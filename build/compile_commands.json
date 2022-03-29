@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/sdp/PercisionMedicine/build",
+  "command": "/usr/bin/g++  -I/home/sdp/PercisionMedicine/build/contrib/zlib-install/include -I/home/sdp/PercisionMedicine/build/contrib/htslib-install/include -I/home/sdp/PercisionMedicine/include -DSINGLE_CORE -O2 -fopenmp -DNDEBUG -std=c++0x -g -fopenmp -o CMakeFiles/PM_pj.dir/interface/PMed_OPTANE.cpp.o -c /home/sdp/PercisionMedicine/interface/PMed_OPTANE.cpp",
+  "file": "/home/sdp/PercisionMedicine/interface/PMed_OPTANE.cpp"
+}
+]

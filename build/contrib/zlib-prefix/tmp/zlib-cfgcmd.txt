@@ -1,0 +1,1 @@
+cmd='/home/sdp/PercisionMedicine/build/contrib/zlib-prefix/src/zlib/configure;--prefix=/home/sdp/PercisionMedicine/build/contrib/zlib-install;--static'
