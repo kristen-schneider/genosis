@@ -1,4 +1,5 @@
-Percisioon Medicine Project
+Precision Medicine Project
+
 mkdir build
 cd build
 cmake ..
