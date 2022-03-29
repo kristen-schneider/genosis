@@ -1,5 +1,0 @@
-/home/sdp/PercisionMedicine/build/CMakeFiles/zlib.dir
-/home/sdp/PercisionMedicine/build/CMakeFiles/htslib.dir
-/home/sdp/PercisionMedicine/build/CMakeFiles/PM_pj.dir
-/home/sdp/PercisionMedicine/build/CMakeFiles/edit_cache.dir
-/home/sdp/PercisionMedicine/build/CMakeFiles/rebuild_cache.dir
