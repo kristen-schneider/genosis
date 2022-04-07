@@ -1,0 +1,19 @@
+# Hashes of file build rules.
+d242f2ed5d82bf01a5a1c04bcdbaf3fb CMakeFiles/htslib
+28687e10d63c0f12577738e0ed264eca CMakeFiles/htslib-complete
+d242f2ed5d82bf01a5a1c04bcdbaf3fb CMakeFiles/zlib
+4b6b98586832e4d9eb05405c285e4982 CMakeFiles/zlib-complete
+06ca6b77bd5ce289f65c0d9546130689 contrib/htslib-prefix/src/htslib-stamp/htslib-build
+126cf3f2d0b04294e650bf068ed1b5c1 contrib/htslib-prefix/src/htslib-stamp/htslib-configure
+b6c4595fb6b883e6da56d1c1899ba6d7 contrib/htslib-prefix/src/htslib-stamp/htslib-download
+9a2dcecba0d81f737405943e24bc9be8 contrib/htslib-prefix/src/htslib-stamp/htslib-install
+3c7f2db1729293c0b873ae4b48718cd3 contrib/htslib-prefix/src/htslib-stamp/htslib-mkdir
+6438054c99a7b58bea894733c893c73f contrib/htslib-prefix/src/htslib-stamp/htslib-patch
+95c5e683f00daa33524f20b2549550bf contrib/htslib-prefix/src/htslib-stamp/htslib-update
+a823c2f9707bc2d8317adbda5f0a97d5 contrib/zlib-prefix/src/zlib-stamp/zlib-build
+6bb55214e7f7354fc038b5966a3e5b7d contrib/zlib-prefix/src/zlib-stamp/zlib-configure
+76c20b699e3470f66a6752c30cd45b0a contrib/zlib-prefix/src/zlib-stamp/zlib-download
+6eefb1ad18d4f65c243b2f7f8f64131b contrib/zlib-prefix/src/zlib-stamp/zlib-install
+b6c1441578aa0f0ac7e75421384f4ef8 contrib/zlib-prefix/src/zlib-stamp/zlib-mkdir
+9d7b4bd6e6df9ba8b3225345ffd397cb contrib/zlib-prefix/src/zlib-stamp/zlib-patch
+a5f9b1f93d4e2a631eb7d9719d896d33 contrib/zlib-prefix/src/zlib-stamp/zlib-update

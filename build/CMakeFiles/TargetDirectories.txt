@@ -1,0 +1,5 @@
+/home/sdp/precision-medicine/build/CMakeFiles/zlib.dir
+/home/sdp/precision-medicine/build/CMakeFiles/htslib.dir
+/home/sdp/precision-medicine/build/CMakeFiles/pm.dir
+/home/sdp/precision-medicine/build/CMakeFiles/edit_cache.dir
+/home/sdp/precision-medicine/build/CMakeFiles/rebuild_cache.dir
