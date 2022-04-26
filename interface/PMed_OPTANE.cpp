@@ -80,12 +80,17 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 int main(){
     pool<root_pmem> pop;
-    std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
+    /*std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
      {"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
      {"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3},
-     {".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};
+     {".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};*/
+
+    std::map<std::string,int > datU = {{"0|0", 5}, {"0|1", 5}, {"1|0", 5}, {"0|2", 5}, {"2|0", 5},
+     {"0|3", 5}, {"3|0", 5}, {"1|2", 5}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
+     {"1|1", 5},{"2|2", 5},{"3|3", 5},{".|.", 5},{"0|.", 5},{".|0", 5},{"1|.", 5},
+     {".|1", 5},{"2|.", 5},{".|2", 5},{"3|.", 5},{".|3", 5}};
     // counters
-    int nn   = 0; // total number of records in file
+    int nn   = 0;  // total number of records in file
     int nsnp = 0;  // number of SNP records in file
     int nhq  = 0;  // number of SNPs for the single sample passing filters
     int nseq = 0;  // number of sequences
@@ -142,7 +147,8 @@ int main(){
         auto &mapgt = *pgt;
         auto &mapgtT = *pgtT;
         uint32_t N = mapmt.size();
-                const char *VCFPath = "/home/sdp/PercisionMedicine/data/ALL.wgs.svs.genotypes.vcf";
+               //const char *VCFPath = "/home/sdp/precidion-medicine/data/ALL.wgs.svs.genotypes.vcf";
+               const char *VCFPath = "/home/sdp/precision-medicine/data/short.vcf";
         htsFile *test_vcf = bcf_open(VCFPath, "r");
         if ( !test_vcf ) {
             printf("Failed to open: %s\n", VCFPath);
@@ -153,14 +159,14 @@ int main(){
         if(test_header == NULL) {throw std::runtime_error("Unable to read header.");}
         const char **seqnames = NULL;
         seqnames = bcf_hdr_seqnames(test_header, &nseq);
-
-        // initialize and allocate bcf1_t object
+        
+	// initialize and allocate bcf1_t object
         bcf1_t *test_record = bcf_init();
          if (test_record == NULL) {
             fprintf(stderr, "ERROR: record is empty\n");
         }
         if (N==0){
-
+		printf("N = 0\n");
             // genotype data for each call
             // genotype arrays are twice as large as
             // the other arrays as there are two values for each sample
@@ -274,7 +280,8 @@ int main(){
             }            
             for (int i = 1; i < 2; ++i) {
                 //std::vector<std::string> tmpvect;
-                try{
+                printf("SECOND for loop\n");
+		    try{
                     std::cout << i << "\t\t";
                     for (auto v:mapgt[i]) {                        
                         std::cout << v  ;
@@ -287,7 +294,8 @@ int main(){
             }            
             for (int j = 1; j < 2; ++j) {
                 //std::vector<std::string> tmpvect;
-                try{
+		printf("THIRD for loop\n");
+		    try{
                     std::cout << j << "\t\t";
                     for (auto vT:mapgtT[j]) {
                         std::cout << vT  ;
