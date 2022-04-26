@@ -1,1 +1,0 @@
-cmd='/home/sdp/precision-medicine/build/contrib/zlib-prefix/src/zlib/configure;--prefix=/home/sdp/precision-medicine/build/contrib/zlib-install;--static'

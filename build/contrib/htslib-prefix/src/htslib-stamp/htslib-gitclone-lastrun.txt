@@ -1,3 +1,0 @@
-repository='https://github.com/nsubtil/htslib.git'
-module=''
-tag='origin'
