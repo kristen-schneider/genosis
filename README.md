@@ -4,4 +4,4 @@ mkdir build
 cd build
 cmake ..
 
-make (to generate executable)
+make
