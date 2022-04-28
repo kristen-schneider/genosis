@@ -1,4 +1,4 @@
-Precision Medicine
+Precision Medicine Project
 <br>
 mkdir build<br>
 cd build<br>
