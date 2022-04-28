@@ -1,7 +1,7 @@
-Precision Medicine Project
-
-mkdir build
-cd build
-cmake ..
-
+:x
+<br>
+mkdir build<br>
+cd build<br>
+cmake ..<br>
+<br>
 make
