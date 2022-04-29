@@ -80,6 +80,11 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
 int main(){
+	std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
+     	{"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
+    	{"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3},
+     	{".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};
+
 	// counters
 	int nn   = 0;  // total number of records in file
 	int nsnp = 0;  // number of SNP records in file
@@ -114,7 +119,16 @@ int main(){
 		fprintf(stderr, "ERROR: record is empty\n");
 	}
 
-	// read the VCF records
+            // genotype data for each call
+            // genotype arrays are twice as large as
+            // the other arrays as there are two values for each sample
+            int ngt_arr = 0;
+            int *gt     = NULL;
+            int ngt     = 0;
+            printf("Loading codes...\n");
+	
+	std::vector<std::vector<int>> tempVecVec; // vector of vectors to storee all genotype encodings
+	// read the VCF records, one by one
 	while(bcf_read(test_vcf, test_header, test_record) == 0){
 		bcf_unpack(test_record, BCF_UN_ALL);
 		bcf_unpack(test_record, BCF_UN_INFO);
@@ -125,7 +139,44 @@ int main(){
                 std::string ref = test_record->d.allele[0]; // REF
                 std::string alt = test_record->d.allele[1]; // ALT
                 std::double_t qual =   test_record->qual; // QUAL
-	}
+		
+		// CHROM thru QUAL as one vector of strings.
+		std::vector<std::string> strvec = 
+		{chrom,(std::to_string(pos)),tid,ref,alt,(std::to_string(qual))};
+		// CHROM thru QUAL as one string
+		std::string s;
+		for (const auto &piece : strvec) s += "\t" + piece;
+		std::string strs = chrom +"\t" + 
+			(std::to_string(pos)) + "\t" + 
+			tid + "\t" + 
+			ref + "\t" + 
+			alt+ "\t" + 
+			(std::to_string(qual));
+
+
+		// genotypes
+		std::string kg;
+		std::vector<int> tempVec;
+		ngt =  bcf_get_genotypes(test_header, test_record,  &gt, &ngt_arr);
+		int ngts = ngt/numSamples;
+		for (int i=0; i<numSamples; i++) {
+			int genotype_s;
+			int genotype = bcf_gt_allele(gt[i*ngts+0]);
+			if (genotype==-1) {
+				kg = ".|.";
+			}
+			else{
+				genotype_s = bcf_gt_allele(gt[i*ngts+1]);
+				kg = (std::to_string(genotype))+"|"+(std::to_string(genotype_s));
+			}
+
+			tempVec.push_back(datU[kg]);
+		}
+		tempVecVec.push_back(tempVec);
+		tempVec.clear(); 
+		std::cout << "------------------" << std::endl;
+
+	} // end of reading records
 
 
 
