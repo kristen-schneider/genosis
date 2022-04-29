@@ -93,7 +93,9 @@ int main(){
 	
 	// path to VCF file
 	// short.vcf
-	const char *VCFPath = "/home/sdp/precision-medicine/data/ten.vcf";
+	// ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf
+	const char *VCFPath = 
+		"/home/sdp/precision-medicine/data/short.vcf";
 	
 	// open VCF file with htslib
 	htsFile *test_vcf = bcf_open(VCFPath, "r");
@@ -173,12 +175,14 @@ int main(){
 			tempVec.push_back(datU[kg]);
 		}
 		tempVecVec.push_back(tempVec);
+		for(int i=0; i < tempVec.size(); i++) {
+			std::cout << tempVec.at(i) << " ";
+		}
 		tempVec.clear(); 
-		std::cout << "------------------" << std::endl;
-
+		//std::cout << "------------------" << std::endl;
+	
+		std::cout << "\n";
 	} // end of reading records
-
-
 
 	// end of script
 	return 0;
