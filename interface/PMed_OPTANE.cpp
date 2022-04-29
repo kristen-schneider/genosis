@@ -80,6 +80,24 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
 int main(){
+	// path to VCF file
+	const char *VCFPath = "/home/sdp/precision-medicine/data/short.vcf";
+	
+	// open VCF file with htslib
+	htsFile *test_vcf = bcf_open(VCFPath, "r");
+	if ( !test_vcf ) {
+		printf("Failed to open: %s\n", VCFPath);
+	}
+
+	// returning a bcf_hdr_t struct 
+	bcf_hdr_t *test_header = bcf_hdr_read(test_vcf);
+	fprintf(stderr, "File '%s' contains %i samples.\n", VCFPath, bcf_hdr_nsamples(test_header));
+	if(test_header == NULL) {
+		throw std::runtime_error("Unable to read header.");
+	}
+		
+
+	// end of script
 	return 0;
 }
 
