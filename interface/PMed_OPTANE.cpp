@@ -80,8 +80,15 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
 int main(){
+	// counters
+	int nn   = 0;  // total number of records in file
+	int nsnp = 0;  // number of SNP records in file
+	int nhq  = 0;  // number of SNPs for the single sample passing filters
+	int nseq = 0;  // number of sequences
+	
 	// path to VCF file
-	const char *VCFPath = "/home/sdp/precision-medicine/data/short.vcf";
+	// short.vcf
+	const char *VCFPath = "/home/sdp/precision-medicine/data/ten.vcf";
 	
 	// open VCF file with htslib
 	htsFile *test_vcf = bcf_open(VCFPath, "r");
@@ -91,11 +98,36 @@ int main(){
 
 	// returning a bcf_hdr_t struct 
 	bcf_hdr_t *test_header = bcf_hdr_read(test_vcf);
-	fprintf(stderr, "File '%s' contains %i samples.\n", VCFPath, bcf_hdr_nsamples(test_header));
+	int numSamples = 0;
+	numSamples = bcf_hdr_nsamples(test_header); // counting number of samples
+
+	fprintf(stderr, "File '%s' contains %i samples.\n", VCFPath, numSamples);
 	if(test_header == NULL) {
 		throw std::runtime_error("Unable to read header.");
 	}
+	const char **seqnames = NULL;
+	seqnames = bcf_hdr_seqnames(test_header, &nseq); // getting sequence names
+
+	// initialize and allocate bcf1_t object
+	bcf1_t *test_record = bcf_init();
+	if (test_record == NULL) {
+		fprintf(stderr, "ERROR: record is empty\n");
+	}
+
+	// read the VCF records
+	while(bcf_read(test_vcf, test_header, test_record) == 0){
+		bcf_unpack(test_record, BCF_UN_ALL);
+		bcf_unpack(test_record, BCF_UN_INFO);
 		
+		std::string chrom = bcf_hdr_id2name(test_header, test_record->rid); // #CHROM
+		int pos = (unsigned long)test_record->pos; // POS
+		std::string tid =   test_record->d.id ; // ID
+                std::string ref = test_record->d.allele[0]; // REF
+                std::string alt = test_record->d.allele[1]; // ALT
+                std::double_t qual =   test_record->qual; // QUAL
+	}
+
+
 
 	// end of script
 	return 0;
