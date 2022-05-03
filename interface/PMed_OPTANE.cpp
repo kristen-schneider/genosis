@@ -1,4 +1,4 @@
-
+#include <fstream>
 #include <vector>
 #include <math.h>
 #include <map>
@@ -91,6 +91,10 @@ int main(){
 	int nhq  = 0;  // number of SNPs for the single sample passing filters
 	int nseq = 0;  // number of sequences
 	
+	// path to out file
+	std::ofstream outFile;
+	outFile.open("encoding.txt");
+
 	// path to VCF file
 	// short.vcf
 	// ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf
@@ -172,16 +176,20 @@ int main(){
 				kg = (std::to_string(genotype))+"|"+(std::to_string(genotype_s));
 			}
 
+			// one record is tempVec
 			tempVec.push_back(datU[kg]);
 		}
+		// all records are tempVecVec
 		tempVecVec.push_back(tempVec);
 		for(int i=0; i < tempVec.size(); i++) {
-			std::cout << tempVec.at(i) << " ";
+			outFile << tempVec.at(i) << " ";
+			//std::cout << tempVec.at(i) << " ";
 		}
 		tempVec.clear(); 
 		//std::cout << "------------------" << std::endl;
 	
-		std::cout << "\n";
+		outFile << "\n";
+		//std::cout << "\n";
 	} // end of reading records
 
 	// end of script
