@@ -84,6 +84,29 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // 1|1, 2|2, 3|3 ->2
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
+void faiss(){
+	int d = 64;                            // dimension
+   	int nb = 100000;                       // database size
+   	int nq = 10000;                        // nb of queries
+    	
+	float *xb = new float[d * nb];
+	float *xq = new float[d * nq];
+   	
+	for(int i = 0; i < nb; i++) {
+        	for(int j = 0; j < d; j++) xb[d * i + j] = drand48();
+        	xb[d * i] += i / 1000.;
+    	}
+    	for(int i = 0; i < nq; i++) {
+        	for(int j = 0; j < d; j++) xq[d * i + j] = drand48();
+        	xq[d * i] += i / 1000.;
+    	}
+
+	faiss::IndexFlatL2 index(d);           // call constructor
+    	//printf("is_trained = %s\n", index.is_trained ? "true" : "false");
+    	//index.add(nb, xb);                     // add vectors to the index
+    	//printf("ntotal = %ld\n", index.ntotal);
+}
+
 int readEncodings(){
 
 	// path to encoding file
@@ -246,6 +269,7 @@ int main(void){
 	
 	sliceVCF();
 	readEncodings();
+	faiss();
 	std::cout << "End of Main." << std::endl;
 	return 0;
 }
