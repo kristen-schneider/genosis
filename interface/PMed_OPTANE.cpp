@@ -83,12 +83,28 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
 int main(){
-	std::cout << "Starting to run program..." << std::endl;
-	std::string s = "...testing sliceVCF...";
-	sliceVCF(s);
+
+	// path to encoding file
+        std::ifstream inFile;
+        inFile.open("encoding.txt");
+	
+	std::string line;	// to store line from file
+	if (inFile.is_open()) {
+		while (getline (inFile, line)) {
+			std::cout << line << std::endl;
+		}
+		inFile.close();
+	}
+	return 0;
 }
 
-int foo(void){
+//int main(){
+//	std::cout << "Starting to run program..." << std::endl;
+//	std::string s = "...testing sliceVCF...";
+//	sliceVCF(s);
+//}
+
+int writeEncoding(void){
 	std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
      	{"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
     	{"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3},

@@ -25,6 +25,10 @@ endif()
 include_directories ("${PROJECT_SOURCE_DIR}/include" )
 link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS} ${zlib_LIB} ${htslib_LIB})
 
+#file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
+include_directories(interface)
+
+
 add_executable (pm "interface/PMed_OPTANE.cpp")
 add_dependencies(pm zlib htslib)
 target_link_libraries (pm  ${htslib_LIB} ${zlib_LIB} ${LIBPMEMKV_LIBRARIES} ${LIBPMEMOBJ++_LIBRARIES} OpenMP::OpenMP_CXX )
