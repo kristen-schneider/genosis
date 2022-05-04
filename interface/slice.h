@@ -9,7 +9,7 @@
 using namespace std;
 
 
-void sliceVCF(
-vector<string> splitString(string s, char delim);
-int countNumberColumns(string gwasFileName, char delim);
-vector<string> returnFileHeader(string gwasFileName, int numCols, char delim);
+void sliceVCF(string s);
+//vector<string> splitString(string s, char delim);
+//int countNumberColumns(string gwasFileName, char delim);
+//vector<string> returnFileHeader(string gwasFileName, int numCols, char delim);
