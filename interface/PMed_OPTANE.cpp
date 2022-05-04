@@ -23,6 +23,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
+
+#include "slice.h"
+
 typedef std::chrono::high_resolution_clock Clock;
 using namespace pmem::obj; 
 using vector_int_type = pmem::obj::vector<int>;
@@ -80,6 +83,12 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
 int main(){
+	std::cout << "Starting to run program..." << std::endl;
+	std::string s = "...testing sliceVCF...";
+	sliceVCF(s);
+}
+
+int foo(void){
 	std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
      	{"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
     	{"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3},
