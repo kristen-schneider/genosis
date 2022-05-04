@@ -57,14 +57,16 @@ timespec diff(timespec start, timespec end )
     }
     return temp;
 }
+
 std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 {
+	std::cout << "Transposing VMF to SMF..." << std::endl;
     if (b.size() == 0)
         //return ;
         std::cerr << "Error reaching to db." << std::endl;
 
     std::vector<std::vector<int>> trans_vec(b[1].size(), std::vector<int>());
-    std::cout << b.size() << " \t::: \t"<< b[1].size() << std::endl;
+    //std::cout << b.size() << " \t::: \t"<< b[1].size() << std::endl;
     for (size_t i = 0; i < b.size(); i++)
     {
         for (size_t j = 0; j < b[i].size(); j++)
@@ -72,7 +74,7 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
             trans_vec[j].push_back(b[i][j]);
         }
     }
-    std::cout << trans_vec.size() << " \t::: \t"<< trans_vec[1].size() << std::endl;
+    //std::cout << trans_vec.size() << " \t::: \t"<< trans_vec[1].size() << std::endl;
     return trans_vec;
 }
 //pmempool create obj --layout="node_hash_map" --size 20G /mnt/Optane/poolvsf_V01
@@ -82,11 +84,11 @@ std::vector<std::vector<int> > transpose( std::vector<std::vector<int> > &b)
 // 1|1, 2|2, 3|3 ->2
 // .|., 0|., .|0, 1|., .|1, 2|., .|2, 3|., .|3 ->3
 
-int main(){
+int readEncodings(){
 
 	// path to encoding file
         std::ifstream inFile;
-        inFile.open("encoding.txt");
+        inFile.open("../encoding.txt");
 	
 	std::string line;	// to store line from file
 	if (inFile.is_open()) {
@@ -98,13 +100,8 @@ int main(){
 	return 0;
 }
 
-//int main(){
-//	std::cout << "Starting to run program..." << std::endl;
-//	std::string s = "...testing sliceVCF...";
-//	sliceVCF(s);
-//}
 
-int writeEncoding(void){
+void sliceVCF(void){
 	std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
      	{"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, 
     	{"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3},
@@ -118,7 +115,7 @@ int writeEncoding(void){
 	
 	// path to out file
 	std::ofstream outFile;
-	outFile.open("encoding.txt");
+	outFile.open("/home/sdp/precision-medicine/encoding.txt");
 
 	// path to VCF file
 	// short.vcf
@@ -150,15 +147,17 @@ int writeEncoding(void){
 		fprintf(stderr, "ERROR: record is empty\n");
 	}
 
-            // genotype data for each call
-            // genotype arrays are twice as large as
-            // the other arrays as there are two values for each sample
-            int ngt_arr = 0;
-            int *gt     = NULL;
-            int ngt     = 0;
-            printf("Loading codes...\n");
+        // genotype data for each call
+        // genotype arrays are twice as large as
+        // the other arrays as there are two values for each sample
+        int ngt_arr = 0;
+        int *gt     = NULL;
+        int ngt     = 0;
+        printf("Encoding VCF to VMF...\n");
 	
 	std::vector<std::vector<int>> tempVecVec; // vector of vectors to storee all genotype encodings
+	
+	
 	// read the VCF records, one by one
 	while(bcf_read(test_vcf, test_header, test_record) == 0){
 		bcf_unpack(test_record, BCF_UN_ALL);
@@ -206,22 +205,54 @@ int writeEncoding(void){
 		}
 		// all records are tempVecVec
 		tempVecVec.push_back(tempVec);
-		for(int i=0; i < tempVec.size(); i++) {
-			outFile << tempVec.at(i) << " ";
-			//std::cout << tempVec.at(i) << " ";
-		}
+		//for(int i=0; i < tempVec.size(); i++) {
+		//	outFile << tempVec.at(i) << " ";
+		//	//std::cout << tempVec.at(i) << " ";
+		//}
 		tempVec.clear(); 
 		//std::cout << "------------------" << std::endl;
 	
-		outFile << "\n";
+		//outFile << "\n";
 		//std::cout << "\n";
 	} // end of reading records
 
+	std::vector<std::vector<int>> TransposeTempVecVec = transpose(tempVecVec);
+	std::cout << "Writing SMF to file..." << std::endl;
+	for(int i = 0; i < TransposeTempVecVec.size(); i++) {
+		std::vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
+		for(int j = 0; j < TransposeTempVec.size(); j++) {
+			outFile << TransposeTempVec.at(j) << " ";
+		}
+		outFile << std::endl;
+
+	}
+	//std::cout << "------|--------|------" << std::endl;
+	
+	//for (auto Tv:TransposeTempVecVec)
+	//mapgtT.emplace_back(Tv);
+	//free(gt);
+	//free(seqnames);
+	//bcf_hdr_destroy(test_headier);
+	//bcf_close(test_vcf);
+	//bcf_destroy(test_record);
+
+
 	// end of script
+	//return 0;
+}
+
+
+int main(void){
+	
+	sliceVCF();
+	readEncodings();
+	std::cout << "End of Main." << std::endl;
 	return 0;
 }
 
 
+// PJ OPTANE STUFF
+//
 //int main(){
 //    pool<root_pmem> pop;
 //    //std::map<std::string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1},
