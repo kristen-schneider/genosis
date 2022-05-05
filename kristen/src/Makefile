@@ -2,7 +2,11 @@ CXX=g++
 LIBS=-lhts
 RM=rm -f
 
-SRCS=main.cpp utils.cpp slice.cpp
+SRCS=main.cpp \
+     utils.cpp \
+     slice.cpp \
+     read_encodings.cpp
+
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: k
