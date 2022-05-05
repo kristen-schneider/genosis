@@ -1,12 +1,14 @@
 #include <iostream>
+#include <string>
 //#include <math.h>
 #include <cstdio>
 #include <cstdlib>
 #include <random>
 #include <faiss/IndexFlat.h>
 
-//#include "faiss_pm.h"
+#include "faiss_pm.h"
 
+using namespace std;
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -18,8 +20,10 @@
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
 
-int faiss_flat(){
-	int d = 0;
+int faiss_flat(int numSamples, string* cohort_arr){
+	for (int i = 0; i < numSamples; i++) {
+		cout << cohort_arr[i] << endl;
+	}
 	return 0;	
 }
 
