@@ -118,26 +118,27 @@ void sliceVCF(void){
 		}
 	
 		// all records are tempVecVec
-		//tempVecVec.push_back(tempVec);
+		tempVecVec.push_back(tempVec);
 		//for(int i=0; i < tempVec.size(); i++) {
 		//	outFile << tempVec.at(i) << " ";
 		//	//cout << tempVec.at(i) << " ";
 		//}
 		tempVec.clear(); 
-	
-		vector<vector<int>> TransposeTempVecVec = transpose(tempVecVec);
-		cout << "Writing SMF to file..." << endl;
-		for(int i = 0; i < TransposeTempVecVec.size(); i++) {
-			vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
-			for(int j = 0; j < TransposeTempVec.size(); j++) {
-				outFile << TransposeTempVec.at(j) << " ";
-			}
+		
 
-			outFile << endl;
-		}
 
-		outFile << "\n";
 
         } // end of reading records
+	
+	// transposing data
+	vector<vector<int>> TransposeTempVecVec = transpose(tempVecVec);
+	cout << "Writing SMF to file..." << endl;
+	for(int i = 0; i < TransposeTempVecVec.size(); i++) {
+		vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
+		for(int j = 0; j < TransposeTempVec.size(); j++) {
+			outFile << TransposeTempVec.at(j) << " ";
+		}
+		outFile << endl;
+	}
 }
 
