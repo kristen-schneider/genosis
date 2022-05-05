@@ -11,6 +11,7 @@
 #include <htslib/synced_bcf_reader.h>
 
 #include "slice.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -70,7 +71,6 @@ void sliceVCF(void){
 
         vector<vector<int>> tempVecVec; // vector of vectors to storee all genotype encodings
 
-	cout << "testing" << endl;
 	// read the VCF records, one by one
         while(bcf_read(test_vcf, test_header, test_record) == 0){
                 bcf_unpack(test_record, BCF_UN_ALL);
@@ -116,19 +116,28 @@ void sliceVCF(void){
 			// one record is tempVec
 			tempVec.push_back(datU[kg]);
 		}
+	
 		// all records are tempVecVec
-		tempVecVec.push_back(tempVec);
+		//tempVecVec.push_back(tempVec);
 		//for(int i=0; i < tempVec.size(); i++) {
 		//	outFile << tempVec.at(i) << " ";
 		//	//cout << tempVec.at(i) << " ";
 		//}
 		tempVec.clear(); 
-		//cout << "------------------" << endl;
 	
-		//outFile << "\n";
-		//cout << "\n";
+		vector<vector<int>> TransposeTempVecVec = transpose(tempVecVec);
+		cout << "Writing SMF to file..." << endl;
+		for(int i = 0; i < TransposeTempVecVec.size(); i++) {
+			vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
+			for(int j = 0; j < TransposeTempVec.size(); j++) {
+				outFile << TransposeTempVec.at(j) << " ";
+			}
 
-                cout << "record\n";
+			outFile << endl;
+		}
+
+		outFile << "\n";
+
         } // end of reading records
 }
 
