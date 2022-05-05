@@ -6,7 +6,7 @@
 
 using namespace std;
 
-string* read_encoded_data(int numSamples){
+string* read_encoded_data(int numSamples, string* cohort_arr){
 
 	// path to encoding file
         string inFileString = "../../encoding.txt";
@@ -19,7 +19,6 @@ string* read_encoded_data(int numSamples){
 	
 
 	string line;	// to store line from file
-	string cohort_arr[numSamples]; // to store all samples as a list of strings
 	int s = 0;
 	if (inFile.is_open()) {
 		while (getline (inFile, line)) {

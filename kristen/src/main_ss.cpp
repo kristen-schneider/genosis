@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 
 #include "read_encodings.h"
 #include "faiss_pm.h"
@@ -11,8 +12,9 @@ int main(void) {
 	cout << "Starting program: Part 2." << endl;
 
 	cout << "...reading encoded file..." << endl;
-	int numSamples = 3;
-	read_encoded_data(numSamples);
+	int numSamples = 3; // to make space for an array of strings which holds a string encoding for each sample
+	string cohort_arr[numSamples]; // to store all samples as a list of strings
+	read_encoded_data(numSamples, cohort_arr);
 
 	cout << "End of program: Part 2." << endl;
 
