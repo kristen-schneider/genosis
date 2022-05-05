@@ -11,11 +11,14 @@ int main(void){
 
 	cout << "Start of program." << endl;
 	
-	cout << "...reading vcf..." << endl;
+	cout << "...reading vcf and writing encodings to intermediate file..." << endl;
 	sliceVCF();
 	
 	cout << "...reading encoding..." << endl;
 	read_encoded_data();
+
+	cout << "...performing FAISS on encoded data..." << endl;
+	
 
 	cout << "End of program." << endl;
 	return 0;

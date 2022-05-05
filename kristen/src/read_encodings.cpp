@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 
+#include "read_encodings.h"
+
 using namespace std;
 
 void read_encoded_data(){
