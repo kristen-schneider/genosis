@@ -4,7 +4,8 @@
 #endif //READ_ENCODINGSS_H
 
 #include <iostream>
+#include <string> 
 
 using namespace std;
 
-void read_encoded_data();
+string* read_encoded_data(int numSamples);

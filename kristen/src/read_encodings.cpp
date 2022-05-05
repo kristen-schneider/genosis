@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void read_encoded_data(){
+string* read_encoded_data(int numSamples){
 
 	// path to encoding file
         string inFileString = "../../encoding.txt";
@@ -17,11 +17,17 @@ void read_encoded_data(){
                 cout << "Failed to open: " << inFileString << endl;
         }
 	
+
 	string line;	// to store line from file
+	string cohort_arr[numSamples]; // to store all samples as a list of strings
+	int s = 0;
 	if (inFile.is_open()) {
 		while (getline (inFile, line)) {
-			cout << line << std::endl;
+			// append line to the string array
+			cohort_arr[s] = line;
+			s += 1;
 		}
 		inFile.close();
 	}
+	return cohort_arr;
 }
