@@ -3,4 +3,4 @@
 
 #endif //FAISS_PM_H
 
-int faiss_flat();
+int faiss_flat(void);
