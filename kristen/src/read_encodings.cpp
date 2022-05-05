@@ -6,7 +6,8 @@
 
 using namespace std;
 
-string* read_encoded_data(int numSamples, string* cohort_arr){
+// need to convert this array workflow to vectors
+vector<float> read_encoded_data(int numSamples){
 
 	// path to encoding file
         string inFileString = "../../encoding.txt";

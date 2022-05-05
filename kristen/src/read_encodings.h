@@ -8,4 +8,4 @@
 
 using namespace std;
 
-string* read_encoded_data(int numSamples, string* cohort_arr);
+vector<float> read_encoded_data(int numSamples);
