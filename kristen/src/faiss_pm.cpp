@@ -1,8 +1,8 @@
 #include <iostream>
-#include <math.h>
-#include <cstdio>
-#include <cstdlib>
-#include <random>
+//#include <math.h>
+//#include <cstdio>
+//#include <cstdlib>
+//#include <random>
 #include <faiss/IndexFlat.h>
 
 #include "faiss_pm.h"
@@ -16,7 +16,7 @@
 
 
 // 64-bit int
-using idx_t = faiss::Index::idx_t;
+//using idx_t = faiss::Index::idx_t;
 
 int faiss_flat() { 
     int d = 64;      // dimension
