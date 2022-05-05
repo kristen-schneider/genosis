@@ -13,11 +13,13 @@ int main(void) {
 
 	cout << "...reading encoded file..." << endl;
 	int numSamples = 3; // to make space for an array of strings which holds a string encoding for each sample
+	int numVariants = 9;
 	string cohort_arr[numSamples]; // to store all samples as a list of strings
 	read_encoded_data(numSamples, cohort_arr);
 	
 	cout << "...starting similarity search..." << endl;
-	faiss_flat(numSamples, cohort_arr);
+	float cohort_float_arr[numSamples];
+	faiss_flat(numSamples, numVariants, cohort_arr, cohort_float_arr);
 
 	cout << "End of program: Part 2." << endl;
 

@@ -1,4 +1,7 @@
+#include <algorithm>
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 //#include <math.h>
 #include <cstdio>
@@ -20,11 +23,24 @@ using namespace std;
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
 
-int faiss_flat(int numSamples, string* cohort_arr){
+float* faiss_flat(int numSamples, int numVariants, string* cohort_arr, float* cohort_float_arr){
+	
+	//float *cohort_float_arr[numSamples];
+	
 	for (int i = 0; i < numSamples; i++) {
+		float sample_float_arr[numVariants];
+		// convert a string to an array of floats
+		istringstream ss(cohort_arr[i] );
+  		copy(
+    			istream_iterator <float> ( ss ),
+    			istream_iterator <float> (),
+    			sample_float_arr
+    		);
+
+		cohort_float_arr[i] = sample_float_arr;
 		cout << cohort_arr[i] << endl;
 	}
-	return 0;	
+	return cohort_float_arr;	
 }
 
 

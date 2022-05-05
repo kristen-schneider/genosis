@@ -8,4 +8,4 @@
 
 using namespace std;
 
-int faiss_flat(int numSamples, string* cohort_arr);
+float* faiss_flat(int numSamples, int numVariants, string* cohort_arr, float* cohort_float_arr);
