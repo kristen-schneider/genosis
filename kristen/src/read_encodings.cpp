@@ -1,13 +1,19 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
 void read_encoded_data(){
 
 	// path to encoding file
-        ifstream inFile;
-        inFile.open("../encoding.txt");
+        string inFileString = "../../encoding.txt";
+	ifstream inFile;
+
+        inFile.open(inFileString);
+	if ( !inFile.is_open() ) {
+                cout << "Failed to open: " << inFileString << endl;
+        }
 	
 	string line;	// to store line from file
 	if (inFile.is_open()) {
