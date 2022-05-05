@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "slice.h"
 #include "read_encodings.h"
+#include "faiss_pm.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ int main(void){
 	read_encoded_data();
 
 	cout << "...performing FAISS on encoded data..." << endl;
-	
+	faiss_flat();	
 
 	cout << "End of program." << endl;
 	return 0;

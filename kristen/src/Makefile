@@ -5,7 +5,8 @@ RM=rm -f
 SRCS=main.cpp \
      utils.cpp \
      slice.cpp \
-     read_encodings.cpp
+     read_encodings.cpp \
+     faiss_pm.cpp
 
 OBJS=$(subst .cpp,.o,$(SRCS))
 
