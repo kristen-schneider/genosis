@@ -4,9 +4,11 @@
 #endif //UTILS_H
 
 #include <iostream>
+#include <string>
 #include <vector>
+
 
 using namespace std;
 
 vector<vector<int>> transpose(vector<vector<int>> &b);
-vector<float> split_string(string &s, char delim);
+

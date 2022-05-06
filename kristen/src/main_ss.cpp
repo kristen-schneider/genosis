@@ -2,9 +2,9 @@
 #include<string>
 #include<vector>
 
-//#include "read_encodings.h"
+#include "read_encodings.h"
 //#include "faiss_pm.h"
-#include "utils.h"
+//#include "utils.h"
 
 using namespace std;
 
@@ -18,8 +18,8 @@ int main(void) {
 	int numVariants = 9;
 	string cohort_arr[numSamples]; // to store all samples as a list of strings
 	vector<float> vecOfFloats;
-	//vecOfFloats = read_encoded_data(numSamples);
-	
+	vecOfFloats = read_encoded_data(numSamples);
+
 	cout << "...starting similarity search..." << endl;
 	//float cohort_float_arr[numSamples];
 	//faiss_flat(numSamples, numVariants, cohort_arr, cohort_float_arr);

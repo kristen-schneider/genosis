@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -24,10 +26,18 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
     return trans_vec;
 }
 
-// convert a line to a vector of floats
-vector<float> split_string(string &s, char delim){
-	vector<float> elems;
-    	split_string(s, delim, back_inserter(elems));
-    	return elems;
-	
-}
+
+// split a string into a vector
+//vector<float> split(){
+//	vector<float> vecFloats;
+//
+//}
+//
+//string s, tmp; 
+//stringstream ss(s);
+//vector<string> words;
+//
+//while(getline(ss, tmp, ',')){
+//    words.push_back(tmp);
+//    .....
+//}
