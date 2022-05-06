@@ -10,7 +10,7 @@
 using namespace std;
 
 // need to convert this array workflow to vectors
-vector<float> read_encoded_data(int numSamples){
+vector<vector<float>> read_encoded_data(int numSamples){
 
 	// path to encoding file
         string inFileString = "../../encoding.txt";
@@ -23,17 +23,21 @@ vector<float> read_encoded_data(int numSamples){
 	
 
 	string line;	// to store line from file
-	vector<float> vecOfFloats; // to store line as a vector of floats
-
-	string s, tmp; 
-	stringstream ss(s);
-	vector<string> words;
+	vector<vector<float>> vecVecOfFloats;
 
 	int sampleCount = 0;
 	if (inFile.is_open()) {
-		while(getline(ss, tmp, ' ')){
-			cout << tmp << endl;
+		string tmp; 
+		vector<float> vecOfFloats; // to store line as a vector of floats
+		vector<string> words;
+		while(getline(inFile, tmp, ',')){
+			float f = stof(tmp);
+			vecOfFloats.push_back(f);
+			cout << f << endl;
 		}
+		cout << endl;
+		
+
 		//while (getline (inFile, line)) {
 			
 			//vecOfFloats.push_back(line);
@@ -43,5 +47,5 @@ vector<float> read_encoded_data(int numSamples){
 		//}
 		inFile.close();
 	}
-	return vecOfFloats;
+	return vecVecOfFloats;
 }

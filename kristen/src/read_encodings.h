@@ -9,4 +9,4 @@
 
 using namespace std;
 
-vector<float> read_encoded_data(int numSamples);
+vector<vector<float>> read_encoded_data(int numSamples);
