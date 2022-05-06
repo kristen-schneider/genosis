@@ -1,8 +1,10 @@
 #include<iostream>
 #include<string>
+#include<vector>
 
-#include "read_encodings.h"
-#include "faiss_pm.h"
+//#include "read_encodings.h"
+//#include "faiss_pm.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -15,11 +17,12 @@ int main(void) {
 	int numSamples = 3; // to make space for an array of strings which holds a string encoding for each sample
 	int numVariants = 9;
 	string cohort_arr[numSamples]; // to store all samples as a list of strings
-	read_encoded_data(numSamples, cohort_arr);
+	vector<float> vecOfFloats;
+	//vecOfFloats = read_encoded_data(numSamples);
 	
 	cout << "...starting similarity search..." << endl;
-	float cohort_float_arr[numSamples];
-	faiss_flat(numSamples, numVariants, cohort_arr, cohort_float_arr);
+	//float cohort_float_arr[numSamples];
+	//faiss_flat(numSamples, numVariants, cohort_arr, cohort_float_arr);
 
 	cout << "End of program: Part 2." << endl;
 

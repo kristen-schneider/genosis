@@ -6,6 +6,7 @@
 
 using namespace std;
 
+// transpose a vector of vectors of ints
 vector<vector<int>> transpose(vector<vector<int>> &b){
 	cout << "Transposing VMF to SMF..." << endl;
 	// throw error if size is bad
@@ -21,4 +22,12 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
         	}
     	}
     return trans_vec;
+}
+
+// convert a line to a vector of floats
+vector<float> split_string(string &s, char delim){
+	vector<float> elems;
+    	split_string(s, delim, back_inserter(elems));
+    	return elems;
+	
 }
