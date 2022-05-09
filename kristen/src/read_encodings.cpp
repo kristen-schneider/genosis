@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iterator>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -14,7 +15,7 @@ using namespace std;
 vector<vector<float>> read_encoded_data(int numSamples, int numVariants){
 
 	// path to encoding file
-        string inFileString = "../../encoding.txt";
+        string inFileString = "../../encoding_space.txt";
 	ifstream inFile;
 	// open encoded data (.txt file)
         inFile.open(inFileString);
@@ -27,24 +28,30 @@ vector<vector<float>> read_encoded_data(int numSamples, int numVariants){
 	vector<vector<float>> vecVecOfFloats;	// to return at the end of function
 
 	int varCount = 0;
+	vector<float> vecOfFloats; // to store line as a vector of floats
 	if (inFile.is_open()) {
-		string tmp; 
-		vector<float> vecOfFloats; // to store line as a vector of floats
-		vector<string> words;
+		string s; 
 
-		while(getline(inFile, tmp, ',')){
-			if(varCount < numVariants){
-				float f = stof(tmp);
-                        	vecOfFloats.push_back(f);
-				varCount += 1;
-			}else{
-				cout << "line" << endl;
-				vecVecOfFloats.push_back(vecOfFloats);
-				varCount = 0;
+		while(getline(inFile, s)){
+		//string s = "What is the right way to split a string into a vector of strings";
+			//vector<string> line_vector;
+			stringstream ss(s);
+			istream_iterator<string> begin(ss);
+			istream_iterator<string> end;
+			vector<string> vstrings(begin, end);
+			//copy(vstrings.begin(), vstrings.end(), ostream_iterator<string>(cout, "\n"));
+			
+			// go through line vector and convert each entry to float
+			for (int v = 0; v < vstrings.size(); v++){
+				float f = stof(vstrings.at(v));
+				vecOfFloats.push_back(f);
 			}
+
+			vecVecOfFloats.push_back(vecOfFloats);
+			vecOfFloats.clear();
 		}
 		inFile.close();
 	}
-	cout << vecVecOfFloats.size() << endl;
+
 	return vecVecOfFloats;
 }

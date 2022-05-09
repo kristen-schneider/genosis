@@ -18,11 +18,9 @@ int main(void) {
 	int numVariants = 9;
 	string cohort_arr[numSamples]; // to store all samples as a list of strings
 	vector<vector<float>> vecVecOfFloats;
-	read_encoded_data(numSamples, numVariants);
-	//test_function(numSamples, numVariants);
+	vecVecOfFloats = read_encoded_data(numSamples, numVariants);
 		
 	cout << "...starting similarity search..." << endl;
-	//float cohort_float_arr[numSamples];
 	//faiss_flat(numSamples, numVariants, cohort_arr, cohort_float_arr);
 
 	cout << "End of program: Part 2." << endl;
