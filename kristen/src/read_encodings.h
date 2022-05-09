@@ -9,4 +9,5 @@
 
 using namespace std;
 
-vector<vector<float>> read_encoded_data(int numSamples);
+void test_function(int numSamples, int numVariants);
+vector<vector<float>> read_encoded_data(int numSamples, int numVariants);

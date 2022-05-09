@@ -10,7 +10,8 @@
 using namespace std;
 
 // need to convert this array workflow to vectors
-vector<vector<float>> read_encoded_data(int numSamples){
+// returns vector of vector of floats for input to ss
+vector<vector<float>> read_encoded_data(int numSamples, int numVariants){
 
 	// path to encoding file
         string inFileString = "../../encoding.txt";
@@ -23,29 +24,27 @@ vector<vector<float>> read_encoded_data(int numSamples){
 	
 
 	string line;	// to store line from file
-	vector<vector<float>> vecVecOfFloats;
+	vector<vector<float>> vecVecOfFloats;	// to return at the end of function
 
-	int sampleCount = 0;
+	int varCount = 0;
 	if (inFile.is_open()) {
 		string tmp; 
 		vector<float> vecOfFloats; // to store line as a vector of floats
 		vector<string> words;
-		while(getline(inFile, tmp, ',')){
-			float f = stof(tmp);
-			vecOfFloats.push_back(f);
-			cout << f << endl;
-		}
-		cout << endl;
-		
 
-		//while (getline (inFile, line)) {
-			
-			//vecOfFloats.push_back(line);
-			// to convert to array: https://stackoverflow.com/questions/43130421/convert-string-vector-to-float-vector-or-array
-			//cohort_arr[s] = line;
-		//	sampleCount += 1;
-		//}
+		while(getline(inFile, tmp, ',')){
+			if(varCount < numVariants){
+				float f = stof(tmp);
+                        	vecOfFloats.push_back(f);
+				varCount += 1;
+			}else{
+				cout << "line" << endl;
+				vecVecOfFloats.push_back(vecOfFloats);
+				varCount = 0;
+			}
+		}
 		inFile.close();
 	}
+	cout << vecVecOfFloats.size() << endl;
 	return vecVecOfFloats;
 }
