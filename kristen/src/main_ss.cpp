@@ -2,7 +2,8 @@
 #include<string>
 #include<vector>
 
-//#include "read_encodings.h"
+#include "read_encodings.h"
+#include "simple.h"
 #include "faiss_pm.h"
 //#include "utils.h"
 
@@ -19,7 +20,8 @@ int main(void) {
 	string cohort_arr[numSamples]; // to store all samples as a list of strings
 	vector<vector<float>> vecVecOfFloats;
 	//vecVecOfFloats = read_encoded_data(numSamples, numVariants);
-		
+	simple_print();
+
 	cout << "...starting similarity search..." << endl;
 	ss();
 
