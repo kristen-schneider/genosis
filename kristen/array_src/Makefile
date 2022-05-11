@@ -1,11 +1,11 @@
 # Pre-compiler and Compiler flags
-CXX_FLAGS := -Wall 
+CXX_FLAGS := #-Wall 
 
 # Project directory structure
 BIN := bin
 SRC := ./src
-LIB := 
-INC := 
+LIB := /home/sdp/miniconda3/envs/py38/lib/
+INC := /home/sdp/miniconda3/envs/py38/include/
 MAINFILE := $(SRC)/main.cpp
 
 # Build directories and output
@@ -14,7 +14,8 @@ BUILD := build
 
 # Library search directories and flags
 EXT_LIB := 
-LDFLAGS := -lhts
+LDFLAGS := -lhts \
+	   -lfaiss
 LDPATHS := $(addprefix -L,$(LIB) $(EXT_LIB))
 
 # Include directories
