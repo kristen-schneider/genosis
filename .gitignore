@@ -4,4 +4,4 @@ build/CMakeFiles/*
 build/cmake_install.cmake
 build/compile_commands.json
 build/contrib/
-kristen/src/*.o
+kristen/array_src/build/
