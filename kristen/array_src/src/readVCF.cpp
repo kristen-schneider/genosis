@@ -10,7 +10,7 @@
 #include <htslib/synced_bcf_reader.h>
 
 #include "readVCF.h"
-//#include "utils.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -130,14 +130,15 @@ void sliceVCF(void){
         } // end of reading records
 	
 	// transposing data
-	//vector<vector<int>> TransposeTempVecVec = transpose(tempVecVec);
-	//cout << "Writing SMF to file..." << endl;
-	//for(int i = 0; i < TransposeTempVecVec.size(); i++) {
-	//	vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
-	//	for(int j = 0; j < TransposeTempVec.size(); j++) {
-	//		outFile << TransposeTempVec.at(j) << " ";
-	//	}
-	//	outFile << endl;
-	//}
+	vector<vector<int>> TransposeTempVecVec = transpose(tempVecVec);
+	cout << "Writing SMF to file..." << endl;
+	for(int i = 0; i < TransposeTempVecVec.size(); i++) {
+		vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
+		for(int j = 0; j < TransposeTempVec.size(); j++) {
+			outFile << TransposeTempVec.at(j) << " ";
+		}
+		outFile << endl;
+	}
+	//return 0;
 }
 
