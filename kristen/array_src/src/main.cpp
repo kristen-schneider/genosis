@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "readVCF.h"
+#include "readEncoding.h"
 
 using namespace std;
 
@@ -8,8 +9,18 @@ using namespace std;
 
 int main(void){
 
+	// temp variables
+	int numSamples = 3;
+	int numVariants = 9;
+
 	cout << "Start of encoding." << endl;
-	
+
+	cout << "Reading VCF file." << endl;
+	sliceVCF();
+
+	cout << "Reading Encoded file." << endl;
+	read_test(numSamples, numVariants);
+		
 	cout << "End of encoding." << endl;
 	return 0;
 }
