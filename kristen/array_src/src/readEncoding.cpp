@@ -21,28 +21,28 @@ int read_test(int numSamples, int numVariants){
 
 	// array to store all samples
 	// arr[s][v]
-	string sampleArr[3][9];
+	string sampleArr[numSamples][numVariants];
 
 
 	// read file, line by line
-	int sampleCount = 0;
 	if(inFile.is_open()){
-		string myArray[9];
 
-		for(int i = 0; i < 9; i++){
-            		inFile >> sampleArr[sampleCount][i];
-        	}
-		sampleCount++;
-		
-		// print out array
-		for (int i = 0; i < 3; i ++){
-			for (int j = 0; j < 9; j++){
-				cout << sampleArr[i][j];
+		for(int s = 0; s < numSamples; s++){
+            		for(int v = 0; v < numVariants; v++){
+				inFile >> sampleArr[s][v];
 			}
-		}
+        	}
    	}
 
 	inFile.close();
+	
+	// print out array
+	for (int i = 0; i < 3; i ++){
+		for (int j = 0; j < 9; j++){
+			cout << sampleArr[i][j];
+		}
+		cout << endl;
+	}
 
 	return 0;
 }
