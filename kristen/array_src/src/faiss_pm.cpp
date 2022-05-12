@@ -33,7 +33,7 @@ int ss() {
 	//std::uniform_real_distribution<> distrib;
 
 	float* xb = new float[d * nb];
-	//float* xq = new float[d * nq];
+	float* xq = new float[d * nq];
 
 	//float xb[nb][d] = {{1.f, 1.f, 1.f, 1.f, 1.f}, {2, 2, 2, 2, 2}, {3, 3, 3, 3, 3}};
 
@@ -42,43 +42,42 @@ int ss() {
 			xb[d*i+j] = 1.;
 	}
 
-	//for (int i = 0; i < nq; i++) {
-   	//	for (int j = 0; j < d; j++)
-        //    		xq[d * i + j] = distrib(rng);
-   	//	xq[d * i] += i / 1000.;
-	//}
+	for (int i = 0; i < nq; i++) {
+   		for (int j = 0; j < d; j++)
+            		xq[d * i + j] = 0.;
+	}
 
 	faiss::IndexFlatL2 index(d); // call constructor
 	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
 	index.add(nb, xb); // add vectors to the index
 	printf("ntotal = %zd\n", index.ntotal);
-	//
-	//int k = 4;
-	//
-	//{ // sanity check: search 5 first vectors of xb
-	//	idx_t* I = new idx_t[k * 5];
-	//	float* D = new float[k * 5];
-	//	index.search(5, xb, k, D, I);
+	
+	int k = 4;
+	
+	{ // sanity check: search 5 first vectors of xb
+		idx_t* I = new idx_t[k * 5];
+		float* D = new float[k * 5];
+		index.search(5, xb, k, D, I);
 
-	//	// print results
+		// print results
     
-        //	delete[] I;
-	//	delete[] D;
-	//}
+        	delete[] I;
+		delete[] D;
+	}
 
-	//{
-	//	idx_t* I = new idx_t[k * nq];
-	//	float* D = new float[k * nq];
+	{
+		idx_t* I = new idx_t[k * nq];
+		float* D = new float[k * nq];
 
-	//	index.search(nq, xq, k, D, I);
+		index.search(nq, xq, k, D, I);
 
-	//	// print results
-	//	delete[] I;
-	//	delete[] D;
-	//}
-	//
-	//delete[] xb;
-	//delete[] xq;
+		// print results
+		delete[] I;
+		delete[] D;
+	}
+	
+	delete[] xb;
+	delete[] xq;
 
 	return 0;
 }
