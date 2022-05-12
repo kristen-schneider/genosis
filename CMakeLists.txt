@@ -1,34 +1,17 @@
 cmake_minimum_required(VERSION 3.22)
-project ("pm" CXX)
+project("precision-medicine" CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake-local")
 include(ExternalProject)
 set(CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_FLAGS "-DSINGLE_CORE -O2 -fopenmp -DNDEBUG -std=c++0x")
+set (CMAKE_CXX_FLAGS "-std=c++0x")
+
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-find_package(OpenMP REQUIRED)
-include("contrib/zlib.cmake")
-include("contrib/htslib.cmake")
-
-if(NOT WIN32)
-	find_package(PkgConfig QUIET)
-endif()
-
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
-else()
-	find_package(LIBPMEMOBJ++ REQUIRED)
-endif()
 include_directories ("${PROJECT_SOURCE_DIR}/include" )
-link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS} ${zlib_LIB} ${htslib_LIB})
 
-#file(GLOB_RECURSE SOURCES LIST_DIRECTORIES true *.h *.cpp)
-include_directories(interface)
+include_directories(src)
 
-
-add_executable (pm "interface/PMed_OPTANE.cpp")
-add_dependencies(pm zlib htslib)
-target_link_libraries (pm  ${htslib_LIB} ${zlib_LIB} ${LIBPMEMKV_LIBRARIES} ${LIBPMEMOBJ++_LIBRARIES} OpenMP::OpenMP_CXX )
+add_executable (precision-medicine "src/main.cpp")
