@@ -1,10 +1,5 @@
 data/*
-build/.cmake/*
-build/CMakeFiles/*
-build/cmake_install.cmake
-build/compile_commands.json
-build/contrib/*
-kristen/array_src/build/*
-kristen/array_src/lib/*
-kristen/array_src/old_*
-
+build/*
+old_make/*
+lib/*
+kristen/vec_src/*
