@@ -3,5 +3,8 @@ build/.cmake/*
 build/CMakeFiles/*
 build/cmake_install.cmake
 build/compile_commands.json
-build/contrib/
-kristen/array_src/build/
+build/contrib/*
+kristen/array_src/build/*
+kristen/array_src/lib/*
+kristen/array_src/old_*
+
