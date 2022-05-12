@@ -9,7 +9,7 @@ using namespace std;
 float* read_test(int numSamples, int numVariants){
 	
 	// path to encoding file
-        string inFileString = "/home/sdp/precision-medicine/big_encoding.txt";
+        string inFileString = "/home/sdp/precision-medicine/basic_encoding.txt";
 	ifstream inFile;
 	
 	// open encoded data (.txt file)
