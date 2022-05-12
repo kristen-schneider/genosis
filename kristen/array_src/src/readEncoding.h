@@ -8,4 +8,4 @@
 
 using namespace std;
 
-int read_test(int numSamples, int numVariants);
+float* read_test(int numSamples, int numVariants);

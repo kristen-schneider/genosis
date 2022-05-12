@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int read_test(int numSamples, int numVariants){
+float* read_test(int numSamples, int numVariants){
 	
 	// path to encoding file
         string inFileString = "/home/sdp/precision-medicine/encoding.txt";
@@ -22,27 +22,34 @@ int read_test(int numSamples, int numVariants){
 	// array to store all samples
 	// arr[s][v]
 	string sampleArr[numSamples][numVariants];
+	float* fArr = new float [numSamples * numVariants];
 
-
+	string s;
+	float f;
 	// read file, line by line
 	if(inFile.is_open()){
 
-		for(int s = 0; s < numSamples; s++){
-            		for(int v = 0; v < numVariants; v++){
-				inFile >> sampleArr[s][v];
-			}
-        	}
+		for (int i = 0; i < (numSamples * numVariants); i ++){
+			inFile >> s;
+			f = stof(s);
+			fArr[i] = f;
+		}
+	//	for(int s = 0; s < numSamples; s++){
+        //    		for(int v = 0; v < numVariants; v++){
+	//			inFile >> sampleArr[s][v];
+	//		}
+        //	}
    	}
 
 	inFile.close();
 	
-	// print out array
-	for (int i = 0; i < 3; i ++){
-		for (int j = 0; j < 9; j++){
-			cout << sampleArr[i][j];
-		}
-		cout << endl;
-	}
+	//// print out array
+	//for (int i = 0; i < 3; i ++){
+	//	for (int j = 0; j < 9; j++){
+	//		cout << sampleArr[i][j];
+	//	}
+	//	cout << endl;
+	//}
 
-	return 0;
+	return fArr;
 }
