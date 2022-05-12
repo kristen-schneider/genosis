@@ -24,16 +24,16 @@ using namespace std;
 using idx_t = faiss::Index::idx_t;
 
 
-int ss(float* xb, int numSamples, int numVariants){ 
+int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){ 
 	int d = numVariants;      // dimension
 	int nb = numSamples; // database size
-	int nq = 2;  // nb of queries
+	int nq = numQueries;  // nb of queries
 
 	//std::mt19937 rng;
 	//std::uniform_real_distribution<> distrib;
 
 	//float* xb = new float[d * nb];
-	float* xq = new float[d * nq];
+	//float* xq = new float[d * nq];
 
 	//float xb[nb][d] = {{1.f, 1.f, 1.f, 1.f, 1.f}, {2, 2, 2, 2, 2}, {3, 3, 3, 3, 3}};
 
@@ -42,11 +42,7 @@ int ss(float* xb, int numSamples, int numVariants){
 	//		xb[d*i+j] = 1.;
 	//}
 
-	for (int i = 0; i < nq; i++) {
-		for (int j = 0; j < d; j++){
-    			xq[d * i + j] = 0.;
-		}
-	}
+	//float xq[numVariants * nq] = {0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1};
 
 	faiss::IndexFlatL2 index(d); // call constructor
 	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
@@ -56,12 +52,19 @@ int ss(float* xb, int numSamples, int numVariants){
 	int k = 4;
 	
 	{ // sanity check: search 5 first vectors of xb
-		idx_t* I = new idx_t[k * 5];
-		float* D = new float[k * 5];
-		index.search(5, xb, k, D, I);
+		idx_t* I = new idx_t[k * nq];
+		float* D = new float[k * nq];
+		index.search(nq, xb, k, D, I);
 
 		// print results
-    
+    		cout << "RESULTS 1:" << endl;
+		for (int i = 0; i < nq; i++){
+			for (int j = 0; j < k; j++){
+				cout << I[i * k * j];
+			}
+			cout << endl;
+		}
+			
         	delete[] I;
 		delete[] D;
 	}
@@ -73,6 +76,14 @@ int ss(float* xb, int numSamples, int numVariants){
 		index.search(nq, xq, k, D, I);
 
 		// print results
+		cout << "RESULTS 2:" << endl;
+		for (int i = 0; i < nq; i++){
+			for (int j = 0; j < k; j++){
+				cout << I[i * k * j] << " ";
+			}
+			cout << endl;
+		}
+		
 		delete[] I;
 		delete[] D;
 	}

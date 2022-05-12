@@ -8,4 +8,4 @@
 
 using namespace std;
 
-int ss(float*, int, int);
+int ss(float*, float*, int, int, int);
