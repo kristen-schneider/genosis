@@ -11,7 +11,7 @@ using namespace std;
 int main(void){
 
 	// temp variables
-	int numSamples = 3;
+	int numSamples = 15;
 	int numVariants = 9;
 
 	cout << "Start of encoding." << endl;
@@ -23,7 +23,7 @@ int main(void){
 	float* xb = read_test(numSamples, numVariants);
 
 	cout << "FAISS." << endl;
-	ss(xb);
+	ss(xb, numSamples, numVariants);
 
 	cout << "End of encoding." << endl;
 	return 0;
