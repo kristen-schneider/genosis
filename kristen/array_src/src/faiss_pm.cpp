@@ -24,7 +24,7 @@ using namespace std;
 using idx_t = faiss::Index::idx_t;
 
 
-int ss() { 
+int ss(float* xb){ 
 	int d = 5;      // dimension
 	int nb = 3; // database size
 	int nq = 2;  // nb of queries
@@ -32,19 +32,20 @@ int ss() {
 	//std::mt19937 rng;
 	//std::uniform_real_distribution<> distrib;
 
-	float* xb = new float[d * nb];
+	//float* xb = new float[d * nb];
 	float* xq = new float[d * nq];
 
 	//float xb[nb][d] = {{1.f, 1.f, 1.f, 1.f, 1.f}, {2, 2, 2, 2, 2}, {3, 3, 3, 3, 3}};
 
-	for (int i = 0; i < nb; i++) {
-		for (int j = 0; j < d; j++)
-			xb[d*i+j] = 1.;
-	}
+	//for (int i = 0; i < nb; i++) {
+	//	for (int j = 0; j < d; j++)
+	//		xb[d*i+j] = 1.;
+	//}
 
 	for (int i = 0; i < nq; i++) {
-   		for (int j = 0; j < d; j++)
-            		xq[d * i + j] = 0.;
+		for (int j = 0; j < d; j++){
+    			xq[d * i + j] = 0.;
+		}
 	}
 
 	faiss::IndexFlatL2 index(d); // call constructor
