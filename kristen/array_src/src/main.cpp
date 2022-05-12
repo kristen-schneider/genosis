@@ -20,10 +20,10 @@ int main(void){
 	//sliceVCF();
 
 	cout << "Reading Encoded file." << endl;
-	read_test(numSamples, numVariants);
+	float* xb = read_test(numSamples, numVariants);
 
 	cout << "FAISS." << endl;
-	ss();
+	ss(xb);
 
 	cout << "End of encoding." << endl;
 	return 0;
