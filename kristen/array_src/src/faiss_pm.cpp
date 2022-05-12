@@ -24,9 +24,9 @@ using namespace std;
 using idx_t = faiss::Index::idx_t;
 
 
-int ss(float* xb){ 
-	int d = 5;      // dimension
-	int nb = 3; // database size
+int ss(float* xb, int numSamples, int numVariants){ 
+	int d = numVariants;      // dimension
+	int nb = numSamples; // database size
 	int nq = 2;  // nb of queries
 
 	//std::mt19937 rng;
