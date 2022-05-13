@@ -24,67 +24,36 @@ using namespace std;
 using idx_t = faiss::Index::idx_t;
 
 
-int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){ 
-	int d = numVariants;      // dimension
-	int nb = numSamples; // database size
-	int nq = numQueries;  // nb of queries
+int ss(float* database, float* queries, int numSamples, int numVariants, int numQueries){ 
+	//int d = numVariants;      // dimension
+	//int nb = numSamples; // database size
+	//int nq = numQueries;  // nb of queries
 
-	//std::mt19937 rng;
-	//std::uniform_real_distribution<> distrib;
 
-	//float* xb = new float[d * nb];
-	//float* xq = new float[d * nq];
-
-	//float xb[nb][d] = {{1.f, 1.f, 1.f, 1.f, 1.f}, {2, 2, 2, 2, 2}, {3, 3, 3, 3, 3}};
-
-	//for (int i = 0; i < nb; i++) {
-	//	for (int j = 0; j < d; j++)
-	//		xb[d*i+j] = 1.;
-	//}
-
-	//float xq[numVariants * nq] = {0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1};
-
-	faiss::IndexFlatL2 index(d); // call constructor
+	faiss::IndexFlatL2 index(numVariants); // call constructor
 	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
-	index.add(nb, xb); // add vectors to the index
+	index.add(numSamples, database); // add vectors to the index
 	printf("ntotal = %zd\n", index.ntotal);
 
 //	for (int i = 0; i < (d*nb); i++){
-//		cout << xb[i];
+//		cout << database[i];
 //	}
 	
-	int k = 4;
+	int k = 4; // number of nearest neightbors to return
 	
-	{ // sanity check: search 5 first vectors of xb
-		idx_t* I = new idx_t[k * nq];
-		float* D = new float[k * nq];
-		index.search(nq, xb, k, D, I);
-
-	//	// print results for sanity check
-    	//	cout << "RESULTS 1:" << endl;
-	//	for (int i = 0; i < nq; i++){
-	//		for (int j = 0; j < k; j++){
-	//			cout << I[i * k * j];
-	//		}
-	//		cout << endl;
-	//	}
-			
-        	delete[] I;
-		delete[] D;
-	}
-
+	// FAISS on database with queries
 	{
-		idx_t* I = new idx_t[k * nq];
-		float* D = new float[k * nq];
+		idx_t* I = new idx_t[k * numQueries];
+		float* D = new float[k * numQueries];
 
-		index.search(nq, xq, k, D, I);
+		index.search(numQueries, queries, k, D, I);
 
 		// print results
 		cout << "RESULTS FOR SS:" << endl;
-		for (int i = 0; i < nq; i++){
+		for (int i = 0; i < numQueries; i++){
 			cout << "  Query " << i << ": ";
 			for (int j = 0; j < k; j++){
-				cout << I[i * k * j] << " ";
+				cout << I[i * k * j] << "\t";
 			}
 			cout << endl;
 		}
@@ -93,8 +62,8 @@ int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){
 		delete[] D;
 	}
 	
-	delete[] xb;
-	delete[] xq;
+	delete[] database;
+	delete[] queries;
 
 	return 0;
 }
