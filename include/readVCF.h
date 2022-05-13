@@ -4,9 +4,9 @@
 #endif // READVCF_H
 
 #include <string>
-#include <string>
 #include <vector>
 using namespace std;
 
 
-void sliceVCF(void);
+void sliceVCF();
+

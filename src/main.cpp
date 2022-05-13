@@ -1,9 +1,9 @@
 #include <iostream>
 
-//#include "readVCF.h"
+#include "readVCF.h"
 #include "utils.h"
-#include "readEncoding.h"
-#include "faiss_pm.h"
+//#include "readEncoding.h"
+//#include "faiss_pm.h"
 
 using namespace std;
 
@@ -12,6 +12,8 @@ using namespace std;
 int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
+	const char* VCFfile = "/home/sdp/precision-medicine/data/vcf/short.vcf";
+
 	// ...to be automated later...
 	int numSamples = 1000; // number of samples (rows) in encoding.txt
 	int numVariants = 100; // number of variants (cols) in encoding.txt
@@ -22,7 +24,7 @@ int main(void){
 	string queriestxt = "/home/sdp/precision-medicine/data/queries.txt";
 
 	// create an array which will holds queries
-	float* xq = read_queries(queriestxt, numSamples, numVariants);
+//	float* xq = read_queries(queriestxt, numSamples, numVariants);
 
 //	float seed[numVariants * numQueries] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f}; 
 //	float* xq = new float[numVariants * numQueries];
@@ -31,19 +33,19 @@ int main(void){
 //	}
 	// DONE. start main.cpp.
 
-	//cout << "Start of encoding." << endl;
+	cout << "Start of encoding." << endl;
 
-	//cout << "Reading VCF file." << endl;
-	//sliceVCF();
+	cout << "Reading VCF file." << endl;
+	sliceVCF();
 
-	cout << "Reading Encoded file." << endl;
-	float* xb = read_test(encodingtxt, numSamples, numVariants);
-	cout << "Done Reading Encoded file." << endl;
-	
-
-	cout << endl << "Starting FAISS." << endl;
-	ss(xb, xq, numSamples, numVariants, numQueries);
-	cout << "End of FAISS." << endl;
+//	cout << "Reading Encoded file." << endl;
+//	float* xb = read_test(encodingtxt, numSamples, numVariants);
+//	cout << "Done Reading Encoded file." << endl;
+//	
+//
+//	cout << endl << "Starting FAISS." << endl;
+//	ss(xb, xq, numSamples, numVariants, numQueries);
+//	cout << "End of FAISS." << endl;
 
 	return 0;
 }
