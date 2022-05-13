@@ -1,6 +1,16 @@
 # Precision Medicine Project
 
-## Kristen's Pipeline
+## Release v 0.1: faiss search (basic) 
+<br>
+- install faiss with conda: <code>conda install -c pytorch faiss-cpu</code>
+- compile with commandline: <code>g++ main_ss.cpp read_encodings.cpp faiss_pm.cpp -I /path/to/conda/include/ -I /../include/ -L /path/to/conda/lib/ -lfaiss -o faiss</code>
+<br>
+### NOTES:
+- Variables that are currently hard coded: numSamples, numVariants, numQueries, xq, encodedtxt. These can be changed in main.<br>
+- There is no error handling.
+----------------------------------------------
+<br><br>
+## Kristen's Notes
 <br>
 
 ### Separate Scripts...<br>
