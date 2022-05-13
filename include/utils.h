@@ -11,4 +11,4 @@
 using namespace std;
 
 vector<vector<int>> transpose(vector<vector<int>> &b);
-
+float* read_queries(string queriestxt, int numSamples, int numVariants);
