@@ -48,6 +48,10 @@ int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){
 	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
 	index.add(nb, xb); // add vectors to the index
 	printf("ntotal = %zd\n", index.ntotal);
+
+//	for (int i = 0; i < (d*nb); i++){
+//		cout << xb[i];
+//	}
 	
 	int k = 4;
 	
@@ -56,14 +60,14 @@ int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){
 		float* D = new float[k * nq];
 		index.search(nq, xb, k, D, I);
 
-		// print results
-    		cout << "RESULTS 1:" << endl;
-		for (int i = 0; i < nq; i++){
-			for (int j = 0; j < k; j++){
-				cout << I[i * k * j];
-			}
-			cout << endl;
-		}
+	//	// print results for sanity check
+    	//	cout << "RESULTS 1:" << endl;
+	//	for (int i = 0; i < nq; i++){
+	//		for (int j = 0; j < k; j++){
+	//			cout << I[i * k * j];
+	//		}
+	//		cout << endl;
+	//	}
 			
         	delete[] I;
 		delete[] D;
@@ -76,8 +80,9 @@ int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){
 		index.search(nq, xq, k, D, I);
 
 		// print results
-		cout << "RESULTS 2:" << endl;
+		cout << "RESULTS FOR SS:" << endl;
 		for (int i = 0; i < nq; i++){
+			cout << "  Query " << i << ": ";
 			for (int j = 0; j < k; j++){
 				cout << I[i * k * j] << " ";
 			}
