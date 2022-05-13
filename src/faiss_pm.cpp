@@ -98,3 +98,4 @@ int ss(float* xb, float* xq, int numSamples, int numVariants, int numQueries){
 
 	return 0;
 }
+
