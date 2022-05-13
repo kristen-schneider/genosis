@@ -8,4 +8,4 @@
 
 using namespace std;
 
-float* read_test(int numSamples, int numVariants);
+float* read_test(string encodingtxt, int numSamples, int numVariants);

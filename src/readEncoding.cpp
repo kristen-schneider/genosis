@@ -6,16 +6,15 @@
 
 using namespace std;
 
-float* read_test(int numSamples, int numVariants){
+float* read_test(string encodingtxt, int numSamples, int numVariants){
 	
 	// path to encoding file
-        string inFileString = "/home/sdp/precision-medicine/basic_encoding.txt";
 	ifstream inFile;
 	
 	// open encoded data (.txt file)
-        inFile.open(inFileString);
+        inFile.open(encodingtxt);
 	if ( !inFile.is_open() ) {
-                cout << "Failed to open: " << inFileString << endl;
+                cout << "Failed to open: " << encodingtxt << endl;
         }
 
 
