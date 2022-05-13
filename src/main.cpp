@@ -12,12 +12,12 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-	int numSamples = 3; // number of samples (rows) in encoding.txt
-	int numVariants = 9; // number of variants (cols) in encoding.txt
+	int numSamples = 10; // number of samples (rows) in encoding.txt
+	int numVariants = 25; // number of variants (cols) in encoding.txt
 	int numQueries = 3; // number of queries
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/small_encoding.txt";
+	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/encoding.txt";
 	
 	// create an array which will holds queries
 	float seed[numVariants * numQueries] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f}; 
