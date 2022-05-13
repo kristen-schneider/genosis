@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -26,18 +27,3 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
     return trans_vec;
 }
 
-
-// split a string into a vector
-//vector<float> split(){
-//	vector<float> vecFloats;
-//
-//}
-//
-//string s, tmp; 
-//stringstream ss(s);
-//vector<string> words;
-//
-//while(getline(ss, tmp, ',')){
-//    words.push_back(tmp);
-//    .....
-//}
