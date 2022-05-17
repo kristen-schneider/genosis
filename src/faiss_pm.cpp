@@ -3,7 +3,6 @@
 #include <iterator>
 #include <sstream>
 #include <string>
-//#include <math.h>
 #include <cstdio>
 #include <cstdlib>
 #include <random>
