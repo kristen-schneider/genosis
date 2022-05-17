@@ -13,13 +13,13 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-	int numSamples = 10;//2504; // number of samples (rows) in encoding.txt
-	int numVariants = 9;//68819; // number of variants (cols) in encoding.txt
+	int numSamples = 250;//2504; // number of samples (rows) in encoding.txt
+	int numVariants = 1500;//68819; // number of variants (cols) in encoding.txt
 	int numQueries = 3; // number of queries
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/ten.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/ten.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
+	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
 	// create an array which will holds queries
 	float* xq = read_queries(queriestxt, numSamples, numVariants);
