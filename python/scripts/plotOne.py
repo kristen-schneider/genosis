@@ -13,7 +13,7 @@ def plot_frequencey(freq_counts_txt, pltName):
     # plt.bar(x,y, width=100)
     # plt.hist(y, bins=30)
     plt.plot(x, y, 'o')
-    plt.title('Diversity of segments ')
+    plt.title('Diversity of segments')
     plt.xlabel('Number of elements per bin\n(bin = segment)')
     plt.ylabel('Frequency')
     plt.savefig(pltName)

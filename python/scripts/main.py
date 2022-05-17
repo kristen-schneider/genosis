@@ -2,13 +2,17 @@ import readEncoding
 import utils
 import writeSegments
 import plotOne
+import plotTwo
+import plotTwoB
 
 encodedData = "All.wgs.svs.genotypes.encoded.txt"
-segCounts = '500segcounts.txt'
-freqCounts = '500freqcounts.txt'
-freqCountsOrd = '500freqcounts-ordered.txt'
-pltName = '500freqloglog.png'
-segmentLength = 200
+segCounts = './segcounts/50segcounts.txt'
+freqCounts = './freqcounts/50freqcounts.txt'
+pltOneName = './png/50freqloglog.png'
+pltTwoName = './png/segcounts.png'
+pltTwoBName = './png/numelements.png'
+segmentLength = 50
+segCountsDir = '/Users/kristen/PycharmProjects/precision-medicine/segcounts/'
 
 def main():
     # print('Reading encoded data.\n')
@@ -23,7 +27,10 @@ def main():
     # print('Writing frequency counts.\n')
     # writeSegments.write_freq(segCounts, freqCounts)
     print('Plotting.\n')
-    plotOne.plot_frequencey(freqCountsOrd, pltName)
+    # plotOne.plot_frequencey(freqCounts, pltOneName)
+    plotTwo.plot_numElements(segCountsDir, pltTwoName)
+    plotTwoB.plot_numElements(encodedData, pltTwoBName)
+
     # print(str(len(unique_segments)) + " unique segments with a segment size of " + str(segmentLength) + ".")
 
 if __name__ == '__main__':
