@@ -4,16 +4,20 @@ import writeSegments
 import plotOne
 import plotTwo
 import plotTwoB
-import sys
+import plotR
 
-segmentLength = 400
+segmentLength = 10
 
-encodedData = sys.argv[1]#'All.wgs.svs.genotypes.encoded.txt'
+encodedData = 'encoding.txt' #'All.wgs.svs.genotypes.encoded.txt1
 segCounts = './segcounts/' + str(segmentLength) + 'segcounts.txt'
 freqCounts = './freqcounts/' + str(segmentLength) + 'freqcounts.txt'
 pltOneName = './png/' + str(segmentLength) + 'freqloglog.png'
 pltTwoName = './png/segcounts.png'
 pltTwoBName = './png/numelements.png'
+
+freqRtxt = './segcounts/Big10segcounts.txt'
+plotRName = './png/' + str(segmentLength) + 'segcounts.png'
+
 segCountsDir = '/Users/kristen/PycharmProjects/precision-medicine/segcounts/'
 
 def main():
@@ -33,7 +37,8 @@ def main():
     # writeSegments.write_seg_count(unique_seg_counts, segCounts)
     # print('Writing frequency counts.\n')
     # writeSegments.write_freq(segCounts, freqCounts)
-    # print('Plotting.\n')
+    #print('Plotting.\n')
+    #plotR.plot_frequencey(segCounts, plotRName)
     # # plotOne.plot_frequencey(freqCounts, pltOneName)
     # plotTwo.plot_numElements(segCountsDir, pltTwoName)
     # plotTwoB.plot_numElements(encodedData, pltTwoBName)
