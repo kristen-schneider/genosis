@@ -3,3 +3,5 @@ build/*
 old_make/*
 lib/*
 kristen/vec_src/*
+python/txt/*
+python/segcounts/*
