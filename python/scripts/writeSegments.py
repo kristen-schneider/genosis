@@ -1,3 +1,13 @@
+## RYAN
+def write_unique_segment_counts(unique_segment_counts, seg_counts_txt):
+    o = open(seg_counts_txt, 'w')
+    header = 'no. of unique segments in region\tfrequency of count\n'
+    o.write(header)
+    for region in unique_segment_counts.keys():
+        s = str(region) + '\t' + str(unique_segment_counts[region]) + '\n'
+        o.write(s)
+
+## KRISTEN
 def write_seg_count(unique_seg_counts, seg_counts_txt):
     o = open(seg_counts_txt, 'w')
     for u_seg in unique_seg_counts.keys():
