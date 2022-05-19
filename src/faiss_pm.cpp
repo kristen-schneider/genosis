@@ -34,11 +34,30 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 	index.add(numSamples, database); // add vectors to the index
 	printf("ntotal = %zd\n", index.ntotal);
 
-//	for (int i = 0; i < (d*nb); i++){
-//		cout << database[i];
-//	}
+	//for (int i = 0; i < ( numVariants * numSamples); i++){
+	//	cout << database[i];
+	//}
 	
 	int k = 4; // number of nearest neightbors to return
+	
+	// sanity check
+	{
+		idx_t* I = new idx_t[k * numQueries];
+                float* D = new float[k * numQueries];
+
+		index.search(numQueries, database, k, D, I);
+
+		// print results
+                cout << "RESULTS FOR I_SC:" << endl;
+                for (int i = 0; i < numQueries; i++){
+                        cout << "  Query " << i << ": ";
+                        for (int j = 0; j < k; j++){
+                                cout << I[i * k * j] << "\t";
+                        }
+                        cout << endl;
+                }
+
+	}
 	
 	// FAISS on database with queries
 	{
@@ -48,11 +67,19 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 		index.search(numQueries, queries, k, D, I);
 
 		// print results
-		cout << "RESULTS FOR SS:" << endl;
+		cout << "RESULTS FOR I_SS:" << endl;
 		for (int i = 0; i < numQueries; i++){
 			cout << "  Query " << i << ": ";
 			for (int j = 0; j < k; j++){
 				cout << I[i * k * j] << "\t";
+			}
+			cout << endl;
+		}
+		cout << "RESULTS FOR D_SS:" << endl;
+		for (int i = 0; i < numQueries; i++){
+			cout << "  Query " << i << ": ";
+			for (int j = 0; j < k; j++){
+				cout << D[i * k * j] << "\t";
 			}
 			cout << endl;
 		}
