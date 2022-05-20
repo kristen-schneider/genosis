@@ -34,9 +34,15 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 	index.add(numSamples, database); // add vectors to the index
 	printf("ntotal = %zd\n", index.ntotal);
 
-	//for (int i = 0; i < ( numVariants * numSamples); i++){
-	//	cout << database[i];
-	//}
+	// debugging
+//	for (int i = 0; i < ( numVariants * numSamples); i++){
+//		printf("%f ", database[i]);
+//	}
+//	cout << endl << typeid(database[0]).name() << endl;
+//	for (int i = 0; i < ( numVariants * numQueries); i++){
+//		printf("%f ", queries[i]);
+//	}
+//	cout << endl << typeid(queries[0]).name() << endl;
 	
 	int k = 4; // number of nearest neightbors to return
 	
@@ -48,14 +54,22 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 		index.search(numQueries, database, k, D, I);
 
 		// print results
-                cout << "RESULTS FOR I_SC:" << endl;
+                cout << "I=\n" << endl;
                 for (int i = 0; i < numQueries; i++){
-                        cout << "  Query " << i << ": ";
                         for (int j = 0; j < k; j++){
-                                cout << I[i * k * j] << "\t";
-                        }
+                                cout << "    " << I[i * k + j] << " ";
+			}
                         cout << endl;
                 }
+		cout << "D=\n" << endl;
+                for (int i = 0; i < numQueries; i++){
+                        for (int j = 0; j < k; j++){
+                                cout << "    " << D[i * k + j] << " ";
+			}
+                        cout << endl;
+        	}
+		delete[] I;
+        	delete[] D;
 
 	}
 	
@@ -71,7 +85,7 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 		for (int i = 0; i < numQueries; i++){
 			cout << "  Query " << i << ": ";
 			for (int j = 0; j < k; j++){
-				cout << I[i * k * j] << "\t";
+				cout << I[i * k + j] << "\t";
 			}
 			cout << endl;
 		}
@@ -79,7 +93,7 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 		for (int i = 0; i < numQueries; i++){
 			cout << "  Query " << i << ": ";
 			for (int j = 0; j < k; j++){
-				cout << D[i * k * j] << "\t";
+				cout << D[i * k + j] << "\t";
 			}
 			cout << endl;
 		}
