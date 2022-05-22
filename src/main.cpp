@@ -12,16 +12,16 @@ using namespace std;
 int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
-	const char* VCFfile = "/home/sdp/precision-medicine/data/vcf/short.vcf";
+	//const char* VCFfile = "/home/sdp/precision-medicine/data/vcf/ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf";
 
 	// ...to be automated later...
-	int numSamples = 1000; // number of samples (rows) in encoding.txt
-	int numVariants = 100; // number of variants (cols) in encoding.txt
-	int numQueries = 3; // number of queries
+	//int numSamples = 1000; // number of samples (rows) in encoding.txt
+	//int numVariants = 100; // number of variants (cols) in encoding.txt
+	//int numQueries = 3; // number of queries
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/encoding.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries.txt";
+	//string encodingtxt = "/home/sdp/precision-medicine/data/encoded/ALLchr14.encoding.txt";
+	//string queriestxt = "/home/sdp/precision-medicine/data/ALLchr14queries.txt";
 
 	// create an array which will holds queries
 //	float* xq = read_queries(queriestxt, numSamples, numVariants);

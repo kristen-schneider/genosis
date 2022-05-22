@@ -15,7 +15,9 @@
 using namespace std;
 
 void sliceVCF(){
-        map<string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1}, {"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, {"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3}, {".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};
+	//map<string, int> datU = create_map();
+	// = {{"0|0", 0}, {"0|1", 1}};
+	map<string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1}, {"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, {"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3}, {".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};
 
         // counters
         int nn   = 0;  // total number of records in file
@@ -25,13 +27,13 @@ void sliceVCF(){
 
         // path to out file
         ofstream outFile;
-        outFile.open("/home/sdp/precision-medicine/data/encoded/encoding.txt");
+        outFile.open("/home/sdp/precision-medicine/data/encoded/new.encoding.txt");
 
         // path to VCF file
         // short.vcf
         // ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf
         
-	const char *VCFPath = "/home/sdp/precision-medicine/data/vcf/ALL.wgs.svs.genotypes.vcf";
+	const char *VCFPath = "/home/sdp/precision-medicine/data/vcf/ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf";
 	
 	// open VCF file with htslib
         htsFile *test_vcf = bcf_open(VCFPath, "r");
@@ -137,5 +139,6 @@ void sliceVCF(){
 		outFile << endl;
 	}
 	//return 0;
+
 }
 
