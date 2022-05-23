@@ -20,7 +20,6 @@ float* read_test(string encodingtxt, int numSamples, int numVariants){
 
 	// array to store all samples
 	// arr[s][v]
-	string sampleArr[numSamples][numVariants];
 	float* fArr = new float [numSamples * numVariants];
 
 	string s;
@@ -66,7 +65,6 @@ float* read_queries(string queriestxt, int numSamples, int numVariants){
 
         // array to store all samples
         // arr[s][v]
-        string qArr[numSamples][numVariants];
         float* fArr = new float [numSamples * numVariants];
 
         string s;
