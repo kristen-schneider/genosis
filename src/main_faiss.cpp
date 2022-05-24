@@ -26,17 +26,16 @@ int main(void){
 
 	// DONE. Start FAISS..
 	// create an array which will holds queries
-	//float* xq = read_queries(queriestxt, numSamples, numVariants);
+	float* xq = read_queries(queriestxt, numSamples, numVariants);
 
 	cout << "Reading Encoded file." << endl;
-	//float* xb = read_test(encodingtxt, numSamples, numVariants);
-	float* chunk = split_encoding(encodingtxt, numSamples, segmentLength);
+	float* xb = read_encodings(encodingtxt, numSamples, numVariants);
+	//float* chunk = split_encoding(encodingtxt, numSamples, segmentLength);
 	cout << "Done Reading Encoded file." << endl;
-	
-	cout << eucDist << endl;
-	//cout << endl << "Starting FAISS." << endl;
-	//ss(xb, xq, numSamples, numVariants, numQueries);
-	//cout << "End of FAISS." << endl;
+
+	cout << endl << "Starting FAISS." << endl;
+	ss(xb, xq, numSamples, numVariants, numQueries);
+	cout << "End of FAISS." << endl;
 
 	
 

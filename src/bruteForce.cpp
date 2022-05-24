@@ -18,3 +18,14 @@ float euclidean_distance(float* vec1, float* vec2, int segLength){
 
 	return eucDist;
 }
+
+// returns an array from x[start:end]
+float* arrSlice(float* x, int start, int end){
+    float slice[end-start];
+    int i_x = start;
+    for (int i = 0; i < (end-start); i++){
+        slice[i] = x[i_x];
+        i_x ++;
+    }
+    return slice;
+}
