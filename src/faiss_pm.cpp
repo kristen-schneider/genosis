@@ -24,7 +24,7 @@ using namespace std;
 using idx_t = faiss::Index::idx_t;
 
 
-int ss(float* database, float* queries, int numSamples, int numVariants, int numQueries){ 
+int ss(float* database, float* queries, int numSamples, int numVariants, int numQueries, int segmentLength){ 
 	//int d = numVariants;      // dimension
 	//int nb = numSamples; // database size
 	//int nq = numQueries;  // nb of queries
@@ -71,7 +71,7 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
         	}
 
 		// test accuracy
-		FAISS_vs_BF(database, queries, numSamples, numVariants, numQueries, I, D, k);
+		FAISS_vs_BF(database, queries, numSamples, segmentLength, numQueries, I, D, k);
 
 		delete[] I;
         	delete[] D;
@@ -117,7 +117,7 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 /*
  *  to compare the distance given by FAISS to distance computed by Brute Force for k nearest neighbors
  * */
-float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVariants, int numQueries, idx_t* I, float* D, int k){
+float FAISS_vs_BF(float* database, float* queries, int numSamples, int segmentLength, int numQueries, idx_t* I, float* D, int k){
 	
 	cout << "Testing against brute force." << endl;
 
@@ -126,16 +126,21 @@ float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVarian
 
 	// for k nearest neighbors returned
 	int start = 0;
-	int end = numVariants;
-	for (int i = 0; i < numQueries; i++){
-		float* query_slice = arrSlice(queries, start, end);
+	int end = segmentLength;
 
+	for (int i = 0; i < numQueries; i++){
+		float Q[segmentLength];
 		for(int j = 0; j < k; j++){
 		
 			int i_index = I[i * k + j];
-			const float* db_slice = arrSlice(database, i_index, i_index + numVariants);
-			
-			eucDist = euclidean_distance(db_slice, query_slice, numVariants);
+			cout << i_index << " ";
+			float db_slice[segmentLength];
+
+			for(int y = i_index; y < segmentLength; y++){
+				db_slice[y] = database[y];
+			}
+			float fakeQ[segmentLength] = {1.f, 2.f, 3.f, 4.f, 5.f};
+			eucDist = euclidean_distance(db_slice, fakeQ, segmentLength);
 			cout << eucDist << endl;
 			
 		}
@@ -145,7 +150,7 @@ float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVarian
 		//float* query_slice = arrSlice(queries, start, end);	
 
 		start = end;
-		end += numVariants;
+		end += segmentLength;
 
 	}
 

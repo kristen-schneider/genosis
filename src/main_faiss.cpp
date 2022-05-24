@@ -34,7 +34,7 @@ int main(void){
 	cout << "Done Reading Encoded file." << endl;
 
 	cout << endl << "Starting FAISS." << endl;
-	ss(xb, xq, numSamples, numVariants, numQueries);
+	ss(xb, xq, numSamples, numVariants, numQueries, segmentLength);
 	cout << "End of FAISS." << endl;
 
 	

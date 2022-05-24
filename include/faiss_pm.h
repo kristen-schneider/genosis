@@ -10,5 +10,5 @@
 using namespace std;
 using idx_t = faiss::Index::idx_t;
 
-int ss(float*, float*, int, int, int);
+int ss(float*, float*, int, int, int, int);
 float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVariants, int numQueries, idx_t* I, float* D, int k);
