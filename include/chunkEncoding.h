@@ -6,4 +6,6 @@
 #include <iostream>
 #include <string> 
 
+using namespace std;
+
 float* split_encoding(string encodingtxt, int numSamples, int segmentLength);
