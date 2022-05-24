@@ -3,6 +3,7 @@
 //#include "readVCF.h"
 #include "utils.h"
 #include "readEncoding.h"
+#include "chunkEncoding.h"
 #include "faiss_pm.h"
 
 using namespace std;
@@ -16,34 +17,25 @@ int main(void){
 	int numSamples = 5096;//2504; // number of samples (rows) in encoding.txt
 	int numVariants = 2500;//68819; // number of variants (cols) in encoding.txt
 	int numQueries = 5; // number of queries
+	int segmentLength = 5;
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
+	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/chr14.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
+	// DONE. Start FAISS..
 	// create an array which will holds queries
-	float* xq = read_queries(queriestxt, numSamples, numVariants);
-
-//	float seed[numVariants * numQueries] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f, 2.f}; 
-//	float* xq = new float[numVariants * numQueries];
-//	for (int i = 0; i < (numVariants * numQueries); i++) {
-//        	xq[i] = seed[i];
-//	}
-	// DONE. start main.cpp.
-
-	//cout << "Start of encoding." << endl;
-
-	//cout << "Reading VCF file." << endl;
-	//sliceVCF();
+	//float* xq = read_queries(queriestxt, numSamples, numVariants);
 
 	cout << "Reading Encoded file." << endl;
-	float* xb = read_test(encodingtxt, numSamples, numVariants);
+	//float* xb = read_test(encodingtxt, numSamples, numVariants);
+	split_encoding(encodingtxt, numSamples, segmentLength);
 	cout << "Done Reading Encoded file." << endl;
 	
 
-	cout << endl << "Starting FAISS." << endl;
-	ss(xb, xq, numSamples, numVariants, numQueries);
-	cout << "End of FAISS." << endl;
+	//cout << endl << "Starting FAISS." << endl;
+	//ss(xb, xq, numSamples, numVariants, numQueries);
+	//cout << "End of FAISS." << endl;
 
 	return 0;
 }
