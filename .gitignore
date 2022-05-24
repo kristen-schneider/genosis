@@ -2,6 +2,7 @@ data/*
 build/*
 old_make/*
 lib/*
+bin/*
 kristen/vec_src/*
 python/txt/*
 python/segcounts/*
