@@ -8,5 +8,5 @@
 
 using namespace std;
 
-float* read_test(string encodingtxt, int numSamples, int numVariants);
+float* read_encodings(string encodingtxt, int numSamples, int numVariants);
 float* read_queries(string queriestxt, int numSamples, int numVariants);

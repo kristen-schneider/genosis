@@ -6,7 +6,7 @@
 
 using namespace std;
 
-float* read_test(string encodingtxt, int numSamples, int numVariants){
+float* read_encodings(string encodingtxt, int numSamples, int numVariants){
 	
 	// path to encoding file
 	ifstream inFile;
