@@ -9,6 +9,7 @@
 #include <faiss/IndexFlat.h>
 
 #include "faiss_pm.h"
+#include "brute_force.h"
 
 using namespace std;
 /**
@@ -68,39 +69,44 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 			}
                         cout << endl;
         	}
+
+		// test accuracy
+		
+
+
 		delete[] I;
         	delete[] D;
 
 	}
 	
-	// FAISS on database with queries
-	{
-		idx_t* I = new idx_t[k * numQueries];
-		float* D = new float[k * numQueries];
-
-		index.search(numQueries, queries, k, D, I);
-
-		// print results
-		cout << "RESULTS FOR I_SS:" << endl;
-		for (int i = 0; i < numQueries; i++){
-			cout << "  Query " << i << ": ";
-			for (int j = 0; j < k; j++){
-				cout << I[i * k + j] << "\t";
-			}
-			cout << endl;
-		}
-		cout << "RESULTS FOR D_SS:" << endl;
-		for (int i = 0; i < numQueries; i++){
-			cout << "  Query " << i << ": ";
-			for (int j = 0; j < k; j++){
-				cout << D[i * k + j] << "\t";
-			}
-			cout << endl;
-		}
-		
-		delete[] I;
-		delete[] D;
-	}
+//	// FAISS on database with queries
+//	{
+//		idx_t* I = new idx_t[k * numQueries];
+//		float* D = new float[k * numQueries];
+//
+//		index.search(numQueries, queries, k, D, I);
+//
+//		// print results
+//		cout << "RESULTS FOR I_SS:" << endl;
+//		for (int i = 0; i < numQueries; i++){
+//			cout << "  Query " << i << ": ";
+//			for (int j = 0; j < k; j++){
+//				cout << I[i * k + j] << "\t";
+//			}
+//			cout << endl;
+//		}
+//		cout << "RESULTS FOR D_SS:" << endl;
+//		for (int i = 0; i < numQueries; i++){
+//			cout << "  Query " << i << ": ";
+//			for (int j = 0; j < k; j++){
+//				cout << D[i * k + j] << "\t";
+//			}
+//			cout << endl;
+//		}
+//		
+//		delete[] I;
+//		delete[] D;
+//	}
 	
 	delete[] database;
 	delete[] queries;

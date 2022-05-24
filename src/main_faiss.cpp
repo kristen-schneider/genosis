@@ -5,6 +5,7 @@
 #include "readEncoding.h"
 #include "chunkEncoding.h"
 #include "faiss_pm.h"
+#include "bruteForce.h"
 
 using namespace std;
 
@@ -29,13 +30,15 @@ int main(void){
 
 	cout << "Reading Encoded file." << endl;
 	//float* xb = read_test(encodingtxt, numSamples, numVariants);
-	split_encoding(encodingtxt, numSamples, segmentLength);
+	float* chunk = split_encoding(encodingtxt, numSamples, segmentLength);
 	cout << "Done Reading Encoded file." << endl;
 	
-
+	cout << eucDist << endl;
 	//cout << endl << "Starting FAISS." << endl;
 	//ss(xb, xq, numSamples, numVariants, numQueries);
 	//cout << "End of FAISS." << endl;
+
+	
 
 	return 0;
 }
