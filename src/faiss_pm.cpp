@@ -9,7 +9,7 @@
 #include <faiss/IndexFlat.h>
 
 #include "faiss_pm.h"
-#include "brute_force.h"
+#include "bruteForce.h"
 
 using namespace std;
 /**
@@ -71,8 +71,7 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
         	}
 
 		// test accuracy
-		
-
+		FAISS_vs_BF(database, queries, numSamples, numVariants, numQueries, I, D, k);
 
 		delete[] I;
         	delete[] D;
@@ -112,5 +111,30 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 	delete[] queries;
 
 	return 0;
+}
+
+
+/*
+ *  to compare the distance given by FAISS to distance computed by Brute Force for k nearest neighbors
+ * */
+float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVariants, int numQueries, idx_t* I, float* D, int k){
+	float diff = 0;
+
+	// for k nearest neighbors returned
+	int start = 0;
+	int end = numVariants;
+	for (int i; i < k; i++){
+		float* db_slice = arrSlice(database, start, end);
+		float* query_slice = arrSlice(queries, start, end);	
+		
+		euclidean_distance(db_slice, query_slice, numVariants);
+		
+		start += numVariants;
+		end += numVariants;
+
+	}
+
+	return diff;
+
 }
 
