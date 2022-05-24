@@ -5,11 +5,13 @@
 
 using namespace std;
 
-float euclidean_distance(float* vec1, float* vec2, int segLength){
+float euclidean_distance(const float* vec1, float* vec2, int segLength){
 
+	cout << "Computing EucDist" << endl;
 	float eucDist = 0;
 	float sum = 0;
 	for (int i = 0; i < segLength; i++){
+		cout << vec1[i] << " " << vec2[i] << endl;
 		float diff = vec1[0]-vec2[0];
 		float diffSqrd = pow(diff, 2);
 		sum += diffSqrd;

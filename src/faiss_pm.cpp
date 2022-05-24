@@ -118,18 +118,33 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
  *  to compare the distance given by FAISS to distance computed by Brute Force for k nearest neighbors
  * */
 float FAISS_vs_BF(float* database, float* queries, int numSamples, int numVariants, int numQueries, idx_t* I, float* D, int k){
+	
+	cout << "Testing against brute force." << endl;
+
 	float diff = 0;
+	float eucDist = 0;
 
 	// for k nearest neighbors returned
 	int start = 0;
 	int end = numVariants;
-	for (int i; i < k; i++){
-		float* db_slice = arrSlice(database, start, end);
-		float* query_slice = arrSlice(queries, start, end);	
+	for (int i = 0; i < numQueries; i++){
+		float* query_slice = arrSlice(queries, start, end);
+
+		for(int j = 0; j < k; j++){
 		
-		euclidean_distance(db_slice, query_slice, numVariants);
-		
-		start += numVariants;
+			int i_index = I[i * k + j];
+			const float* db_slice = arrSlice(database, i_index, i_index + numVariants);
+			
+			eucDist = euclidean_distance(db_slice, query_slice, numVariants);
+			cout << eucDist << endl;
+			
+		}
+		cout << endl;
+
+		//float* db_slice = arrSlice(database, start, end);
+		//float* query_slice = arrSlice(queries, start, end);	
+
+		start = end;
 		end += numVariants;
 
 	}
