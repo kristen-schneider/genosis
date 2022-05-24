@@ -29,47 +29,13 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
     return trans_vec;
 }
 
-/*
-map<string, string> create_map(){
-	map<string, string> m;
-	m["key"] = "value";
-	return m;
+// returns an array from x[start:end]
+float* arrSlice(float* x, int start, int end){
+    float slice[end-start];
+    int i_x = start;
+    for (int i = 0; i < (end-start); i++){
+        slice[i] = x[i_x];
+        i_x ++;
+    }
+    return slice;
 }
-*/
-
-/*
-// initialize map for genotype encoding
-
-map<string,int> create_map(){
-  	map<string, int> m;
-	m["0|0"] = 0;
-
-	m["0|1"] = 1;
-	m["1|0"] = 1;
-	m["0|2"] = 1;
-	m["2|0"] = 1;
-	m["0|3"] = 1;
-	m["3|0"] = 1;
-	m["1|2"] = 1;
-	m["2|1"] = 1;	
-	m["1|3"] = 1;
-	m["3|1"] = 1;
-
-	m["1|1"] = 2;
-	m["2|2"] = 2;
-	m["3|3"] = 2;
-	
-	m[".|."] = 3;
-	m["0|."] = 3;
-	m[".|0"] = 3;
-	m["1|."] = 3;
-	m[".|1"] = 3;
-	m["2|."] = 3;
-	m[".|2"] = 3;
-	m["3|."] = 3;
-	m[".|3"] = 3;
-
-
-	return m;
-}
-*/
