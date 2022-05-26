@@ -128,23 +128,30 @@ float FAISS_vs_BF(float* database, float* queries, int numSamples, int segmentLe
 	int start = 0;
 	int end = segmentLength;
 
+	// for each query: compute BF ED for all k nearest neighbors returned
 	for (int i = 0; i < numQueries; i++){
 		float Q[segmentLength];
+		float fakeQ[segmentLength] = {1.f, 2.f, 3.f, 4.f, 5.f};
+		
+		// for each nearest neighbor, compute BF ED
 		for(int j = 0; j < k; j++){
 		
 			int i_index = I[i * k + j];
 			cout << "i: " << i_index << endl;
-			float db_slice[segmentLength];
-
-			for(int y = i_index; y < segmentLength; y++){
-				db_slice[y] = database[y];
+			
+			float * db_slice;
+			db_slice = new float [segmentLength];
+		
+			int db_i = 0;	
+			for(int y = i_index; y < i_index+segmentLength; y++){
+				db_slice[db_i] = database[y];
+				db_i++;	
 			}
-			float fakeQ[segmentLength] = {1.f, 2.f, 3.f, 4.f, 5.f};
+			cout << endl;
 			eucDist = euclidean_distance(db_slice, fakeQ, segmentLength);
 			cout << "ed: " << eucDist << endl;
 			
 		}
-		cout << endl;
 
 		//float* db_slice = arrSlice(database, start, end);
 		//float* query_slice = arrSlice(queries, start, end);	
