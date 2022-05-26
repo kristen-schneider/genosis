@@ -133,7 +133,7 @@ float FAISS_vs_BF(float* database, float* queries, int numSamples, int segmentLe
 		for(int j = 0; j < k; j++){
 		
 			int i_index = I[i * k + j];
-			cout << i_index << " ";
+			cout << "i: " << i_index << endl;
 			float db_slice[segmentLength];
 
 			for(int y = i_index; y < segmentLength; y++){
@@ -141,7 +141,7 @@ float FAISS_vs_BF(float* database, float* queries, int numSamples, int segmentLe
 			}
 			float fakeQ[segmentLength] = {1.f, 2.f, 3.f, 4.f, 5.f};
 			eucDist = euclidean_distance(db_slice, fakeQ, segmentLength);
-			cout << eucDist << endl;
+			cout << "ed: " << eucDist << endl;
 			
 		}
 		cout << endl;
