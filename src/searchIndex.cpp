@@ -1,6 +1,7 @@
 #include <faiss/IndexFlat.h>
 #include <fstream>
 #include <iostream>
+#include <math.h>
 #include <sstream>
 #include <string>
 
@@ -42,14 +43,14 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 	cout << "I=\n" << endl;
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
-                        cout << "    " << I[i * k + j] << " ";
+                        cout << "\t" << I[i * k + j] << " ";
                 }
                 cout << endl;
         }
         cout << "D=\n" << endl;
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
-                        cout << "    " << D[i * k + j] << " ";
+                        cout << "\t" << sqrt(D[i * k + j]) << " ";
                 }
                 cout << endl;
         }
