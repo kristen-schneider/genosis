@@ -23,8 +23,8 @@ faiss::IndexFlatL2 faissMain(string encodedFile, int numVariants, int numSamples
 
 	// setup for FAISS
 	faiss::IndexFlatL2 index(numVariants);
-	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
-
+	if (index.is_trained == 1){cout << "...index is trained." << endl;}
+	else{cerr << "...INDEX IS NOT TRAINED." << endl;}
 	// ifstream to encoded file
         ifstream inFile;
 	// open encoded file
@@ -52,21 +52,22 @@ faiss::IndexFlatL2 faissMain(string encodedFile, int numVariants, int numSamples
 				f = stof(s);
 				singleVector[c] = f;	
 			}
-
+			
+			/*
 			cout << "adding vector: ";
 			for (int i = 0; i < segLength; i++){
 				cout << singleVector[i];
 			}
+			*/
 
 			// add array to index
 			index.add(1, singleVector);	
-			cout << endl;
 			delete[] singleVector;
 			lineCount++;
 		}
 
 	}
-	printf("ntotal = %zd\n", index.ntotal);
+	cout << "...added " << index.ntotal << " vectors to index." << endl;
 	// closed encoded file
 	inFile.close();
 	return index;

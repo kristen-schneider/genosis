@@ -25,7 +25,9 @@ int main(void){
 
 	// DONE. Start FAISS..
 	cout << "Starting similarity searching using FAISS..." << endl;
+	cout << "\n1.Builing index for " << encodingtxt << "..." << endl;
 	faiss::IndexFlatL2 index = faissMain(encodingtxt, numVariants, numSamples, numQueries);
+	cout << "\n2.Running similairty search..." << endl;
 	int x = similarity_search(index, queriestxt, numVariants, numSamples, numQueries);	
 	// create an array which will holds queries
 	//float* xq = read_queries(queriestxt, numSamples, numVariants);
