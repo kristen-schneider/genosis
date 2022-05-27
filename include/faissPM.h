@@ -10,3 +10,4 @@
 using namespace std;
 using idx_t = faiss::Index::idx_t;
 
+int faissMain(string encodedFile);
