@@ -20,9 +20,8 @@ using idx_t = faiss::Index::idx_t;
 using namespace std;
 
 
-int similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVariants, int numSamples, int numQueries){
+void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVariants, int numSamples, int numQueries, int k){
 	
-	int k = 4;
 	idx_t* I = new idx_t[k * numQueries];
 	float* D = new float[k * numQueries];
 
@@ -54,6 +53,4 @@ int similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVaria
                 }
                 cout << endl;
         }
-	return 0;
-
 }
