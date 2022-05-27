@@ -1,6 +1,5 @@
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <math.h>
 #include <sstream>
 #include <string>
@@ -22,14 +21,14 @@ int brute_force_main(string encodedFile, string queriesFile, int numVariants, in
 			currQuery[i] = queries[q * numVariants + i];
 		}
 		cout << "Query " << q << endl; 
-		compute_one_query(currQuery, encodedFile, numVariants, numSamples, numQueries);
+		float* distArr = compute_one_query(currQuery, encodedFile, numVariants, numSamples, numQueries);
+
 		delete[] currQuery;
-		cout << endl;
 	}
 	return 0;
 }
 
-int compute_one_query(float* query, string encodedFile, int numVariants, int numSamples, int numQueries){
+float *compute_one_query(float* query, string encodedFile, int numVariants, int numSamples, int numQueries){
 	// ifstream to encoded file
         ifstream inFile;
         // open encoded file
@@ -39,9 +38,9 @@ int compute_one_query(float* query, string encodedFile, int numVariants, int num
         }
 
 	// store index and distance in my own hashmap
-	map<int, int> m;
-	m[1] = 1;
-        // read encoded file line by line
+	float* distArr = new float[numSamples];
+        
+	// read encoded file line by line
         string line;
         int lineCount = 0;
         if(inFile.is_open()){
@@ -60,13 +59,17 @@ int compute_one_query(float* query, string encodedFile, int numVariants, int num
                                 f = stof(s);
                                 singleVector[c] = f;
                         }
-			float distance = euclidean_distance(query, singleVector, segLength);
-			//m[lineCount] = distance;	
+			float singleDistance = euclidean_distance(query, singleVector, segLength);
+			distArr[lineCount] = singleDistance;
+			lineCount ++;
+			/*
 			cout << "\tvector" << lineCount << ": " << distance << endl;
-			lineCount++;
+			*/
+
 		}
 	}
-	return 0;
+	cout << "...brute force computations complete." << endl;
+	return distArr;
 }
 
 

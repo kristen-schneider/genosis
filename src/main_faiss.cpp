@@ -16,7 +16,7 @@ int main(void){
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
 	int numVariants = 9;//2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 2548;//2504; // number of samples (rows) in encoding.txt
+	int numSamples = 15;//2504; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
 	int k = 15;
 

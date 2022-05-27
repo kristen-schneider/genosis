@@ -37,7 +37,8 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 
 	//  index.search(nq, xq, k, D, I);
 	index.search(numQueries, queries, k, D, I);
-
+	cout << "...search complete." << endl;
+	/*
 	// print results
         cout << "...printing results." << endl;
 	cout << "I=\n" << endl;
@@ -54,4 +55,7 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
                 }
                 cout << endl;
         }
+	*/
+	delete [] I;
+	delete [] D;
 }
