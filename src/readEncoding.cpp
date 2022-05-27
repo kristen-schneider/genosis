@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cctype>
+#include <algorithm>
 #include <fstream>
 #include <string>
 
@@ -24,21 +26,18 @@ float* read_encodings(string encodingtxt, int numSamples, int numVariants){
 
 	string s;
 	float f;
+	int v  = 0;
 	// read file, line by line
 	if(inFile.is_open()){
-
-		for (int i = 0; i < (numSamples * numVariants); i ++){
+		while(true){
 			inFile >> s;
+			if(inFile.eof()){ break; }
 			f = stof(s);
-			fArr[i] = f;
+			fArr[v] = f;
+			v++;
 		}
-	//	for(int s = 0; s < numSamples; s++){
-        //    		for(int v = 0; v < numVariants; v++){
-	//			inFile >> sampleArr[s][v];
-	//		}
-        //	}
    	}
-
+	cout << "total variants: " << v << endl;
 	inFile.close();
 	
 	//// print out array

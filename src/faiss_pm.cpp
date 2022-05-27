@@ -29,7 +29,6 @@ int ss(float* database, float* queries, int numSamples, int numVariants, int num
 	//int nb = numSamples; // database size
 	//int nq = numQueries;  // nb of queries
 
-
 	faiss::IndexFlatL2 index(numVariants); // call constructor
 	printf("is_trained = %s\n", index.is_trained ? "true" : "false");
 	index.add(numSamples, database); // add vectors to the index
