@@ -2,6 +2,7 @@
 #include <fstream>
 #include <math.h>
 #include <map>
+#include <string>
 #include <htslib/hts.h>
 #include <htslib/vcf.h>
 #include <htslib/vcfutils.h>
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-void sliceVCF(){
+void sliceVCF(const char *vcfFile, string encodedFile){
 	//map<string, int> datU = create_map();
 	// = {{"0|0", 0}, {"0|1", 1}};
 	map<string,int > datU = {{"0|0", 0}, {"0|1", 1}, {"1|0", 1}, {"0|2", 1}, {"2|0", 1}, {"0|3", 1}, {"3|0", 1}, {"1|2", 1}, {"2|1", 1}, {"1|3", 1}, {"3|1", 1}, {"1|1", 2},{"2|2", 2},{"3|3", 2},{".|.", 3},{"0|.", 3},{".|0", 3},{"1|.", 3}, {".|1", 3},{"2|.", 3},{".|2", 3},{"3|.", 3},{".|3", 3}};
@@ -27,18 +28,18 @@ void sliceVCF(){
 
         // path to out file
         ofstream outFile;
-        outFile.open("/home/sdp/precision-medicine/data/encoded/new.encoding.txt");
+        outFile.open(encodedFile);
 
         // path to VCF file
         // short.vcf
         // ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf
         
-	const char *VCFPath = "/home/sdp/precision-medicine/data/vcf/ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf";
+	//const char *vcfFile = vcfFile;
 	
 	// open VCF file with htslib
-        htsFile *test_vcf = bcf_open(VCFPath, "r");
+        htsFile *test_vcf = bcf_open(vcfFile, "r");
       	if ( !test_vcf ) {
-       		printf("Failed to open: %s\n", VCFPath);
+       		printf("Failed to open: %s\n", vcfFile);
        	}
 
 	// returning a bcf_hdr_t struct
@@ -46,7 +47,7 @@ void sliceVCF(){
         int numSamples = 0;
         numSamples = bcf_hdr_nsamples(test_header); // counting number of samples
 
-        fprintf(stderr, "File '%s' contains %i samples.\n", VCFPath, numSamples);
+        fprintf(stderr, "File '%s' contains %i samples.\n", vcfFile, numSamples);
         if(test_header == NULL) {
                 throw runtime_error("Unable to read header.");
         }
@@ -134,7 +135,7 @@ void sliceVCF(){
 	for(int i = 0; i < TransposeTempVecVec.size(); i++) {
 		vector<int> TransposeTempVec = TransposeTempVecVec.at(i);
 		for(int j = 0; j < TransposeTempVec.size(); j++) {
-			outFile << TransposeTempVec.at(j) << " ";
+			outFile << TransposeTempVec.at(j);
 		}
 		outFile << endl;
 	}

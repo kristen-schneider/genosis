@@ -8,5 +8,5 @@
 using namespace std;
 
 
-void sliceVCF();
+void sliceVCF(const char *vcfFile, string encodedFile);
 
