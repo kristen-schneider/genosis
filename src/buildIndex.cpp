@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "faissPM.h"
+#include "buildIndex.h"
 
 
 /**
@@ -19,7 +19,7 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-faiss::IndexFlatL2 faissMain(string encodedFile, int numVariants, int numSamples, int numQueries){
+faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int numSamples, int numQueries){
 
 	// setup for FAISS
 	faiss::IndexFlatL2 index(numVariants);

@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "faissPM2.h"
+#include "searchIndex.h"
 #include "readEncoding.h"
 
 /**

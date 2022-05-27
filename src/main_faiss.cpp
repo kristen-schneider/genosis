@@ -1,8 +1,8 @@
 #include <iostream>
 #include <faiss/IndexFlat.h>
 
-#include "faissPM.h"
-#include "faissPM2.h"
+#include "buildIndex.h"
+#include "searchIndex.h"
 
 using namespace std;
 // 64-bit int
@@ -27,7 +27,7 @@ int main(void){
 	cout << "Starting similarity searching using FAISS..." << endl;
 	
 	cout << "\n1.Builing index for " << encodingtxt << "..." << endl;
-	faiss::IndexFlatL2 index = faissMain(encodingtxt, numVariants, numSamples, numQueries);
+	faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples, numQueries);
 	cout << "\n2.Running similairty search..." << endl;
 	int x = similarity_search(index, queriestxt, numVariants, numSamples, numQueries);	
 	cout << "End of FAISS." << endl;

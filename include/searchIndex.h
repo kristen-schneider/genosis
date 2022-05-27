@@ -1,7 +1,7 @@
-#ifndef FAISSPM2_H
-#define FAISSPM2_H
+#ifndef SEARCHINDEX_H
+#define SEARCHINDEX_H
 
-#endif //FAISSPM2_H
+#endif //SEARCHINDEX_H
 
 #include <iostream>
 #include <string>
