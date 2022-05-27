@@ -28,14 +28,3 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
     	}
     return trans_vec;
 }
-
-// returns an array from x[start:end]
-float* arrSlice(float* x, int start, int end){
-    float slice[end-start];
-    int i_x = start;
-    for (int i = 0; i < (end-start); i++){
-        slice[i] = x[i_x];
-        i_x ++;
-    }
-    return slice;
-}
