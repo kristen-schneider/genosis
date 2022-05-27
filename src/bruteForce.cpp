@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <math.h>
 #include <sstream>
 #include <string>
@@ -37,6 +38,9 @@ int compute_one_query(float* query, string encodedFile, int numVariants, int num
                 cout << "Failed to open: " << encodedFile << endl;
         }
 
+	// store index and distance in my own hashmap
+	map<int, int> m;
+	m[1] = 1;
         // read encoded file line by line
         string line;
         int lineCount = 0;
@@ -57,6 +61,7 @@ int compute_one_query(float* query, string encodedFile, int numVariants, int num
                                 singleVector[c] = f;
                         }
 			float distance = euclidean_distance(query, singleVector, segLength);
+			//m[lineCount] = distance;	
 			cout << "\tvector" << lineCount << ": " << distance << endl;
 			lineCount++;
 		}
