@@ -52,7 +52,7 @@ float* read_encodings(string encodingtxt, int numSamples, int numVariants){
 }
 
 // read queries file
-float* read_queries(string queriestxt, int numSamples, int numVariants){
+float* read_queries(string queriestxt, int numVariants, int numQueries){
         // path to queries file
         ifstream inFile;
 
@@ -62,24 +62,28 @@ float* read_queries(string queriestxt, int numSamples, int numVariants){
                 cout << "Failed to open: " << queriestxt << endl;
         }
 
-        // array to store all samples
-        // arr[s][v]
-        float* fArr = new float [numSamples * numVariants];
+	// to store all queries
+        float* queriesArr = new float[numVariants * numQueries];
+	int Q = 0;
+	if(inFile.is_open()){
+		string line;
+                while(getline(inFile, line)){
+			int segLength = line.length();
+			string s;
+                        float f;
 
-        string s;
-        float f;
-        // read file, line by line
-        if(inFile.is_open()){
-
-                for (int i = 0; i < (numSamples * numVariants); i ++){
-                        inFile >> s;
-                        f = stof(s);
-                        fArr[i] = f;
-                }
-        }
+                        // convert string line to float array
+                        for (int c = 0; c < segLength; c++){
+                                s = line[c];
+                                f = stof(s);
+                                queriesArr[Q * segLength + c] = f;
+                        }
+			Q++;
+		}
+	}
 
         inFile.close();
 
-        return fArr;
+        return queriesArr;
 
 }
