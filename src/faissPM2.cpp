@@ -1,0 +1,58 @@
+#include <faiss/IndexFlat.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+#include "faissPM2.h"
+#include "readEncoding.h"
+
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+
+// 64-bit int
+using idx_t = faiss::Index::idx_t;
+using namespace std;
+
+
+int similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVariants, int numSamples, int numQueries){
+	
+	int k = 4;
+	idx_t* I = new idx_t[k * numQueries];
+	float* D = new float[k * numQueries];
+
+	// get queries from file
+	float* queries = read_queries(queriesFile, numVariants, numQueries);
+	cout << "Query: " << endl;
+	for (int i = 0; i < numVariants; i++){
+        	cout << queries[i];
+        }
+	cout << endl;
+
+
+	//  index.search(nq, xq, k, D, I);
+	index.search(numQueries, queries, k, D, I);
+
+	// print results
+        cout << "I=\n" << endl;
+        for (int i = 0; i < numQueries; i++){
+                for (int j = 0; j < k; j++){
+                        cout << "    " << I[i * k + j] << " ";
+                }
+                cout << endl;
+        }
+        cout << "D=\n" << endl;
+        for (int i = 0; i < numQueries; i++){
+                for (int j = 0; j < k; j++){
+                        cout << "    " << D[i * k + j] << " ";
+                }
+                cout << endl;
+        }
+	return 0;
+
+}
