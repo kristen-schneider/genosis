@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <faiss/IndexFlat.h>
 #include <fstream>
 #include <iostream>
@@ -20,7 +19,7 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-int faissMain(string encodedFile, int numVariants, int numSamples, int numQueries){
+faiss::IndexFlatL2 faissMain(string encodedFile, int numVariants, int numSamples, int numQueries){
 
 	// setup for FAISS
 	faiss::IndexFlatL2 index(numVariants);
@@ -53,17 +52,23 @@ int faissMain(string encodedFile, int numVariants, int numSamples, int numQuerie
 				f = stof(s);
 				singleVector[c] = f;	
 			}
+
+			cout << "adding vector: ";
+			for (int i = 0; i < segLength; i++){
+				cout << singleVector[i];
+			}
+
 			// add array to index
 			index.add(1, singleVector);	
-			cout << "added vector: " << lineCount << endl;
-			lineCount++;
+			cout << endl;
 			delete[] singleVector;
+			lineCount++;
 		}
 
 	}
 	printf("ntotal = %zd\n", index.ntotal);
 	// closed encoded file
 	inFile.close();
-	return 0;
+	return index;
 
 }
