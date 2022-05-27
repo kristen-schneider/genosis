@@ -1,55 +1,11 @@
 #include <iostream>
 #include <cctype>
-#include <algorithm>
 #include <fstream>
 #include <string>
 
 #include "readEncoding.h"
 
 using namespace std;
-
-float* read_encodings(string encodingtxt, int numSamples, int numVariants){
-	
-	// path to encoding file
-	ifstream inFile;
-	
-	// open encoded data (.txt file)
-        inFile.open(encodingtxt);
-	if ( !inFile.is_open() ) {
-                cout << "Failed to open: " << encodingtxt << endl;
-        }
-
-
-	// array to store all samples
-	// arr[s][v]
-	float* fArr = new float [numSamples * numVariants];
-
-	string s;
-	float f;
-	int v  = 0;
-	// read file, line by line
-	if(inFile.is_open()){
-		while(true){
-			inFile >> s;
-			if(inFile.eof()){ break; }
-			f = stof(s);
-			fArr[v] = f;
-			v++;
-		}
-   	}
-	cout << "total variants: " << v << endl;
-	inFile.close();
-	
-	//// print out array
-	//for (int i = 0; i < 3; i ++){
-	//	for (int j = 0; j < 9; j++){
-	//		cout << sampleArr[i][j];
-	//	}
-	//	cout << endl;
-	//}
-
-	return fArr;
-}
 
 // read queries file
 float* read_queries(string queriestxt, int numVariants, int numQueries){

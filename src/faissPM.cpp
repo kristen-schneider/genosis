@@ -53,12 +53,10 @@ faiss::IndexFlatL2 faissMain(string encodedFile, int numVariants, int numSamples
 				singleVector[c] = f;	
 			}
 			
-			/*
-			cout << "adding vector: ";
+			/*cout << "adding vector: ";
 			for (int i = 0; i < segLength; i++){
 				cout << singleVector[i];
-			}
-			*/
+			}*/
 
 			// add array to index
 			index.add(1, singleVector);	

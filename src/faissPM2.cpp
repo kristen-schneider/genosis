@@ -28,18 +28,19 @@ int similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVaria
 
 	// get queries from file
 	float* queries = read_queries(queriesFile, numVariants, numQueries);
-	cout << "Query: " << endl;
+	/*cout << "Query: " << endl;
 	for (int i = 0; i < numVariants; i++){
         	cout << queries[i];
         }
-	cout << endl;
+	cout << endl;*/
 
 
 	//  index.search(nq, xq, k, D, I);
 	index.search(numQueries, queries, k, D, I);
 
 	// print results
-        cout << "I=\n" << endl;
+        cout << "...printing results." << endl;
+	cout << "I=\n" << endl;
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
                         cout << "    " << I[i * k + j] << " ";
