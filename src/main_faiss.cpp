@@ -15,14 +15,14 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-	int numVariants = 9;//2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 15;//2504; // number of samples (rows) in encoding.txt
+	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
+	int numSamples = 2504; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
-	int k = 15;
+	int k = 2504;
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
+	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
 	// DONE. Start FAISS..
 	cout << "---------" << endl;
