@@ -42,7 +42,7 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 	// writing results
         cout << "...writing index results." << endl;
 	ofstream outIndexFile;
-	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexReults.txt");
+	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexResults.txt");
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
                         outIndexFile << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;

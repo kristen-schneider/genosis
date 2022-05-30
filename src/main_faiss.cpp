@@ -16,9 +16,9 @@ int main(void){
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
 	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 2504; // number of samples (rows) in encoding.txt
+	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
-	int k = 2504;
+	int k = 2548;
 
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";

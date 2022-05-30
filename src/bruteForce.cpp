@@ -64,20 +64,17 @@ float *compute_one_query(float* query, string encodedFile, int numVariants, int 
                                 singleVector[c] = f;
                         }
 			float singleDistance = euclidean_distance(query, singleVector, segLength);
+			cout << lineCount << endl;
 			distArr[lineCount] = singleDistance;
 			lineCount ++;
-				
-			//cout << "\tvector" << lineCount << ": " << distance << endl;
-			
-
 		}
 	}
 	cout << "...brute force computations complete." << endl;
 
 	// writing results
-        cout << "...writing brute force results." << endl;
+        cout << "...writing brute force results." << numSamples << endl;
         ofstream outBruteForceFile;
-        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceReults.txt");
+        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceResults.txt");
         for (int i = 0; i < numSamples; i++){
                 outBruteForceFile << i << "\t" << distArr[i] << endl;
         }
