@@ -23,6 +23,10 @@ int brute_force_main(string encodedFile, string queriesFile, int numVariants, in
 		cout << "Query " << q << endl; 
 		float* distArr = compute_one_query(currQuery, encodedFile, numVariants, numSamples, numQueries);
 
+		// sort distArr, keep indexes
+		float* sortedDistArr = new float[numSamples];
+
+
 		delete[] currQuery;
 	}
 	return 0;
@@ -62,13 +66,23 @@ float *compute_one_query(float* query, string encodedFile, int numVariants, int 
 			float singleDistance = euclidean_distance(query, singleVector, segLength);
 			distArr[lineCount] = singleDistance;
 			lineCount ++;
-			/*
-			cout << "\tvector" << lineCount << ": " << distance << endl;
-			*/
+				
+			//cout << "\tvector" << lineCount << ": " << distance << endl;
+			
 
 		}
 	}
 	cout << "...brute force computations complete." << endl;
+
+	// writing results
+        cout << "...writing brute force results." << endl;
+        ofstream outBruteForceFile;
+        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceReults.txt");
+        for (int i = 0; i < numSamples; i++){
+                outBruteForceFile << i << "\t" << distArr[i] << endl;
+        }
+        outBruteForceFile.close();
+
 	return distArr;
 }
 
