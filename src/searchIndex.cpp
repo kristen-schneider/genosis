@@ -38,24 +38,32 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 	//  index.search(nq, xq, k, D, I);
 	index.search(numQueries, queries, k, D, I);
 	cout << "...search complete." << endl;
+	
+	// writing results
+        cout << "...writing index results." << endl;
+	ofstream outIndexFile;
+	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexReults.txt");
+        for (int i = 0; i < numQueries; i++){
+                for (int j = 0; j < k; j++){
+                        outIndexFile << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+                }
+                outIndexFile << endl;
+        }
+	outIndexFile.close();
+	
 	/*
-	// print results
-        cout << "...printing results." << endl;
-	cout << "I=\n" << endl;
+        cout << "..writing distance results." << endl;
+	ofstream outDistanceFile;
+	outDistanceFile.open("/home/sdp/precision-medicine/data/txt/distanceReults.txt");
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
-                        cout << "\t" << I[i * k + j] << " ";
+                        outDistanceFile << "\t" << sqrt(D[i * k + j]) << " ";
                 }
-                cout << endl;
+                outDistanceFile << endl;
         }
-        cout << "D=\n" << endl;
-        for (int i = 0; i < numQueries; i++){
-                for (int j = 0; j < k; j++){
-                        cout << "\t" << sqrt(D[i * k + j]) << " ";
-                }
-                cout << endl;
-        }
+	outDistanceFile.close();
 	*/
+	
 	delete [] I;
 	delete [] D;
 }
