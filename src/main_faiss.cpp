@@ -18,22 +18,28 @@ int main(void){
 	int numVariants = 9;//2548903;//68819; // number of variants (cols) in encoding.txt
 	int numSamples = 15;//2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
-	int k = 2548;
+	int k = 15;
 	int segmentLength = 3; // length of a single vector
 
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.seg.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
 	// DONE. Start FAISS..
 	cout << "---------" << endl;
 	cout << "Starting similarity searching using FAISS..." << endl;
 	
-	cout << "\n1.Builing index for " << encodingtxt << "..." << endl;
-	faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples);
+	cout << "\nENCODED FILE: " << encodingtxt << "..." << endl;
+	//faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples);
+	
 	for (int i = 0; i < numVariants; i += segmentLength){
-		faiss::IndexFlatL2 index = build_faiss_index_segments(encodingtxt, i, segmentLength, numSamples);
+		cout << "\nSegment: " << i << "-" << i+segmentLength << endl;
+		cout << "-Building index." << endl;
+		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, i, segmentLength, numSamples);
+		cout << "-Running similairty search." << endl;
+		similarity_search(s_index, queriestxt, segmentLength, numSamples, numQueries, k, to_string(i));
 	}
+	/*
 	cout << "\n2.Running similairty search..." << endl;
 	similarity_search(index, queriestxt, numVariants, numSamples, numQueries, k);	
 	
@@ -41,7 +47,7 @@ int main(void){
 	cout << "---------" << endl;
 	//cout << "Starting Brute Force." << endl;
 	//int x = brute_force_main(encodingtxt, queriestxt, numVariants, numSamples, numQueries);
-	
+	*/
 
 	return 0;
 }

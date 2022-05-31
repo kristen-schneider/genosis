@@ -73,7 +73,6 @@ faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int nu
 
 // for segments rather than full lines
 faiss::IndexFlatL2 build_faiss_index_segments(string encodedFile, int start, int lengthSegment, int numSamples){
-	cout << "segmenting for " << start << endl;
 	
 	// setup for FAISS
 	faiss::IndexFlatL2 index(lengthSegment);
@@ -91,28 +90,24 @@ faiss::IndexFlatL2 build_faiss_index_segments(string encodedFile, int start, int
 	string line;
 	int lineCount = 0;
 	if(inFile.is_open()){
-		cout << "reading for " << start << endl;
                 while(getline(inFile, line)){
 			string s;
 			float f;
-
 			// convert string line to float array
 			float* singleVector = new float[lengthSegment];
+			int i = 0;
 			for (int c = start; c < start+lengthSegment; c++){
-				cout << line[c] << " ";
 				s = line[c];
 				f = stof(s);
-				singleVector[c] = f;	
+				singleVector[i] = f;	
+				i++;
 			}
-			cout << endl;
-			
 			/*cout << "adding vector: ";
 			for (int i = 0; i < segLength; i++){
 				cout << singleVector[i];
 			}*/
 
 			// add array to index
-			//for (int i = 0; i < lengthSegment; i++){cout << singleVector[i];}
 			index.add(1, singleVector);	
 			delete[] singleVector;
 			lineCount++;
