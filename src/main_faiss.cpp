@@ -18,7 +18,7 @@ int main(void){
 	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
 	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
-	int k = 2548903;
+	int k = 2548;
 	int segmentLength = 500000; // length of a single vector
 
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
