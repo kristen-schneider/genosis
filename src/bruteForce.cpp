@@ -9,10 +9,11 @@
 
 using namespace std;
 
-int brute_force_main(string encodedFile, string queriesFile, int numVariants, int numSamples, int numQueries){
+int brute_force_main(string encodedFile, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int numSegments){
 	
 	// get queries from file
-        float* queries = read_queries(queriesFile, numVariants, numQueries);
+        //float* queries = read_queries(queriesFile, numVariants, numQueries);
+	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);
 	for(int q = 0; q < numQueries; q++){
 
 		// one query at a time
@@ -21,7 +22,9 @@ int brute_force_main(string encodedFile, string queriesFile, int numVariants, in
 			currQuery[i] = queries[q * numVariants + i];
 		}
 		cout << "Query " << q << endl; 
-		float* distArr = compute_one_query(currQuery, encodedFile, numVariants, numSamples, numQueries);
+		for (int s = 0; s < numSegments; s++){
+			float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
+		}
 
 		// sort distArr, keep indexes
 		float* sortedDistArr = new float[numSamples];
@@ -32,7 +35,7 @@ int brute_force_main(string encodedFile, string queriesFile, int numVariants, in
 	return 0;
 }
 
-float *compute_one_query(float* query, string encodedFile, int numVariants, int numSamples, int numQueries){
+float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries){
 	// ifstream to encoded file
         ifstream inFile;
         // open encoded file
@@ -49,22 +52,19 @@ float *compute_one_query(float* query, string encodedFile, int numVariants, int 
         int lineCount = 0;
         if(inFile.is_open()){
                 while(getline(inFile, line)){
-                        int segLength = line.length();
-                        if (segLength != numVariants){
-                                cerr << "\t!! segment length does not equal number of variants !!" << endl;
-                        }
                         string s;
                         float f;
 
 			// convert string line to float array
                         float* singleVector = new float[segLength];
-                        for (int c = 0; c < segLength; c++){
+                        int i = 0;
+			for (int c = start; c < start+segLength; c++){
                                 s = line[c];
                                 f = stof(s);
-                                singleVector[c] = f;
+                                singleVector[i] = f;
+				i ++;
                         }
 			float singleDistance = euclidean_distance(query, singleVector, segLength);
-			cout << lineCount << endl;
 			distArr[lineCount] = singleDistance;
 			lineCount ++;
 		}
@@ -72,9 +72,9 @@ float *compute_one_query(float* query, string encodedFile, int numVariants, int 
 	cout << "...brute force computations complete." << endl;
 
 	// writing results
-        cout << "...writing brute force results." << numSamples << endl;
+        cout << "...writing brute force results." << endl;
         ofstream outBruteForceFile;
-        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceResults.txt");
+        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceResults." +to_string(start)+".txt");
         for (int i = 0; i < numSamples; i++){
                 outBruteForceFile << i << "\t" << distArr[i] << endl;
         }
