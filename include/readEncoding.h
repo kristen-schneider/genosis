@@ -9,4 +9,4 @@
 using namespace std;
 
 float* read_encodings(string encodingtxt, int numSamples, int numVariants);
-float* read_queries(string queriestxt, int numVariants, int numQueries);
+float* read_queries(string queriestxt, int segLength, int numQueries);

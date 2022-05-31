@@ -10,20 +10,20 @@ using namespace std;
 // read queries file
 float* read_queries(string queriestxt, int numVariants, int numQueries){
         // path to queries file
-        ifstream inFile;
+        ifstream qFile;
 
         // open queries data (.txt file)
-        inFile.open(queriestxt);
-        if ( !inFile.is_open() ) {
+        qFile.open(queriestxt);
+        if ( !qFile.is_open() ) {
                 cout << "Failed to open: " << queriestxt << endl;
         }
 
 	// to store all queries
         float* queriesArr = new float[numVariants * numQueries];
 	int Q = 0;
-	if(inFile.is_open()){
+	if(qFile.is_open()){
 		string line;
-                while(getline(inFile, line)){
+                while(getline(qFile, line)){
 			int segLength = line.length();
 			string s;
                         float f;
@@ -38,8 +38,9 @@ float* read_queries(string queriestxt, int numVariants, int numQueries){
 		}
 	}
 
-        inFile.close();
-
+        qFile.close();
+        qFile.seekg(0);
+        qFile.clear();
         return queriesArr;
 
 }
