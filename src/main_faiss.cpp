@@ -15,15 +15,18 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-	int numVariants = 9;//2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 15;//2548; // number of samples (rows) in encoding.txt
+	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
+	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
-	int k = 15;
-	int segmentLength = 3; // length of a single vector
+	int k = 2548903;
+	int segmentLength = 500000; // length of a single vector
+
+	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
+	cout << numSegments << endl;
 
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
+	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
 	// DONE. Start FAISS..
 	cout << "---------" << endl;
@@ -32,12 +35,24 @@ int main(void){
 	cout << "\nENCODED FILE: " << encodingtxt << "..." << endl;
 	//faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples);
 	
-	for (int i = 0; i < numVariants; i += segmentLength){
-		cout << "\nSegment: " << i << "-" << i+segmentLength << endl;
+	int start = 0;
+	for (int i = 0; i < numSegments; i ++){
+		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
 		cout << "-Building index." << endl;
-		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, i, segmentLength, numSamples);
+		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
-		similarity_search(s_index, queriestxt, i, segmentLength, numVariants, numSamples, numQueries, k, to_string(i));
+		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
+		start += segmentLength;
+	}
+	if (numVariants % segmentLength != 0){
+		int lastSegmentLength = numVariants - (numSegments * segmentLength);
+		cout << "\nLAST SEG DIFF";// << endl;
+		cout << "\nSegment: " << start << "-" << start+lastSegmentLength << endl;
+                cout << "-Building index." << endl;
+                faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
+                cout << "-Running similairty search." << endl;
+                similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
+
 	}
 	/*
 	cout << "\n2.Running similairty search..." << endl;

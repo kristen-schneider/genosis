@@ -44,6 +44,7 @@ faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int nu
 			}
 			string s;
 			float f;
+			
 
 			// convert string line to float array
 			float* singleVector = new float[segLength];
