@@ -19,7 +19,7 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int numSamples, int numQueries){
+faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int numSamples){
 
 	// setup for FAISS
 	faiss::IndexFlatL2 index(numVariants);
@@ -69,5 +69,66 @@ faiss::IndexFlatL2 build_faiss_index(string encodedFile, int numVariants, int nu
 	// closed encoded file
 	inFile.close();
 	return index;
-
 }
+
+// for segments rather than full lines
+faiss::IndexFlatL2 build_faiss_index_segments(string encodedFile, int start, int lengthSegment, int numSamples){
+	cout << "segmenting for " << start << endl;
+	
+	// setup for FAISS
+	faiss::IndexFlatL2 index(lengthSegment);
+	if (index.is_trained == 1){cout << "...index is trained." << endl;}
+	else{cerr << "...INDEX IS NOT TRAINED." << endl;}
+	// ifstream to encoded file
+        ifstream inFile;
+	// open encoded file
+        inFile.open(encodedFile);
+        if ( !inFile.is_open() ) {
+                cout << "Failed to open: " << encodedFile << endl;
+        }
+
+	// read encoded file line by line
+	string line;
+	int lineCount = 0;
+	if(inFile.is_open()){
+		cout << "reading for " << start << endl;
+                while(getline(inFile, line)){
+			string s;
+			float f;
+
+			// convert string line to float array
+			float* singleVector = new float[lengthSegment];
+			for (int c = start; c < start+lengthSegment; c++){
+				cout << line[c] << " ";
+				s = line[c];
+				f = stof(s);
+				singleVector[c] = f;	
+			}
+			cout << endl;
+			
+			/*cout << "adding vector: ";
+			for (int i = 0; i < segLength; i++){
+				cout << singleVector[i];
+			}*/
+
+			// add array to index
+			//for (int i = 0; i < lengthSegment; i++){cout << singleVector[i];}
+			index.add(1, singleVector);	
+			delete[] singleVector;
+			lineCount++;
+		}
+
+	}
+	cout << "...added " << index.ntotal << " vectors to index." << endl;
+	// closed encoded file
+	inFile.close();
+	inFile.seekg(0);
+	inFile.clear();
+	return index;
+}
+
+
+
+
+
+
