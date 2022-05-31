@@ -45,7 +45,7 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexResults.txt");
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
-                        outIndexFile << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+                        outIndexFile << I[i * k + j] << "\t" << D[i * k + j] << endl;
                 }
                 outIndexFile << endl;
         }
