@@ -10,4 +10,4 @@
 using namespace std;
 using idx_t = faiss::Index::idx_t;
 
-void similarity_search(faiss::IndexFlatL2 index, string qFile, int numV, int numS, int numQ, int k);
+void similarity_search(faiss::IndexFlatL2 index, string qFile, int segLength, int numS, int numQ, int k, string txtName);

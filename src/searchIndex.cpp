@@ -21,13 +21,13 @@ using idx_t = faiss::Index::idx_t;
 using namespace std;
 
 
-void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVariants, int numSamples, int numQueries, int k){
+void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int lengthQuery, int numSamples, int numQueries, int k, string txtName){
 	
 	idx_t* I = new idx_t[k * numQueries];
 	float* D = new float[k * numQueries];
 
 	// get queries from file
-	float* queries = read_queries(queriesFile, numVariants, numQueries);
+	float* queries = read_queries(queriesFile, lengthQuery, numQueries);
 	/*cout << "Query: " << endl;
 	for (int i = 0; i < numVariants; i++){
         	cout << queries[i];
@@ -38,11 +38,11 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int numVari
 	//  index.search(nq, xq, k, D, I);
 	index.search(numQueries, queries, k, D, I);
 	cout << "...search complete." << endl;
-	
+
 	// writing results
         cout << "...writing index results." << endl;
 	ofstream outIndexFile;
-	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexResults.txt");
+	outIndexFile.open("/home/sdp/precision-medicine/data/txt/index."+txtName+".txt");
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
                         outIndexFile << I[i * k + j] << "\t" << D[i * k + j] << endl;
