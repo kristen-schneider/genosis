@@ -23,7 +23,7 @@ int main(void){
 
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.seg.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 
 	// DONE. Start FAISS..
 	cout << "---------" << endl;
@@ -37,7 +37,7 @@ int main(void){
 		cout << "-Building index." << endl;
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, i, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
-		similarity_search(s_index, queriestxt, segmentLength, numSamples, numQueries, k, to_string(i));
+		similarity_search(s_index, queriestxt, i, segmentLength, numVariants, numSamples, numQueries, k, to_string(i));
 	}
 	/*
 	cout << "\n2.Running similairty search..." << endl;

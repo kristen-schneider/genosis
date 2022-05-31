@@ -21,13 +21,14 @@ using idx_t = faiss::Index::idx_t;
 using namespace std;
 
 
-void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int lengthQuery, int numSamples, int numQueries, int k, string txtName){
+void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
 	
 	idx_t* I = new idx_t[k * numQueries];
 	float* D = new float[k * numQueries];
 
 	// get queries from file
-	float* queries = read_queries(queriesFile, lengthQuery, numQueries);
+	//float* queries = read_queries(queriesFile, lengthQuery, numQueries);
+	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);	
 	/*cout << "Query: " << endl;
 	for (int i = 0; i < numVariants; i++){
         	cout << queries[i];
@@ -38,6 +39,7 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int lengthQ
 	//  index.search(nq, xq, k, D, I);
 	index.search(numQueries, queries, k, D, I);
 	cout << "...search complete." << endl;
+
 
 	// writing results
         cout << "...writing index results." << endl;
