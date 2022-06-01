@@ -16,7 +16,7 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-/*	
+	
 	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
 	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
@@ -25,7 +25,7 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-*/	
+/*	
 	
 	int numVariants = 9;
 	int numSamples = 15;
@@ -36,12 +36,12 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-		
+*/		
 	
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
 
-
+/*
 	cout << "Starting Brute Force." << endl;
 	int start_bf = 0;
 	for (int i = 0; i < numSegments; i ++){
@@ -58,7 +58,7 @@ int main(void){
 	}
 	cout << "End of Brute Force." << endl;
         cout << "---------" << endl;
-	
+*/	
 
 	cout << "Starting Exact Match." << endl;
 	int start_em = 0;
