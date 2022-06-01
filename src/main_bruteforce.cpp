@@ -55,7 +55,8 @@ int main(void){
 		cout << "\nSegment: " << start_bf << "-" << start_bf+lastSegmentLength << endl;
 		int x = brute_force_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments);	
 	}
-
+	cout << "End of Brute Force." << endl;
+        cout << "---------" << endl;
 	
 
 	return 0;

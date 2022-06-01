@@ -74,22 +74,7 @@ int main(void){
 	
 	cout << "End of FAISS." << endl;
 	cout << "---------" << endl;
-	cout << "Starting Brute Force." << endl;
-	int start_bf = 0;
-	for (int i = 0; i < numSegments; i ++){
-		cout << "\nSegment: " << start_bf << "-" << start_bf+segmentLength << endl;
-		int x = brute_force_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments);
-		start_bf += segmentLength;
-	}
-	
-	if (numVariants % segmentLength != 0){
-		int lastSegmentLength = numVariants - (numSegments * segmentLength);
-		cout << "\nLAST SEG DIFF";
-		cout << "\nSegment: " << start_bf << "-" << start_bf+lastSegmentLength << endl;
-		int x = brute_force_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments);	
-	}
 
-	
 
 	return 0;
 }
