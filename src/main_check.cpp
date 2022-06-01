@@ -1,9 +1,10 @@
 #include <iostream>
 #include <faiss/IndexFlat.h>
 
-#include "buildIndex.h"
-#include "searchIndex.h"
 #include "bruteForce.h"
+#include "buildIndex.h"
+#include "exactmatch.h"
+#include "searchIndex.h"
 
 using namespace std;
 // 64-bit int
@@ -15,7 +16,7 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-	
+/*	
 	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
 	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
@@ -24,8 +25,8 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+*/	
 	
-	/*
 	int numVariants = 9;
 	int numSamples = 15;
 	int numQueries = 1; // number of queries
@@ -35,7 +36,7 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-	*/	
+		
 	
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
@@ -59,5 +60,22 @@ int main(void){
         cout << "---------" << endl;
 	
 
+	cout << "Starting Exact Match." << endl;
+	int start_em = 0;
+	for (int i = 0; i < numSegments; i ++){
+		cout << "\nSegment: " << start_em << "-" << start_em+segmentLength << endl;
+		int x = exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments);
+		start_em += segmentLength;
+	}
+	
+	if (numVariants % segmentLength != 0){
+		int lastSegmentLength = numVariants - (numSegments * segmentLength);
+		cout << "\nLAST SEG DIFF";
+		cout << "\nSegment: " << start_em << "-" << start_em+lastSegmentLength << endl;
+		int x = exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments);	
+	}
+	cout << "End of Exact Match." << endl;
+        cout << "---------" << endl;
+	
 	return 0;
 }
