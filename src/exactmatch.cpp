@@ -21,7 +21,7 @@ int exact_match_main(string encodedFile, string queriesFile, int start, int leng
 			currQuery[i] = queries[q * lengthQuery + i];
 		}
 		cout << "Query " << q << endl;
-		float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
+		float* distArr = compute_one_queryEM(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
 
 		//for (int s = 0; s < numSegments; s++){
 		//	float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
@@ -36,7 +36,7 @@ int exact_match_main(string encodedFile, string queriesFile, int start, int leng
 	return 0;
 }
 
-float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries){
+float *compute_one_queryEM(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries){
 	// ifstream to encoded file
         ifstream inFile;
         // open encoded file
@@ -70,12 +70,12 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
 			lineCount ++;
 		}
 	}
-	cout << "...brute force computations complete." << endl;
+	cout << "...exact match computations complete." << endl;
 
 	// writing results
-        cout << "...writing brute force results." << endl;
+        cout << "...writing exact match results." << endl;
         ofstream outBruteForceFile;
-        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/bruteforceResults." +to_string(start)+".txt");
+        outBruteForceFile.open("/home/sdp/precision-medicine/data/txt/exactMatchResults." +to_string(start)+".txt");
         for (int i = 0; i < numSamples; i++){
                 outBruteForceFile << i << "\t" << distArr[i] << endl;
         }
@@ -87,21 +87,11 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
 
 float exact_match(float* vec1, float* vec2, int segLength){
 
-	/*
-	for (int i = 0; i < segLength; i++)
-                cout << vec1[i] << " ";
-	cout << endl;
-	for (int i = 0; i < segLength; i++)
-                cout << vec2[i] << " ";
-	cout << endl;
-	*/
-	float eucDist = 0;
-	float sum = 0;
+	float numMismatches = 0;
 	for (int i = 0; i < segLength; i++){
-		float diff = vec1[i]-vec2[i];
-		float diffSqrd = pow(diff, 2);
-		sum += diffSqrd;
+		if(vec1[i] != vec2[i]){
+			numMismatches++;
+		}
 	}
-	eucDist = sqrt(sum);
-	return eucDist;
+	return numMismatches;
 }
