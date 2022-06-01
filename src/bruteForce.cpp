@@ -15,16 +15,17 @@ int brute_force_main(string encodedFile, string queriesFile, int start, int leng
         //float* queries = read_queries(queriesFile, numVariants, numQueries);
 	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);
 	for(int q = 0; q < numQueries; q++){
-
 		// one query at a time
-		float* currQuery = new float[numVariants];
-		for(int i = 0; i < (numVariants); i++){
-			currQuery[i] = queries[q * numVariants + i];
+		float* currQuery = new float[lengthQuery];
+		for(int i = 0; i < (lengthQuery); i++){
+			currQuery[i] = queries[q * lengthQuery + i];
 		}
-		cout << "Query " << q << endl; 
-		for (int s = 0; s < numSegments; s++){
-			float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
-		}
+		cout << "Query " << q << endl;
+		float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
+
+		//for (int s = 0; s < numSegments; s++){
+		//	float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
+		//}
 
 		// sort distArr, keep indexes
 		float* sortedDistArr = new float[numSamples];

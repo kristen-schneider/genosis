@@ -59,16 +59,16 @@ float* read_queries_segment(string queriestxt, int start, int numVariants, int s
 
 	// to store all queries
         float* queriesArr = new float[segmentLength * numQueries];
+	
 	int Q = 0;
 	if(qFile.is_open()){
 		string line;
                 while(getline(qFile, line)){
 			string s;
                         float f;
-
                         // convert string line to float array
 			int i = 0;
-                        for (int c = start; c < start+segmentLength; c++){
+                        for (int c = start; c < (start+segmentLength); c++){
                                 s = line[c];
                                 f = stof(s);
 				queriesArr[Q * segmentLength + i] = f;

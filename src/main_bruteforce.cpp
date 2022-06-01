@@ -41,39 +41,6 @@ int main(void){
 	cout << numSegments << endl;
 
 
-	// DONE. Start FAISS..
-	cout << "---------" << endl;
-	cout << "Starting similarity searching using FAISS..." << endl;
-	
-	cout << "\nENCODED FILE: " << encodingtxt << "..." << endl;
-	//faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples);
-	
-	int start = 0;
-	for (int i = 0; i < numSegments; i ++){
-		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
-		cout << "-Building index." << endl;
-		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
-		cout << "-Running similairty search." << endl;
-		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
-		start += segmentLength;
-	}
-	if (numVariants % segmentLength != 0){
-		int lastSegmentLength = numVariants - (numSegments * segmentLength);
-		cout << "\nLAST SEG DIFF";// << endl;
-		cout << "\nSegment: " << start << "-" << start+lastSegmentLength << endl;
-                cout << "-Building index." << endl;
-                faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
-                cout << "-Running similairty search." << endl;
-                similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
-
-	}
-	/*
-	cout << "\n2.Running similairty search..." << endl;
-	similarity_search(index, queriestxt, numVariants, numSamples, numQueries, k);	
-	*/
-	
-	cout << "End of FAISS." << endl;
-	cout << "---------" << endl;
 	cout << "Starting Brute Force." << endl;
 	int start_bf = 0;
 	for (int i = 0; i < numSegments; i ++){
