@@ -46,10 +46,10 @@ int main(void){
 
 	cout << "Starting Brute Force." << endl;
 	int start_bf = 0;
-	metric = "bf";
+	metric = "ed";
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_bf << "-" << start_bf+segmentLength << endl;
-		int x = compare_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+		compare_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
 		start_bf += segmentLength;
 	}
 	
@@ -57,7 +57,7 @@ int main(void){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
 		cout << "\nLAST SEG DIFF";
 		cout << "\nSegment: " << start_bf << "-" << start_bf+lastSegmentLength << endl;
-		int x = compare_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
+		compare_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
 	cout << "End of Brute Force." << endl;
         cout << "---------" << endl;
@@ -68,7 +68,7 @@ int main(void){
 	metric = "em";
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_em << "-" << start_em+segmentLength << endl;
-		int x = exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+		exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
 		start_em += segmentLength;
 	}
 	
@@ -76,7 +76,7 @@ int main(void){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
 		cout << "\nLAST SEG DIFF";
 		cout << "\nSegment: " << start_em << "-" << start_em+lastSegmentLength << endl;
-		int x = exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
+		exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
 	cout << "End of Exact Match." << endl;
         cout << "---------" << endl;
