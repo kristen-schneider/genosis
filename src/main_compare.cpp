@@ -12,7 +12,7 @@ using idx_t = faiss::Index::idx_t;
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
 int main(void){
-/*
+
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
 	
@@ -24,7 +24,7 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-*/
+/*/
 	
 	
 	int numVariants = 9;
@@ -36,49 +36,67 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-		
+*/		
 
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
 	int metric = -1;
-
-
-	cout << "Starting Brute Force." << endl;
-	int start_bf = 0;
+/*
+	cout << "------------------" << endl;
+	cout << "Starting Euclidean Distance." << endl;
+	int start_ed = 0;
 	metric = 0;
 	for (int i = 0; i < numSegments; i ++){
-		cout << "\nSegment: " << start_bf << "-" << start_bf+segmentLength << endl;
-		compare_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
-		start_bf += segmentLength;
+		cout << "\nSegment: " << start_ed << "-" << start_ed+segmentLength << endl;
+		compare_main(encodingtxt, queriestxt, start_ed, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+		start_ed += segmentLength;
 	}
-	
+	// last segment if differnt length	
 	if (numVariants % segmentLength != 0){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
-		cout << "\nLAST SEG DIFF";
-		cout << "\nSegment: " << start_bf << "-" << start_bf+lastSegmentLength << endl;
-		compare_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
+		cout << "\nSegment: " << start_ed << "-" << start_ed+lastSegmentLength << endl;
+		compare_main(encodingtxt, queriestxt, start_ed, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
-	cout << "End of Brute Force." << endl;
-        cout << "---------" << endl;
+	cout << "End of Euclidean Distance." << endl;
+        cout << "------------------\n" << endl;
 	
 
-	cout << "Starting Exact Match." << endl;
-	int start_em = 0;
+	cout << "------------------" << endl;
+	cout << "Starting Counting Mismatches." << endl;
+	int start_mm = 0;
 	metric = 1;
 	for (int i = 0; i < numSegments; i ++){
-		cout << "\nSegment: " << start_em << "-" << start_em+segmentLength << endl;
-		compare_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
-		start_em += segmentLength;
+		cout << "\nSegment: " << start_mm << "-" << start_mm+segmentLength << endl;
+		compare_main(encodingtxt, queriestxt, start_mm, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+		start_mm += segmentLength;
 	}
-	
+	// last segment if differnt length	
 	if (numVariants % segmentLength != 0){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
-		cout << "\nLAST SEG DIFF";
-		cout << "\nSegment: " << start_em << "-" << start_em+lastSegmentLength << endl;
-		compare_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
+		cout << "\nSegment: " << start_mm << "-" << start_mm+lastSegmentLength << endl;
+		compare_main(encodingtxt, queriestxt, start_mm, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
-	cout << "End of Exact Match." << endl;
-        cout << "---------" << endl;
-	
+	cout << "End of Counting Mismatches." << endl;
+        cout << "------------------\n" << endl;
+*/
+
+	cout << "------------------" << endl;
+	cout << "Starting Counting Non-reference Genotypes." << endl;
+        int start_nrg = 0;
+        metric = 2;
+        for (int i = 0; i < numSegments; i ++){
+                cout << "\nSegment: " << start_nrg << "-" << start_nrg+segmentLength << endl;
+                compare_main(encodingtxt, queriestxt, start_nrg, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+                start_nrg += segmentLength;
+        }
+        // last segment if differnt length      
+        if (numVariants % segmentLength != 0){
+                int lastSegmentLength = numVariants - (numSegments * segmentLength);
+                cout << "\nSegment: " << start_nrg << "-" << start_nrg+lastSegmentLength << endl;
+                compare_main(encodingtxt, queriestxt, start_nrg, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+        }
+        cout << "End of Counting Mismatches." << endl;
+        cout << "------------------\n" << endl;
+
 	return 0;
 }

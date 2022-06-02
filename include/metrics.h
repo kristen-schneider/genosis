@@ -12,4 +12,4 @@ using namespace std;
 //float* compute_one_query(float* q, string eFile, int start, int lenQUery, int numV, int numS, int numQ);
 float euclidean_distance(float* vec1, float* vec2, int segLength);
 float exact_match(float* vec1, float* vec2, int segLength);
-float sharedNRG();
+float sharedNRG(float* vec1, float* vec2, int segLength);
