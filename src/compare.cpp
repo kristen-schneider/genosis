@@ -4,12 +4,14 @@
 #include <sstream>
 #include <string>
 
-#include "bruteForce.h"
+#include "compare.h"
+#include "metrics.h"
 #include "readEncoding.h"
+#include "sharedNRG.h"
 
 using namespace std;
 
-int brute_force_main(string encodedFile, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int numSegments){
+int compare_main(string encodedFile, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int numSegments, string metric){
 	
 	// get queries from file
         //float* queries = read_queries(queriesFile, numVariants, numQueries);
@@ -21,7 +23,7 @@ int brute_force_main(string encodedFile, string queriesFile, int start, int leng
 			currQuery[i] = queries[q * lengthQuery + i];
 		}
 		cout << "Query " << q << endl;
-		float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
+		float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries, metric);
 
 		//for (int s = 0; s < numSegments; s++){
 		//	float* distArr = compute_one_query(currQuery, encodedFile, start, lengthQuery, numVariants, numSamples, numQueries);
@@ -36,7 +38,7 @@ int brute_force_main(string encodedFile, string queriesFile, int start, int leng
 	return 0;
 }
 
-float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries){
+float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries, string metric){
 	// ifstream to encoded file
         ifstream inFile;
         // open encoded file
@@ -84,24 +86,3 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
 	return distArr;
 }
 
-
-float euclidean_distance(float* vec1, float* vec2, int segLength){
-
-	/*
-	for (int i = 0; i < segLength; i++)
-                cout << vec1[i] << " ";
-	cout << endl;
-	for (int i = 0; i < segLength; i++)
-                cout << vec2[i] << " ";
-	cout << endl;
-	*/
-	float eucDist = 0;
-	float sum = 0;
-	for (int i = 0; i < segLength; i++){
-		float diff = vec1[i]-vec2[i];
-		float diffSqrd = pow(diff, 2);
-		sum += diffSqrd;
-	}
-	eucDist = sqrt(sum);
-	return eucDist;
-}
