@@ -1,9 +1,9 @@
 #include <iostream>
 #include <faiss/IndexFlat.h>
 
-#include "bruteForce.h"
 #include "buildIndex.h"
-#include "exactmatch.h"
+#include "compare.h"
+#include "metrics.h"
 #include "searchIndex.h"
 
 using namespace std;
@@ -13,7 +13,7 @@ using idx_t = faiss::Index::idx_t;
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
 int main(void){
-
+/*
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
 	
@@ -25,7 +25,8 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-/*	
+*/
+	
 	
 	int numVariants = 9;
 	int numSamples = 15;
@@ -36,17 +37,19 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-*/		
+		
 	
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
+	string metric = "";
 
-/*
+
 	cout << "Starting Brute Force." << endl;
 	int start_bf = 0;
+	metric = "bf";
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_bf << "-" << start_bf+segmentLength << endl;
-		int x = brute_force_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments);
+		int x = compare_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
 		start_bf += segmentLength;
 	}
 	
@@ -54,17 +57,18 @@ int main(void){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
 		cout << "\nLAST SEG DIFF";
 		cout << "\nSegment: " << start_bf << "-" << start_bf+lastSegmentLength << endl;
-		int x = brute_force_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments);	
+		int x = compare_main(encodingtxt, queriestxt, start_bf, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
 	cout << "End of Brute Force." << endl;
         cout << "---------" << endl;
-*/	
+	
 
 	cout << "Starting Exact Match." << endl;
 	int start_em = 0;
+	metric = "em";
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_em << "-" << start_em+segmentLength << endl;
-		int x = exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments);
+		int x = exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
 		start_em += segmentLength;
 	}
 	
@@ -72,7 +76,7 @@ int main(void){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
 		cout << "\nLAST SEG DIFF";
 		cout << "\nSegment: " << start_em << "-" << start_em+lastSegmentLength << endl;
-		int x = exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments);	
+		int x = exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
 	cout << "End of Exact Match." << endl;
         cout << "---------" << endl;
