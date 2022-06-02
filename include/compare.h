@@ -8,5 +8,5 @@
 
 using namespace std;
 
-void compare_main(string eFile, string qFile, int start, int lenQuery, int numV, int numS, int numQ, int numSeg, string metric);
-float* compute_one_query(float* q, string eFile, int start, int lenQUery, int numV, int numS, int numQ, string metric);
+void compare_main(string eFile, string qFile, int start, int lenQuery, int numV, int numS, int numQ, int numSeg, int metric);
+float* compute_one_query(float* q, string eFile, int start, int lenQUery, int numV, int numS, int numQ, int metric);

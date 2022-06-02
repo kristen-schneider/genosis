@@ -1,5 +1,4 @@
 #include <iostream>
-#include <faiss/IndexFlat.h>
 
 #include "buildIndex.h"
 #include "compare.h"
@@ -38,15 +37,15 @@ int main(void){
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/test.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/test.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
 		
-	
+
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
-	string metric = "";
+	int metric = -1;
 
 
 	cout << "Starting Brute Force." << endl;
 	int start_bf = 0;
-	metric = "ed";
+	metric = 0;
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_bf << "-" << start_bf+segmentLength << endl;
 		compare_main(encodingtxt, queriestxt, start_bf, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
@@ -65,10 +64,10 @@ int main(void){
 
 	cout << "Starting Exact Match." << endl;
 	int start_em = 0;
-	metric = "em";
+	metric = 1;
 	for (int i = 0; i < numSegments; i ++){
 		cout << "\nSegment: " << start_em << "-" << start_em+segmentLength << endl;
-		exact_match_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+		compare_main(encodingtxt, queriestxt, start_em, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
 		start_em += segmentLength;
 	}
 	
@@ -76,7 +75,7 @@ int main(void){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
 		cout << "\nLAST SEG DIFF";
 		cout << "\nSegment: " << start_em << "-" << start_em+lastSegmentLength << endl;
-		exact_match_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
+		compare_main(encodingtxt, queriestxt, start_em, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);	
 	}
 	cout << "End of Exact Match." << endl;
         cout << "---------" << endl;

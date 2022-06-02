@@ -7,11 +7,10 @@
 #include "compare.h"
 #include "metrics.h"
 #include "readEncoding.h"
-#include "sharedNRG.h"
 
 using namespace std;
 
-void compare_main(string encodedFile, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int numSegments, string metric){
+void compare_main(string encodedFile, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int numSegments, int metric){
 	
 	// get queries from file
 	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);
@@ -30,7 +29,7 @@ void compare_main(string encodedFile, string queriesFile, int start, int lengthQ
 
         	cout << "...writing results." << endl;
         	ofstream outMetricFile;
-        	outMetricFile.open("/home/sdp/precision-medicine/data/txt/" + metric + "Results." +to_string(start)+".txt");
+        	outMetricFile.open("/home/sdp/precision-medicine/data/txt/" + to_string(metric) + "Results." +to_string(start)+".txt");
         	for (int i = 0; i < numSamples; i++){
                 	outMetricFile << i << "\t" << metricArr[i] << endl;
         	}
@@ -44,7 +43,7 @@ void compare_main(string encodedFile, string queriesFile, int start, int lengthQ
 	}
 }
 
-float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries, string metric){
+float *compute_one_query(float* query, string encodedFile, int start, int segLength, int numVariants, int numSamples, int numQueries, int metric){
 	// ifstream to encoded file
         ifstream inFile;
         // open encoded file
@@ -75,20 +74,24 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
                         }
 
 			// compute metric by switch statment
+			float singleMetric = -1;
 			switch(metric) {
-  				case "ed":
-    					// euclidean distance
-					float singleMetric = euclidean_distance(query, singleVector, segLength);
-    					break;
-				case "em":
+  				case 0:{
+					// euclidean distance
+					singleMetric = euclidean_distance(query, singleVector, segLength);
+					//metricArr[lineCount] = singleMetric;
+    					break;}
+				case 1:{
 					// count mismatches
-					float singleMetric = exact_match(query, singleVector, segLength);
+					singleMetric = exact_match(query, singleVector, segLength);
+					//metricArr[lineCount] = singleMetric;
+					break;}
 			}
 			metricArr[lineCount] = singleMetric;
 			lineCount ++;
 		}
 	}
 
-	return distArr;
+	return metricArr;
 }
 
