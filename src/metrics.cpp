@@ -40,3 +40,8 @@ float exact_match(float* vec1, float* vec2, int segLength){
         }
         return numMismatches;
 }
+
+float sharedNRG(){
+	float numNRG = 0;
+	return numNRG;
+}
