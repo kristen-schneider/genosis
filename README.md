@@ -16,13 +16,14 @@
 - FAISS installed with conda. Run FAISS part with with: <code>g++ main_ss.cpp read_encodings.cpp faiss_pm.cpp -I /home/sdp/miniconda3/envs/py38/include/ -L /home/sdp/miniconda3/envs/py38/lib/ -lfaiss -o test</code> --> still errors.<br>
 - to just encode: <code>g++ main.cpp readVCF.cpp utils.cpp -I ../include/ -lhts -o encode</code><br>
 
-### IDEALLY...<br>
-I want to run <code>make</code> and my program would:<br>
-1. Read VCF into Variant Major Format(VMF)<br>
-2. Transpose VMF to Sample Major Format(SMF)<br>
-3. Write out Sample Major Format to intermediate file<br>
-4. Read intermediate file into arrays<br>
-5. Use arrays as input to FAISS<br><br>
+### WORKFLOW...<br>
+! main.cpp scripts will need paths to proper input files. ! <br>
+1. Read and encode VCF into Variant Major Format(VMF)<br>
+<code>g++ main_encode.cpp readVCF.cpp utils.cpp -I ../include/ -lhts -o ../bin/encode</code><br>
+2. Run FAISS.
+<code>g++ main_faiss.cpp buildIndex.cpp searchIndex.cpp readEncoding.cpp -I ../include/ -I /home/sdp/miniconda3/include/ -L /home/sdp/miniconda3/lib/ -lfaiss -o ../bin/faiss</code><br>
+3. Run comparison metrics. This includes running FAISS. (e.g. brute force euclidean distance vs FAISS)<br>
+<code>g++ main_compare.cpp compare.cpp buildIndex.cpp searchIndex.cpp metrics.cpp readEncoding.cpp -I ../include/ -I /home/sdp/miniconda3/include/ -L /home/sdp/miniconda3/lib/ -lfaiss -o ../bin/compare</code><br>
 
 
 ## PJ's Notes: <br>
