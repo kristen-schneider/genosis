@@ -15,7 +15,7 @@ int main(void){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
-/*	
+	
 	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
 	int numSamples = 2548; // number of samples (rows) in encoding.txt
 	int numQueries = 1; // number of queries
@@ -24,9 +24,9 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-*/
+
 	
-	
+/*	
 	int numVariants = 9;
 	int numSamples = 3;
 	int numQueries = 1; // number of queries
@@ -36,7 +36,7 @@ int main(void){
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-//		
+*/		
 
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << numSegments << endl;
@@ -78,12 +78,32 @@ int main(void){
 	}
 	cout << "End of Counting Mismatches." << endl;
         cout << "------------------\n" << endl;
+*/
 
+	cout << "------------------" << endl;
+        cout << "Starting Counting SMART Mismatches." << endl;
+        int start_smm = 0;
+        metric = 2;
+        for (int i = 0; i < numSegments; i ++){
+                cout << "\nSegment: " << start_smm << "-" << start_smm+segmentLength << endl;
+                compare_main(encodingtxt, queriestxt, start_smm, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
+                start_smm += segmentLength;
+        }
+        // last segment if differnt length      
+        if (numVariants % segmentLength != 0){
+                int lastSegmentLength = numVariants - (numSegments * segmentLength);
+                cout << "\nSegment: " << start_smm << "-" << start_smm+lastSegmentLength << endl;
+                compare_main(encodingtxt, queriestxt, start_smm, lastSegmentLength, numVariants, numSamples, numQueries, numSegments, metric);   
+        }
+        cout << "End of Counting SMART Mismatches." << endl;
+        cout << "------------------\n" << endl;
+
+/*
 
 	cout << "------------------" << endl;
 	cout << "Starting Counting Non-reference Genotypes." << endl;
         int start_nrg = 0;
-        metric = 2;
+        metric = 3;
         for (int i = 0; i < numSegments; i ++){
                 cout << "\nSegment: " << start_nrg << "-" << start_nrg+segmentLength << endl;
                 compare_main(encodingtxt, queriestxt, start_nrg, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
@@ -97,12 +117,12 @@ int main(void){
         }
         cout << "End of Counting Non-reference Genotypes." << endl;
         cout << "------------------\n" << endl;
-*/
+
 
 	cout << "------------------" << endl;
         cout << "Starting Counting Non-reference Genotypes Weighted." << endl;
         int start_nrgw = 0;
-        metric = 3;
+        metric = 4;
         for (int i = 0; i < numSegments; i ++){
                 cout << "\nSegment: " << start_nrgw << "-" << start_nrgw+segmentLength << endl;
                 compare_main(encodingtxt, queriestxt, start_nrgw, segmentLength, numVariants, numSamples, numQueries, numSegments, metric);
@@ -117,7 +137,7 @@ int main(void){
         cout << "End of Counting Non-reference Genotypes Weighted.." << endl;
         cout << "------------------\n" << endl;
 
-
+*/
 
 	return 0;
 }

@@ -82,13 +82,17 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
     					break;}
 				case 1:{
 					// count mismatches
-					singleMetric = exact_match(query, singleVector, segLength);
+					singleMetric = mismatch(query, singleVector, segLength);
 					break;}
 				case 2:{
 					// count shared nonRef genotypes
-					singleMetric = sharedNRG(query, singleVector, segLength);
+					singleMetric = smart_mismatch(query, singleVector, segLength);
 					break;}
 				case 3:{
+					// count shared nonRef genotypes
+					singleMetric = sharedNRG(query, singleVector, segLength);
+					break;}
+				case 4:{
 					// count shared nonRef genotypes with weights
 					singleMetric = sharedNRGWeighted(query, singleVector, segLength);
 				       	break;}
