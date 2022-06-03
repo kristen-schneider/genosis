@@ -10,8 +10,8 @@ using namespace std;
 // only code for reading encoded file and performing FAISS will be run
 int main(void){
 
-	const char *vcfFile = "/home/sdp/precision-medicine/data/vcf/ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf";
-	string encodedFile = "/home/sdp/precision-medicine/data/encoded/new.encoded2.vcf";//new.encoded.txt";
+	const char *vcfFile = "/home/sdp/precision-medicine/data/vcf/testinglong.vcf";//ALL.chr14.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf";
+	string encodedFile = "/home/sdp/precision-medicine/data/encoded/testinglong.txt";//new.encoded.txt";
 	cout << "Start of encoding." << endl;
 
 	cout << "Reading VCF file." << endl;
