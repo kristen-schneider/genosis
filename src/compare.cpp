@@ -88,6 +88,10 @@ float *compute_one_query(float* query, string encodedFile, int start, int segLen
 					// count shared nonRef genotypes
 					singleMetric = sharedNRG(query, singleVector, segLength);
 					break;}
+				case 3:{
+					// count shared nonRef genotypes with weights
+					singleMetric = sharedNRGWeighted(query, singleVector, segLength);
+				       	break;}
 			}
 			metricArr[lineCount] = singleMetric;
 			lineCount ++;

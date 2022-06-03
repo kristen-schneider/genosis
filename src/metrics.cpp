@@ -56,3 +56,22 @@ float sharedNRG(float* vec1, float* vec2, int segLength){
 
 	return numNRG;
 }
+
+/*
+ * counts number of shared nonreference genotypes
+ * more weight if they are nonrefeernce and are different (het and homo alt += 2)
+ * the count of alleles where they share a non-refrence allele
+ */
+float sharedNRGWeighted(float* vec1, float* vec2, int segLength){
+	float numNRG = 0;
+	
+	for (int i = 0; i < segLength; i++){
+                if(vec1[i] != 0 && vec2[i] != 0){
+                        if(vec1[i] == vec2[i]){ // nonreference and same genotype
+				numNRG++;
+			}else{numNRG+=2;} // nonreference and different genotype
+                }
+        }
+
+	return numNRG;
+}
