@@ -29,7 +29,7 @@ float euclidean_distance(float* vec1, float* vec2, int segLength){
 /*
  * counts number of mismatches betweeen two vectors 
  */
-float exact_match(float* vec1, float* vec2, int segLength){
+float mismatch(float* vec1, float* vec2, int segLength){
 
         float numMismatches = 0;
         for (int i = 0; i < segLength; i++){
@@ -38,6 +38,19 @@ float exact_match(float* vec1, float* vec2, int segLength){
                 }
         }
         return numMismatches;
+}
+/*
+ * counts number of mismatches betweeen two vectors
+ */
+float smart_mismatch(float* vec1, float* vec2, int segLength){
+
+        float mismatchScore = 0;
+        for (int i = 0; i < segLength; i++){
+                if(vec1[i] != vec2[i]){
+                        mismatchScore += abs(vec1[i] - vec2[i]);
+                }
+        }
+        return mismatchScore;
 }
 
 /*
