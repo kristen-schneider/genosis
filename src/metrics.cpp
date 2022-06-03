@@ -80,9 +80,12 @@ float sharedNRGWeighted(float* vec1, float* vec2, int segLength){
 	
 	for (int i = 0; i < segLength; i++){
                 if(vec1[i] != 0 && vec2[i] != 0){
-                        if(vec1[i] == vec2[i]){ // nonreference and same genotype
-				numNRG++;
-			}else{numNRG+=2;} // nonreference and different genotype
+                        // how many alleles are they sharing?
+			if (vec1[i] < vec2[i]){numNRG+=vec1[i];}
+			else{numNRG+=vec2[i];}
+			//if(vec1[i] == vec2[i]){ // nonreference and same genotype
+			//	numNRG++;
+			//}else{numNRG+=2;} // nonreference and different genotype
                 }
         }
 

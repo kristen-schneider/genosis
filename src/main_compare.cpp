@@ -78,7 +78,7 @@ int main(void){
 	}
 	cout << "End of Counting Mismatches." << endl;
         cout << "------------------\n" << endl;
-*/
+
 
 	cout << "------------------" << endl;
         cout << "Starting Counting SMART Mismatches." << endl;
@@ -98,7 +98,7 @@ int main(void){
         cout << "End of Counting SMART Mismatches." << endl;
         cout << "------------------\n" << endl;
 
-/*
+
 
 	cout << "------------------" << endl;
 	cout << "Starting Counting Non-reference Genotypes." << endl;
@@ -117,7 +117,7 @@ int main(void){
         }
         cout << "End of Counting Non-reference Genotypes." << endl;
         cout << "------------------\n" << endl;
-
+*/
 
 	cout << "------------------" << endl;
         cout << "Starting Counting Non-reference Genotypes Weighted." << endl;
@@ -137,7 +137,7 @@ int main(void){
         cout << "End of Counting Non-reference Genotypes Weighted.." << endl;
         cout << "------------------\n" << endl;
 
-*/
+
 
 	return 0;
 }
