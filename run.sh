@@ -1,10 +1,19 @@
 #!/bin/sh
 
+# path to directories
 src_dir="/home/sdp/precision-medicine/src/"
 bin_dir="/home/sdp/precision-medicine/bin/"
 data_dir="/home/sdp/precision-medicine/data/"
-encoded_file=$data_dir"encoded/short.encoded.txt"
 
+# path to encoded and query file
+encoded_file=$data_dir"encoded/short.encoded.txt"
+quireies_file=$data_dir"queries/short.queries.txt"
+
+# search and encoding info
+numVariants=9   # number of variants in encoded file
+numSamples=3;   # number of samples in encoded file
+numQueries=1;   # number of queries in queries file
+k=9;            # number of nearest neighbors to report
 
 echo "Starting All Experiments."
 
