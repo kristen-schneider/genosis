@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <faiss/IndexFlat.h>
@@ -6,6 +7,7 @@
 #include "searchIndex.h"
 
 using namespace std;
+using namespace std::chrono;
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
 
@@ -26,16 +28,16 @@ int main(int argc, char* argv[]){
 	//string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries2.txt";//ALL.wgs.svs.genotypes.queries.txt
 	*/
 	
-
-	int numVariants = atoi(argv[1]);//9;
-	int numSamples = atoi(argv[2]);//3;
-	int numQueries= atoi(argv[3]);//1; // number of queries
-	int k = atoi(argv[4]);//3;
-	int segmentLength = atoi(argv[5]);//3; // length of a single vector
-
+	
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt
+	string encodingtxt = argv[1];//"/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt
+	string queriestxt = argv[2];//"/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt
+	int numVariants = atoi(argv[3]);//9;
+	int numSamples = atoi(argv[4]);//3;
+	int numQueries= atoi(argv[5]);//1; // number of queries
+	int k = atoi(argv[6]);//3;
+	int segmentLength = atoi(argv[7]);//3; // length of a single vector
+
 
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
 	cout << "NUM SEGMENTS (floor): " << numSegments << endl;
@@ -50,12 +52,17 @@ int main(int argc, char* argv[]){
 	
 	int start = 0;
 	for (int i = 0; i < numSegments; i ++){
+		auto startTime = high_resolution_clock::now();	
 		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
 		cout << "-Building index." << endl;
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
 		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 		start += segmentLength;
+		
+		auto stopTime = high_resolution_clock::now();
+		auto durationTime = duration_cast<microseconds>(stopTime - startTime);
+		cout << "TIME: " << durationTime.count() << endl;
 	}
 	if (numVariants % segmentLength != 0){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);

@@ -8,14 +8,14 @@ bin_dir="/home/sdp/precision-medicine/bin/"
 data_dir="/home/sdp/precision-medicine/data/"
 
 # path to encoded and query file
-encoded_file=$data_dir"encoded/short.encoded.txt"
-quireies_file=$data_dir"queries/short.queries.txt"
+encoded_file=$data_dir"encoded/new.encoded.txt"
+queries_file=$data_dir"queries/new.queries.txt"
 
 # search and encoding info
-numVariants=9   # number of variants in encoded file
-numSamples=3;   # number of samples in encoded file
+numVariants=2548903   # number of variants in encoded file
+numSamples=2548   # number of samples in encoded file
 numQueries=1;   # number of queries in queries file
-k=9;            # number of nearest neighbors to report
+k=2548;            # number of nearest neighbors to report
 segmentLengthStart=3;
 segmentLengthEnd=9;
 segmentLengthStep=1;
@@ -30,7 +30,7 @@ do
     	echo "INDEX: " $index
 
     	#for segment lengths 100-1000 (100 step)
-	for segment_length in {3..9..3}
+	for segment_length in {100..1000..100}
 	#for segment_length in {$segmentLengthStart..$segmentLengthEnd}
     	do
         	echo "SEGMENT LENGTH: " $segment_length
@@ -45,9 +45,10 @@ do
 			-I $conda_dir"include/" \
 			-L $conda_dir"lib" \
 			-lfaiss \
-			-o $bin \
-        	
-		$bin $numVariants $numSamples $numQueries $k $segment_length
+			-o $bin 
+
+		outFile=$data_dir"index"$index"-length"$segment_length
+		$bin $encoded_file $queries_file $numVariants $numSamples $numQueries $k $segment_length > $outFile
 
     	done
    	echo
