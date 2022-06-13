@@ -45,8 +45,9 @@ do
 			-I $conda_dir"include/" \
 			-L $conda_dir"lib" \
 			-lfaiss \
-			-o $bin
-        	$bin
+			-o $bin \
+        	
+		$bin $numVariants $numSamples $numQueries $k $segment_length
 
     	done
    	echo

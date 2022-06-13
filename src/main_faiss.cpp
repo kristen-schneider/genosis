@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <faiss/IndexFlat.h>
 
@@ -10,7 +11,7 @@ using idx_t = faiss::Index::idx_t;
 
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
-int main(void){
+int main(int argc, char* argv[]){
 
 	// MAKE CHANGES TO THESE VARIABLES 
 	// ...to be automated later...
@@ -25,19 +26,19 @@ int main(void){
 	//string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries2.txt";//ALL.wgs.svs.genotypes.queries.txt
 	*/
 	
-	int numVariants = 9;
-	int numSamples = 3;
-	int numQueries = 1; // number of queries
-	int k = 3;
-	int segmentLength = 3; // length of a single vector
+
+	int numVariants = atoi(argv[1]);//9;
+	int numSamples = atoi(argv[2]);//3;
+	int numQueries= atoi(argv[3]);//1; // number of queries
+	int k = atoi(argv[4]);//3;
+	int segmentLength = atoi(argv[5]);//3; // length of a single vector
 
 	// path to encoded file
 	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt
 	string queriestxt = "/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt
-	
-	
+
 	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
-	cout << numSegments << endl;
+	cout << "NUM SEGMENTS (floor): " << numSegments << endl;
 
 
 	// DONE. Start FAISS..
