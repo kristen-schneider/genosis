@@ -26,7 +26,8 @@ int main(int argc, char* argv[]){
 	int numSegments = numVariants/segmentLength;
 	cout << numSegments << endl;
 	int metric = -1;
-
+	
+	
 	/*
 	cout << "------------------" << endl;
 	cout << "Starting Euclidean Distance." << endl;
@@ -103,7 +104,7 @@ int main(int argc, char* argv[]){
         }
         cout << "End of Counting Non-reference Genotypes." << endl;
         cout << "------------------\n" << endl;
-*/
+
 
 	cout << "------------------" << endl;
         cout << "Starting Counting Non-reference Genotypes Weighted." << endl;
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]){
         cout << "End of Counting Non-reference Genotypes Weighted.." << endl;
         cout << "------------------\n" << endl;
 
-
+*/
 
 	return 0;
 }

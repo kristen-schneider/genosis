@@ -119,7 +119,3 @@ faiss::IndexFlatIP build_faiss_index_segments_IP(string encodedFile, int start, 
         inFile.clear();
         return index;
 }
-
-
-
-
