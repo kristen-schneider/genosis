@@ -141,7 +141,6 @@ void sliceVCF(const char *vcfFile, string encodedFile){
 		}
 		outFile << endl;
 	}
-	//return 0;
 
 }
 

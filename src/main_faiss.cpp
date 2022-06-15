@@ -15,31 +15,18 @@ using idx_t = faiss::Index::idx_t;
 // only code for reading encoded file and performing FAISS will be run
 int main(int argc, char* argv[]){
 
-	// MAKE CHANGES TO THESE VARIABLES 
-	// ...to be automated later...
-	/*
-	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 2548; // number of samples (rows) in encoding.txt
-	int numQueries = 1; // number of queries
-	int k = 2548;
-	int segmentLength = 500; // length of a single vector
 	// path to encoded file
-	//string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded2.txt";//ALL.wgs.svs.genotypes.encoded.txt
-	//string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries2.txt";//ALL.wgs.svs.genotypes.queries.txt
-	*/
-	
-	
-	// path to encoded file
-	string encodingtxt = argv[1];//"/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt
-	string queriestxt = argv[2];//"/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt
-	int numVariants = atoi(argv[3]);//9;
-	int numSamples = atoi(argv[4]);//3;
-	int numQueries= atoi(argv[5]);//1; // number of queries
-	int k = atoi(argv[6]);//3;
-	int segmentLength = atoi(argv[7]);//3; // length of a single vector
+	string encodingtxt = argv[1];		// file with encoded data
+	string queriestxt = argv[2];		// file with query data
+
+	int numVariants = atoi(argv[3]);	// number of variants (cols)
+	int numSamples = atoi(argv[4]);		// number of samples (rows)
+	int numQueries= atoi(argv[5]); 		// number of queries sumbitted
+	int k = atoi(argv[6]); 			// num nearest neighbors
+	int segmentLength = atoi(argv[7]); 	// length of one segment
 
 
-	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
+	int numSegments = numVariants/segmentLength;
 	cout << "NUM SEGMENTS (floor): " << numSegments << endl;
 
 
@@ -55,9 +42,9 @@ int main(int argc, char* argv[]){
 		auto startTime = high_resolution_clock::now();	
 		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
 		cout << "-Building index." << endl;
-		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
+		faiss::IndexFlatIP s_index = build_faiss_index_segments_IP(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
-		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
+		similarity_search_IP(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 		start += segmentLength;
 		
 		auto stopTime = high_resolution_clock::now();
@@ -69,9 +56,9 @@ int main(int argc, char* argv[]){
 		cout << "\nLAST SEG DIFF";// << endl;
 		cout << "\nSegment: " << start << "-" << start+lastSegmentLength << endl;
                 cout << "-Building index." << endl;
-                faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
+                faiss::IndexFlatIP s_index = build_faiss_index_segments_IP(encodingtxt, start, lastSegmentLength, numSamples);
                 cout << "-Running similairty search." << endl;
-                similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
+                similarity_search_IP(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 
 	}
 	/*

@@ -11,37 +11,23 @@ using idx_t = faiss::Index::idx_t;
 
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
-int main(void){
-
-	// MAKE CHANGES TO THESE VARIABLES 
-	// ...to be automated later...
+int main(int argc, char* argv[]){
 	
-	int numVariants = 2548903;//68819; // number of variants (cols) in encoding.txt
-	int numSamples = 2548; // number of samples (rows) in encoding.txt
-	int numQueries = 1; // number of queries
-	int k = 2548;
-	int segmentLength = 500; // length of a single vector
 	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/new.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/new.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
+        string encodingtxt = argv[1];           // file with encoded data
+        string queriestxt = argv[2];            // file with query data
 
-	
-/*	
-	int numVariants = 9;
-	int numSamples = 3;
-	int numQueries = 1; // number of queries
-	int k = 3;
-	int segmentLength = 3; // length of a single vector
+        int numVariants = atoi(argv[3]);        // number of variants (cols)
+        int numSamples = atoi(argv[4]);         // number of samples (rows)
+        int numQueries= atoi(argv[5]);          // number of queries sumbitted
+        int k = atoi(argv[6]);                  // num nearest neighbors
+        int segmentLength = atoi(argv[7]);      // length of one segment
 
-	// path to encoded file
-	string encodingtxt = "/home/sdp/precision-medicine/data/encoded/short.encoded.txt";//ALL.wgs.svs.genotypes.encoded.txt";
-	string queriestxt = "/home/sdp/precision-medicine/data/queries/short.queries.txt";//ALL.wgs.svs.genotypes.queries.txt";
-*/		
-
-	int numSegments = numVariants/segmentLength;// + (numVariants % segmentLength != 0);
+	int numSegments = numVariants/segmentLength;
 	cout << numSegments << endl;
 	int metric = -1;
-/*
+
+	/*
 	cout << "------------------" << endl;
 	cout << "Starting Euclidean Distance." << endl;
 	int start_ed = 0;
