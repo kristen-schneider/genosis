@@ -63,7 +63,8 @@ indexType buildIndex(indexType index, string encodedFile, int start, int lengthS
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
 int main(int argc, char* argv[]){
-
+	
+	cout << "olasjalh" << endl;
 	// path to encoded file
 	string encodingtxt = argv[1];		// file with encoded data
 	string queriestxt = argv[2];		// file with query data
