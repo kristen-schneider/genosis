@@ -64,7 +64,6 @@ indexType buildIndex(indexType index, string encodedFile, int start, int lengthS
 // only code for reading encoded file and performing FAISS will be run
 int main(int argc, char* argv[]){
 	
-	cout << "olasjalh" << endl;
 	// path to encoded file
 	string encodingtxt = argv[1];		// file with encoded data
 	string queriestxt = argv[2];		// file with query data
@@ -85,18 +84,13 @@ int main(int argc, char* argv[]){
 	cout << "Starting similarity searching using FAISS..." << endl;
 	
 	cout << "\nENCODED FILE: " << encodingtxt << "..." << endl;
-	//faiss::IndexFlatL2 index = build_faiss_index(encodingtxt, numVariants, numSamples);
 	
 	int start = 0;
 	for (int i = 0; i < numSegments; i ++){
 		auto startTime = high_resolution_clock::now();	
 		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
 		cout << "-Building index." << endl;
-		//faiss::IndexFlatL2 indexFL2(segmentLength);
-        	//faiss::IndexFlatIP indexFIP(segmentLength);
-
-        	//buildIndex<faiss::IndexFlatL2>(indexFL2, encodingtxt, start, segmentLength, numSamples);
-        	//buildIndex<faiss::IndexFlatIP>(indexFIP, encodingtxt, start, segmentLength, numSamples);
+		
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
 		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
@@ -111,21 +105,12 @@ int main(int argc, char* argv[]){
 		cout << "\nLAST SEG DIFF";// << endl;
 		cout << "\nSegment: " << start << "-" << start+lastSegmentLength << endl;
                 cout << "-Building index." << endl;
-                //faiss::IndexFlatL2 indexFL2(segmentLength);
-        	//faiss::IndexFlatIP indexFIP(segmentLength);
-
-        	//buildIndex<faiss::IndexFlatL2>(indexFL2, encodingtxt, start, segmentLength, numSamples);
-        	//buildIndex<faiss::IndexFlatIP>(indexFIP, encodingtxt, start, segmentLength, numSamples);
 
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
                 cout << "-Running similairty search." << endl;
                 similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 
 	}
-	/*
-	cout << "\n2.Running similairty search..." << endl;
-	similarity_search(index, queriestxt, numVariants, numSamples, numQueries, k);	
-	*/
 	
 	cout << "End of FAISS." << endl;
 	cout << "---------" << endl;

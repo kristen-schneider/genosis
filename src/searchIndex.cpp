@@ -44,15 +44,16 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, 
 	// writing results
         cout << "...writing index results." << endl;
 	ofstream outIndexFile;
-	outIndexFile.open("/home/sdp/precision-medicine/data/txt/index."+txtName+".txt");
+	outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexResults.txt");
         for (int i = 0; i < numQueries; i++){
                 for (int j = 0; j < k; j++){
-                        outIndexFile << I[i * k + j] << "\t" << D[i * k + j] << endl;
+                        cout << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+                        outIndexFile << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
                 }
-                outIndexFile << endl;
+                cout << endl;
+                //outIndexFile << endl;
         }
 	outIndexFile.close();
-	
 	/*
         cout << "..writing distance results." << endl;
 	ofstream outDistanceFile;
@@ -70,51 +71,3 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, 
 	delete [] D;
 }
 
-void similarity_search_IP(faiss::IndexFlatIP index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
-	
-	idx_t* I = new idx_t[k * numQueries];
-	float* D = new float[k * numQueries];
-
-	// get queries from file
-	//float* queries = read_queries(queriesFile, lengthQuery, numQueries);
-	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);	
-	/*cout << "Query: " << endl;
-	for (int i = 0; i < numVariants; i++){
-        	cout << queries[i];
-        }
-	cout << endl;*/
-
-
-	//  index.search(nq, xq, k, D, I);
-	index.search(numQueries, queries, k, D, I);
-	cout << "...search complete." << endl;
-
-
-	// writing results
-        cout << "...writing index results." << endl;
-	ofstream outIndexFile;
-	outIndexFile.open("/home/sdp/precision-medicine/data/txt/index."+txtName+".txt");
-        for (int i = 0; i < numQueries; i++){
-                for (int j = 0; j < k; j++){
-                        outIndexFile << I[i * k + j] << "\t" << D[i * k + j] << endl;
-                }
-                outIndexFile << endl;
-        }
-	outIndexFile.close();
-	
-	/*
-        cout << "..writing distance results." << endl;
-	ofstream outDistanceFile;
-	outDistanceFile.open("/home/sdp/precision-medicine/data/txt/distanceReults.txt");
-        for (int i = 0; i < numQueries; i++){
-                for (int j = 0; j < k; j++){
-                        outDistanceFile << "\t" << sqrt(D[i * k + j]) << " ";
-                }
-                outDistanceFile << endl;
-        }
-	outDistanceFile.close();
-	*/
-	
-	delete [] I;
-	delete [] D;
-}
