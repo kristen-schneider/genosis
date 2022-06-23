@@ -1,4 +1,5 @@
 #include <faiss/IndexFlat.h>
+#include <faiss/IndexHNSW.h>
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -21,6 +22,7 @@ using idx_t = faiss::Index::idx_t;
 using namespace std;
 
 
+//void similarity_search(faiss::IndexHNSWFlat index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
 void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
 	
 	idx_t* I = new idx_t[k * numQueries];
@@ -67,7 +69,7 @@ void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, 
 	outDistanceFile.close();
 	*/
 	
-	delete [] I;
-	delete [] D;
+	//delete [] I;
+	//delete [] D;
 }
 

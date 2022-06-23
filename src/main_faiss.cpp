@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <faiss/IndexFlat.h>
+#include <faiss/IndexHNSW.h>
 #include <fstream>
 #include <sstream>
 
@@ -12,53 +13,6 @@ using namespace std;
 using namespace std::chrono;
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
-
-/*
-template <class indexType>
-indexType buildIndex(indexType index, string encodedFile, int start, int lengthSegment, int numSamples){
-	if (index.is_trained == 1){cout << "...index is trained." << endl;}
-        else{cerr << "...INDEX IS NOT TRAINED." << endl;}
-
-        // ifstream to encoded file
-        ifstream inFile;
-
-        // open encoded file
-        inFile.open(encodedFile);
-        if ( !inFile.is_open() ) {
-		cout << "Failed to open: " << encodedFile << endl;
-        }
-
-        // read encoded file line by line
-        string line;
-        int lineCount = 0;
-        if(inFile.is_open()){
-                while(getline(inFile, line)){
-                        string s;
-                        float f;
-                        // convert string line to float array
-                        float* singleVector = new float[lengthSegment];
-                        int i = 0;
-                        for (int c = start; c < start+lengthSegment; c++){
-                                s = line[c];
-                                f = stof(s);
-                                singleVector[i] = f;
-                                i++;
-                        }
-			index.add(1, singleVector);
-                        delete[] singleVector;
-                        lineCount++;
-                }
-
-        }
-
-        cout << "...added " << index.ntotal << " vectors to index." << endl;
-	inFile.close();
-        inFile.seekg(0);
-        inFile.clear();
-
-        return index;
-}
-*/
 
 // code to read VCF and write to encoded file is commented out
 // only code for reading encoded file and performing FAISS will be run
@@ -92,6 +46,7 @@ int main(int argc, char* argv[]){
 		cout << "-Building index." << endl;
 		
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
+		//faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
 		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 		start += segmentLength;
@@ -99,6 +54,7 @@ int main(int argc, char* argv[]){
 		auto stopTime = high_resolution_clock::now();
 		auto durationTime = duration_cast<microseconds>(stopTime - startTime);
 		cout << "TIME: " << durationTime.count() << endl;
+		cout << "end segment: " << i << endl;
 	}
 	if (numVariants % segmentLength != 0){
 		int lastSegmentLength = numVariants - (numSegments * segmentLength);
@@ -107,6 +63,7 @@ int main(int argc, char* argv[]){
                 cout << "-Building index." << endl;
 
 		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
+		//faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
                 cout << "-Running similairty search." << endl;
                 similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 
