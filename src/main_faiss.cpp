@@ -45,8 +45,8 @@ int main(int argc, char* argv[]){
 		cout << "\nSegment: " << start << "-" << start+segmentLength << endl;
 		cout << "-Building index." << endl;
 		
-		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
-		//faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
+		//faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
+		faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, segmentLength, numSamples);
 		cout << "-Running similairty search." << endl;
 		similarity_search(s_index, queriestxt, start, segmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 		start += segmentLength;
@@ -62,8 +62,8 @@ int main(int argc, char* argv[]){
 		cout << "\nSegment: " << start << "-" << start+lastSegmentLength << endl;
                 cout << "-Building index." << endl;
 
-		faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
-		//faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
+		//faiss::IndexFlatL2 s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
+		faiss::IndexHNSWFlat s_index = build_faiss_index_segments(encodingtxt, start, lastSegmentLength, numSamples);
                 cout << "-Running similairty search." << endl;
                 similarity_search(s_index, queriestxt, start, lastSegmentLength, numVariants, numSamples, numQueries, k, to_string(start));
 
