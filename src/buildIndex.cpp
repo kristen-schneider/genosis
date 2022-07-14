@@ -25,7 +25,7 @@ faiss::IndexHNSWFlat build_faiss_index_segments(string encodedFile, int start, i
 	cout << "INDEX_HNSW_FLAT" << endl;
 	
 	// setup for FAISS
-	faiss::IndexHNSWFlat index(lengthSegment, 4);
+	faiss::IndexHNSWFlat IndexHNSWFlat(lengthSegment, 64);
 	//faiss::IndexFlatL2 index(lengthSegment);
 	
 	//if (index.is_trained == 1){cout << "...index is trained." << endl;}
@@ -61,16 +61,16 @@ faiss::IndexHNSWFlat build_faiss_index_segments(string encodedFile, int start, i
 			}*/
 
 			// add array to index
-			index.add(1, singleVector);	
+			IndexHNSWFlat.add(1, singleVector);	
 			delete[] singleVector;
 			lineCount++;
 		}
 
 	}
-	cout << "...added " << index.ntotal << " vectors to index." << endl;
+	cout << "...added " << IndexHNSWFlat.ntotal << " vectors to index." << endl;
 	// closed encoded file
 	inFile.seekg(0);
 	inFile.close();
 	inFile.clear();
-	return index;
+	return IndexHNSWFlat;
 }

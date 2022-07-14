@@ -23,7 +23,7 @@ using namespace std;
 
 
 void similarity_search(const faiss::IndexHNSWFlat &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
-//void similarity_search(faiss::IndexFlatL2 index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
+//void similarity_search(const faiss::IndexFlatL2 &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
 	
 	idx_t* I = new idx_t[k * numQueries];
 	float* D = new float[k * numQueries];
@@ -41,7 +41,8 @@ void similarity_search(const faiss::IndexHNSWFlat &index, string queriesFile, in
 
 	//  index.search(nq, xq, k, D, I);
 	
-	index.search(numQueries, queries, k, D, I);
+	//index.search(numQueries, queries, k, D, I);
+	index.range_search(numQueries, queries, k, D, I, 50.0);
 	cout << "...search complete." << endl;
 
 

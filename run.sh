@@ -8,14 +8,14 @@ bin_dir="/home/sdp/precision-medicine/bin/"
 data_dir="/home/sdp/precision-medicine/data/"
 
 # path to encoded and query file
-encoded_file=$data_dir"encoded/test.encoded.txt"
-queries_file=$data_dir"queries/test.queries.txt"
+encoded_file=$data_dir"encoded/new.encoded.txt"
+queries_file=$data_dir"queries/new.queries.txt"
 
 # search and encoding info
-numVariants=9 #2548903   # number of variants in encoded file
-numSamples=15 #2548   # number of samples in encoded file
+numVariants=2548903   # number of variants in encoded file
+numSamples=2548   # number of samples in encoded file
 numQueries=1;   # number of queries in queries file
-k=15 #2548;            # number of nearest neighbors to report
+k=2548;            # number of nearest neighbors to report
 #segmentLengthStart=3;
 #segmentLengthEnd=9;
 #segmentLengthStep=1;
@@ -30,7 +30,7 @@ do
     	echo "INDEX: " $index
 
     	#for segment lengths 100-1000 (100 step)
-	for segment_length in {3..5..1}
+	for segment_length in {500..1000..100}
 	#for segment_length in {$segmentLengthStart..$segmentLengthEnd}
     	do
         	echo "SEGMENT LENGTH: " $segment_length
