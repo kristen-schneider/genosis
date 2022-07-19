@@ -85,6 +85,13 @@ float* read_queries_segment(string queriestxt, int start, int numVariants, int s
         qFile.close();
         qFile.seekg(0);
         qFile.clear();
-        return queriesArr;
+	/*
+        cout << "SEGMENT LENGTH: " << segmentLength << endl;
+	cout << "NUM QUERIES: " << numQueries << endl;
+	for (int i = 0; i < (segmentLength * numQueries); i ++){
+		cout << queriesArr[i];
+	}
+	*/
+	return queriesArr;
 
 }

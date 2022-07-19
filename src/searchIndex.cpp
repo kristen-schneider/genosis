@@ -31,18 +31,19 @@ void similarity_search(const faiss::IndexHNSWFlat &index, string queriesFile, in
 	// get queries from file
 	//float* queries = read_queries(queriesFile, lengthQuery, numQueries);
 	cout << "...reading queries" << endl;
-	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);	
-	/*cout << "Query: " << endl;
-	for (int i = 0; i < numVariants; i++){
+	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);
+	/*
+	cout << "Query: " << endl;
+	for (int i = 0; i < lengthQuery; i++){
         	cout << queries[i];
         }
-	cout << endl;*/
-
+	cout << endl;
+	*/
 
 	//  index.search(nq, xq, k, D, I);
 	
-	//index.search(numQueries, queries, k, D, I);
-	index.range_search(numQueries, queries, k, D, I, 50.0);
+	index.search(numQueries, queries, k, D, I);
+	//index.range_search(numQueries, queries, k, D, I, 50.0);
 	cout << "...search complete." << endl;
 
 
