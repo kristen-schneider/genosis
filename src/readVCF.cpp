@@ -54,8 +54,8 @@ void sliceVCF(const char *vcfFile, string encodedFile){
         }
         const char **seqnames = NULL;
         seqnames = bcf_hdr_seqnames(test_header, &nseq); // getting sequence names
-
-        // initialize and allocate bcf1_t object
+        
+	// initialize and allocate bcf1_t object
         bcf1_t *test_record = bcf_init();
         if (test_record == NULL) {
                 fprintf(stderr, "ERROR: record is empty\n");
