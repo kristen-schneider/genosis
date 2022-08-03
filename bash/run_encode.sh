@@ -9,7 +9,7 @@ data_dir="/home/sdp/precision-medicine/data/"
 
 # path to vcf and encoded file
 vcf_file=$data_dir"vcf/ten.vcf"
-encoded_file=$data_dir"encoded/new.encoded.txt"
+encoded_file=$data_dir"encoded/ten2.encoded.txt"
 
 # search and encoding info
 numVariants=9   # number of variants in encoded file

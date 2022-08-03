@@ -114,10 +114,10 @@ void sliceVCF(const char *vcfFile, string encodedFile){
 			}
 
 			// one record is tempVec
-			cout << kg << " " << datU2[kg] << "\t";
+			//cout << kg << " " << datU2[kg] << "\t";
 			tempVec.push_back(datU2[kg]);
 		}
-		cout << endl;
+		//cout << endl;
 		// all records are tempVecVec
 		tempVecVec.push_back(tempVec);
 		//for(int i=0; i < tempVec.size(); i++) {
