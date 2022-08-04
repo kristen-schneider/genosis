@@ -1,0 +1,239 @@
+The system is: Linux - 5.13.0-19-generic - x86_64
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++ 
+Build flags: -fvisibility-inlines-hidden;-std=c++17;-fmessage-length=0;-march=nocona;-mtune=haswell;-ftree-vectorize;-fPIC;-fstack-protector-strong;-fno-plt;-O2;-ffunction-sections;-pipe;-isystem;/home/sdp/miniconda3/include
+Id flags: -c 
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.o"
+
+The CXX compiler identification is GNU, found in "/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/3.22.1/CompilerIdCXX/CMakeCXXCompilerId.o"
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_81d12/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_81d12.dir/build.make CMakeFiles/cmTC_81d12.dir/build
+gmake[1]: Entering directory '/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o
+/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++   -fvisibility-inlines-hidden -std=c++17 -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/sdp/miniconda3/include    -v -o CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp
+Reading specs from /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/specs
+COLLECT_GCC=/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++
+Target: x86_64-conda-linux-gnu
+Configured with: /home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/src/gcc/configure --build=x86_64-build_pc-linux-gnu --host=x86_64-build_pc-linux-gnu --target=x86_64-conda-linux-gnu --prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built --with-sysroot=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-languages=c,c++,fortran,objc,obj-c++ --with-pkgversion='crosstool-NG 1.24.0.133_b0863d8_dirty' --enable-__cxa_atexit --disable-libmudflap --enable-libgomp --disable-libssp --enable-libquadmath --enable-libquadmath-support --enable-libsanitizer --enable-libmpx --with-gmp=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpfr=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpc=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-isl=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --enable-lto --with-host-libstdcxx='-static-libgcc -Wl,-Bstatic,-lstdc++,-Bdynamic -lm' --enable-threads=posix --enable-target-optspace --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-long-long --enable-default-pie
+Thread model: posix
+gcc version 9.3.0 (crosstool-NG 1.24.0.133_b0863d8_dirty) 
+COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-v' '-o' 'CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'
+ /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/cc1plus -quiet -v -iprefix /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/ -isysroot /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot -D_GNU_SOURCE -isystem /home/sdp/miniconda3/include /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -march=nocona -mtune=haswell -auxbase-strip CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -O2 -std=c++17 -version -fvisibility-inlines-hidden -fmessage-length=0 -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -ffunction-sections -o - |
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/as -v --64 -o CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o
+GNU assembler version 2.35.1 (x86_64-conda-linux-gnu) using BFD version (GNU Binutils) 2.35.1
+GNU C++17 (crosstool-NG 1.24.0.133_b0863d8_dirty) version 9.3.0 (x86_64-conda-linux-gnu)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0"
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu"
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward"
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include"
+ignoring nonexistent directory "/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot/include"
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed"
+ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /home/sdp/miniconda3/include
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed
+ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include
+ /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/include
+End of search list.
+GNU C++17 (crosstool-NG 1.24.0.133_b0863d8_dirty) version 9.3.0 (x86_64-conda-linux-gnu)
+	compiled by GNU C version 5.4.0 20160609, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 88eacfae89185f0c1ade0dfe70b1a39d
+COMPILER_PATH=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../libexec/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/
+LIBRARY_PATH=/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../lib/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-v' '-o' 'CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'
+Linking CXX executable cmTC_81d12
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_81d12.dir/link.txt --verbose=1
+/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++ -fvisibility-inlines-hidden -std=c++17 -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/sdp/miniconda3/include  -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/sdp/miniconda3/lib -Wl,-rpath-link,/home/sdp/miniconda3/lib -L/home/sdp/miniconda3/lib -v CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_81d12 
+Reading specs from /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/specs
+COLLECT_GCC=/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++
+COLLECT_LTO_WRAPPER=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/lto-wrapper
+Target: x86_64-conda-linux-gnu
+Configured with: /home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/src/gcc/configure --build=x86_64-build_pc-linux-gnu --host=x86_64-build_pc-linux-gnu --target=x86_64-conda-linux-gnu --prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built --with-sysroot=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-languages=c,c++,fortran,objc,obj-c++ --with-pkgversion='crosstool-NG 1.24.0.133_b0863d8_dirty' --enable-__cxa_atexit --disable-libmudflap --enable-libgomp --disable-libssp --enable-libquadmath --enable-libquadmath-support --enable-libsanitizer --enable-libmpx --with-gmp=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpfr=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpc=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-isl=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --enable-lto --with-host-libstdcxx='-static-libgcc -Wl,-Bstatic,-lstdc++,-Bdynamic -lm' --enable-threads=posix --enable-target-optspace --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-long-long --enable-default-pie
+Thread model: posix
+gcc version 9.3.0 (crosstool-NG 1.24.0.133_b0863d8_dirty) 
+COMPILER_PATH=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../libexec/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/
+LIBRARY_PATH=/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../lib/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/
+COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-L/home/sdp/miniconda3/lib' '-v' '-o' 'cmTC_81d12' '-shared-libgcc'
+ /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/collect2 -plugin /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/liblto_plugin.so -plugin-opt=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccodvlbm.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_81d12 /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/Scrt1.o /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crti.o /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o -L/home/sdp/miniconda3/lib -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0 -L/home/sdp/miniconda3/bin/../lib/gcc -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib -rpath /home/sdp/miniconda3/lib -O2 --sort-common --as-needed -z relro -z now --disable-new-dtags --gc-sections -rpath /home/sdp/miniconda3/lib -rpath-link /home/sdp/miniconda3/lib CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crtn.o
+COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-L/home/sdp/miniconda3/lib' '-v' '-o' 'cmTC_81d12' '-shared-libgcc'
+gmake[1]: Leaving directory '/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/home/sdp/miniconda3/include]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed]
+    add: [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include]
+    add: [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/include]
+  end of search list found
+  collapse include dir [/home/sdp/miniconda3/include] ==> [/home/sdp/miniconda3/include]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0/backward]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include] ==> [/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/include]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed] ==> [/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed]
+  collapse include dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/include]
+  collapse include dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/include] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/include]
+  implicit include dirs: [/home/sdp/miniconda3/include;/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0;/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu;/home/sdp/miniconda3/x86_64-conda-linux-gnu/include/c++/9.3.0/backward;/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/include;/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed;/home/sdp/miniconda3/x86_64-conda-linux-gnu/include;/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(x86_64-conda-linux-gnu-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_81d12/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_81d12.dir/build.make CMakeFiles/cmTC_81d12.dir/build]
+  ignore line: [gmake[1]: Entering directory '/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++   -fvisibility-inlines-hidden -std=c++17 -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/sdp/miniconda3/include    -v -o CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Reading specs from /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/specs]
+  ignore line: [COLLECT_GCC=/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++]
+  ignore line: [Target: x86_64-conda-linux-gnu]
+  ignore line: [Configured with: /home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/src/gcc/configure --build=x86_64-build_pc-linux-gnu --host=x86_64-build_pc-linux-gnu --target=x86_64-conda-linux-gnu --prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built --with-sysroot=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-languages=c c++ fortran objc obj-c++ --with-pkgversion='crosstool-NG 1.24.0.133_b0863d8_dirty' --enable-__cxa_atexit --disable-libmudflap --enable-libgomp --disable-libssp --enable-libquadmath --enable-libquadmath-support --enable-libsanitizer --enable-libmpx --with-gmp=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpfr=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpc=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-isl=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --enable-lto --with-host-libstdcxx='-static-libgcc -Wl -Bstatic -lstdc++ -Bdynamic -lm' --enable-threads=posix --enable-target-optspace --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-long-long --enable-default-pie]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.3.0 (crosstool-NG 1.24.0.133_b0863d8_dirty) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-v' '-o' 'CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc']
+  ignore line: [ /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/cc1plus -quiet -v -iprefix /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/ -isysroot /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot -D_GNU_SOURCE -isystem /home/sdp/miniconda3/include /usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -march=nocona -mtune=haswell -auxbase-strip CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -O2 -std=c++17 -version -fvisibility-inlines-hidden -fmessage-length=0 -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -ffunction-sections -o - |]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/as -v --64 -o CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [GNU assembler version 2.35.1 (x86_64-conda-linux-gnu) using BFD version (GNU Binutils) 2.35.1]
+  ignore line: [GNU C++17 (crosstool-NG 1.24.0.133_b0863d8_dirty) version 9.3.0 (x86_64-conda-linux-gnu)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0"]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu"]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward"]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include"]
+  ignore line: [ignoring nonexistent directory "/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot/include"]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed"]
+  ignore line: [ignoring duplicate directory "/home/sdp/miniconda3/bin/../lib/gcc/../../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /home/sdp/miniconda3/include]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/x86_64-conda-linux-gnu]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include/c++/9.3.0/backward]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/include-fixed]
+  ignore line: [ /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/include]
+  ignore line: [ /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++17 (crosstool-NG 1.24.0.133_b0863d8_dirty) version 9.3.0 (x86_64-conda-linux-gnu)]
+  ignore line: [	compiled by GNU C version 5.4.0 20160609  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 88eacfae89185f0c1ade0dfe70b1a39d]
+  ignore line: [COMPILER_PATH=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../libexec/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../lib/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-v' '-o' 'CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc']
+  ignore line: [Linking CXX executable cmTC_81d12]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_81d12.dir/link.txt --verbose=1]
+  ignore line: [/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++ -fvisibility-inlines-hidden -std=c++17 -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/sdp/miniconda3/include  -Wl -O2 -Wl --sort-common -Wl --as-needed -Wl -z relro -Wl -z now -Wl --disable-new-dtags -Wl --gc-sections -Wl -rpath /home/sdp/miniconda3/lib -Wl -rpath-link /home/sdp/miniconda3/lib -L/home/sdp/miniconda3/lib -v CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_81d12 ]
+  ignore line: [Reading specs from /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/specs]
+  ignore line: [COLLECT_GCC=/home/sdp/miniconda3/bin/x86_64-conda-linux-gnu-c++]
+  ignore line: [COLLECT_LTO_WRAPPER=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/lto-wrapper]
+  ignore line: [Target: x86_64-conda-linux-gnu]
+  ignore line: [Configured with: /home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/src/gcc/configure --build=x86_64-build_pc-linux-gnu --host=x86_64-build_pc-linux-gnu --target=x86_64-conda-linux-gnu --prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built --with-sysroot=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-languages=c c++ fortran objc obj-c++ --with-pkgversion='crosstool-NG 1.24.0.133_b0863d8_dirty' --enable-__cxa_atexit --disable-libmudflap --enable-libgomp --disable-libssp --enable-libquadmath --enable-libquadmath-support --enable-libsanitizer --enable-libmpx --with-gmp=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpfr=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-mpc=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --with-isl=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/.build/x86_64-conda-linux-gnu/buildtools --enable-lto --with-host-libstdcxx='-static-libgcc -Wl -Bstatic -lstdc++ -Bdynamic -lm' --enable-threads=posix --enable-target-optspace --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/builder/ktietz/cos6/ci_cos6/ctng-compilers_1622658800915/work/gcc_built/x86_64-conda-linux-gnu/sysroot --enable-long-long --enable-default-pie]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 9.3.0 (crosstool-NG 1.24.0.133_b0863d8_dirty) ]
+  ignore line: [COMPILER_PATH=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../libexec/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/bin/]
+  ignore line: [LIBRARY_PATH=/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/:/home/sdp/miniconda3/bin/../lib/gcc/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/:/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/:/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-fvisibility-inlines-hidden' '-std=c++17' '-fmessage-length=0' '-march=nocona' '-mtune=haswell' '-ftree-vectorize' '-fPIC' '-fstack-protector-strong' '-fno-plt' '-O2' '-ffunction-sections' '-pipe' '-isystem' '/home/sdp/miniconda3/include' '-L/home/sdp/miniconda3/lib' '-v' '-o' 'cmTC_81d12' '-shared-libgcc']
+  link line: [ /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/collect2 -plugin /home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/liblto_plugin.so -plugin-opt=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccodvlbm.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -o cmTC_81d12 /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/Scrt1.o /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crti.o /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o -L/home/sdp/miniconda3/lib -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0 -L/home/sdp/miniconda3/bin/../lib/gcc -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib -L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib -L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib -rpath /home/sdp/miniconda3/lib -O2 --sort-common --as-needed -z relro -z now --disable-new-dtags --gc-sections -rpath /home/sdp/miniconda3/lib -rpath-link /home/sdp/miniconda3/lib CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o /home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crtn.o]
+    arg [/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/home/sdp/miniconda3/bin/../libexec/gcc/x86_64-conda-linux-gnu/9.3.0/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccodvlbm.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--sysroot=/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-pie] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_81d12] ==> ignore
+    arg [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/Scrt1.o] ==> obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/Scrt1.o]
+    arg [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crti.o] ==> obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crti.o]
+    arg [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o] ==> obj [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o]
+    arg [-L/home/sdp/miniconda3/lib] ==> dir [/home/sdp/miniconda3/lib]
+    arg [-L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0] ==> dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0]
+    arg [-L/home/sdp/miniconda3/bin/../lib/gcc] ==> dir [/home/sdp/miniconda3/bin/../lib/gcc]
+    arg [-L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib] ==> dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib]
+    arg [-L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib] ==> dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib]
+    arg [-L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib] ==> dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib]
+    arg [-L/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib] ==> dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib]
+    arg [-L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib] ==> dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib]
+    arg [-L/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib] ==> dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib]
+    arg [-rpath] ==> ignore
+    arg [/home/sdp/miniconda3/lib] ==> ignore
+    arg [-O2] ==> ignore
+    arg [--sort-common] ==> ignore
+    arg [--as-needed] ==> ignore
+    arg [-zrelro] ==> ignore
+    arg [-znow] ==> ignore
+    arg [--disable-new-dtags] ==> ignore
+    arg [--gc-sections] ==> ignore
+    arg [-rpath] ==> ignore
+    arg [/home/sdp/miniconda3/lib] ==> ignore
+    arg [-rpath-link] ==> ignore
+    arg [/home/sdp/miniconda3/lib] ==> ignore
+    arg [CMakeFiles/cmTC_81d12.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o] ==> obj [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o]
+    arg [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crtn.o] ==> obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crtn.o]
+  collapse obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/Scrt1.o] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/Scrt1.o]
+  collapse obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crti.o] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/crti.o]
+  collapse obj [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o] ==> [/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o]
+  collapse obj [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o] ==> [/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o]
+  collapse obj [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib/crtn.o] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/crtn.o]
+  collapse library dir [/home/sdp/miniconda3/lib] ==> [/home/sdp/miniconda3/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0] ==> [/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0]
+  collapse library dir [/home/sdp/miniconda3/bin/../lib/gcc] ==> [/home/sdp/miniconda3/lib/gcc]
+  collapse library dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib/../lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib/../lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib/../lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../lib/gcc/x86_64-conda-linux-gnu/9.3.0/../../../../x86_64-conda-linux-gnu/lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/lib]
+  collapse library dir [/home/sdp/miniconda3/bin/../x86_64-conda-linux-gnu/sysroot/usr/lib] ==> [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit objs: [/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/Scrt1.o;/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/crti.o;/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtbeginS.o;/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0/crtendS.o;/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib/crtn.o]
+  implicit dirs: [/home/sdp/miniconda3/lib;/home/sdp/miniconda3/lib/gcc/x86_64-conda-linux-gnu/9.3.0;/home/sdp/miniconda3/lib/gcc;/home/sdp/miniconda3/x86_64-conda-linux-gnu/lib;/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/lib;/home/sdp/miniconda3/x86_64-conda-linux-gnu/sysroot/usr/lib]
+  implicit fwks: []
+
+

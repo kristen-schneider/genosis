@@ -1,0 +1,3 @@
+/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/precision-medicine.dir
+/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/edit_cache.dir
+/home/sdp/precision-medicine/kristen/array_src/build/CMakeFiles/rebuild_cache.dir
