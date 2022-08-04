@@ -1,0 +1,5 @@
+#ifndef ENCODINGMAP_H
+#define ENCODINGMAP_H
+
+#endif //ENCODINGMAP_H
+
