@@ -20,6 +20,42 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
+//faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int num_samples){
+faiss::IndexHNSWFlat build_faiss_index(string encodedTXT, int num_variants, int num_samples){
+	// setup for FAISS
+	//faiss::IndexFlatL2 index(num_variants);
+	faiss::IndexHNSWFlat index(num_variants, 64);
+
+	// open encoded file
+	ifstream eFile;
+	eFile.open(encodedTXT);
+	if (!eFile.is_open()){
+		cout << "Failed to open: " << encodedTXT << endl;
+	}else{
+		string line;
+		while (getline(eFile, line)){
+			string s;
+			float f;
+
+			// convert line to float array
+			float* sample_vector = new float[num_variants];
+			for (int i = 0; i < num_variants; i ++){
+				s = line[i];
+				f = stof(s);
+				sample_vector[i] = f;
+			}
+			index.add(1, sample_vector);
+			delete[] sample_vector;
+		}
+	}
+	cout << "...added " << index.ntotal << " samples to the index." << endl;
+	eFile.seekg(0);
+	eFile.close();
+	eFile.clear();
+	return index;
+}
+
+
 faiss::IndexHNSWFlat build_faiss_index_segments(string encodedFile, int start, int lengthSegment, int numSamples){
 //faiss::IndexFlatL2 build_faiss_index_segments(string encodedFile, int start, int lengthSegment, int numSamples){
 	cout << "INDEX_HNSW_FLAT" << endl;
@@ -55,12 +91,7 @@ faiss::IndexHNSWFlat build_faiss_index_segments(string encodedFile, int start, i
 				singleVector[i] = f;	
 				i++;
 			}
-			/*cout << "adding vector: ";
-			for (int i = 0; i < segLength; i++){
-				cout << singleVector[i];
-			}*/
-
-			// add array to index
+			
 			IndexHNSWFlat.add(1, singleVector);	
 			delete[] singleVector;
 			lineCount++;

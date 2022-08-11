@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # path to directories
-src_dir="/home/sdp/precision-medicine/src/"
-include_dir="/home/sdp/precision-medicine/include/"
+src_dir="/home/sdp/precision-medicine/cpp/src/"
+include_dir="/home/sdp/precision-medicine/cpp/include/"
 conda_dir="/home/sdp/miniconda3/envs/faiss/"
 bin_dir="/home/sdp/precision-medicine/bin/"
 data_dir="/home/sdp/precision-medicine/data/"
@@ -20,7 +20,7 @@ k=2548
 segmentLength=3000000
 
 source ~/miniconda3/etc/profile.d/conda.sh 
-conda activate faiss
+conda activate precision-medicine
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$conda_dir"lib/"
 #echo $LD_LIBRARY_PATH
 
