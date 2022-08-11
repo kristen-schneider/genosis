@@ -21,6 +21,26 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
+//void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
+//	       	int num_queries, int num_variants){
+void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
+	       	int num_queries, int num_variants){
+	
+	idx_t* I = new idx_t[k * num_queries];
+	float* D = new float[k * num_queries];
+
+	float* queries = read_queries(queriesTXT, num_variants, num_queries); 
+	index.search(num_queries, queries, k, D, I);
+	for (int i = 0; i < num_queries; i++){
+		cout << "QUERY: " << i << endl;
+		for (int j = 0; j < k; j++){
+			cout << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+		}
+		cout << endl;
+	}
+	delete[] I;
+	delete[] D;
+}
 
 void similarity_search(const faiss::IndexHNSWFlat &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
 //void similarity_search(const faiss::IndexFlatL2 &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
