@@ -1,7 +1,5 @@
 #include <iostream>
-//#include <iterator>
-//#include <sstream>
-//#include <fstream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -28,3 +26,27 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
     	}
     return trans_vec;
 }
+
+// return number of samples and number of variants in encoding file
+void get_dimensions(string encodedTXT, int* dimensions){
+	
+	ifstream eFile;
+	eFile.open(encodedTXT);
+	if (!eFile.is_open()){
+		cout << "Failed to open: " << encodedTXT << endl;
+	}else{
+		int num_samples = 0;
+		int num_variants = 0;
+		string line;
+		while (getline(eFile, line)){
+			if (num_variants == 0){
+				num_variants = line.length();;
+			}
+			num_samples ++;	
+		}
+		dimensions[0] = num_samples;
+		dimensions[1] = num_variants;
+	}
+}
+
+
