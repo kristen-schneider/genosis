@@ -2,9 +2,10 @@
 
 rule all:
 	input:
-		"data/segments/seg_5000/segments.encoding.done"
+		"data/segments/seg_5000/segments.encoding.done", 
+		"data/segments/seg_5000/segments.genome.done"
 
-rule segment_vcf_COMPILE:
+rule split_encode_vcf_COMPILE:
 	input:
 		main="cpp/src/main.cpp",
 		read_config="cpp/src/read_config.cpp",
@@ -28,7 +29,7 @@ rule segment_vcf_COMPILE:
 			" -o {output.bin}"
 		
 
-rule segment_vcf_RUN:
+rule split_encode_vcf_RUN:
 	input:
 		bin="cpp/bin/segment",
 		config_file="cpp/configs/segment_config"
@@ -38,3 +39,13 @@ rule segment_vcf_RUN:
 		"Executing--slice vcf into segments and encode"
 	shell:
 		"./{input.bin} {input.config_file} && touch {output.done}"
+
+
+rule plink_genome_IBD:
+	input:
+		encoding_done="data/segments/seg_5000/segments.encoding.done"
+	output:
+		done="data/segments/seg_5000/segments.genome.done"
+	shell:
+		"bash bash/run_plink.sh && touch {output.done}"
+
