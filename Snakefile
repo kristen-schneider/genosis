@@ -108,6 +108,8 @@ rule faiss_L2_EXECUTE:
 		"for encoding_f in {input.data_dir}*encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};"
-		"	{input.bin} $encoding_f $encoding_f 2548 > {input.data_dir}$seg_name'.faissL2';" \ 
+		#"	echo ./{input.bin} $encoding_f $encoding_f;"
+		#"	./{input.bin} $encoding_f $encoding_f 2548;" \ 
+		"	./{input.bin} $encoding_f $encoding_f 2548 > {input.data_dir}$seg_name'.faissL2';" \ 
 		"done" \
 		" && touch {output.done}"
