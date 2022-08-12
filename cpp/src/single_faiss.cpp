@@ -35,14 +35,15 @@ int main(int argc, char* argv[]){
 	cout << "Starting FAISS for " << encodedTXT << endl;
 
 	cout << "Building index..." << endl;
+	/*
 	faiss::IndexHNSWFlat index = build_faiss_index(encodedTXT, \
                         num_variants, \
                         num_samples);
-	/*
+	*/
 	faiss::IndexFlatL2 index = build_faiss_index(encodedTXT, \
 			num_variants, \
 			num_samples);
-	*/
+
 	cout << "Running search..." << endl;
 	search(index, k, queriesTXT, \
 		 	num_queries, \

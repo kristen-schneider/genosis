@@ -20,11 +20,11 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-//faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int num_samples){
-faiss::IndexHNSWFlat build_faiss_index(string encodedTXT, int num_variants, int num_samples){
+//faiss::IndexHNSWFlat build_faiss_index(string encodedTXT, int num_variants, int num_samples){
+faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int num_samples){
 	// setup for FAISS
-	//faiss::IndexFlatL2 index(num_variants);
-	faiss::IndexHNSWFlat index(num_variants, 64);
+	faiss::IndexFlatL2 index(num_variants);
+	//faiss::IndexHNSWFlat index(num_variants, 64);
 
 	// open encoded file
 	ifstream eFile;

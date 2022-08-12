@@ -21,9 +21,9 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-//void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
+//void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
 //	       	int num_queries, int num_variants){
-void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
+void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
 	       	int num_queries, int num_variants){
 	
 	idx_t* I = new idx_t[k * num_queries];
