@@ -1,37 +1,40 @@
-#configfile: "config.yaml"
+from types import SimpleNamespace
+configfile: "config.yaml" # path to the config
+config = SimpleNamespace(**config)
 
 rule all:
 	input:
 		"setup.done",
-		"data/segments/seg_5000/segments.encoding.done", 
-		"data/segments/seg_5000/segments.genome.done",
-		"data/segments/seg_5000/segments.faissL2.done"
+		f"{config.segments_out_dir}/segments.encoding.done",		
+		f"{config.segments_out_dir}/segments.genome.done",		
+		f"{config.segments_out_dir}/segments.faissL2.done",		
 
 rule set_up:
 	input:
-		condalib="/home/sdp/miniconda3/envs/precision-medicine/lib"
+		condalib=f"{config.conda_dir}/lib"
 	output:
 		done="setup.done"
 	message: 
 		"Setting up environment"
 	shell:
-		" source ~/miniconda3/etc/profile.d/conda.sh" \
-		" && conda activate precision-medicine" \
-		" && PATH=$PATH:~/plink_linux_x86_64_20220402/" \
-		" && export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{input.condalib}" \
-		" && touch {output.done}"
+		"source ~/miniconda3/etc/profile.d/conda.sh;" \
+		"conda activate precision-medicine;" \
+		"PATH=$PATH:~/plink_linux_x86_64_20220402/;" \
+		"export LD_LIBRARY_PATH={input.condalib}${{LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}};" \
+		"touch {output.done};"
 		
 
 rule split_encode_vcf_COMPILE:
 	input:
-		main="cpp/src/main.cpp",
-		read_config="cpp/src/read_config.cpp",
-		map_encodings="cpp/src/map_encodings.cpp",
-		slice_vcf="cpp/src/slice_vcf.cpp",
-		encode_vcf="cpp/src/encode_vcf.cpp",
-		include="cpp/include/"
+		setup="setup.done",
+		main=f"{config.src_dir}/main.cpp",
+		read_config=f"{config.src_dir}/read_config.cpp",
+		map_encodings=f"{config.src_dir}/map_encodings.cpp",
+		slice_vcf=f"{config.src_dir}/slice_vcf.cpp",
+		encode_vcf=f"{config.src_dir}/encode_vcf.cpp",
+		include=f"{config.include_dir}/"
 	output:
-		bin="cpp/bin/segment"
+		bin=f"{config.bin_dir}/segment"
 	message:
 		"Compiling--slice vcf into segments and encode"
 	shell:
@@ -47,10 +50,11 @@ rule split_encode_vcf_COMPILE:
 
 rule split_encode_vcf_EXECUTE:
 	input:
-		bin="cpp/bin/segment",
+		setup="setup.done",
+		bin=f"{config.bin_dir}/segment",
 		config_file="cpp/configs/segment_config"
 	output:
-		done="data/segments/seg_5000/segments.encoding.done"
+		done="data/segments/chr0-test/seg_3/segments.encoding.done"
 	message: 
 		"Executing--slice vcf into segments and encode"
 	shell:
@@ -60,9 +64,10 @@ rule split_encode_vcf_EXECUTE:
 
 rule plink_genome_IBD:
 	input:
-		encoding_done="data/segments/seg_5000/segments.encoding.done"
+		setup="setup.done",
+		encoding_done="data/segments/chr0-test/seg_3/segments.encoding.done"
 	output:
-		done="data/segments/seg_5000/segments.genome.done"
+		done="data/segments/chr0-test/seg_3/segments.genome.done"
 	message:
 		"Running plink on all encodings"
 	shell:
@@ -72,16 +77,18 @@ rule plink_genome_IBD:
 
 rule faiss_L2_COMPILE:
 	input:
-		main="cpp/src/single_faiss.cpp",
-		build="cpp/src/buildIndex.cpp",
-		read="cpp/src/readEncoding.cpp",
-		search="cpp/src/searchIndex.cpp",
-		utils="cpp/src/utils.cpp",
-		include="cpp/include/",
-		condainclude="/home/sdp/miniconda3/envs/precision-medicine/include",
-		condalib="/home/sdp/miniconda3/envs/precision-medicine/lib"
+		setup="setup.done",
+		encoding_done="data/segments/chr0-test/seg_3/segments.encoding.done",
+		main=f"{config.src_dir}/single_faiss.cpp",
+		build=f"{config.src_dir}buildIndex.cpp",
+		read=f"{config.src_dir}readEncoding.cpp",
+		search=f"{config.src_dir}searchIndex.cpp",
+		utils=f"{config.src_dir}utils.cpp",
+		include=f"{config.include_dir}",
+		condainclude=f"{config.conda_dir}/include",
+		condalib=f"{config.conda_dir}/lib"
 	output:
-		bin="cpp/bin/single_faiss"
+		bin=f"{config.bin_dir}/single_faiss"
 	message:
 		"Compiling--run FAISS L2 on all input segments"
 	shell:
@@ -98,18 +105,22 @@ rule faiss_L2_COMPILE:
 
 rule faiss_L2_EXECUTE:
 	input:
+		setup="setup.done",
 		bin="cpp/bin/single_faiss",
-		data_dir="data/segments/seg_5000/"
+		data_dir="data/segments/chr0-test/seg_3/"
 	output:
-		done="data/segments/seg_5000/segments.faissL2.done"
+		done="data/segments/chr0-test/seg_3/segments.faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input segments"
 	shell:
 		"for encoding_f in {input.data_dir}*encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};"
+		#"	echo $seg_name;" \
 		#"	echo ./{input.bin} $encoding_f $encoding_f;"
-		#"	./{input.bin} $encoding_f $encoding_f 2548;" \ 
-		"	./{input.bin} $encoding_f $encoding_f 2548 > {input.data_dir}$seg_name'.faissL2';" \ 
+		#"	./{input.bin} $encoding_f $encoding_f 2548;" \
+		#"	./{input.bin} $encoding_f $encoding_f 10;" \ 
+		#"	echo {input.data_dir}$seg_name'.faissL2';" \
+		"	./{input.bin} $encoding_f $encoding_f 10 > {input.data_dir}$seg_name'.faissL2';" \ 
 		"done" \
 		" && touch {output.done}"

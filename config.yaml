@@ -1,0 +1,14 @@
+conda_dir:
+  /home/sdp/miniconda3/envs/precision-medicine/
+
+src_dir:
+  cpp/src
+include_dir:
+  cpp/include
+bin_dir:
+  cpp/bin
+
+segment_config:
+  cpp/configs/segment_config
+segments_out_dir:
+  data/segments/chr0-test/seg_3
