@@ -8,7 +8,7 @@ include_dir:
 bin_dir:
   cpp/bin
 
-segment_config:
-  cpp/configs/segment_config
+configs_dir:
+  cpp/configs
 segments_out_dir:
   data/segments/chr0-test/seg_3

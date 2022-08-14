@@ -52,9 +52,9 @@ rule split_encode_vcf_EXECUTE:
 	input:
 		setup="setup.done",
 		bin=f"{config.bin_dir}/segment",
-		config_file="cpp/configs/segment_config"
+		config_file=f"{config.configs_dir}/segment_config"
 	output:
-		done="data/segments/chr0-test/seg_3/segments.encoding.done"
+		done=f"{config.segments_out_dir}/segments.encoding.done"
 	message: 
 		"Executing--slice vcf into segments and encode"
 	shell:
@@ -65,9 +65,9 @@ rule split_encode_vcf_EXECUTE:
 rule plink_genome_IBD:
 	input:
 		setup="setup.done",
-		encoding_done="data/segments/chr0-test/seg_3/segments.encoding.done"
+		encoding_done=f"{config.segments_out_dir}/segments.encoding.done"
 	output:
-		done="data/segments/chr0-test/seg_3/segments.genome.done"
+		done=f"{config.segments_out_dir}/segments.genome.done"
 	message:
 		"Running plink on all encodings"
 	shell:
@@ -78,7 +78,7 @@ rule plink_genome_IBD:
 rule faiss_L2_COMPILE:
 	input:
 		setup="setup.done",
-		encoding_done="data/segments/chr0-test/seg_3/segments.encoding.done",
+		encoding_done=f"{config.segments_out_dir}/segments.encoding.done",
 		main=f"{config.src_dir}/single_faiss.cpp",
 		build=f"{config.src_dir}buildIndex.cpp",
 		read=f"{config.src_dir}readEncoding.cpp",
@@ -106,10 +106,10 @@ rule faiss_L2_COMPILE:
 rule faiss_L2_EXECUTE:
 	input:
 		setup="setup.done",
-		bin="cpp/bin/single_faiss",
-		data_dir="data/segments/chr0-test/seg_3/"
+		bin=f"{config.bin_dir}/single_faiss",
+		data_dir=f"{config.segments_out_dir}/"
 	output:
-		done="data/segments/chr0-test/seg_3/segments.faissL2.done"
+		done=f"{config.segments_out_dir}/segments.faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input segments"
 	shell:
