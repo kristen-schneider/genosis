@@ -11,7 +11,7 @@ bin_dir:
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/segments/chr6/seg_5000
+  data/segments/chr0-test/seg_3
 
 k:
-  248
+  2548
