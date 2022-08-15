@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
 		 	num_queries, \
 			num_variants);	
 		
-	auto end = high_resolution_clock::now();
-	auto duration_file = duration_case<microseconds> (stop - start);
-	cout << "TIME:file:" << duration_file << endl;
+	auto stop = high_resolution_clock::now();
+	auto duration_file = duration_cast<microseconds> (stop - start);
+	cout << "TIME:file:" << duration_file.count() << endl;
 }

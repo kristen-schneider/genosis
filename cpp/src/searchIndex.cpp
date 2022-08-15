@@ -36,9 +36,9 @@ void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
 	auto start = high_resolution_clock::now();
 	index.search(num_queries, queries, k, D, I);
 	auto stop = high_resolution_clock::now();
-	auto duration_search = duration_cast<microseconds>(stop - start);
-	
-	cout << "TIME:search:" << duration_search << endl;
+	auto duration_search = duration_cast<microseconds>(stop - start);	
+	cout << "TIME:search:" << duration_search.count() << endl;
+
 	for (int i = 0; i < num_queries; i++){
 		cout << "QUERY: " << i << endl;
 		for (int j = 0; j < k; j++){
