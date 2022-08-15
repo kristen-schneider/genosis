@@ -1,13 +1,14 @@
 #include <faiss/IndexFlat.h>
 #include <faiss/IndexHNSW.h>
 #include <iostream>
-
+#include <chrono>
 #include "buildIndex.h"
 #include "searchIndex.h"
 #include "utils.h"
 
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
+using namespace std::chrono;
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -34,6 +35,7 @@ int main(int argc, char* argv[]){
 
 	cout << "Starting FAISS for " << encodedTXT << endl;
 
+	auto start = high_resolution_clock::now();
 	cout << "Building index..." << endl;
 	/*
 	faiss::IndexHNSWFlat index = build_faiss_index(encodedTXT, \
@@ -49,4 +51,7 @@ int main(int argc, char* argv[]){
 		 	num_queries, \
 			num_variants);	
 		
+	auto end = high_resolution_clock::now();
+	auto duration_file = duration_case<microseconds> (stop - start);
+	cout << "TIME:file:" << duration_file << endl;
 }

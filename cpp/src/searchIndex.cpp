@@ -5,6 +5,7 @@
 #include <math.h>
 #include <sstream>
 #include <string>
+#include <chrono>
 
 #include "searchIndex.h"
 #include "readEncoding.h"
@@ -19,6 +20,7 @@
 
 // 64-bit int
 using idx_t = faiss::Index::idx_t;
+using namespace std::chrono;
 using namespace std;
 
 //void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
@@ -30,7 +32,13 @@ void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
 	float* D = new float[k * num_queries];
 
 	float* queries = read_queries(queriesTXT, num_variants, num_queries); 
+	
+	auto start = high_resolution_clock::now();
 	index.search(num_queries, queries, k, D, I);
+	auto stop = high_resolution_clock::now();
+	auto duration_search = duration_cast<microseconds>(stop - start);
+	
+	cout << "TIME:search:" << duration_search << endl;
 	for (int i = 0; i < num_queries; i++){
 		cout << "QUERY: " << i << endl;
 		for (int j = 0; j < k; j++){
