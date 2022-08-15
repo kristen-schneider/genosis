@@ -4,5 +4,6 @@ old_make/
 lib/
 bin/
 kristen/vec_src/
+plink.*
 python/txt/
 python/segcounts/
