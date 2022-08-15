@@ -20,7 +20,7 @@ rule set_up:
 		"source ~/miniconda3/etc/profile.d/conda.sh;" \
 		"conda activate precision-medicine;" \
 		"PATH=$PATH:~/plink_linux_x86_64_20220402/;" \
-		"export LD_LIBRARY_PATH={input.condalib}${{LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}};" \
+		"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{input.condalib};" \
 		"touch {output.done};"
 		
 
