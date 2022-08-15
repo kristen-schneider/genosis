@@ -65,15 +65,22 @@ rule split_encode_vcf_EXECUTE:
 rule plink_genome_IBD:
 	input:
 		setup="setup.done",
+		data_dir=f"{config.segments_out_dir}/",
 		encoding_done=f"{config.segments_out_dir}/segments.encoding.done"
 	output:
 		done=f"{config.segments_out_dir}/segments.genome.done"
 	message:
 		"Running plink on all encodings"
 	shell:
-		"bash bash/run_plink.sh" \
+		"for vcf_f in {input.data_dir}*.vcf; do" \
+		"	echo $vcf_f;" \
+		"	plink --vcf $vcf_f --genome;" \
+		"       filename=$(basename $vcf_f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	mv plink.genome {input.data_dir}${{seg_name}}.genome;" \
+		"done" \
 		" && touch {output.done}"
-
+		
 
 rule faiss_L2_COMPILE:
 	input:
@@ -113,14 +120,9 @@ rule faiss_L2_EXECUTE:
 	message:
 		"Executing--run FAISS L2 on all input segments"
 	shell:
-		"for encoding_f in {input.data_dir}*encoding; do" \
+		"for encoding_f in {input.data_dir}*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};"
-		#"	echo $seg_name;" \
-		#"	echo ./{input.bin} $encoding_f $encoding_f;"
-		#"	./{input.bin} $encoding_f $encoding_f 2548;" \
-		#"	./{input.bin} $encoding_f $encoding_f 10;" \ 
-		#"	echo {input.data_dir}$seg_name'.faissL2';" \
-		"	./{input.bin} $encoding_f $encoding_f 10 > {input.data_dir}$seg_name'.faissL2';" \ 
+		"	./{input.bin} $encoding_f $encoding_f {config.k} > {input.data_dir}$seg_name'.faissL2';" \ 
 		"done" \
 		" && touch {output.done}"
