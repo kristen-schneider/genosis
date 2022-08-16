@@ -1,6 +1,12 @@
 conda_dir:
   /home/sdp/miniconda3/envs/precision-medicine/
 
+sample_IDs:
+  data/ALL.sampleIDs
+
+python_dir:
+  python
+
 src_dir:
   cpp/src
 include_dir:
