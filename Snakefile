@@ -7,7 +7,8 @@ rule all:
 		"setup.done",
 		f"{config.segments_out_dir}/segments.encoding.done",		
 		f"{config.segments_out_dir}/segments.genome.done",		
-		f"{config.segments_out_dir}/segments.faissL2.done",		
+		f"{config.segments_out_dir}/segments.faissL2.done",
+		f"{config.segments_out_dir}/segments.cnn.done"	
 
 rule set_up:
 	input:
@@ -124,5 +125,24 @@ rule faiss_L2_EXECUTE:
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};"
 		"	./{input.bin} $encoding_f $encoding_f {config.k} > {input.data_dir}$seg_name'.faissL2';" \ 
+		"done" \
+		" && touch {output.done}"
+
+
+rule generate_cnn_input_file:
+	input:
+		setup="setup.done",
+		sample_IDs=f"{config.sample_IDs}",
+		data_dir=f"{config.segments_out_dir}/", 
+		make_CNN=f"{config.python_dir}/scripts/cnn/make_CNN_input.py"
+	output:
+		done=f"{config.segments_out_dir}/segments.cnn.done"
+	message:
+		"Generating CNN input files for all segments"
+	shell:
+		"for encoding_f in {input.data_dir}*.encoding; do" \
+		"	filename=$(basename $encoding_f);" \
+                "       seg_name=${{filename%.*}};" \
+		"	python {input.make_CNN} {input.sample_IDs} $encoding_f {input.data_dir}$seg_name'.genome' {input.data_dir}$seg_name'.cnn';" \
 		"done" \
 		" && touch {output.done}"
