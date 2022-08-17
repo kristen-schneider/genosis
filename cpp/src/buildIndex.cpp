@@ -44,10 +44,10 @@ faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int nu
 			size_t end = 0;
 			while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
 				end = line.find(delim, start);
-				cout << line.substr(start, end - start) << endl;
-				//sample_vector[i] = line.substr(start, end - start);
+				f = stof(line.substr(start, end - start));
+				sample_vector[i] = f;
+				i ++;
 			}
-
 			/*
 			 for (int i = 0; i < num_variants; i ++){
 				s = line[i];
