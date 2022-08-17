@@ -2,10 +2,18 @@ import sys
 from collections import defaultdict
 
 #sys.path.insert(1, '~genotype-encoding/python/utils/')
-#import distance_calculations
-#from python.utils import distance_calculations
+import distance_calculations
+
+## INPUT DATA STRUCTURES FROM START FILES
+## 1. sample IDs
+## 2. sample encodings
+## 3. plink files
 
 def get_sample_ID_list(sample_ID_file):
+    '''
+    opens a file with all sample IDs
+    and creates a list
+    '''
     all_sample_IDs = []
     f = open(sample_ID_file, 'r')
     for line in f:
@@ -16,6 +24,10 @@ def get_sample_ID_list(sample_ID_file):
     return all_sample_IDs
 
 def get_encoding_list(sample_encodings_file):
+    '''
+    opens a file with all encodings for
+    all samples and creates a list
+    '''
     all_sample_encodings = []
     f = open(sample_encodings_file, 'r')
     for line in f:
@@ -26,20 +38,47 @@ def get_encoding_list(sample_encodings_file):
 
     return all_sample_encodings
 
-def get_ID_encoding_dict(sample_IDs, sample_encodings_file):
+def get_ID_encoding_dict(sample_IDs, sample_encodings):
+    '''
+    takes a list of sample IDs and a file of all encodings
+    and creates a dictionary (both need to be ordered)
+    key: sampleID
+    value: sample encoding
+    '''
     ID_encoding_dict = dict.fromkeys(sample_IDs)
 
     ID_i = 0
-    f = open(sample_encodings_file, 'r')
-    for line in f:
-        encoding_i = line.strip()
+    for encoding_i in sample_encodings:
         ID_encoding_dict[sample_IDs[ID_i]] = encoding_i
         ID_i += 1
-    f.close()
 
     if len(sample_IDs) != len(ID_encoding_dict.keys()):
         print('ERROR: not the same number of sample IDs and encodings.')
     return ID_encoding_dict
+
+
+def get_encoding_ID_dict(sample_encodings, sample_IDs):
+    '''
+    takes a list of sample encodings
+    and a file of all sampleIDs
+    and creates a dictionary
+    key: sample encoding
+    value: sample ID
+    '''
+    encoding_ID_dict = dict.fromkeys(sample_encodings)
+
+    encoding_i = 0
+    for sampleID_i in sample_IDs:
+        encoding_ID_dict[sample_encodings[encoding_i]] = sampleID_i
+        encoding_i += 1
+
+    if len(sample_encodidngs) != len(encoding_ID_dict.keys()):
+        print('ERROR: not the same number of sample IDs and encodings.')
+    return encoding_ID_dict
+
+
+
+## PLOTTING DATA STRUCTURES
 
 def get_query_euclidean_dict(query_ID, ID_encoding_dict):
     query_euclidean_dict = {ID: -1 for ID in ID_encoding_dict.keys()}

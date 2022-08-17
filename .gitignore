@@ -4,6 +4,7 @@ old_make/
 lib/
 bin/
 kristen/vec_src/
+python/png
 plink.*
 */__pycache__/*
 python/txt/
