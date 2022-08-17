@@ -26,12 +26,12 @@ using namespace std;
 //void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
 //	       	int num_queries, int num_variants){
 void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
-	       	int num_queries, int num_variants){
+	       	int num_queries, int num_variants, const char delim){
 	
 	idx_t* I = new idx_t[k * num_queries];
 	float* D = new float[k * num_queries];
 
-	float* queries = read_queries(queriesTXT, num_variants, num_queries); 
+	float* queries = read_queries(queriesTXT, num_variants, num_queries, delim); 
 	
 	auto start = high_resolution_clock::now();
 	index.search(num_queries, queries, k, D, I);

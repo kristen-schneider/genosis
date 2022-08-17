@@ -52,7 +52,8 @@ int main(int argc, char* argv[]){
 	cout << "Running search..." << endl;
 	search(index, k, queriesTXT, \
 		 	num_queries, \
-			num_variants);	
+			num_variants, \
+			delim);	
 		
 	auto stop = high_resolution_clock::now();
 	auto duration_file = duration_cast<microseconds> (stop - start);

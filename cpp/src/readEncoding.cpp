@@ -8,7 +8,7 @@
 using namespace std;
 
 // read queries file
-float* read_queries(string queriestxt, int numVariants, int numQueries){
+float* read_queries(string queriestxt, int numVariants, int numQueries, const char delim){
         // path to queries file
         ifstream qFile;
 
@@ -24,16 +24,26 @@ float* read_queries(string queriestxt, int numVariants, int numQueries){
 	if(qFile.is_open()){
 		string line;
                 while(getline(qFile, line)){
-			int segLength = line.length();
+			//iint segLength = line.length();
 			string s;
                         float f;
 
                         // convert string line to float array
-                        for (int c = 0; c < segLength; c++){
-                                s = line[c];
-                                f = stof(s);
-                                queriesArr[Q * segLength + c] = f;
+                        int i = 0;
+                        size_t start;
+                        size_t end = 0;
+                        while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
+                                end = line.find(delim, start);
+                                f = stof(line.substr(start, end - start));
+                                queriesArr[Q * numVariants + i] = f;
+                                i ++;
                         }
+
+			//for (int c = 0; c < segLength; c++){
+                        //        s = line[c];
+                        //        f = stof(s);
+                        //        queriesArr[Q * segLength + c] = f;
+                        //}
 			Q++;
 		}
 	}
