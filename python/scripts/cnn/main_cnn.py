@@ -88,18 +88,23 @@ def main():
 
     print('Embeddings...')
     
+    # file to write output embeddings
+    # (same format as encoding file:
+    #   one line is one embedding vector)
     out_embeddings = open(ID_embeddings_file, 'w')
 
     embedding = model.build_embedding(vector_size)
     
     # getting size of the input encoding vectors
     vector_size = num_variants
-    input_embedding_dict = dict()
 
+    # to store embeddings and to check input vectors
     input_encoding_check = []
     embedding_list = []
 
+    # iterate through all pairs in a batch 
     for batch in train_dataset:
+        # get sample 1 and sample 2 in a pair
         sample1, sample2 = batch[:2]
         
         # embeddings
@@ -108,8 +113,10 @@ def main():
             embedding(sample2)
         )
         for i in range(len(sample1)):
+            # get input encoding vector to check it with sample encodings
             input_encoding_check.append(sample1[i].numpy())
             input_encoding_check.append(sample2[i].numpy())
+            # save embedding for sample1 and sample 2
             embedding_list.append(sample1_embedding[i].numpy())
             embedding_list.append(sample2_embedding[i].numpy())
 
@@ -117,6 +124,9 @@ def main():
     for a in range(len(input_encoding_check)):
         original_encoding = np.array(sample_encodings[a])
         tf_encoding = input_encoding_check[a]
+        # checking that the input vector is
+        # the same as the encoding vector 
+        # so order of embeddings is same as order of encodings
         if(np.array_equal(tf_encoding, original_encoding)):
             for f in embedding_list[a]:
                 out_embeddings.write(str(f) + ' ')
