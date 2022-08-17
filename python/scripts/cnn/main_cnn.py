@@ -11,11 +11,16 @@ import model
 import sys
 import utils
 
+sys.path.insert(1, '/home/sdp/precision-medicine/python/scripts/')
+import basic_data_structures
+
 import tensorflow as tf
+import numpy as np 
 
 sample_IDs_file = sys.argv[1]
 sample_encodings_file = sys.argv[2]
 ID_distances_file = sys.argv[3]
+ID_embeddings_file = sys.argv[4]
 #encoding_distances_file = sys.argv[4]
 # ds_out_dir = sys.argv[4]
 #tf_records_dir = sys.argv[4]
@@ -33,6 +38,11 @@ def main():
     print('...Number of Pairs: ', num_pairs)
     print()
     
+    ## basic data structures
+    sample_IDs = basic_data_structures.get_sample_ID_list(sample_IDs_file)
+    sample_encodings = basic_data_structures.get_encoding_list(sample_encodings_file)
+
+
     print('Building dataset...')
     # ds = basic_ds.build_dataset_from_file(CNN_input_file)
     ds = basic_ds.sample_without_replacement(sample_IDs_file, sample_encodings_file,
@@ -77,37 +87,43 @@ def main():
     vector_size = num_variants
 
     print('Embeddings...')
+    
+    out_embeddings = open(ID_embeddings_file, 'w')
+
     embedding = model.build_embedding(vector_size)
     
     # getting size of the input encoding vectors
     vector_size = num_variants
+    input_embedding_dict = dict()
 
-    print('Embeddings...')
-    embedding = model.build_embedding(vector_size)
-    
-    count = 0
+    input_encoding_check = []
+    embedding_list = []
+
     for batch in train_dataset:
-        count += 1
         sample1, sample2 = batch[:2]
+        
+        # embeddings
         sample1_embedding, sample2_embedding = (
             embedding(sample1),
             embedding(sample2)
         )
-        print(sample1, sample1_embedding)
-        print(sample2, sample2_embedding)
-    print(count)
+        for i in range(len(sample1)):
+            input_encoding_check.append(sample1[i].numpy())
+            input_encoding_check.append(sample2[i].numpy())
+            embedding_list.append(sample1_embedding[i].numpy())
+            embedding_list.append(sample2_embedding[i].numpy())
 
-    #sample = next(iter(train_dataset))
-    #
-    #sample1, sample2 = sample[:2]
-    #sample1_embedding, sample2_embedding = (
-    #    embedding(sample1),
-    #    embedding(sample2)
-    #)
-    #
-    #cosine_similarity = tf.metrics.CosineSimilarity()
-    #similarity = cosine_similarity(sample1_embedding, sample2_embedding)
-    #print("Similarity:", similarity.numpy())
+    print("...writing embeddings")
+    for a in range(len(input_encoding_check)):
+        original_encoding = np.array(sample_encodings[a])
+        tf_encoding = input_encoding_check[a]
+        if(np.array_equal(tf_encoding, original_encoding)):
+            for f in embedding_list[a]:
+                out_embeddings.write(str(f) + ' ')
+            out_embeddings.write('\n')
+                        
+    
+    out_embeddings.close()
 
 if __name__ == '__main__':
     main()
