@@ -18,11 +18,13 @@ int main(int argc, char* argv[]){
 	string encodedTXT = argv[1];
 	string queriesTXT = argv[2];
 	int k = stoi(argv[3]);
+	const char delim = ' ';
+
 
 	int encoded_dimensions[2];	// [num_samples, num_variants]
 	int queries_dimensions[2];	// [num_queries, num_variants]
-	get_dimensions(encodedTXT, encoded_dimensions);
-	get_dimensions(queriesTXT, queries_dimensions);
+	get_dimensions(encodedTXT, encoded_dimensions, true);
+	get_dimensions(queriesTXT, queries_dimensions, true);
 	int num_samples = encoded_dimensions[0];
 	int num_variants = encoded_dimensions[1];
 	int num_queries = queries_dimensions[0];
@@ -44,7 +46,8 @@ int main(int argc, char* argv[]){
 	*/
 	faiss::IndexFlatL2 index = build_faiss_index(encodedTXT, \
 			num_variants, \
-			num_samples);
+			num_samples, 
+			delim);
 
 	cout << "Running search..." << endl;
 	search(index, k, queriesTXT, \
