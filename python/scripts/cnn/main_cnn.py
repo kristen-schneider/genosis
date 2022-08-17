@@ -89,7 +89,8 @@ def main():
     out_embeddings = open(ID_embeddings_file, 'w')
 
     embedding = model.build_embedding(vector_size)
-    
+    cosine_similarity = tf.metrics.CosineSimilarity()
+
     # to store embeddings and to check input vectors
     input_encoding_check = []
     embedding_list = []
@@ -104,6 +105,13 @@ def main():
             embedding(sample1),
             embedding(sample2)
         )
+        
+        similarity_encodings = cosine_similarity(sample1, sample2)
+        similarity_embeddings = cosine_similarity(sample1_embedding, sample2_embedding)
+        print(similarity_encodings.numpy(), similarity_embeddings.numpy(),
+              similarity_embeddings.numpy()-similarity_encodings.numpy())
+
+
         for i in range(len(sample1)):
             # get input encoding vector to check it with sample encodings
             input_encoding_check.append(sample1[i].numpy())
