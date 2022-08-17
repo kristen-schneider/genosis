@@ -47,7 +47,6 @@ def build_dataset_from_file(CNN_input_file):
 
 def sample_without_replacement(sample_IDs_file, sample_encodings_file,
                                ID_distances_file,
-                               encoding_distance_file,
                                num_samples, num_variants):
 
     print('...getting lists')

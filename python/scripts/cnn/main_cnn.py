@@ -9,7 +9,6 @@ Description: Inspired by [code](https://keras.io/examples/vision/siamese_network
 import basic_ds
 import model
 import sys
-import tfrecord_ds
 import utils
 
 import tensorflow as tf
@@ -17,7 +16,7 @@ import tensorflow as tf
 sample_IDs_file = sys.argv[1]
 sample_encodings_file = sys.argv[2]
 ID_distances_file = sys.argv[3]
-encoding_distances_file = sys.argv[4]
+#encoding_distances_file = sys.argv[4]
 # ds_out_dir = sys.argv[4]
 #tf_records_dir = sys.argv[4]
 
@@ -38,7 +37,6 @@ def main():
     # ds = basic_ds.build_dataset_from_file(CNN_input_file)
     ds = basic_ds.sample_without_replacement(sample_IDs_file, sample_encodings_file,
                                              ID_distances_file,
-                                             encoding_distances_file,
                                              num_samples, num_variants)
     # ds = basic_ds.build_dataset_from_file(encoding_distances_file)
     # print('Writing dataset to zip file...')
@@ -78,19 +76,19 @@ def main():
     # getting size of the input encoding vectors
     vector_size = num_variants
 
-    # print('Embeddings...')
-    # embedding = model.build_embedding(vector_size)
-    # sample = next(iter(train_dataset))
-    #
-    # sample1, sample2 = sample[:2]
-    # sample1_embedding, sample2_embedding = (
-    #     embedding(sample1),
-    #     embedding(sample2)
-    # )
-    #
-    # cosine_similarity = tf.metrics.CosineSimilarity()
-    # similarity = cosine_similarity(sample1_embedding, sample2_embedding)
-    # print("Similarity:", similarity.numpy())
+    print('Embeddings...')
+    embedding = model.build_embedding(vector_size)
+    sample = next(iter(train_dataset))
+    
+    sample1, sample2 = sample[:2]
+    sample1_embedding, sample2_embedding = (
+        embedding(sample1),
+        embedding(sample2)
+    )
+    
+    cosine_similarity = tf.metrics.CosineSimilarity()
+    similarity = cosine_similarity(sample1_embedding, sample2_embedding)
+    print("Similarity:", similarity.numpy())
 
 if __name__ == '__main__':
     main()
