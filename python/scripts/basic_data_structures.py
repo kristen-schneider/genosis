@@ -34,6 +34,7 @@ def get_encoding_list(sample_encodings_file):
         encoding = line.strip()
         encoding_list_ints = [int(i) for i in encoding]
         all_sample_encodings.append(encoding_list_ints)
+        #all_sample_encodings.append(encoding)
     f.close()
 
     return all_sample_encodings
@@ -72,7 +73,7 @@ def get_encoding_ID_dict(sample_encodings, sample_IDs):
         encoding_ID_dict[sample_encodings[encoding_i]] = sampleID_i
         encoding_i += 1
 
-    if len(sample_encodidngs) != len(encoding_ID_dict.keys()):
+    if len(sample_encodings) != len(encoding_ID_dict.keys()):
         print('ERROR: not the same number of sample IDs and encodings.')
     return encoding_ID_dict
 
