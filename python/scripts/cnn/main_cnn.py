@@ -44,6 +44,7 @@ def main():
 
 
     print('Building dataset...')
+    print('...sampling without replacement')
     # ds = basic_ds.build_dataset_from_file(CNN_input_file)
     ds = basic_ds.sample_without_replacement(sample_IDs_file, sample_encodings_file,
                                              ID_distances_file,
@@ -64,9 +65,6 @@ def main():
     train_dataset = ds.take(round(num_pairs * 0.8))
     val_dataset = ds.skip(round(num_pairs * 0.8))
 
-    # val_dataset = val_dataset.batch(32, drop_remainder=False)
-    # val_dataset = val_dataset.prefetch(tf.data.AUTOTUNE)
-
     # getting size of the input encoding vectors
     vector_size = num_variants
 
@@ -83,9 +81,6 @@ def main():
     print('Training Model...')
     siamese_model.fit(train_dataset, epochs=1, validation_data=val_dataset)
 
-    # getting size of the input encoding vectors
-    vector_size = num_variants
-
     print('Embeddings...')
     
     # file to write output embeddings
@@ -95,9 +90,6 @@ def main():
 
     embedding = model.build_embedding(vector_size)
     
-    # getting size of the input encoding vectors
-    vector_size = num_variants
-
     # to store embeddings and to check input vectors
     input_encoding_check = []
     embedding_list = []
