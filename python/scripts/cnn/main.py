@@ -58,7 +58,7 @@ x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(x)
 x = tf.keras.layers.BatchNormalization()(x)
 x = tf.keras.layers.GlobalAveragePooling1D()(x)
 
-outputs = tf.keras.layers.Dense(2500)(x)
+outputs = tf.keras.layers.Dense(80)(x)
 
 base_cnn = tf.keras.Model(inputs=inputs, outputs=outputs, name="base_cnn")
 embedding = tf.keras.Model(base_cnn.input, outputs, name="Embedding")
@@ -151,8 +151,10 @@ class SiameseModel(tf.keras.Model):
 
 siamese_model = SiameseModel(siamese_network)
 
+## Embeddings for a UNtrained model
 out_embeddings_2 = open(ID_embeddings_file_2, 'w')
-# Embeddings for a UNtrained model
+
+UT_all_sample_embeddings = []
 # iterate through all pairs in a batch
 for batch in train_dataset:
     # get sample 1 and sample 2 in a pair
@@ -164,14 +166,18 @@ for batch in train_dataset:
         embedding(sample2)
     )
 
+    for s in range(len(sample1_embedding.numpy())):
+        UT_all_sample_embeddings.append(sample1_embedding[s].numpy())
+        UT_all_sample_embeddings.append(sample2_embedding[s].numpy())
 
-    for s in sample1_embedding:
-        np_embedding = s.numpy()
-        for f in np_embedding:
-            out_embeddings_2.write(str(f) + ' ')
-        out_embeddings_2.write('\n')
+print("num UT embeddings: ", len(UT_all_sample_embeddings))
+for embedding_i in range(len(UT_all_sample_embeddings)):
+    curr_embedding = UT_all_sample_embeddings[embedding_i]
+    for f in curr_embedding:
+        out_embeddings_2.write(str(f) + ' ')
+    out_embeddings_2.write('\n')
 
-
+out_embeddings_2.close()
 
 
 siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True)
@@ -179,6 +185,7 @@ siamese_model.fit(train_dataset, epochs=1, validation_data=val_dataset)
 
 out_embeddings = open(ID_embeddings_file, 'w')
 
+all_sample_embeddings = []
 # iterate through all pairs in a batch
 for batch in train_dataset:
     # get sample 1 and sample 2 in a pair
@@ -189,13 +196,29 @@ for batch in train_dataset:
         embedding(sample1),
         embedding(sample2)
     )
+    
+    for s in range(len(sample1_embedding.numpy())):
+        all_sample_embeddings.append(sample1_embedding[s].numpy())
+        all_sample_embeddings.append(sample2_embedding[s].numpy())
 
+print("num embeddings: ", len(all_sample_embeddings))
+for embedding_i in range(len(all_sample_embeddings)):
+    curr_embedding = all_sample_embeddings[embedding_i]
+    for f in curr_embedding:
+        out_embeddings.write(str(f) + ' ')
+    out_embeddings.write('\n')
 
-    for s in sample1_embedding:
-        np_embedding = s.numpy()
-        for f in np_embedding:
-            out_embeddings.write(str(f) + ' ')
-        out_embeddings.write('\n')
+out_embeddings.close()
+
+    #for s in range(len(sample1_embedding)):
+    #    np_embedding_1 = sample1_embedding[s].numpy()
+    #    np_embedding_2 = sample2_embedding[s].numpy()
+    #    for f in np_embedding_1:
+    #        out_embeddings.write(str(f) + ' ')
+    #    out_embeddings.write('\n')
+    #    for f in np_embedding_2:
+    #        out_embeddings.write(str(f) + ' ')
+    #    out_embeddings.write('\n')
 
     #cosine_similarity = tf.metrics.CosineSimilarity()
 
