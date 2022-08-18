@@ -151,37 +151,37 @@ class SiameseModel(tf.keras.Model):
 
 siamese_model = SiameseModel(siamese_network)
 
-## Embeddings for a UNtrained model
-out_embeddings_2 = open(ID_embeddings_file_2, 'w')
+### Embeddings for a UNtrained model
+#out_embeddings_2 = open(ID_embeddings_file_2, 'w')
+#
+#UT_all_sample_embeddings = []
+## iterate through all pairs in a batch
+#for batch in train_dataset:
+#    # get sample 1 and sample 2 in a pair
+#    sample1, sample2 = batch[:2]
+#
+#    # embeddings
+#    sample1_embedding, sample2_embedding = (
+#        embedding(sample1),
+#        embedding(sample2)
+#    )
+#
+#    for s in range(len(sample1_embedding.numpy())):
+#        UT_all_sample_embeddings.append(sample1_embedding[s].numpy())
+#        UT_all_sample_embeddings.append(sample2_embedding[s].numpy())
+#
+#print("num UT embeddings: ", len(UT_all_sample_embeddings))
+#for embedding_i in range(len(UT_all_sample_embeddings)):
+#    curr_embedding = UT_all_sample_embeddings[embedding_i]
+#    for f in curr_embedding:
+#        out_embeddings_2.write(str(f) + ' ')
+#    out_embeddings_2.write('\n')
+#
+#out_embeddings_2.close()
 
-UT_all_sample_embeddings = []
-# iterate through all pairs in a batch
-for batch in train_dataset:
-    # get sample 1 and sample 2 in a pair
-    sample1, sample2 = batch[:2]
-
-    # embeddings
-    sample1_embedding, sample2_embedding = (
-        embedding(sample1),
-        embedding(sample2)
-    )
-
-    for s in range(len(sample1_embedding.numpy())):
-        UT_all_sample_embeddings.append(sample1_embedding[s].numpy())
-        UT_all_sample_embeddings.append(sample2_embedding[s].numpy())
-
-print("num UT embeddings: ", len(UT_all_sample_embeddings))
-for embedding_i in range(len(UT_all_sample_embeddings)):
-    curr_embedding = UT_all_sample_embeddings[embedding_i]
-    for f in curr_embedding:
-        out_embeddings_2.write(str(f) + ' ')
-    out_embeddings_2.write('\n')
-
-out_embeddings_2.close()
-
-
-siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True)
-siamese_model.fit(train_dataset, epochs=1, validation_data=val_dataset)
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=1)
+siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True)#, loss='mse')
+siamese_model.fit(train_dataset, epochs=20, validation_data=val_dataset)
 
 out_embeddings = open(ID_embeddings_file, 'w')
 
