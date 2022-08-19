@@ -18,13 +18,16 @@ int main(int argc, char* argv[]){
 	string encodedTXT = argv[1];
 	string queriesTXT = argv[2];
 	int k = stoi(argv[3]);
-	const char delim = ' ';
+	string s_delim = argv[4];
+	cout << "s_delim: " << s_delim << endl;
+	char delim = '\0';
+	if (s_delim == "space"){ delim = ' ';}
 
 
 	int encoded_dimensions[2];	// [num_samples, num_variants]
 	int queries_dimensions[2];	// [num_queries, num_variants]
-	get_dimensions(encodedTXT, encoded_dimensions, true);
-	get_dimensions(queriesTXT, queries_dimensions, true);
+	get_dimensions(encodedTXT, encoded_dimensions, delim);
+	get_dimensions(queriesTXT, queries_dimensions, delim);
 	int num_samples = encoded_dimensions[0];
 	int num_variants = encoded_dimensions[1];
 	int num_queries = queries_dimensions[0];
