@@ -21,7 +21,7 @@ using idx_t = faiss::Index::idx_t;
 using namespace std;
 
 //faiss::IndexHNSWFlat build_faiss_index(string encodedTXT, int num_variants, int num_samples){
-faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int num_samples, const char delim){
+faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int num_samples, char delim){
 	// setup for FAISS
 	faiss::IndexFlatL2 index(num_variants);
 	//faiss::IndexHNSWFlat index(num_variants, 64);
@@ -42,18 +42,28 @@ faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int nu
 			float* sample_vector = new float[num_variants];
 			size_t start;
 			size_t end = 0;
-			while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
-				end = line.find(delim, start);
-				f = stof(line.substr(start, end - start));
-				sample_vector[i] = f;
-				i ++;
+			if (delim == '\0'){
+				cout << "Delim is non. Processing encodings." << endl;
+			 	for (int i = 0; i < num_variants; i ++){
+					s = line[i];
+					f = stof(s);
+					sample_vector[i] = f;
+				}
 			}
-			/*
-			 for (int i = 0; i < num_variants; i ++){
-				s = line[i];
-				f = stof(s);
-				sample_vector[i] = f;
-			}*/
+			else{
+				cout << "Delim is space. Processing embeddings." << endl;
+				while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
+					end = line.find(delim, start);
+					f = stof(line.substr(start, end - start));
+					sample_vector[i] = f;
+					i ++;
+			
+				}
+			}
+			for (int i = 0; i < num_variants; i ++){
+				cout << sample_vector[i] << " ";
+			}
+			cout << endl;
 			index.add(1, sample_vector);
 			delete[] sample_vector;
 		}

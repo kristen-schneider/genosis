@@ -28,7 +28,7 @@ vector<vector<int>> transpose(vector<vector<int>> &b){
 }
 
 // return number of samples and number of variants in encoding file
-void get_dimensions(string encodedTXT, int* dimensions, bool embeddings){
+void get_dimensions(string encodedTXT, int* dimensions, char delim){
 	
 	ifstream eFile;
 	eFile.open(encodedTXT);
@@ -41,7 +41,7 @@ void get_dimensions(string encodedTXT, int* dimensions, bool embeddings){
 		while (getline(eFile, line)){
 
 			if (num_variants == 0){
-				if (embeddings){
+				if (delim == ' '){
 					size_t start = 0;
 					size_t end = 0;
 					const char delim = ' ';

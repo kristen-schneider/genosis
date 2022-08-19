@@ -26,7 +26,7 @@ using namespace std;
 //void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
 //	       	int num_queries, int num_variants){
 void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
-	       	int num_queries, int num_variants, const char delim){
+	       	int num_queries, int num_variants, char delim){
 	
 	idx_t* I = new idx_t[k * num_queries];
 	float* D = new float[k * num_queries];

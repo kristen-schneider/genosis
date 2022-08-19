@@ -12,4 +12,4 @@
 using namespace std;
 
 vector<vector<int> > transpose(vector<vector<int> > &b);
-void get_dimensions(string encodedTXT, int* dimensions, bool embeddings);
+void get_dimensions(string encodedTXT, int* dimensions, char delim);
