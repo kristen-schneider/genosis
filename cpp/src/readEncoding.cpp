@@ -32,18 +32,22 @@ float* read_queries(string queriestxt, int numVariants, int numQueries, const ch
                         int i = 0;
                         size_t start;
                         size_t end = 0;
-                        while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
-                                end = line.find(delim, start);
-                                f = stof(line.substr(start, end - start));
-                                queriesArr[Q * numVariants + i] = f;
-                                i ++;
-                        }
+			if (delim == ' '){
+                        	while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
+                                	end = line.find(delim, start);
+                                	f = stof(line.substr(start, end - start));
+                                	queriesArr[Q * numVariants + i] = f;
+                                	i ++;
+                        	}	
+			}
+			else{
+				for (int c = 0; c < numVariants; c++){
+                                	s = line[c];
+                                	f = stof(s);
+                                	queriesArr[Q * numVariants + c] = f;
+                        	}
+			}
 
-			//for (int c = 0; c < segLength; c++){
-                        //        s = line[c];
-                        //        f = stof(s);
-                        //        queriesArr[Q * segLength + c] = f;
-                        //}
 			Q++;
 		}
 	}
