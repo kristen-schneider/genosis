@@ -2,6 +2,12 @@ from types import SimpleNamespace
 configfile: "config.yaml" # path to the config
 config = SimpleNamespace(**config)
 
+LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
+shell.prefix("""
+set -euo pipefail;
+export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
+""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
+
 rule all:
 	input:
 		f"{config.segments_out_dir}/segments.encoding.done",		
@@ -33,7 +39,7 @@ rule split_encode_vcf_EXECUTE:
 	message: 
 		"Executing--slice vcf into segments and encode"
 	shell:
-		"./{input.bin} {input.config_file}" \
+		"./{input.bin} {input.config_file} > {config.segments_out_dir}/segments.encoding.done" \
 		" && touch {output.done}"
 
 rule plink_genome_IBD:
@@ -45,7 +51,7 @@ rule plink_genome_IBD:
 		"Running plink on all encodings"
 	shell:
 		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
-		"	plink --vcf $vcf_f --genome;" \
+		"	plink --vcf $vcf_f --genome > {config.segments_out_dir}/segments.plink.done;" \
 		"       filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	mv plink.genome {config.segments_out_dir}/${{seg_name}}.genome;" \
@@ -89,7 +95,11 @@ rule faiss_L2_EXECUTE:
 
 rule generate_cnn_input_file:
 	input:
-		sample_IDs=f"{config.sample_IDs}",
+		f"{config.segments_out_dir}/segments.encoding.done",
+                f"{config.segments_out_dir}/segments.plink.done",
+                f"{config.segments_out_dir}/segments.faissL2.done",
+		sample_IDs=f"{config.sample_IDs}"
+		
 	output:
 		done=f"{config.segments_out_dir}/segments.cnn.done"
 	message:
