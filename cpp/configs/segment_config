@@ -4,6 +4,6 @@ vcf_file=data/vcf/chr0-test.vcf
 
 segment_size=3
 
-out_dir=data/segments/chr0-test/seg_3/
+out_dir=data/segments/chr0_test/seg_3/
 
 out_base_name=chr0

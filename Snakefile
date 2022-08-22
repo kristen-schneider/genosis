@@ -5,13 +5,12 @@ config = SimpleNamespace(**config)
 rule all:
 	input:
 		f"{config.segments_out_dir}/segments.encoding.done",		
-		f"{config.segments_out_dir}/segments.genome.done",		
-		f"{config.segments_out_dir}/segments.faissL2.done",
-		f"{config.segments_out_dir}/segments.cnn.done"	
+		f"{config.segments_out_dir}/segments.plink.done",		
+		f"{config.segments_out_dir}/segments.faissL2.done"
+		#f"{config.segments_out_dir}/segments.cnn.done"	
 
 rule split_encode_vcf_COMPILE:
 	input:
-		setup="setup.done",
 		main=f"{config.src_dir}/main.cpp",
 		read_config=f"{config.src_dir}/read_config.cpp",
 		map_encodings=f"{config.src_dir}/map_encodings.cpp",
@@ -35,7 +34,6 @@ rule split_encode_vcf_COMPILE:
 
 rule split_encode_vcf_EXECUTE:
 	input:
-		setup="setup.done",
 		bin=f"{config.bin_dir}/segment",
 		config_file=f"{config.configs_dir}/segment_config"
 	output:
@@ -49,28 +47,25 @@ rule split_encode_vcf_EXECUTE:
 
 rule plink_genome_IBD:
 	input:
-		setup="setup.done",
 		data_dir=f"{config.segments_out_dir}/",
 		encoding_done=f"{config.segments_out_dir}/segments.encoding.done"
 	output:
-		done=f"{config.segments_out_dir}/segments.genome.done"
+		done=f"{config.segments_out_dir}/segments.plink.done"
 	message:
 		"Running plink on all encodings"
 	shell:
-		"for vcf_f in {input.data_dir}*.vcf; do" \
+		"for vcf_f in {input.data_dir}/*.vcf; do" \
 		"	echo $vcf_f;" \
 		"	plink --vcf $vcf_f --genome;" \
 		"       filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	mv plink.genome {input.data_dir}${{seg_name}}.genome;" \
+		"	mv plink.genome {input.data_dir}/${{seg_name}}.genome;" \
 		"done" \
 		" && touch {output.done}"
 		
 
 rule faiss_L2_COMPILE:
 	input:
-		setup="setup.done",
-		encoding_done=f"{config.segments_out_dir}/segments.encoding.done",
 		main=f"{config.src_dir}/single_faiss.cpp",
 		build=f"{config.src_dir}/buildIndex.cpp",
 		read=f"{config.src_dir}/readEncoding.cpp",
@@ -97,7 +92,6 @@ rule faiss_L2_COMPILE:
 
 rule faiss_L2_EXECUTE:
 	input:
-		setup="setup.done",
 		bin=f"{config.bin_dir}/single_faiss",
 		data_dir=f"{config.segments_out_dir}/"
 	output:
@@ -105,28 +99,28 @@ rule faiss_L2_EXECUTE:
 	message:
 		"Executing--run FAISS L2 on all input segments"
 	shell:
-		"for encoding_f in {input.data_dir}*.encoding; do" \
+		"for encoding_f in {input.data_dir}/*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
-		"	seg_name=${{filename%.*}};"
-		"	./{input.bin} $encoding_f $encoding_f {config.k} > {input.data_dir}$seg_name'.faissL2';" \ 
+		"	seg_name=${{filename%.*}};" \
+		" 	echo {input.data_dir}/${{seg_name}}.faissL2;" \
+		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim}> {input.data_dir}/${{seg_name}}.faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
 
-rule generate_cnn_input_file:
-	input:
-		setup="setup.done",
-		sample_IDs=f"{config.sample_IDs}",
-		data_dir=f"{config.segments_out_dir}/", 
-		make_CNN=f"{config.python_dir}/scripts/cnn/make_CNN_input.py"
-	output:
-		done=f"{config.segments_out_dir}/segments.cnn.done"
-	message:
-		"Generating CNN input files for all segments"
-	shell:
-		"for encoding_f in {input.data_dir}*.encoding; do" \
-		"	filename=$(basename $encoding_f);" \
-                "       seg_name=${{filename%.*}};" \
-		"	python {input.make_CNN} {input.sample_IDs} $encoding_f {input.data_dir}$seg_name'.genome' {input.data_dir}$seg_name'.cnn';" \
-		"done" \
-		" && touch {output.done}"
+#rule generate_cnn_input_file:
+#	input:
+#		sample_IDs=f"{config.sample_IDs}",
+#		data_dir=f"{config.segments_out_dir}/", 
+#		make_CNN=f"{config.python_dir}/scripts/cnn/make_CNN_input.py"
+#	output:
+#		done=f"{config.segments_out_dir}/segments.cnn.done"
+#	message:
+#		"Generating CNN input files for all segments"
+#	shell:
+#		"for encoding_f in {input.data_dir}*.encoding; do" \
+#		"	filename=$(basename $encoding_f);" \
+#                "       seg_name=${{filename%.*}};" \
+#		"	python {input.make_CNN} {input.sample_IDs} $encoding_f {input.data_dir}$seg_name'.genome' {input.data_dir}$seg_name'.cnn';" \
+#		"done" \
+#		" && touch {output.done}"
