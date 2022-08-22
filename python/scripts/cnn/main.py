@@ -151,10 +151,13 @@ class SiameseModel(tf.keras.Model):
 
 siamese_model = SiameseModel(siamese_network)
 
-### Embeddings for a UNtrained model
-#out_embeddings_2 = open(ID_embeddings_file_2, 'w')
+callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
+siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True)#, loss='loss')
+siamese_model.fit(train_dataset, epochs=5, validation_data=val_dataset)
 #
-#UT_all_sample_embeddings = []
+#out_embeddings = open(ID_embeddings_file, 'w')
+#
+#all_sample_embeddings = []
 ## iterate through all pairs in a batch
 #for batch in train_dataset:
 #    # get sample 1 and sample 2 in a pair
@@ -165,51 +168,19 @@ siamese_model = SiameseModel(siamese_network)
 #        embedding(sample1),
 #        embedding(sample2)
 #    )
-#
+#    
 #    for s in range(len(sample1_embedding.numpy())):
-#        UT_all_sample_embeddings.append(sample1_embedding[s].numpy())
-#        UT_all_sample_embeddings.append(sample2_embedding[s].numpy())
+#        all_sample_embeddings.append(sample1_embedding[s].numpy())
+#        all_sample_embeddings.append(sample2_embedding[s].numpy())
 #
-#print("num UT embeddings: ", len(UT_all_sample_embeddings))
-#for embedding_i in range(len(UT_all_sample_embeddings)):
-#    curr_embedding = UT_all_sample_embeddings[embedding_i]
+#print("num embeddings: ", len(all_sample_embeddings))
+#for embedding_i in range(len(all_sample_embeddings)):
+#    curr_embedding = all_sample_embeddings[embedding_i]
 #    for f in curr_embedding:
-#        out_embeddings_2.write(str(f) + ' ')
-#    out_embeddings_2.write('\n')
+#        out_embeddings.write(str(f) + ' ')
+#    out_embeddings.write('\n')
 #
-#out_embeddings_2.close()
-
-callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
-siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True, loss='loss')
-history = siamese_model.fit(train_dataset, epochs=20, validation_data=val_dataset)
-len(history.history['loss'])
-
-out_embeddings = open(ID_embeddings_file, 'w')
-
-all_sample_embeddings = []
-# iterate through all pairs in a batch
-for batch in train_dataset:
-    # get sample 1 and sample 2 in a pair
-    sample1, sample2 = batch[:2]
-
-    # embeddings
-    sample1_embedding, sample2_embedding = (
-        embedding(sample1),
-        embedding(sample2)
-    )
-    
-    for s in range(len(sample1_embedding.numpy())):
-        all_sample_embeddings.append(sample1_embedding[s].numpy())
-        all_sample_embeddings.append(sample2_embedding[s].numpy())
-
-print("num embeddings: ", len(all_sample_embeddings))
-for embedding_i in range(len(all_sample_embeddings)):
-    curr_embedding = all_sample_embeddings[embedding_i]
-    for f in curr_embedding:
-        out_embeddings.write(str(f) + ' ')
-    out_embeddings.write('\n')
-
-out_embeddings.close()
+#out_embeddings.close()
 
     #for s in range(len(sample1_embedding)):
     #    np_embedding_1 = sample1_embedding[s].numpy()
