@@ -15,9 +15,9 @@ python_dir:
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/segments/chr0_test/seg_3
+  data/segments/chr0_test/seg_100
 
 k:
-  3
+  2548
 delim:
   none
