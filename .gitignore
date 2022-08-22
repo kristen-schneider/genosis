@@ -1,11 +1,11 @@
-data/
-build/
-old_make/
-lib/
 bin/
+build/
+data/
+lib/
+old_make/
 kristen/vec_src/
-python/png
 plink.*
-*/__pycache__/*
+python/png
 python/txt/
 python/segcounts/
+.snakemake/
