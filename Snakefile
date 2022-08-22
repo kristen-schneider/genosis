@@ -4,26 +4,10 @@ config = SimpleNamespace(**config)
 
 rule all:
 	input:
-		"setup.done",
 		f"{config.segments_out_dir}/segments.encoding.done",		
 		f"{config.segments_out_dir}/segments.genome.done",		
 		f"{config.segments_out_dir}/segments.faissL2.done",
 		f"{config.segments_out_dir}/segments.cnn.done"	
-
-rule set_up:
-	input:
-		condalib=f"{config.conda_dir}/lib"
-	output:
-		done="setup.done"
-	message: 
-		"Setting up environment"
-	shell:
-		"source ~/miniconda3/etc/profile.d/conda.sh;" \
-		"conda activate precision-medicine;" \
-		"PATH=$PATH:~/plink_linux_x86_64_20220402/;" \
-		"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{input.condalib};" \
-		"touch {output.done};"
-		
 
 rule split_encode_vcf_COMPILE:
 	input:
