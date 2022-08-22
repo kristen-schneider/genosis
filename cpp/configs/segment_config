@@ -2,8 +2,8 @@ encoding_file=data/encodings/encoding.trivial
 
 vcf_file=data/vcf/chr0-test.vcf
 
-segment_size=3
+segment_size=100
 
-out_dir=data/segments/chr0_test/seg_3/
+out_dir=data/segments/chr0_test/seg_100/
 
 out_base_name=chr0
