@@ -13,7 +13,8 @@ rule all:
 		f"{config.segments_out_dir}/segments.encoding.done",		
 		f"{config.segments_out_dir}/segments.plink.done",		
 		f"{config.segments_out_dir}/segments.faissL2.done",
-		f"{config.segments_out_dir}/segments.cnn.done"	
+		f"{config.segments_out_dir}/segments.cnn.done",
+		f"{config.segments_out_dir}/segments.embedding.done"	
 
 rule split_encode_vcf_COMPILE:
 	output:
@@ -39,7 +40,7 @@ rule split_encode_vcf_EXECUTE:
 	message: 
 		"Executing--slice vcf into segments and encode"
 	shell:
-		"./{input.bin} {input.config_file} > {config.segments_out_dir}/segments.encoding.done" \
+		"./{input.bin} {input.config_file} > {output.done}" \
 		" && touch {output.done}"
 
 rule plink_genome_IBD:
@@ -51,7 +52,7 @@ rule plink_genome_IBD:
 		"Running plink on all encodings"
 	shell:
 		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
-		"	plink --vcf $vcf_f --genome > {config.segments_out_dir}/segments.plink.done;" \
+		"	plink --vcf $vcf_f --genome > {output.done};" \
 		"       filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	mv plink.genome {config.segments_out_dir}/${{seg_name}}.genome;" \
@@ -88,7 +89,7 @@ rule faiss_L2_EXECUTE:
 		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim}> {config.segments_out_dir}/${{seg_name}}.faissL2;" \ 
+		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
@@ -111,3 +112,25 @@ rule generate_cnn_input_file:
 		"	python {config.python_dir}/scripts/cnn/make_CNN_input.py {input.sample_IDs} $encoding_f {config.segments_out_dir}/${{seg_name}}.genome {config.segments_out_dir}/${{seg_name}}.cnn;" \
 		"done" \
 		" && touch {output.done}"
+
+rule run_model:
+	input:
+		f"{config.segments_out_dir}/segments.encoding.done",
+                f"{config.segments_out_dir}/segments.plink.done",
+                f"{config.segments_out_dir}/segments.faissL2.done",
+		f"{config.segments_out_dir}/segments.cnn.done",
+                sample_IDs=f"{config.sample_IDs}"
+
+	output:
+		done=f"{config.segments_out_dir}/segments.embedding.done"
+	message:
+		"Running CNN model for all segments"
+	shell:
+		"for cnn_f in {config.segments_out_dir}/*.cnn; do" \
+		"	filename=$(basename $cnn_f);" \
+                "       seg_name=${{filename%.*}};" \
+		"	echo ${{seg_name}};" \
+                "       python {config.python_dir}/scripts/cnn/main.py {input.sample_IDs} {config.segments_out_dir}/${{seg_name}}.encoding $cnn_f {config.segments_out_dir}/${{seg_name}}.embedding;" \
+		"done" \
+		" && touch {output.done}"
+
