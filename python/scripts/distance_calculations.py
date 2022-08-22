@@ -4,14 +4,14 @@ from scipy.spatial import distance
 import sys
 
 
-encoding_file = sys.argv[1]
-index1 = int(sys.argv[2])
-index2 = int(sys.argv[3])
+#encoding_file = sys.argv[1]
+#index1 = int(sys.argv[2])
+#index2 = int(sys.argv[3])
 
-def main():
-    
-    print(brute_force(index1, index2))
-    print(numpy_euclidean(index1, index2))
+#def main():
+#    
+#    print(brute_force(index1, index2))
+#    print(numpy_euclidean(index1, index2))
 
 def brute_force(i1, i2):
     f = open(encoding_file, 'r')
@@ -79,6 +79,6 @@ def euclidean_distance(vector1, vector2):
         sum += diff_sqrd
     return math.sqrt(sum)
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+#    main()
 
