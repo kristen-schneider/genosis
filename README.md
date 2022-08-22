@@ -6,7 +6,7 @@
 <br>
 
 ## 2. Editing config files
-- edit `cpp/configs/segment\_config`<br>
+- edit `cpp/configs/segment_config`<br>
 - edit `config.yaml`<br>
 <br>
 
