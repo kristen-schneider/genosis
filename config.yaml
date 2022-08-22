@@ -1,18 +1,14 @@
-conda_dir:
-  /home/sdp/miniconda3/envs/precision-medicine
-
 sample_IDs:
   data/ALL.sampleIDs
 
-python_dir:
-  python
-
-src_dir:
-  cpp/src
-include_dir:
-  cpp/include
 bin_dir:
   cpp/bin
+
+compile_split_vcf:
+  g++ cpp/src/main.cpp cpp/src/read_config.cpp cpp/src/map_encodings.cpp cpp/src/slice_vcf.cpp cpp/src/encode_vcf.cpp -I cpp/include/ -lhts -o cpp/bin/segment
+
+compile_faiss:
+  g++ cpp/src/single_faiss.cpp cpp/src/buildIndex.cpp cpp/src/readEncoding.cpp cpp/src/searchIndex.cpp cpp/src/utils.cpp -I cpp/include/ -I /home/sdp/miniconda3/envs/precision-medicine/include/ -L /home/sdp/miniconda3/envs/precision-medicine/lib/ -lfaiss -o cpp/bin/single_faiss
 
 configs_dir:
   cpp/configs
