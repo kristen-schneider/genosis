@@ -5,8 +5,8 @@ import sys
 
 
 encoding_file = sys.argv[1]
-index1 = sys.argv[2]
-index2 = sys.argv[3]
+index1 = int(sys.argv[2])
+index2 = int(sys.argv[3])
 
 def main():
     
@@ -14,7 +14,7 @@ def main():
     print(numpy_euclidean(index1, index2))
 
 def brute_force(i1, i2):
-    f = open(faiss_file, 'r')
+    f = open(encoding_file, 'r')
     l_count = 0
     vector1, vector2 = '', ''
 
@@ -24,26 +24,36 @@ def brute_force(i1, i2):
         if l_count == i2:
             vector2 = line.strip()
         l_count += 1
-
+    
+    f.close()
     return euclidean_distance(vector1, vector2)
 
 def numpy_euclidean(i1, i2):
-    f = open(faiss_file, 'r')
+    f = open(encoding_file, 'r')
     l_count = 0
     vector1, vector2 = '', ''
     vector1_list, vector2_list = [], []
 
     for line in f:
         if l_count == i1:
-            vector1 = line.strip()
-            for v in vector1: vector1_list.append(float(v))
+            vector1_list = line.strip().split()
+            if(len(vector1_list) == 1):
+                vector1_list = []
+                for i in range(len(line.strip())):
+                    vector1_list.append(float(line[i]))
+            
 
         if l_count == i2:
-            vector2 = line.strip()
-            for v in vector2: vector2_list.append(float(v))
+            vector2_list = line.strip().split()
+            if(len(vector2_list) == 1):
+                vector2_list = []
+                for i in range(len(line.strip())):
+                    vector2_list.append(float(line[i]))
 
         l_count += 1
 
+    f.close()
+    
     # distance.euclidean(vector1_list, vector2_list)
     vector1_list = np.array(vector1_list)
     vector2_list = np.array(vector2_list)
@@ -51,10 +61,19 @@ def numpy_euclidean(i1, i2):
 
 def euclidean_distance(vector1, vector2):
     sum = 0
-    for v in range(len(vector1)):
-        v1 = int(vector1[v])
-        v2 = int(vector2[v])
+    vector1_list = vector1.strip().split()
+    vector2_list = vector2.strip().split()
 
+    if(len(vector1_list) == 1):
+        vector1_list = []
+        vector2_list = []
+        for i in range(len(vector1)):
+            vector1_list.append(vector1[i])
+            vector2_list.append(vector2[i])
+
+    for v in range(len(vector1_list)):
+        v1 = float(vector1_list[v])
+        v2 = float(vector2_list[v])
         diff = v1-v2
         diff_sqrd = pow(diff, 2)
         sum += diff_sqrd
