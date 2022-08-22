@@ -11,7 +11,7 @@ sample_IDs_file = sys.argv[1]
 sample_encodings_file = sys.argv[2]
 ID_distances_file = sys.argv[3]
 ID_embeddings_file = sys.argv[4]
-ID_embeddings_file_2 = sys.argv[5]
+#ID_embeddings_file_2 = sys.argv[5]
 
 ## rewriting my main_cnn.py script in-line like the example
 
