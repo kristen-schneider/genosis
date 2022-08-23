@@ -8,4 +8,7 @@ plink.*
 python/png
 python/txt/
 python/segcounts/
+python/scripts/cnn/__pycache__/
+python/scripts/plotting/__pycache__/
+python/scripts/__pycache__/
 .snakemake/
