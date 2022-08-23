@@ -170,7 +170,7 @@ vector<vector<int>> transpose(vector<vector<int>> &vmf){
 	}
 
 	// transpose data
-	vector<vector<int>> smf_vec(vmf[1].size(), vector<int>());
+	vector<vector<int>> smf_vec(vmf[0].size(), vector<int>());
     	for (size_t i = 0; i < vmf.size(); i++) {
 		for (size_t j = 0; j < vmf[i].size(); j++) {
             		smf_vec[j].push_back(vmf[i][j]);
