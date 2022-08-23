@@ -129,7 +129,7 @@ rule faiss_L2_EXECUTE_ENCODING:
 		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
+		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.enc_delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
@@ -145,7 +145,8 @@ rule faiss_L2_EXECUTE_EMBEDDING:
 		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
 		"       filename=$(basename $embedding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $embedding_f $embedding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"	echo $embedding_f;" \
+		"	./{input.bin} $embedding_f $embedding_f {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 

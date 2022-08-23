@@ -15,9 +15,11 @@ python_dir:
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/segments/chr0_test/seg_100
+  data/segments/chr0_test/seg_5000
 
 k:
   2548
-delim:
+enc_delim:
   none
+emb_delim:
+  space
