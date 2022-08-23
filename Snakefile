@@ -14,8 +14,8 @@ rule all:
 		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.segments_out_dir}/segments.cnn.done",
 		f"{config.segments_out_dir}/segments.embedding.done", 
-		f"{config.segments_out_dir}/segments.encoding.faissL2.done",
-		f"{config.segments_out_dir}/segments.embedding.faissL2.done"	
+		f"{config.segments_out_dir}/segments.enc_faissL2.done",
+		f"{config.segments_out_dir}/segments.emb_faissL2.done"	
 
 rule split_encode_vcf_COMPILE:
 	output:
@@ -122,14 +122,14 @@ rule faiss_L2_EXECUTE_ENCODING:
 	input:
 		bin=f"{config.bin_dir}/single_faiss",
 	output:
-		done=f"{config.segments_out_dir}/segments.encoding.faissL2.done"
+		done=f"{config.segments_out_dir}/segments.enc_faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input encoding segments"
 	shell:
 		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.encoding.faissL2;" \ 
+		"	./{input.bin} $encoding_f $encoding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
@@ -138,15 +138,14 @@ rule faiss_L2_EXECUTE_EMBEDDING:
 	input:
 		bin=f"{config.bin_dir}/single_faiss",
 	output:
-		f"{config.segments_out_dir}/segments.encoding.faissL2.done",
-		done=f"{config.segments_out_dir}/segments.embedding.faissL2.done"
+		done=f"{config.segments_out_dir}/segments.emb_faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input embedding segments"
 	shell:
 		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
 		"       filename=$(basename $embedding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $embedding_f $embedding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.embedding.faissL2;" \ 
+		"	./{input.bin} $embedding_f $embedding_f {config.k} {config.delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
