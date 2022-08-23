@@ -154,33 +154,33 @@ siamese_model = SiameseModel(siamese_network)
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
 siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True)#, loss='loss')
 siamese_model.fit(train_dataset, epochs=5, validation_data=val_dataset)
-#
-#out_embeddings = open(ID_embeddings_file, 'w')
-#
-#all_sample_embeddings = []
-## iterate through all pairs in a batch
-#for batch in train_dataset:
-#    # get sample 1 and sample 2 in a pair
-#    sample1, sample2 = batch[:2]
-#
-#    # embeddings
-#    sample1_embedding, sample2_embedding = (
-#        embedding(sample1),
-#        embedding(sample2)
-#    )
-#    
-#    for s in range(len(sample1_embedding.numpy())):
-#        all_sample_embeddings.append(sample1_embedding[s].numpy())
-#        all_sample_embeddings.append(sample2_embedding[s].numpy())
-#
-#print("num embeddings: ", len(all_sample_embeddings))
-#for embedding_i in range(len(all_sample_embeddings)):
-#    curr_embedding = all_sample_embeddings[embedding_i]
-#    for f in curr_embedding:
-#        out_embeddings.write(str(f) + ' ')
-#    out_embeddings.write('\n')
-#
-#out_embeddings.close()
+
+out_embeddings = open(ID_embeddings_file, 'w')
+
+all_sample_embeddings = []
+# iterate through all pairs in a batch
+for batch in train_dataset:
+    # get sample 1 and sample 2 in a pair
+    sample1, sample2 = batch[:2]
+
+    # embeddings
+    sample1_embedding, sample2_embedding = (
+        embedding(sample1),
+        embedding(sample2)
+    )
+    
+    for s in range(len(sample1_embedding.numpy())):
+        all_sample_embeddings.append(sample1_embedding[s].numpy())
+        all_sample_embeddings.append(sample2_embedding[s].numpy())
+
+print("num embeddings: ", len(all_sample_embeddings))
+for embedding_i in range(len(all_sample_embeddings)):
+    curr_embedding = all_sample_embeddings[embedding_i]
+    for f in curr_embedding:
+        out_embeddings.write(str(f) + ' ')
+    out_embeddings.write('\n')
+
+out_embeddings.close()
 
     #for s in range(len(sample1_embedding)):
     #    np_embedding_1 = sample1_embedding[s].numpy()
