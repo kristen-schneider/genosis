@@ -43,7 +43,6 @@ faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int nu
 			size_t start;
 			size_t end = 0;
 			if (delim == '\0'){
-				cout << "Delim is non. Processing encodings." << endl;
 			 	for (int i = 0; i < num_variants; i ++){
 					s = line[i];
 					f = stof(s);
@@ -51,7 +50,6 @@ faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int nu
 				}
 			}
 			else{
-				cout << "Delim is space. Processing embeddings." << endl;
 				while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
 					end = line.find(delim, start);
 					f = stof(line.substr(start, end - start));
@@ -60,10 +58,12 @@ faiss::IndexFlatL2 build_faiss_index(string encodedTXT, int num_variants, int nu
 			
 				}
 			}
+			/*
 			for (int i = 0; i < num_variants; i ++){
 				cout << sample_vector[i] << " ";
 			}
 			cout << endl;
+			*/
 			index.add(1, sample_vector);
 			delete[] sample_vector;
 		}
