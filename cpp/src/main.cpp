@@ -35,7 +35,6 @@ int main(int argc, char* argv[]){
 	cout << "Slicing VCF..." << endl;
 	int num_segments = slice(vcf_file, segment_size, output_base_name, out_dir);
 
-
 	// encoded vcf segments 
 	cout << "Encoding VCF..." << endl;
 	write_all_segments(num_segments, encoding_map, out_dir, output_base_name);
