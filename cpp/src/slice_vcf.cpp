@@ -6,6 +6,40 @@
 
 using namespace std;
 
+//int write_segments(string vcf_file, int segment_size, string base_name, string out_dir){
+//	// return number of segmented files
+//	int segment_count = 0;
+//
+//	// open vcf file and check success
+//	ifstream vcf_file_stream;
+//    	vcf_file_stream.open(vcf_file);
+//    	if (!vcf_file_stream.is_open()){
+//        	cout << "FAILED TO OPEN: " << vcf_file << endl;
+//    		return -1;
+//	}
+//
+//	// read vcf file
+//	string line;
+//	int lines_in_segment_count = 0;
+//
+//	// write header to segment out file
+//	string out_vcf_segment_name = out_dir + base_name + \
+//				      ".seg." + to_string(segment_count) + \
+//				      ".vcf";
+//	write_vcf_header(vcf_file, out_vcf_segment_name);
+//	
+//	// open segment out file in append mode
+//	ofstream out_file_stream;
+//	out_file_stream.open(out_vcf_segment_name, ios_base::app);
+//
+//	// read vcf file
+//	while (vcf_file_stream.peek() != EOF){
+//	
+//	}
+//	
+//	return segment_count;
+//}
+
 void write_vcf_header(string vcf_file, string out_file){
     /*
      * open VCF file and write header data to out_file
