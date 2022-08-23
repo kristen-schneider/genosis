@@ -145,7 +145,6 @@ rule faiss_L2_EXECUTE_EMBEDDING:
 		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
 		"       filename=$(basename $embedding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	echo $embedding_f;" \
 		"	./{input.bin} $embedding_f $embedding_f {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
