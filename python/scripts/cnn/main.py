@@ -13,6 +13,12 @@ ID_distances_file = sys.argv[3]
 ID_embeddings_file = sys.argv[4]
 #ID_embeddings_file_2 = sys.argv[5]
 
+# model parameters
+num_epochs = 10
+num_layers = 5
+filter_size = 32
+
+
 ## rewriting my main_cnn.py script in-line like the example
 
 # find dimensions of incoming data
@@ -51,8 +57,6 @@ vector_size = num_variants
 print('Building Base CNN...')
 inputs = tf.keras.Input(shape=(num_variants, 1))
 
-num_layers = 5
-filter_size = 32
 # using for loop to build layers
 for l in range(num_layers):
     x = tf.keras.layers.Conv1D(filters=filter_size, kernel_size=3, activation="relu")(inputs)
@@ -157,7 +161,7 @@ siamese_model = SiameseModel(siamese_network)
 
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
 siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True, weighted_metrics=[])#, loss='loss')
-siamese_model.fit(train_dataset, epochs=5, validation_data=val_dataset)
+siamese_model.fit(train_dataset, epochs=num_epochs, validation_data=val_dataset)
 
 out_embeddings = open(ID_embeddings_file, 'w')
 
