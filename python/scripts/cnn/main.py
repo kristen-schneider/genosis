@@ -162,6 +162,7 @@ siamese_model = SiameseModel(siamese_network)
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
 siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True, weighted_metrics=[])#, loss='loss')
 siamese_model.fit(train_dataset, epochs=num_epochs, validation_data=val_dataset)
+#print(siamese_model.evaluate(val_dataset))
 
 out_embeddings = open(ID_embeddings_file, 'w')
 
