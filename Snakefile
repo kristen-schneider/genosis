@@ -108,9 +108,9 @@ rule faiss_L2_COMPILE:
 		"Compiling--run FAISS L2 on all input segments"
 	shell:
 		"g++ {config.src_dir}/single_faiss.cpp" \
-		" {config.src_dir}/buildIndex.cpp" \
-		" {config.src_dir}/readEncoding.cpp" \
-		" {config.src_dir}/searchIndex.cpp" \
+		" {config.src_dir}/build_index.cpp" \
+		" {config.src_dir}/read_encodings.cpp" \
+		" {config.src_dir}/search_index.cpp" \
 		" {config.src_dir}/utils.cpp" \
 		" -I {config.include_dir}/" \
 		" -I {config.conda_dir}/include/" \
