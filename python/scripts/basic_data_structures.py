@@ -1,7 +1,6 @@
-import sys
+import os, sys, inspect
 from collections import defaultdict
 
-#sys.path.insert(1, '~genotype-encoding/python/utils/')
 import distance_calculations
 
 ## INPUT DATA STRUCTURES FROM START FILES

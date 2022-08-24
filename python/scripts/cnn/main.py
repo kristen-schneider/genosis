@@ -1,7 +1,10 @@
 import basic_ds
-import sys
+import os, sys, inspect
 import utils
-sys.path.insert(1, '/home/sdp/precision-medicine/python/scripts/')
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 import basic_data_structures
 
 import tensorflow as tf

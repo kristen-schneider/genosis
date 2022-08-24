@@ -2,11 +2,13 @@ import numpy as np
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-import sys
+import os, sys, inspect
 
-from python.utils import basic_datastructures
-# sys.path.insert(1, '/home/sdp/genotype-encoding/python/utils/')
-# import basic_datastructures
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+import basic_datastructures
 
 def main():
     # system arguments

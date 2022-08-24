@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 from scipy.stats import kendalltau
 from scipy.stats import mannwhitneyu
 
-import sys
+import os, sys, inspect
 
-from python.utils import basic_datastructures
-# sys.path.insert(1, '/home/sdp/genotype-encoding/python/utils/')
-# import basic_datastructures
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+import basic_datastructures
 
 sample_ID_file = sys.argv[1]
 plink_file = sys.argv[2]
