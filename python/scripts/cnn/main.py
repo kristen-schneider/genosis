@@ -50,12 +50,16 @@ vector_size = num_variants
 # building network
 print('Building Base CNN...')
 inputs = tf.keras.Input(shape=(num_variants, 1))
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(inputs)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(x)
-x = tf.keras.layers.BatchNormalization()(x)
+
+num_layers = 5
+filter_size = 32
+# using for loop to build layers
+for l in range(num_layers):
+    x = tf.keras.layers.Conv1D(filters=filter_size, kernel_size=3, activation="relu")(inputs)
+    x = tf.keras.layers.MaxPool1D(pool_size=2, strides=2)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    filter_size *= 2
+
 x = tf.keras.layers.GlobalAveragePooling1D()(x)
 
 outputs = tf.keras.layers.Dense(80)(x)
