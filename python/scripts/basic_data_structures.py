@@ -9,11 +9,8 @@ import distance_calculations
 ## 2. sample encodings
 ## 3. plink files
 
+
 def get_sample_ID_list(sample_ID_file):
-    '''
-    opens a file with all sample IDs
-    and creates a list
-    '''
     all_sample_IDs = []
     f = open(sample_ID_file, 'r')
     for line in f:
@@ -24,62 +21,30 @@ def get_sample_ID_list(sample_ID_file):
     return all_sample_IDs
 
 def get_encoding_list(sample_encodings_file):
-    '''
-    opens a file with all encodings for
-    all samples and creates a list
-    '''
     all_sample_encodings = []
     f = open(sample_encodings_file, 'r')
     for line in f:
         encoding = line.strip()
         encoding_list_ints = [int(i) for i in encoding]
         all_sample_encodings.append(encoding_list_ints)
-        #all_sample_encodings.append(encoding)
     f.close()
 
     return all_sample_encodings
 
-def get_ID_encoding_dict(sample_IDs, sample_encodings):
-    '''
-    takes a list of sample IDs and a file of all encodings
-    and creates a dictionary (both need to be ordered)
-    key: sampleID
-    value: sample encoding
-    '''
+def get_ID_encoding_dict(sample_IDs, sample_encodings_file):
     ID_encoding_dict = dict.fromkeys(sample_IDs)
 
     ID_i = 0
-    for encoding_i in sample_encodings:
+    f = open(sample_encodings_file, 'r')
+    for line in f:
+        encoding_i = line.strip()
         ID_encoding_dict[sample_IDs[ID_i]] = encoding_i
         ID_i += 1
+    f.close()
 
     if len(sample_IDs) != len(ID_encoding_dict.keys()):
         print('ERROR: not the same number of sample IDs and encodings.')
     return ID_encoding_dict
-
-
-def get_encoding_ID_dict(sample_encodings, sample_IDs):
-    '''
-    takes a list of sample encodings
-    and a file of all sampleIDs
-    and creates a dictionary
-    key: sample encoding
-    value: sample ID
-    '''
-    encoding_ID_dict = dict.fromkeys(sample_encodings)
-
-    encoding_i = 0
-    for sampleID_i in sample_IDs:
-        encoding_ID_dict[sample_encodings[encoding_i]] = sampleID_i
-        encoding_i += 1
-
-    if len(sample_encodings) != len(encoding_ID_dict.keys()):
-        print('ERROR: not the same number of sample IDs and encodings.')
-    return encoding_ID_dict
-
-
-
-## PLOTTING DATA STRUCTURES
 
 def get_query_euclidean_dict(query_ID, ID_encoding_dict):
     query_euclidean_dict = {ID: -1 for ID in ID_encoding_dict.keys()}
@@ -100,7 +65,7 @@ def get_plink_dict(plink_file):
         l = line.strip().split()
         ID1 = l[1]
         ID2 = l[3]
-        plink_distance = float(l[7])
+        plink_distance = float(l[11])
         plink_dict[ID1][ID2] = plink_distance
         plink_dict[ID2][ID1] = plink_distance
     f.close()
@@ -142,6 +107,42 @@ def get_faiss_distances_dict(sample_ID_list, faiss_file):
     f.close()
     return faiss_dict
 
+def get_faiss_rankings_dict(sample_ID_list, faiss_file):
+    '''
+
+    :param sample_ID_list:
+    :param faiss_file:
+    :return: return a dictionary of dictionaries
+      whose first key is sample 1,
+      second key is sample2 and
+      whose value is the rank for sample 2
+    '''
+    faiss_dict = defaultdict(dict)
+    num_samples = len(sample_ID_list)
+    pairwise_count = 0
+
+    f = open(faiss_file, 'r')
+    for line in f:
+        if "QUERY" in line:
+            pairwise_count = 0
+            sampleID1 = sample_ID_list[int(line.split(':')[1].strip())]
+        else:
+            if pairwise_count == num_samples:
+                continue
+            else:
+                l = line.strip().split()
+                try:
+                    index = int(l[0])
+                    rank = pairwise_count
+                    sampleID2 = sample_ID_list[index]
+                    faiss_dict[sampleID1][sampleID2] = rank
+                    pairwise_count += 1
+
+                except ValueError:
+                    continue
+    f.close()
+    return faiss_dict
+
 def get_faiss_rankings(sample_ID_list, faiss_file):
     '''
 
@@ -171,5 +172,3 @@ def get_faiss_rankings(sample_ID_list, faiss_file):
                     continue
     f.close()
     return faiss_rankings
-
-
