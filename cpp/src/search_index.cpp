@@ -7,8 +7,8 @@
 #include <string>
 #include <chrono>
 
-#include "searchIndex.h"
-#include "readEncoding.h"
+#include "search_index.h"
+#include "read_encodings.h"
 
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.

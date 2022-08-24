@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 
-#include "readEncoding.h"
+#include "read_encodings.h"
 
 using namespace std;
 

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-#include "buildIndex.h"
+#include "build_index.h"
 
 
 /**
