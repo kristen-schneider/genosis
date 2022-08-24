@@ -14,7 +14,7 @@ ID_embeddings_file = sys.argv[4]
 #ID_embeddings_file_2 = sys.argv[5]
 
 # model parameters
-num_epochs = 10
+num_epochs = 5
 num_layers = 5
 filter_size = 32
 
