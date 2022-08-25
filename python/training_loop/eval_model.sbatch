@@ -3,7 +3,7 @@
 #SBATCH -p short # TODO check if this is correct
 #SBATCH --job-name=eval_test_set
 #SBATCH --gres=gpu:0
-#SBATCH --ntasks=1
+#SBATCH --ntasks=64
 #SBATCH --nodes=1
 #SBATCH --time=23:00:00
 #SBATCH --mem=32gb

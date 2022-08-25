@@ -17,7 +17,7 @@ def evaluate_model(args: argparse.Namespace):
         batch_size=args.batch_size,
     )
     model.compile(run_eagerly=True)
-    model.evaluate(test_data, verbose=1)
+    model.evaluate(test_data.ds, verbose=1)
 
 
 if __name__ == "__main__":
