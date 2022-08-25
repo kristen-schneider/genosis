@@ -1,5 +1,5 @@
-import sys
 import argparse
+import sys
 
 import tensorflow as tf
 from datasets import PairsDataset
@@ -16,6 +16,7 @@ def evaluate_model(args: argparse.Namespace):
         shuffle=False,
         batch_size=args.batch_size,
     )
+    model.compile(run_eagerly=True)
     model.evaluate(test_data, verbose=1)
 
 
