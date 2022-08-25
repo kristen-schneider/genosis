@@ -5,12 +5,14 @@ from typing import Container, Iterable, Mapping, Tuple
 import numpy as np
 import tensorflow as tf
 
-def get_sample_names(filename:str) -> list[str]:
+
+def get_sample_names(filename: str) -> list[str]:
     """
     Loads the sample names from file
     """
     with open(filename, "r") as f:
         return f.read().splitlines()
+
 
 def load_sample_ids(filename: str) -> Mapping[str, int]:
     """
@@ -74,7 +76,8 @@ def yield_sample_pair(
 
 
 def partition_samples(
-    train_ratio: float, sample_file: str,
+    train_ratio: float,
+    sample_file: str,
 ) -> Tuple[list[str], list[str], list[str]]:
     """
     Partitions the samples into training, validation and test sets.
