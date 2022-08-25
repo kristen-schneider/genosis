@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import tensorflow as tf
 from datasets import PairsDataset, partition_samples
 from models import SiameseModel, build_siamese_network, resnet_model
@@ -16,12 +14,11 @@ if __name__ == "__main__":
         train_ratio=0.9, sample_file="/home/murad/data/toy_model_data/ALL.sampleIDs"
     )
     # log the train/val/test samples
-    with open("partitions.txt", "w") as f:
-        f.write("train:\n")
+    with open("train_samples.txt", "w") as f:
         f.write("\n".join(train_samples))
-        f.write("\n\nval:\n")
+    with open("val_samples.txt", "w") as f:
         f.write("\n".join(val_samples))
-        f.write("\n\ntest:\n")
+    with open("test_samples.txt", "w") as f:
         f.write("\n".join(test_samples))
 
     # TODO test to make sure there is no train/test leakage
