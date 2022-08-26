@@ -16,7 +16,10 @@ int main(int argc, char* argv[]){
 	config_options = get_config_options(configFile);
 
 	string vcf_file = config_options["vcf_file"];
-	
+	int slice_size = stoi(config_options["slice_size"]);
+	string out_dir = config_options["out_dir"];
+    	string out_base_name = config_options["out_base_name"];
+
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
 	// smaller VCF files
@@ -25,6 +28,9 @@ int main(int argc, char* argv[]){
 	cout << "Read " << header_num_lines << " lines from VCF header." << endl;
 
 
+	// slice full chromosome VCF file into smaller slices
+	int num_slices = slice(vcf_file, vcf_header, slice_size,
+        	out_base_name, out_dir);
 	return 0;
 }
 
@@ -62,83 +68,83 @@ vector<string> read_vcf_header(string vcf_file){
 
 /*
  * Open full VCF file, ignore header, 
- * write a one segment to segment file
+ * write a one slice to slice file
  * return number of slices
  */
-int slice(string vcf_file, int segment_size, string base_name, string out_dir){
+int slice(string vcf_file, vector<string> vcf_header, 
+		int slice_size, 
+		string base_name, string out_dir){
 
-    // to return
-    int segment_count = 0;
+	// to return
+	int slice_count = 0;
 
-    // open vcf file and check success
-    ifstream vcf_file_stream;
-    vcf_file_stream.open(vcf_file);
-    if (!vcf_file_stream.is_open()){
-        cout << "FAILED TO OPEN: " << vcf_file << endl;
-    }
-
-    // read vcf file
-    else{
-        string line;
-        int total_line_count = 0;
-        int lines_in_segment = 0;
-
-        // name segment out_file
-        string out_vcf_segment_name = out_dir + base_name + \
-                          ".seg." + to_string(segment_count) + \
-                          ".vcf";
-        // write vcf header
-        write_vcf_header(vcf_file, out_vcf_segment_name);
-
-        // open out file in append mode
-        ofstream out_file_stream;
-        out_file_stream.open(out_vcf_segment_name, ios_base::app);
-
-        // read vcf file until segment length
-        while (lines_in_segment < segment_size){
-            if (vcf_file_stream.peek() != EOF){
-                getline (vcf_file_stream, line);
-            }
-            else {
-                lines_in_segment = segment_size;
-                cout << "segment " << segment_count << " " << out_vcf_segment_name << endl;
-                cout << "END OF FILE" << endl;
-                //break;
-            }
-
-            // ingore header
-            if (line.at(0) != '#'){
-                //cout << total_line_count << " " \
-                    << lines_in_segment << " " \
-                    << out_vcf_segment_name << endl;
-                out_file_stream << line << endl;
-                // increment counters
-                lines_in_segment ++;
-                total_line_count ++;
-            }
-            // if segment length fulfilled
-            if (lines_in_segment == segment_size){
-                cout << "segment " << segment_count << " " << out_vcf_segment_name << endl;
-                lines_in_segment = 0;
-                out_file_stream.close();
-
-                // open new file stream
-                segment_count++;
-                out_vcf_segment_name = out_dir + base_name + \
-                                              ".seg." + to_string(segment_count) + \
-                                              ".vcf";
-                // write vcf header to new segment out_file
-                write_vcf_header(vcf_file, out_vcf_segment_name);
-                // open new segment out_file in append mode
-                out_file_stream.open(out_vcf_segment_name, ios_base::app);
-
-            }
-        }
-        out_file_stream.close();
-        cout << "SEGMENT LENGTH: " << segment_size << endl;
-        cout << "LINE COUNT: " << total_line_count << endl;
-        cout << "NUM SEGMENTS: " << segment_count << endl;
-        int num_variants = total_line_count;
+    	// open vcf file and check success
+    	ifstream vcf_file_stream;
+    	vcf_file_stream.open(vcf_file);
+    	if (!vcf_file_stream.is_open()){
+    		cout << "FAILED TO OPEN: " << vcf_file << endl;
+        	exit(1);
 	}
-	return segment_count;
+        int total_line_count = 0;
+        int lines_in_slice = 0;
+	
+	// at start of a new slice,
+	// open new slice file
+	// write header
+	ofstream slice_file_stream;
+	// name slice out file
+        string out_vcf_slice_file = out_dir + base_name + \
+        	".seg." + to_string(slice_count) + \
+                ".vcf";
+       	slice_file_stream.open(out_vcf_slice_file);
+        for (int i = 0; i < vcf_header.size(); i ++){
+                slice_file_stream << vcf_header[i] << endl;
+        }
+
+	// read vcf file until end
+	string line;
+        while (getline (vcf_file_stream, line)){
+            	// ignore header
+		char char1 = line.at(0);
+            	if (char1 == '#'){continue;}
+		else{
+			// still building a slice
+			if (lines_in_slice < slice_size){
+				slice_file_stream << line << endl;
+				lines_in_slice ++;
+				total_line_count ++;
+			}
+			// reached end of slice-->increment slice count
+			// close file-->increment slice count
+			// open new file-->write header-->write line
+			else if (lines_in_slice == slice_size){
+				//slice_file_stream << line;
+				slice_file_stream.close();
+				slice_count += 1;
+				
+				// open next slice file and write header 
+                                string out_vcf_slice_file = out_dir + base_name + \
+                                        ".seg." + to_string(slice_count) + \
+                                        ".vcf";
+                                slice_file_stream.open(out_vcf_slice_file);
+                                for (int i = 0; i < vcf_header.size(); i ++){
+                                        slice_file_stream << vcf_header[i] << endl;
+                                }
+				slice_file_stream << line << endl;
+				lines_in_slice = 1;	
+			}
+		}
+        }
+	// write last line
+	if (lines_in_slice < slice_size){
+		slice_file_stream << line << endl;
+	}
+	slice_file_stream.close();
+		
+        slice_file_stream.close();
+        cout << "SEGMENT LENGTH: " << slice_size << endl;
+        cout << "LINE COUNT: " << total_line_count << endl;
+        cout << "NUM SEGMENTS: " << slice_count << endl;
+        int num_variants = total_line_count;
+	return slice_count;
 }
