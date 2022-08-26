@@ -9,11 +9,20 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
+
+	// read config file for chromosome VCF file
+	string configFile = argv[1];   // configuration file will all options
+	map<string, string> config_options;
+	config_options = get_config_options(configFile);
+
+	string vcf_file = config_options["vcf_file"];
 	
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
 	// smaller VCF files
-	vector<string> vcf_header;	
+	vector<string> vcf_header = read_vcf_header(vcf_file);
+	int header_num_lines = vcf_header.size();
+	cout << "Read " << header_num_lines << " lines from VCF header." << endl;
 
 
 	return 0;
@@ -51,39 +60,12 @@ vector<string> read_vcf_header(string vcf_file){
 	return vcf_header;
 }
 
-void write_vcf_header(string vcf_file, string out_file){
-    /*
-     * open VCF file and write header data to out_file
-     */
-
-    // open file and check success
-    ifstream vcf_file_stream;
-    vcf_file_stream.open(vcf_file);
-    if (!vcf_file_stream.is_open()){
-            cout << "FAILED TO OPEN: " << vcf_file << endl;
-    }
-    else{
-        // open output VCF file for a segment
-        ofstream out_file_stream;
-        out_file_stream.open(out_file);
-
-        string line;
-        // read vcf file header and write just header to put
-        while (getline (vcf_file_stream, line)){
-            char char1 = line.at(0);
-            if (char1 == '#'){
-                out_file_stream << line << endl;
-            }
-            else{ break; }
-        }
-    }
-}
-
+/*
+ * Open full VCF file, ignore header, 
+ * write a one segment to segment file
+ * return number of slices
+ */
 int slice(string vcf_file, int segment_size, string base_name, string out_dir){
-    /*
-     * Open VCF file, ignore header,
-     * write a segment of columns to out_file
-     */
 
     // to return
     int segment_count = 0;

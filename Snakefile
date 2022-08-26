@@ -9,17 +9,23 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
 
 rule all:
-        input:
-                f"{config.segments_out_dir}/segments.vcf.done",
+	input:
+		f"{config.bin_dir}/slice-vcf",
+                f"{config.segments_out_dir}/segments.vcf.done"
+
 
 rule split_vcf_COMPILE:
-        output:
+	input:
+        	slice_vcf=f"{config.src_dir}/slice_vcf.cpp",
+		read_config=f"{config.src_dir}/read_config.cpp"
+	output:
                 bin=f"{config.bin_dir}/slice-vcf"
-        message:
-                "Compiling--slice vcf into segments..."
-        shell:
-                "g++ {config.src_dir}/slice_vcf.cpp" \
-                " {config.src_dir}/read_config.cpp" \
+	message:
+		"Compiling--slice vcf into segments..."
+	shell:
+                "g++ " \
+		" {input.slice_vcf} " \
+                " {input.read_config} " \
                 " -I {config.include_dir}/" \
                 " -lhts" \
                 " -o {output.bin}"
