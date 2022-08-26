@@ -1,44 +1,55 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
+#include "read_config.h"
 #include "slice_vcf.h"
 
 using namespace std;
 
-//int write_segments(string vcf_file, int segment_size, string base_name, string out_dir){
-//	// return number of segmented files
-//	int segment_count = 0;
-//
-//	// open vcf file and check success
-//	ifstream vcf_file_stream;
-//    	vcf_file_stream.open(vcf_file);
-//    	if (!vcf_file_stream.is_open()){
-//        	cout << "FAILED TO OPEN: " << vcf_file << endl;
-//    		return -1;
-//	}
-//
-//	// read vcf file
-//	string line;
-//	int lines_in_segment_count = 0;
-//
-//	// write header to segment out file
-//	string out_vcf_segment_name = out_dir + base_name + \
-//				      ".seg." + to_string(segment_count) + \
-//				      ".vcf";
-//	write_vcf_header(vcf_file, out_vcf_segment_name);
-//	
-//	// open segment out file in append mode
-//	ofstream out_file_stream;
-//	out_file_stream.open(out_vcf_segment_name, ios_base::app);
-//
-//	// read vcf file
-//	while (vcf_file_stream.peek() != EOF){
-//	
-//	}
-//	
-//	return segment_count;
-//}
+int main(int argc, char* argv[]){
+	
+	// read header of full chromosome VCF file
+	// store as list to write to header of 
+	// smaller VCF files
+	vector<string> vcf_header;	
+
+
+	return 0;
+}
+
+/*
+ * Open full chromosome VCF file and read the header.
+ * Store the header data in a vector of strings
+ * Return the header data. (To be written at the
+ * top of every smaller VCF file)
+ */
+vector<string> read_vcf_header(string vcf_file){
+	// stores VCF header
+	vector<string> vcf_header;
+	
+	// open file and check success
+    	ifstream vcf_file_stream;
+    	vcf_file_stream.open(vcf_file);
+    	if (!vcf_file_stream.is_open()){
+        	cout << "FAILED TO OPEN: " << vcf_file << endl;
+		exit(1);
+    	}
+        
+	// read vcf file header and stop
+	// when header is done
+	string line;
+        while (getline (vcf_file_stream, line)){
+            char char1 = line.at(0);
+            if (char1 == '#'){
+                vcf_header.push_back(line);
+            }
+	    // stop when header is done
+            else{ break; }
+        }	
+	return vcf_header;
+}
 
 void write_vcf_header(string vcf_file, string out_file){
     /*

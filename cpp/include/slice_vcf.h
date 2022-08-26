@@ -6,8 +6,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
+
+vector<string> read_vcf_header(string vcf_file);
+
 
 void write_vcf_header(string vcf_file, string out_file);
 int slice(string vcf_file, int segment_size, string base_name, string out_dir);;
