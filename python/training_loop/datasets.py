@@ -1,3 +1,8 @@
+"""
+Used to load data from sample files.
+KEY ASSUMPTION: The order of samples is the same in the sample IDs file and
+the genotype encodings file.
+"""
 import random
 from pprint import pprint
 from typing import Container, Iterable, Mapping, Tuple
@@ -148,9 +153,60 @@ class PairsDataset:
         self.ds = self.ds.batch(batch_size).prefetch(10)
 
 
+class SingleDataset:
+    def __init__(
+        self,
+        keep_samples: Iterable,  # leave out if samples outside this set
+        sample_id_filename: str,
+        genotype_filename: str,
+        shuffle: bool = False,
+        # encoding_type: tf.DType = tf.int8,
+        batch_size: int = 32,
+        repeat: bool = True,
+    ):
+        """
+        TF dataset for single samples.
+        Each element is a tuple of (sample_id, genotype_vector)
+        """
+        # map sample IDs to indices
+        sample_ids = load_sample_ids(sample_id_filename)
+
+        # integer indexed list of genotype encodings
+        genotypes = load_genotypes(genotype_filename)
+
+        # filter out genotype strings that have samples outside the keep_samples set
+        genotypes = [genotypes[sample_ids[s]] for s in keep_samples]
+
+        # create dataset that yeilds tuples of (sample_id, genotype_vector)
+        self.ds = tf.data.Dataset.from_tensor_slices((keep_samples, genotypes))
+
+        self.num_variants = len(genotypes[0])
+        # self.ds = tf.data.Dataset.from_tensor_slices(data)
+        if repeat:
+            self.ds = self.ds.repeat()
+        if shuffle:
+            self.ds = self.ds.shuffle(buffer_size=len(genotypes))
+        self.ds = self.ds.batch(batch_size).prefetch(10)
+
 
 if __name__ == "__main__":
-    sample_ids = load_sample_ids("/home/murad/data/toy_model_data/ALL.sampleIDs")
-    genotypes = load_genotypes("/home/murad/data/toy_model_data/chr0.seg.0.encoding")
-    sample_pairs = get_sample_pairs("/home/murad/data/toy_model_data/chr0.seg.0.cnn")
-    pprint(sample_pairs)
+    # sample_ids = load_sample_ids("/home/murad/data/toy_model_data/ALL.sampleIDs")
+    # genotypes = load_genotypes("/home/murad/data/toy_model_data/chr0.seg.0.encoding")
+    # sample_pairs = get_sample_pairs("/home/murad/data/toy_model_data/chr0.seg.0.cnn")
+    # pprint(sample_pairs)
+    S = SingleDataset(
+        keep_samples=[
+            "HG00122",
+            "HG00123",
+            "HG00125",
+        ],
+        sample_id_filename="/home/murad/data/toy_model_data/ALL.sampleIDs",
+        genotype_filename="/home/murad/data/toy_model_data/chr0.seg.0.encoding",
+        shuffle=False,
+        batch_size=32,
+        repeat=False,
+    )
+    for x in S.ds:
+        print(x.shape)
+        exit()
+
