@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
-import sys
+import os, sys, inspect
 
-sys.path.insert(1, '/home/sdp/genotype-encoding/python/utils/')
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 import basic_datastructures
 
 sample_ID_file = sys.argv[1]

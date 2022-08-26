@@ -2,8 +2,8 @@
 #include <faiss/IndexHNSW.h>
 #include <iostream>
 #include <chrono>
-#include "buildIndex.h"
-#include "searchIndex.h"
+#include "build_index.h"
+#include "search_index.h"
 #include "utils.h"
 
 // 64-bit int

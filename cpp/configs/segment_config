@@ -1,9 +1,9 @@
 encoding_file=data/encodings/encoding.trivial
 
-vcf_file=data/vcf/ALL.chr6.shapeit2_integrated_snvindels_v2a_27022019.GRCh38.phased.vcf
+vcf_file=data/vcf/chr0-test.5000.vcf
 
 segment_size=5000
 
-out_dir=data/segments/chr6/seg_5000/
+out_dir=data/segments/chr0_test/seg_5000/
 
-out_base_name=chr6
+out_base_name=chr0

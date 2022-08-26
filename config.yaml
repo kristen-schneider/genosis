@@ -1,23 +1,25 @@
-conda_dir:
-  /home/sdp/miniconda3/envs/precision-medicine/
-
 sample_IDs:
   data/ALL.sampleIDs
 
-python_dir:
-  python
-
+bin_dir:
+  cpp/bin
 src_dir:
   cpp/src
 include_dir:
   cpp/include
-bin_dir:
-  cpp/bin
+conda_dir:
+  /home/sdp/miniconda3/envs/precision-medicine
+python_dir:
+  python
 
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/segments/chr6/seg_5000
+  data/segments/chr0_test/seg_5000
 
 k:
   2548
+enc_delim:
+  none
+emb_delim:
+  space

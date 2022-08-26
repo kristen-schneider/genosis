@@ -1,7 +1,10 @@
 import basic_ds
-import sys
+import os, sys, inspect
 import utils
-sys.path.insert(1, '/home/sdp/precision-medicine/python/scripts/')
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 import basic_data_structures
 
 import tensorflow as tf
@@ -11,7 +14,13 @@ sample_IDs_file = sys.argv[1]
 sample_encodings_file = sys.argv[2]
 ID_distances_file = sys.argv[3]
 ID_embeddings_file = sys.argv[4]
-ID_embeddings_file_2 = sys.argv[5]
+#ID_embeddings_file_2 = sys.argv[5]
+
+# model parameters
+num_epochs = 5
+num_layers = 5
+filter_size = 32
+
 
 ## rewriting my main_cnn.py script in-line like the example
 
@@ -50,12 +59,14 @@ vector_size = num_variants
 # building network
 print('Building Base CNN...')
 inputs = tf.keras.Input(shape=(num_variants, 1))
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(inputs)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.Conv1D(filters=6, kernel_size=3, activation="relu")(x)
-x = tf.keras.layers.BatchNormalization()(x)
+
+# using for loop to build layers
+for l in range(num_layers):
+    x = tf.keras.layers.Conv1D(filters=filter_size, kernel_size=3, activation="relu")(inputs)
+    x = tf.keras.layers.MaxPool1D(pool_size=2, strides=2)(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    filter_size *= 2
+
 x = tf.keras.layers.GlobalAveragePooling1D()(x)
 
 outputs = tf.keras.layers.Dense(80)(x)
@@ -151,38 +162,10 @@ class SiameseModel(tf.keras.Model):
 
 siamese_model = SiameseModel(siamese_network)
 
-### Embeddings for a UNtrained model
-#out_embeddings_2 = open(ID_embeddings_file_2, 'w')
-#
-#UT_all_sample_embeddings = []
-## iterate through all pairs in a batch
-#for batch in train_dataset:
-#    # get sample 1 and sample 2 in a pair
-#    sample1, sample2 = batch[:2]
-#
-#    # embeddings
-#    sample1_embedding, sample2_embedding = (
-#        embedding(sample1),
-#        embedding(sample2)
-#    )
-#
-#    for s in range(len(sample1_embedding.numpy())):
-#        UT_all_sample_embeddings.append(sample1_embedding[s].numpy())
-#        UT_all_sample_embeddings.append(sample2_embedding[s].numpy())
-#
-#print("num UT embeddings: ", len(UT_all_sample_embeddings))
-#for embedding_i in range(len(UT_all_sample_embeddings)):
-#    curr_embedding = UT_all_sample_embeddings[embedding_i]
-#    for f in curr_embedding:
-#        out_embeddings_2.write(str(f) + ' ')
-#    out_embeddings_2.write('\n')
-#
-#out_embeddings_2.close()
-
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', min_delta=0)#mode="auto", patience=1)
-siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True, loss='loss')
-history = siamese_model.fit(train_dataset, epochs=20, validation_data=val_dataset)
-len(history.history['loss'])
+siamese_model.compile(optimizer=tf.keras.optimizers.Adam(0.0001), run_eagerly=True, weighted_metrics=[])#, loss='loss')
+siamese_model.fit(train_dataset, epochs=num_epochs, validation_data=val_dataset)
+#print(siamese_model.evaluate(val_dataset))
 
 out_embeddings = open(ID_embeddings_file, 'w')
 
