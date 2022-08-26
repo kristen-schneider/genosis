@@ -115,6 +115,7 @@ class PairsDataset:
         encoding_type: tf.DType = tf.int8,
         target_type: tf.DType = tf.float32,
         batch_size: int = 32,
+        repeat: bool = True,
     ):
         """
         TF dataset for the sample pairs and target distances.
@@ -133,19 +134,19 @@ class PairsDataset:
         self.num_pairs = len(sample_pairs) // batch_size
         self.num_variants = len(genotypes[0])
 
-        self.ds = (
-            tf.data.Dataset.from_generator(
-                lambda: yield_sample_pair(sample_ids, sample_pairs, genotypes, shuffle),
-                (encoding_type, encoding_type, target_type),
-                (
-                    tf.TensorShape([self.num_variants]),
-                    tf.TensorShape([self.num_variants]),
-                    tf.TensorShape([]),
-                ),
-            )
-            .batch(batch_size)
-            .prefetch(10)
+        self.ds = tf.data.Dataset.from_generator(
+            lambda: yield_sample_pair(sample_ids, sample_pairs, genotypes, shuffle),
+            (encoding_type, encoding_type, target_type),
+            (
+                tf.TensorShape([self.num_variants]),
+                tf.TensorShape([self.num_variants]),
+                tf.TensorShape([]),
+            ),
         )
+        if repeat:
+            self.ds = self.ds.repeat()
+        self.ds = self.ds.batch(batch_size).prefetch(10)
+
 
 
 if __name__ == "__main__":

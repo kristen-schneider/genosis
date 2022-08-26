@@ -1,13 +1,16 @@
 import argparse
 import sys
 
+import matplotlib.pyplot as plt
 import tensorflow as tf
 from datasets import PairsDataset
+from models import DistanceLayer
 
 
 def evaluate_model(args: argparse.Namespace):
     model = tf.keras.models.load_model(args.model_path)
-    samples = [line.rstrip().split("\t") for line in open(args.test_samples, "r")]
+    samples = [line.rstrip() for line in open(args.test_samples, "r")]
+    print(samples)
     test_data = PairsDataset(
         keep_samples=samples,
         sample_id_filename=args.samples_ids,
@@ -15,9 +18,26 @@ def evaluate_model(args: argparse.Namespace):
         genotype_filename=args.genotypes,
         shuffle=False,
         batch_size=args.batch_size,
+        repeat=False,
     )
-    model.compile(run_eagerly=True)
-    model.evaluate(test_data.ds, verbose=1)
+    print(test_data.num_pairs)
+
+    distance = DistanceLayer()
+    dpred = []
+    dtrue = []
+    for i, (s1, s2, d) in enumerate(test_data.ds):
+        print(f"{i}/{test_data.num_pairs}")
+        for truth, pred in zip(
+            d.numpy(),
+            tf.keras.layers.Dot(axes=-1, normalize=True)([model(s1), model(s2)]).numpy(),
+        ):
+            dpred.append(pred)
+            dtrue.append(truth)
+
+    plt.scatter(dtrue, dpred)
+    plt.xlabel("IBD distance")
+    plt.ylabel("Predicted distance")
+    plt.show()
 
 
 if __name__ == "__main__":

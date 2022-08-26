@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", min_delta=0.0001, patience=2, verbose=1
+            monitor="val_loss", patience=2, verbose=1
         ),
         # TODO DOESN'T WORK
         # find another callback that saves just the 'base_model'.
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     training_model.fit(
         train_data.ds,
-        epochs=5,
+        epochs=10,
         steps_per_epoch=train_data.num_pairs,
         validation_data=val_data.ds,
         validation_steps=val_data.num_pairs,

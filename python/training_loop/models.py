@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-
 def conv1d_block(
     inputs: tf.Tensor,
     filters: int,
@@ -16,9 +15,16 @@ def conv1d_block(
     :param strides: stride length.
     :return: The output tensor.
     """
-    x = tf.keras.layers.Conv1D(filters, kernel_size, strides=strides, padding="same")(
-        inputs
-    )
+    # x = tf.keras.layers.Conv1D(filters, kernel_size, strides=strides, padding="same")(
+    #     inputs
+    # )
+    x = tf.keras.layers.Conv1D(
+        filters,
+        kernel_size,
+        strides=strides,
+        padding="same",
+        kernel_regularizer=tf.keras.regularizers.L2(0.001),
+    )(inputs)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Activation(activation)(x)
     return x
@@ -39,12 +45,23 @@ def residual1d_block(
     :param strides: stride length.
     :return: The output tensor.
     """
-    x = tf.keras.layers.Conv1D(filters, kernel_size, strides=strides, padding="same")(
-        inputs
-    )
+
+    x = tf.keras.layers.Conv1D(
+        filters,
+        kernel_size,
+        strides=strides,
+        padding="same",
+        kernel_regularizer=tf.keras.regularizers.L2(0.001),
+    )(inputs)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Activation(activation)(x)
-    x = tf.keras.layers.Conv1D(filters, kernel_size, strides=strides, padding="same")(x)
+    x = tf.keras.layers.Conv1D(
+        filters,
+        kernel_size,
+        strides=strides,
+        padding="same",
+        kernel_regularizer=tf.keras.regularizers.L2(0.001),
+    )(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.Add()([x, inputs])
     x = tf.keras.layers.Activation(activation)(x)
@@ -109,8 +126,9 @@ def build_siamese_network(base_model: tf.keras.Model, vector_size: int):
     sample1_input = tf.keras.Input(name="sample1", shape=vector_size)
     sample2_input = tf.keras.Input(name="sample2", shape=vector_size)
 
-    predicted_distances = DistanceLayer()(
-        base_model(sample1_input), base_model(sample2_input)
+    # predicted_distances = DistanceLayer()(
+    predicted_distances = tf.keras.layers.Dot(axes=-1, normalize=True)(
+        [base_model(sample1_input), base_model(sample2_input)]
     )
     siamese_network = tf.keras.Model(
         inputs=[sample1_input, sample2_input], outputs=predicted_distances
@@ -162,7 +180,8 @@ class SiameseModel(tf.keras.Model):
 
     def _compute_loss(self, sample_data, target_distances):
         predicted_distance = self.siamese_network(sample_data)
-        loss = tf.keras.metrics.mean_squared_error(predicted_distance, target_distances)
+        # loss = tf.keras.metrics.mean_squared_error(predicted_distance, target_distances)
+        loss = tf.keras.losses.Huber()(predicted_distance, target_distances)
         return loss
 
     @property

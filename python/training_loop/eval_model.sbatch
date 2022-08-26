@@ -11,12 +11,13 @@
 #SBATCH --error="./eval_test_set.err"
 # --------------------------------------------------------------
 
-data_dir=/scratch/Shares/layer/projects/toy_model_data
+data_dir=/home/murad/data/toy_model_data
+# data_dir=/scratch/Shares/layer/projects/toy_model_data
 python evaluation_loop.py \
     --model_path $data_dir/base_model.h5 \
     --test_samples $data_dir/testing.txt \
     --sample_ids $data_dir/ALL.sampleIDs \
     --sample_pairs $data_dir/chr0.seg.0.cnn \
     --genotypes $data_dir/chr0.seg.0.encoding \
-    --batch_size 64
+    --batch_size 256
 
