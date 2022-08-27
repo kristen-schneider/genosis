@@ -168,3 +168,19 @@ rule faiss_COMPILE:
                 " -lfaiss" \
                 " -o {output.bin}" \
 
+rule faiss_embedding_EXECUTE:
+	input:
+		bin=f"{config.bin_dir}/single_faiss",
+		database=f"{config.samples_dir}/train_samples.txt",
+		queries=f"{config.samples_dir}/test_samples.txt"
+	output:
+		done=f"{config.segments_out_dir}/segments.emd_faissL2.done"
+	message:
+		"Executing--run FAISS L2 on all input embedding segments"
+	shell:
+		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
+		"       filename=$(basename $encoding_f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	./{input.bin} $embedding_f {input.database} {input.queries} {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"done" \
+		" && touch {output.done}"
