@@ -71,41 +71,50 @@ int get_num_samples(bcf_hdr_t *vcf_header){
 }
 
 /*
- * Gets number of samples
- * and number of variants
- * in a file with encoded/
- * embedding data
+ * Returns number of samples from a file with a 
+ * list of samples.
  */
-void get_dimensions(string in_file, int* dimensions, char delim){
-        
+int count_num_samples(string in_file){
 	int num_samples = 0;
-	int num_variants = 0;
-
-	// open queries data (.txt file)
 	ifstream f_stream;
         f_stream.open(in_file);
         if ( !f_stream.is_open() ) {
                 cout << "Failed to open: " << in_file << endl;
-        	exit(1);
+                exit(1);
+        }
+        // count number of lines = num_samples
+        string line;
+        while ( getline(f_stream, line) ){
+		num_samples++;
 	}
-	// count number of lines = num_samples
-	// count number of elements in first line = num_variants
-	string line;
-	while ( getline(f_stream, line) ){
-		if ( num_variants = 0){
-			size_t start;
-			size_t end = 0;
-			// count number of variants in first line
-			while ( (start = line.find_first_not_of(delim, end)) != std::string::npos){
-				end = line.find(delim, start);
-				num_variants ++;
-			}
-			num_samples ++;
-		}
-		num_samples ++;
-	}
-	dimensions[0] = num_variants;
-	dimensions[1] = num_samples;
+	f_stream.close();
+	return num_samples;
 }
+/*
+ * Returns number of entreis for a single
+ * input vector  given an 
+ * encoding or embedding file
+ */
+int count_length_input_vector(string in_file, char delim){
+	int num_variants = 0;
 
-
+	// open encoding or embeddding data
+        ifstream f_stream;
+        f_stream.open(in_file);
+        if ( !f_stream.is_open() ) {
+                cout << "Failed to open: " << in_file << endl;
+                exit(1);
+        }
+        
+	// count number of elements in first line = num_variants
+        string line;
+	size_t start;
+        size_t end = 0;
+	getline(f_stream, line);
+	while ( (start = line.find_first_not_of(delim, end)) != std::string::npos){
+		end = line.find(delim, start);
+        	num_variants ++;
+        }
+	f_stream.close();
+	return num_variants;
+}

@@ -15,40 +15,39 @@ using namespace std;
 int main(int argc, char* argv[]){
 
 	cout << "Running FAISS on one segment encoding file." << endl;
-	
-	string encoding_file = argv[1];
-	string query_file = argv[2];
-	int k = stoi(argv[3]);
+
+	string data_file = argv[1];
+	string database_file = argv[2];
+	string query_file = argv[3];
+	int k = stoi(argv[4]);
 	// convert delim to char for differnt delims
-	string s_delim = argv[4];
+	string s_delim = argv[5];
 	char delim = '\0';
 	if (s_delim == "space"){ delim = ' ';}
 
 
-	int encoding_dimensions[2];	// [num_samples, num_variants]
-	int query_dimensions[2];	// [num_queries, num_variants]
-	get_dimensions(encoding_file, encoding_dimensions, delim);
-	get_dimensions(query_file, query_dimensions, delim);
-	int num_variants = encoding_dimensions[0];
-	int num_samples = encoding_dimensions[1];
-	int num_queries = query_dimensions[1];
+	int num_elements = count_length_input_vector(data_file, delim);
+	int num_db_samples = count_num_samples(database_file);
+	int num_q_samples = count_num_samples(query_file);
 
-	cout << "Number samples: " << num_samples << endl;
-	cout << "Number variants: " << num_variants << endl;
-	cout << "Number queries: " << num_queries << endl;
+	cout << "Number database samples: " << num_db_samples << endl;
+	cout << "Number query samples: " << num_q_samples << endl;
+	cout << "Number vector elements: " << num_elements << endl;
+
+	
 	
 
 
-//	cout << "Starting FAISS for " << encoding_file << endl;
+//	cout << "Starting FAISS for " << database_file << endl;
 //
 //	auto start = high_resolution_clock::now();
 //	cout << "Building index..." << endl;
 //	/*
-//	faiss::IndexHNSWFlat index = build_faiss_index(encoding_file, \
+//	faiss::IndexHNSWFlat index = build_faiss_index(database_file, \
 //                        num_variants, \
 //                        num_samples);
 //	*/
-//	faiss::IndexFlatL2 index = build_faiss_index(encoding_file, \
+//	faiss::IndexFlatL2 index = build_faiss_index(database_file, \
 //			num_variants, \
 //			num_samples, 
 //			delim);

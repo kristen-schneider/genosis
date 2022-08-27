@@ -20,4 +20,5 @@ using namespace std;
 vector<vector<int>> transpose(vector<vector<int>> &vmf);
 vector<string> get_sample_IDs(string sample_IDs_file);
 int get_num_samples(bcf_hdr_t *vcf_header);
-void get_dimensions(string in_file, int* dimensions, char delim);
+int count_num_samples(string in_file);
+int count_length_input_vector(string in_file, char delim);
