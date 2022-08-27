@@ -23,7 +23,7 @@ using namespace std;
 
 faiss::IndexFlatL2 build_index(string data_file, string database_file, char delim, int num_elements){
 	// make map of sample ID to sample encoding (embedding)
-	map<string, float*> ID_vector_map = make_ID_vector_map(data_file, delim, num_elements);
+	map<string, float*> ID_data_map = make_ID_data_map(data_file, delim, num_elements);
 	
 	faiss::IndexFlatL2 index(num_elements);
 	//int i = 0;
@@ -40,15 +40,9 @@ faiss::IndexFlatL2 build_index(string data_file, string database_file, char deli
 	string line;
 	while (getline(db_file_stream, line)){
 		// pull sample vector from map
-		float* sample_vector = ID_vector_map[line];
+		float* sample_vector = ID_data_map[line];
 		//add to index
 		index.add(1, sample_vector);
-		delete[] sample_vector;
-		//for (int j = 0; j < sample_vector.size(); j++){
-			//float f = sample_vector.at(j);
-			//sample_arr[i] = f;
-			//i++;
-		//}
 	}
 	cout << "...added " << index.ntotal << " samples to the index." << endl;
 	db_file_stream.close();
@@ -60,7 +54,8 @@ faiss::IndexFlatL2 build_index(string data_file, string database_file, char deli
  * value is a vector of floats for
  * the encoding (or embedding)
  */
-map<string, float*> make_ID_vector_map(string data_file, char delim, int num_elements){
+map<string, float*> make_ID_data_map(string data_file, char delim, int num_elements){
+	cout << "Making Vector Map..." << endl;
 	// open data_file
 	ifstream data_file_stream;
 	data_file_stream.open(data_file);
@@ -69,18 +64,20 @@ map<string, float*> make_ID_vector_map(string data_file, char delim, int num_ele
 		exit(1);
 	}
 
-	map<string, float*> ID_vector_map;
+	map<string, float*> ID_data_map;
 
 	string line;
-	size_t start;
-	size_t end = 0;
 	// read file
 	while (getline(data_file_stream, line)){
+		size_t start;
+		size_t end = 0;
+		
 		//vector<float> sample_vector;
 		string sampleID = "";
 		float* sample_vector = new float[num_elements];
 		int float_i = 0;
 		while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
+			end = line.find(delim, start);
 			if (sampleID == ""){
 				sampleID = line.substr(start, end - start);
 			}else{
@@ -90,10 +87,10 @@ map<string, float*> make_ID_vector_map(string data_file, char delim, int num_ele
 			}
 		}
 		pair<string, float*> p (sampleID, sample_vector);
-   	        ID_vector_map.insert(p);
+   	        ID_data_map.insert(p);
 	}	
 
-	return ID_vector_map;
+	return ID_data_map;
 
 }
 

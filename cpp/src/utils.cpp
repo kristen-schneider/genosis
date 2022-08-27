@@ -116,5 +116,6 @@ int count_length_input_vector(string in_file, char delim){
         	num_variants ++;
         }
 	f_stream.close();
-	return num_variants;
+	// uncount sampleID
+	return num_variants - 1;
 }

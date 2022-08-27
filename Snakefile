@@ -17,8 +17,8 @@ rule all:
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.segments_out_dir}/segments.encoding.done",
-		f"{config.segments_out_dir}/segments.embeddings.done"
-
+		f"{config.segments_out_dir}/segments.embeddings.done",
+		f"{config.segments_out_dir}/segments.emd_faissL2.done"
 
 rule sample_IDs:
 	input:
@@ -170,7 +170,7 @@ rule faiss_COMPILE:
 
 rule faiss_embedding_EXECUTE:
 	input:
-		bin=f"{config.bin_dir}/single_faiss",
+		bin=f"{config.bin_dir}/faiss",
 		database=f"{config.samples_dir}/train_samples.txt",
 		queries=f"{config.samples_dir}/test_samples.txt"
 	output:
@@ -179,8 +179,8 @@ rule faiss_embedding_EXECUTE:
 		"Executing--run FAISS L2 on all input embedding segments"
 	shell:
 		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
-		"       filename=$(basename $encoding_f);" \
+		"       filename=$(basename $embedding_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $embedding_f {input.database} {input.queries} {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"	./{input.bin} $embedding_f {input.queries} {input.queries} {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"

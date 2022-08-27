@@ -34,8 +34,9 @@ int main(int argc, char* argv[]){
 	cout << "Number query samples: " << num_q_samples << endl;
 	cout << "Number vector elements: " << num_elements << endl;
 
+	cout << "Building Index..." << endl;
 	faiss::IndexFlatL2 faiss_index = build_index(data_file, database_file, delim, num_elements);
-	
+	cout << "Running search..." << endl;
 	
 
 
