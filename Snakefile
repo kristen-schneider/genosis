@@ -77,6 +77,7 @@ rule encode_vcf_COMPILE:
 rule encode_vcf_EXECUTE:
 	input:
 		bin=f"{config.bin_dir}/encode-vcf",
+		sample_IDs=f"{config.sample_IDs}", 
 		config_file=f"{config.configs_dir}/sample.config"
 	output:
 		done=f"{config.segments_out_dir}/segments.encoding.done"
@@ -86,7 +87,7 @@ rule encode_vcf_EXECUTE:
 		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
 		"	filename=$(basename $vcf_f);" \
                 "       seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.config_file} $vcf_f {config.segments_out_dir}/${{seg_name}}.encoding > {output.done};" \
+		"	./{input.bin} {input.config_file} {input.sample_IDs} $vcf_f {config.segments_out_dir}/${{seg_name}}.encoding > {output.done};" \
 		"done" \
 		" && touch {output.done}"
 

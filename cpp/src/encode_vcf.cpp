@@ -25,8 +25,9 @@ int main(int argc, char* argv[]){
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);
 
-	string vcf_slice_file = argv[2];
-	string output_encoding_file = argv[3];
+	string sample_IDs_file = argv[2];
+	string vcf_slice_file = argv[3];
+	string output_encoding_file = argv[4];
 
 	// access each option by variable name
 	string encoding_file = config_options["encoding_file"];
@@ -37,7 +38,7 @@ int main(int argc, char* argv[]){
 	// make encoding map
 	map<string, int> encoding_map = make_encoding_map(encoding_file);
 	
-	encode_vcf(vcf_slice_file, encoding_map, output_encoding_file);
+	encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file);
 
 	return 0;
 }
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]){
  * takes one sliced vcf file and encoding instructions
  * and writes output encoiding file
  */
-void encode_vcf(string vcf_slice_file, map<string, int> encoding_map, string output_encoding_file){
+void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, int> encoding_map, string output_encoding_file){
 	
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
@@ -67,8 +68,6 @@ void encode_vcf(string vcf_slice_file, map<string, int> encoding_map, string out
 	// getting number of samples
 	int num_samples = get_num_samples(vcf_header);
 	cout << "NUM SAMPLES: " << num_samples << endl;
-	// gettting all sequence names
-	const char **sequence_names = get_sequence_names(vcf_header);
 	
 	// initialize and allocate bcf1_t object
         bcf1_t *vcf_record = bcf_init();
@@ -133,40 +132,20 @@ void encode_vcf(string vcf_slice_file, map<string, int> encoding_map, string out
 	// transposing data
 	cout << "...transposing data..." << endl;
 	vector<vector<int>> sample_major_format_vec = transpose(all_genotype_encodings);
+	
+	
+	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file); 
 	// writing smf
 	cout << "...writing sample major format encodings to file..." << endl;
-	write_SMF(sample_major_format_vec, output_encoding_file);
-	
+	write_SMF(all_sample_IDs, sample_major_format_vec, output_encoding_file);	
 }
 
-
-int get_num_samples(bcf_hdr_t *vcf_header){
-	/*
-	 * returns number of samples in VCF file
-	 */
-
-	int num_samples = -1;
-	num_samples = bcf_hdr_nsamples(vcf_header);
-	return num_samples;
-}
-
-const char **get_sequence_names(bcf_hdr_t *vcf_header){
-	/*
-	 * returns sequnce IDs/names in VCF file
-	 */
-	int n = 0;
-	
-	const char **sequence_names = NULL;
-	bcf_hdr_seqnames(vcf_header, &n);
-	
-	return sequence_names;
-}
-
-void write_SMF(vector<vector<int>> smf, string output_encoding_file){
-	/*
-	 * writes sample major format
-	 * to outfile
-	 */
+/*
+ * given a set of sample IDs,
+ * and a set of smf encoded vectors, 
+ * write: sampleID encoding
+ */
+void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string output_encoding_file){
 	
 	// open output file to write encoding
 	ofstream output_stream;
@@ -174,6 +153,7 @@ void write_SMF(vector<vector<int>> smf, string output_encoding_file){
 
 	for (int i = 0; i < smf.size(); i++) {
 		vector<int> sample = smf.at(i);
+		output_stream << all_sample_IDs.at(i) << " ";
 		for(int j = 0; j < sample.size(); j++) {
 			output_stream << sample.at(j);
 		}

@@ -17,7 +17,7 @@
 
 using namespace std;
 
-void encode_vcf(string input_vcf_file, map<string, int> encoding_map, string output_encoding_file);
+void encode_vcf(string sample_IDs_file, string input_vcf_file, map<string, int> encoding_map, string output_encoding_file);
+void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string output_encoding_file);
 int get_num_samples(bcf_hdr_t *vcf_header);
 const char **get_sequence_names(bcf_hdr_t *vcf_header);
-void write_SMF(vector<vector<int>> smf, string output_encoding_file);

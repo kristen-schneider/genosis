@@ -1,5 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <htslib/hts.h>
+#include <htslib/vcf.h>
+#include <htslib/vcfutils.h>
+#include <htslib/kstring.h>
+#include <htslib/kseq.h>
+#include <htslib/synced_bcf_reader.h>
 #include <string>
 #include <vector>
 #include <map>
@@ -32,36 +38,36 @@ vector<vector<int>> transpose(vector<vector<int>> &vmf){
     return smf_vec;
 }
 
-// return number of samples and number of variants in encoding file
-void get_dimensions(string encodedTXT, int* dimensions, char delim){
-	
-	ifstream eFile;
-	eFile.open(encodedTXT);
-	if (!eFile.is_open()){
-		cout << "Failed to open: " << encodedTXT << endl;
-	}else{
-		int num_samples = 0;
-		int num_variants = 0;
-		string line;
-		while (getline(eFile, line)){
+/*
+ * get a list of all sample IDs
+ */
+vector<string> get_sample_IDs(string sample_IDs_file){
 
-			if (num_variants == 0){
-				if (delim == ' '){
-					size_t start = 0;
-					size_t end = 0;
-					const char delim = ' ';
-					while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
-						end = line.find(delim, start);
-						num_variants ++;
-					}
-				}else{
-					num_variants = line.length();;
-			
-				}
-			}
-			num_samples ++;	
-		}
-		dimensions[0] = num_samples;
-		dimensions[1] = num_variants;
+	vector<string> sample_IDs_vec;
+	
+	// open file and check success
+	ifstream sample_IDs_file_stream;
+	sample_IDs_file_stream.open(sample_IDs_file);
+	if ( !sample_IDs_file_stream.is_open() ){
+		cout << "FAILED TO OPEN: " << sample_IDs_file << endl;
+		exit(1);
 	}
+	string line;
+	while(getline(sample_IDs_file_stream, line)){
+		sample_IDs_vec.push_back(line);
+	}
+
+	return sample_IDs_vec;
 }
+
+/*
+ * returns number of samples in VCF file
+ */
+int get_num_samples(bcf_hdr_t *vcf_header){
+
+        int num_samples = -1;
+        num_samples = bcf_hdr_nsamples(vcf_header);
+        return num_samples;
+}
+
+
