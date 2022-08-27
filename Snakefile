@@ -12,9 +12,10 @@ rule all:
 	input:
 		f"{config.samples_dir}/sampleIDs.ALL",
 		f"{config.bin_dir}/slice-vcf",
+		f"{config.bin_dir}/encode-vcf", 
+		f"{config.bin_dir}/faiss",
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.segments_out_dir}/segments.plink.done",
-		f"{config.bin_dir}/encode-vcf", 
 		f"{config.segments_out_dir}/segments.encoding.done",
 		f"{config.segments_out_dir}/segments.embeddings.done"
 
@@ -139,3 +140,31 @@ rule run_model:
     		"	 --genotype_filename $encoding_f;"
 		"done" \
 		" && touch {output.done}"
+
+
+rule faiss_COMPILE:
+	input:
+		f"{config.segments_out_dir}/segments.encoding.done",
+                f"{config.segments_out_dir}/segments.embeddings.done",
+		main=f"{config.src_dir}/single_faiss.cpp",
+		utils=f"{config.src_dir}/utils.cpp",
+		build=f"{config.src_dir}/build_index.cpp",
+		search=f"{config.src_dir}/search_index.cpp",
+		read=f"{config.src_dir}/read_encodings.cpp"
+	output:
+		bin=f"{config.bin_dir}/faiss"
+	message:
+		"Compiling--FAISS..."
+	shell:
+		"g++ " \
+                " {input.main} " \
+                " {input.utils} " \
+                " {input.build} " \
+                " {input.search} "\
+		" {input.read} "\
+                " -I {config.include_dir}/" \
+		" -I {config.conda_dir}/include/" \
+		" -L {config.conda_dir}/lib/" \
+                " -lfaiss" \
+                " -o {output.bin}" \
+
