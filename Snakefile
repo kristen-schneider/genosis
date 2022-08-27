@@ -11,7 +11,8 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 rule all:
 	input:
 		f"{config.bin_dir}/slice-vcf",
-                f"{config.segments_out_dir}/segments.vcf.done"
+                f"{config.segments_out_dir}/segments.vcf.done", 
+		f"{config.bin_dir}/encode-vcf"
 
 
 rule split_vcf_COMPILE:
@@ -41,3 +42,21 @@ rule split_vcf_EXECUTE:
 	shell:
 		"./{input.bin} {input.config_file} > {output.done}" \
 		" && touch {output.done}"
+
+rule encode_vcf_COMPILE:
+	input:
+		encode_vcf=f"{config.src_dir}/encode_vcf.cpp",
+		read_config=f"{config.src_dir}/read_config.cpp", 
+		map_encodings=f"{config.src_dir}/map_encodings.cpp",
+		utils=f"{config.src_dir}/utils.cpp"
+	output:
+		bin=f"{config.bin_dir}/encode-vcf"
+	shell:
+		"g++ " \
+                " {input.encode_vcf} " \
+                " {input.read_config} " \
+		" {input.map_encodings} "\
+		" {input.utils} " \
+                " -I {config.include_dir}/" \
+                " -lhts" \
+                " -o {output.bin}"

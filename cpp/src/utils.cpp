@@ -8,23 +8,28 @@
 
 using namespace std;
 
-
 // transpose a vector of vectors of ints
-vector<vector<int>> transpose(vector<vector<int>> &b){
-	cout << "Transposing VMF to SMF..." << endl;
-	// throw error if size is bad
-	if (b.size() == 0) {
-		cerr << "Error reaching to db." << endl;
-	}
-    	
-	// transpose data
-	vector<vector<int>> trans_vec(b[1].size(), vector<int>());
-    	for (size_t i = 0; i < b.size(); i++) {
-		for (size_t j = 0; j < b[i].size(); j++) {
-            		trans_vec[j].push_back(b[i][j]);
-        	}
-    	}
-    return trans_vec;
+vector<vector<int>> transpose(vector<vector<int>> &vmf){
+        /*
+         * Takes a variant major format
+         * vector of vector of ints
+         * and transposes it to
+         * sample major format.
+         */
+        cout << "Transposing VMF to SMF..." << endl;
+        // throw error if size is bad
+        if (vmf.size() == 0) {
+                cerr << "Error reading variant major format." << endl;
+        }
+
+        // transpose data
+        vector<vector<int>> smf_vec(vmf[0].size(), vector<int>());
+        for (size_t i = 0; i < vmf.size(); i++) {
+                for (size_t j = 0; j < vmf[i].size(); j++) {
+                        smf_vec[j].push_back(vmf[i][j]);
+                }
+        }
+    return smf_vec;
 }
 
 // return number of samples and number of variants in encoding file
@@ -60,5 +65,3 @@ void get_dimensions(string encodedTXT, int* dimensions, char delim){
 		dimensions[1] = num_variants;
 	}
 }
-
-
