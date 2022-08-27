@@ -12,7 +12,8 @@ rule all:
 	input:
 		f"{config.bin_dir}/slice-vcf",
                 f"{config.segments_out_dir}/segments.vcf.done", 
-		f"{config.bin_dir}/encode-vcf"
+		f"{config.bin_dir}/encode-vcf", 
+		f"{config.segments_out_dir}/segments.encoding.done"
 
 
 rule split_vcf_COMPILE:
@@ -51,6 +52,8 @@ rule encode_vcf_COMPILE:
 		utils=f"{config.src_dir}/utils.cpp"
 	output:
 		bin=f"{config.bin_dir}/encode-vcf"
+	message:
+		"Compiling--encode vcf slices..."
 	shell:
 		"g++ " \
                 " {input.encode_vcf} " \
@@ -60,3 +63,20 @@ rule encode_vcf_COMPILE:
                 " -I {config.include_dir}/" \
                 " -lhts" \
                 " -o {output.bin}"
+
+rule encode_vcf_EXECUTE:
+	input:
+		bin=f"{config.bin_dir}/encode-vcf",
+		config_file=f"{config.configs_dir}/sample.config"
+	output:
+		done=f"{config.segments_out_dir}/segments.encoding.done"
+	message:
+		"Executing--encode vcf slices..."
+	shell:
+		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
+		"	filename=$(basename $vcf_f);" \
+                "       seg_name=${{filename%.*}};" \
+		"	./{input.bin} {input.config_file} $vcf_f {config.segments_out_dir}/${{seg_name}}.encoding > {output.done};" \
+		"done" \
+		" && touch {output.done}"
+
