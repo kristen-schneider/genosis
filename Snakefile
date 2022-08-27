@@ -13,6 +13,7 @@ rule all:
 		f"{config.sample_IDs}",
 		f"{config.bin_dir}/slice-vcf",
                 f"{config.segments_out_dir}/segments.vcf.done", 
+		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.bin_dir}/encode-vcf", 
 		f"{config.segments_out_dir}/segments.encoding.done"
 
@@ -20,11 +21,11 @@ rule sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		IDs=f"{config.sample_IDs}"
+		sampleIDs=f"{config.sample_IDs}"
 	message:
 		"Getting list of all sample IDs from VCF file..."
 	shell:
-		"bcftools query -l {input.vcf} > {output.IDs}"
+		"bcftools query -l {input.vcf} > {output.sampleIDs}"
 
 rule split_vcf_COMPILE:
 	input:
@@ -52,6 +53,23 @@ rule split_vcf_EXECUTE:
 		"Executing--slice vcf into segments..."
 	shell:
 		"./{input.bin} {input.config_file} > {output.done}" \
+		" && touch {output.done}"
+
+rule plink_genome_IBD:
+	input:
+		vcf_done=f"{config.segments_out_dir}/segments.vcf.done"
+	output:
+		done=f"{config.segments_out_dir}/segments.plink.done"
+	message:
+		"Running plink on all encodings"
+	shell:
+		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
+		"       filename=$(basename $vcf_f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	plink --vcf $vcf_f --genome --out {config.segments_out_dir}/${{seg_name}} > {output.done};" \
+		"done" \
+		" && rm {config.segments_out_dir}/*.log" \
+		" && rm {config.segments_out_dir}/*.nosex" \
 		" && touch {output.done}"
 
 rule encode_vcf_COMPILE:
