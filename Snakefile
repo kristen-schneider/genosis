@@ -10,11 +10,21 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
+		f"{config.sample_IDs}",
 		f"{config.bin_dir}/slice-vcf",
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.bin_dir}/encode-vcf", 
 		f"{config.segments_out_dir}/segments.encoding.done"
 
+rule sample_IDs:
+	input:
+		vcf=f"{config.vcf_file}"
+	output:
+		IDs=f"{config.sample_IDs}"
+	message:
+		"Getting list of all sample IDs from VCF file..."
+	shell:
+		"bcftools query -l {input.vcf} > {output.IDs}"
 
 rule split_vcf_COMPILE:
 	input:

@@ -1,3 +1,5 @@
+vcf_file:
+  data/vcf/chr0-test.5000.vcf
 sample_IDs:
   data/ALL.sampleIDs
 
