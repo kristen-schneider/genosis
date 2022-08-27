@@ -10,22 +10,25 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
-		f"{config.sample_IDs}",
+		f"{config.samples_dir}/sampleIDs.ALL",
 		f"{config.bin_dir}/slice-vcf",
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.bin_dir}/encode-vcf", 
-		f"{config.segments_out_dir}/segments.encoding.done"
+		f"{config.segments_out_dir}/segments.encoding.done",
+		f"{config.segments_out_dir}/segments.embeddings.done"
+
 
 rule sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		sampleIDs=f"{config.sample_IDs}"
+		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL"
 	message:
 		"Getting list of all sample IDs from VCF file..."
 	shell:
-		"bcftools query -l {input.vcf} > {output.sampleIDs}"
+		"bcftools query -l {input.vcf} > {output.sample_IDs}"
+
 
 rule split_vcf_COMPILE:
 	input:
@@ -55,6 +58,7 @@ rule split_vcf_EXECUTE:
 		"./{input.bin} {input.config_file} > {output.done}" \
 		" && touch {output.done}"
 
+
 rule plink_genome_IBD:
 	input:
 		vcf_done=f"{config.segments_out_dir}/segments.vcf.done"
@@ -71,6 +75,7 @@ rule plink_genome_IBD:
 		" && rm {config.segments_out_dir}/*.log" \
 		" && rm {config.segments_out_dir}/*.nosex" \
 		" && touch {output.done}"
+
 
 rule encode_vcf_COMPILE:
 	input:
@@ -95,7 +100,7 @@ rule encode_vcf_COMPILE:
 rule encode_vcf_EXECUTE:
 	input:
 		bin=f"{config.bin_dir}/encode-vcf",
-		sample_IDs=f"{config.sample_IDs}", 
+		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL", 
 		config_file=f"{config.configs_dir}/sample.config"
 	output:
 		done=f"{config.segments_out_dir}/segments.encoding.done"
@@ -109,3 +114,28 @@ rule encode_vcf_EXECUTE:
 		"done" \
 		" && touch {output.done}"
 
+
+rule run_model:
+	input:
+		script=f"{config.model_dir}/create_vectors.py", 
+		test_samples=f"{config.samples_dir}/test_samples.txt", 
+		model=f"{config.model_dir}/base_model.h5",
+		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL",
+		
+	output:
+		done=f"{config.segments_out_dir}/segments.embeddings.done"
+	message:
+		"Running model for all vcf slices. (Getting embeddings...)"
+	shell:
+		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $encoding_f);" \
+		"       seg_name=${{filename%.*}};" \
+		"	python {input.script}" \
+    		" 	 --sample-list {input.test_samples}" \
+    		"	 --model-path {input.model}" \
+    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.embedding" \
+    		"	 --batch-size {config.batch_size}" \
+    		"	 --sample_id_filename {input.sample_IDs}" \
+    		"	 --genotype_filename $encoding_f;"
+		"done" \
+		" && touch {output.done}"
