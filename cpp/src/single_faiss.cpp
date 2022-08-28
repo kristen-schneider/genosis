@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
 	cout << "Building Index..." << endl;
 	faiss::IndexFlatL2 faiss_index = build_index(database_IDs, database_data, delim, num_elements);
 	cout << "Running search..." << endl;
-	search(faiss_index, k, query_IDs, query_data, num_q_samples, num_elements, delim);	
+	search(faiss_index, k, database_IDs, query_IDs, query_data, num_q_samples, num_elements, delim);	
 	auto stop = high_resolution_clock::now();
 	auto duration_file = duration_cast<microseconds> (stop - start);
 	cout << "TIME:file:" << duration_file.count() << endl;
