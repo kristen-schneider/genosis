@@ -8,6 +8,7 @@
 #include <chrono>
 
 #include "search_index.h"
+#include "build_index.h"
 #include "read_encodings.h"
 
 /**
@@ -24,14 +25,15 @@ using namespace std::chrono;
 using namespace std;
 
 //void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
-//	       	int num_queries, int num_variants){
-void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
-	       	int num_queries, int num_variants, char delim){
+//	       	int num_queries, int num_elements){
+void search(const faiss::IndexFlatL2 &index, int k, string query_IDs, string query_data,\
+	       	int num_queries, int num_elements, char delim){
 	
 	idx_t* I = new idx_t[k * num_queries];
 	float* D = new float[k * num_queries];
 
-	float* queries = read_queries(queriesTXT, num_variants, num_queries, delim); 
+	float* queries = make_queries_arr(query_data, query_IDs, delim, num_queries, num_elements); 
+	//float* queries = read_queries(queriesTXT, num_elements, num_queries, delim); 
 	
 	auto start = high_resolution_clock::now();
 	index.search(num_queries, queries, k, D, I);
@@ -50,59 +52,36 @@ void search(const faiss::IndexFlatL2 &index, int k, string queriesTXT,\
 	delete[] D;
 }
 
-void similarity_search(const faiss::IndexHNSWFlat &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
-//void similarity_search(const faiss::IndexFlatL2 &index, string queriesFile, int start, int lengthQuery, int numVariants, int numSamples, int numQueries, int k, string txtName){
+/*
+ * makes an array of all queries
+ */
+float* make_queries_arr(string query_data, string query_IDs, char delim, int num_queries, int num_elements){
+	float* queries = new float[num_queries * num_elements];
 	
-	idx_t* I = new idx_t[k * numQueries];
-	float* D = new float[k * numQueries];
+	// make map of sample ID to sample encoding (embedding)
+        map<string, float*> ID_query_map = make_ID_data_map(query_data, delim, num_elements);
 
-	// get queries from file
-	//float* queries = read_queries(queriesFile, lengthQuery, numQueries);
-	cout << "...reading queries" << endl;
-	float* queries = read_queries_segment(queriesFile, start, numVariants, lengthQuery, numQueries);
-	/*
-	cout << "Query: " << endl;
-	for (int i = 0; i < lengthQuery; i++){
-        	cout << queries[i];
+        // read through query file (list of samples in database)
+        // and pull those vectors from the map to add to index
+        ifstream q_file_stream;
+        q_file_stream.open(query_IDs);
+        if (!q_file_stream.is_open()){
+                cout << "Failed to open: " << query_IDs << endl;
+                exit(1);
         }
-	cout << endl;
-	*/
-
-	//  index.search(nq, xq, k, D, I);
-	
-	index.search(numQueries, queries, k, D, I);
-	//index.range_search(numQueries, queries, k, D, I, 50.0);
-	cout << "...search complete." << endl;
-
-
-	//// writing results
-        //cout << "...writing index results." << endl;
-	//ofstream outIndexFile;
-	//outIndexFile.open("/home/sdp/precision-medicine/data/txt/indexResults.txt");
-        for (int i = 0; i < numQueries; i++){
-                for (int j = 0; j < k; j++){
-                        cout << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
-                        //outIndexFile << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
-                }
-                cout << endl;
-                //outIndexFile << endl;
+        string line;
+	int sample_i = 0;
+        while (getline(q_file_stream, line)){
+                // pull sample vector from map
+                float* sample_vector = ID_query_map[line];
+		// add all elements to query array
+		for (int q = 0; q < num_elements; q++){
+			queries[sample_i * num_elements + q] = sample_vector[q];
+		}
+		sample_i ++;
         }
-	//outIndexFile.close();
-	/*
-        cout << "..writing distance results." << endl;
-	ofstream outDistanceFile;
-	outDistanceFile.open("/home/sdp/precision-medicine/data/txt/distanceReults.txt");
-        for (int i = 0; i < numQueries; i++){
-                for (int j = 0; j < k; j++){
-                        outDistanceFile << "\t" << sqrt(D[i * k + j]) << " ";
-                }
-                outDistanceFile << endl;
-        }
-	outDistanceFile.close();
-	*/
-	
-	delete [] I;
-	delete [] D;
-	cout << "...deleting I and D. " << "start: " << start << endl;
+        q_file_stream.close();
+
+	return queries;
 }
 
