@@ -127,7 +127,7 @@ rule run_model_database_data:
 		encodings=f"{config.segments_out_dir}/segments.encoding.done",
 		script=f"{config.model_dir}/create_vectors.py", 
 		database_samples=f"{config.samples_dir}/train_samples.txt", 
-		model=f"{config.model_dir}/base_model.h5",
+		model=f"{config.model}",
 		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL",
 		
 	output:
@@ -153,7 +153,7 @@ rule run_model_query_data:
 		encodings=f"{config.segments_out_dir}/segments.encoding.done",
 		script=f"{config.model_dir}/create_vectors.py", 
 		query_samples=f"{config.samples_dir}/test_samples.txt", 
-		model=f"{config.model_dir}/base_model.h5",
+		model=f"{config.model}",
 		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL",
 		
 	output:

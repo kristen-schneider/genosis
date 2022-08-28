@@ -20,7 +20,8 @@ python_dir:
   python
 model_dir:
   python/training_loop
-
+model:
+  python/training_loop/model_8_26.h5
 
 batch_size:
   32
