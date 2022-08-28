@@ -41,11 +41,11 @@ void search(const faiss::IndexFlatL2 &index, int k, string database_IDs, string 
 	index.search(num_queries, queries, k, D, I);
 	auto stop = high_resolution_clock::now();
 	auto duration_search = duration_cast<microseconds>(stop - start);	
+	cout << "Sample_ID, index_match, distance_match" << endl;
 	cout << "TIME:search:" << duration_search.count() << endl;
 
 	for (int i = 0; i < num_queries; i++){
 		cout << "QUERY: " << query_ID_vector.at(i) << endl;
-		cout << "Sample_ID, index_match, distance_match" << endl;
 		for (int j = 0; j < k; j++){
 			cout << database_ID_vector.at(I[i * k + j]) << " " << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
 		}
