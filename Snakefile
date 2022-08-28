@@ -19,7 +19,8 @@ rule all:
 		f"{config.segments_out_dir}/segments.encoding.done",
 		f"{config.segments_out_dir}/segments.database-embeddings.done",
 		f"{config.segments_out_dir}/segments.query-embeddings.done",
-		f"{config.segments_out_dir}/segments.emd_faissL2.done"
+		f"{config.segments_out_dir}/segments.enc_faissL2.done",
+		f"{config.segments_out_dir}/segments.emb_faissL2.done"
 
 rule sample_IDs:
 	input:
@@ -197,13 +198,34 @@ rule faiss_COMPILE:
                 " -lfaiss" \
                 " -o {output.bin}" \
 
-rule faiss_embedding_EXECUTE:
+rule faiss_encoding_EXECUTE:
 	input:
+		encodings=f"{config.segments_out_dir}/segments.encoding.done",
 		bin=f"{config.bin_dir}/faiss",
 		database_IDs=f"{config.samples_dir}/train_samples.txt",
 		query_IDs=f"{config.samples_dir}/test_samples.txt"
 	output:
-		done=f"{config.segments_out_dir}/segments.emd_faissL2.done"
+		done=f"{config.segments_out_dir}/segments.enc_faissL2.done"
+	message:
+		"Executing--run FAISS L2 on all input encoding segments"
+	shell:
+		"for f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {config.k} {config.enc_delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
+		"done" \
+		" && touch {output.done}"
+
+
+rule faiss_embedding_EXECUTE:
+	input:
+		db_embeddings=f"{config.segments_out_dir}/segments.database-embeddings.done",
+		q_embeddings=f"{config.segments_out_dir}/segments.query-embeddings.done",
+		bin=f"{config.bin_dir}/faiss",
+		database_IDs=f"{config.samples_dir}/train_samples.txt",
+		query_IDs=f"{config.samples_dir}/test_samples.txt"
+	output:
+		done=f"{config.segments_out_dir}/segments.emb_faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input embedding segments"
 	shell:

@@ -28,6 +28,6 @@ batch_size:
 k:
   100
 enc_delim:
-  none
+  space
 emb_delim:
   space
