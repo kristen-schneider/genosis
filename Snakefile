@@ -17,7 +17,8 @@ rule all:
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.segments_out_dir}/segments.encoding.done",
-		f"{config.segments_out_dir}/segments.embeddings.done",
+		f"{config.segments_out_dir}/segments.database-embeddings.done",
+		f"{config.segments_out_dir}/segments.query-embeddings.done",
 		f"{config.segments_out_dir}/segments.emd_faissL2.done"
 
 rule sample_IDs:
@@ -116,25 +117,50 @@ rule encode_vcf_EXECUTE:
 		" && touch {output.done}"
 
 
-rule run_model:
+rule run_model_database_data:
 	input:
 		script=f"{config.model_dir}/create_vectors.py", 
-		test_samples=f"{config.samples_dir}/test_samples.txt", 
+		database_samples=f"{config.samples_dir}/train_samples.txt", 
 		model=f"{config.model_dir}/base_model.h5",
 		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL",
 		
 	output:
-		done=f"{config.segments_out_dir}/segments.embeddings.done"
+		done=f"{config.segments_out_dir}/segments.database-embeddings.done"
 	message:
-		"Running model for all vcf slices. (Getting embeddings...)"
+		"Running model for all vcf slices on database data. (Getting embeddings...)"
 	shell:
 		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $encoding_f);" \
 		"       seg_name=${{filename%.*}};" \
 		"	python {input.script}" \
-    		" 	 --sample-list {input.test_samples}" \
+    		" 	 --sample-list {input.database_samples}" \
     		"	 --model-path {input.model}" \
-    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.embedding" \
+    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.datbase-embedding" \
+    		"	 --batch-size {config.batch_size}" \
+    		"	 --sample_id_filename {input.sample_IDs}" \
+    		"	 --genotype_filename $encoding_f;"
+		"done" \
+		" && touch {output.done}"
+
+rule run_model_query_data:
+	input:
+		script=f"{config.model_dir}/create_vectors.py", 
+		query_samples=f"{config.samples_dir}/test_samples.txt", 
+		model=f"{config.model_dir}/base_model.h5",
+		sample_IDs=f"{config.samples_dir}/sampleIDs.ALL",
+		
+	output:
+		done=f"{config.segments_out_dir}/segments.query-embeddings.done"
+	message:
+		"Running model for all vcf slices on query data. (Getting embeddings...)"
+	shell:
+		"for encoding_f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $encoding_f);" \
+		"       seg_name=${{filename%.*}};" \
+		"	python {input.script}" \
+    		" 	 --sample-list {input.query_samples}" \
+    		"	 --model-path {input.model}" \
+    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.query-embedding" \
     		"	 --batch-size {config.batch_size}" \
     		"	 --sample_id_filename {input.sample_IDs}" \
     		"	 --genotype_filename $encoding_f;"
@@ -145,7 +171,8 @@ rule run_model:
 rule faiss_COMPILE:
 	input:
 		f"{config.segments_out_dir}/segments.encoding.done",
-                f"{config.segments_out_dir}/segments.embeddings.done",
+                f"{config.segments_out_dir}/segments.database-embeddings.done",
+                f"{config.segments_out_dir}/segments.query-embeddings.done",
 		main=f"{config.src_dir}/single_faiss.cpp",
 		utils=f"{config.src_dir}/utils.cpp",
 		build=f"{config.src_dir}/build_index.cpp",
@@ -171,16 +198,16 @@ rule faiss_COMPILE:
 rule faiss_embedding_EXECUTE:
 	input:
 		bin=f"{config.bin_dir}/faiss",
-		database=f"{config.samples_dir}/train_samples.txt",
-		queries=f"{config.samples_dir}/test_samples.txt"
+		database_IDs=f"{config.samples_dir}/train_samples.txt",
+		query_IDs=f"{config.samples_dir}/test_samples.txt"
 	output:
 		done=f"{config.segments_out_dir}/segments.emd_faissL2.done"
 	message:
 		"Executing--run FAISS L2 on all input embedding segments"
 	shell:
-		"for embedding_f in {config.segments_out_dir}/*.embedding; do" \
-		"       filename=$(basename $embedding_f);" \
+		"for f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} $embedding_f {input.queries} {input.queries} {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.datbase-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
