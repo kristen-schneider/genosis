@@ -55,7 +55,6 @@ faiss::IndexFlatL2 build_index(string database_IDs, string database_data, char d
  * the encoding (or embedding)
  */
 map<string, float*> make_ID_data_map(string data_file, char delim, int num_elements){
-	cout << "Making Vector Map..." << endl;
 	// open data_file
 	ifstream data_file_stream;
 	data_file_stream.open(data_file);
