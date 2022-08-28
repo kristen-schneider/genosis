@@ -151,11 +151,13 @@ void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string ou
 	ofstream output_stream;
 	output_stream.open(output_encoding_file);
 
+	// format sample ID float float float...
+	// space delim
 	for (int i = 0; i < smf.size(); i++) {
 		vector<int> sample = smf.at(i);
 		output_stream << all_sample_IDs.at(i) << " ";
 		for(int j = 0; j < sample.size(); j++) {
-			output_stream << sample.at(j);
+			output_stream << sample.at(j) << " ";
 		}
 		output_stream << endl;
 	}

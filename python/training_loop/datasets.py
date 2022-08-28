@@ -36,8 +36,10 @@ def load_genotypes(filename: str) -> list[list[np.uint8]]:
     load file with genotype encodings and returns a dict keyed by int id
     """
     with open(filename, "r") as f:
-        genotypes = f.read().splitlines()  # string of ints with no delimiter
-    return [[np.uint8(i) for i in list(g.split()[1])] for g in genotypes]
+        #genotypes = f.read().splitlines()  # string of ints with no delimiter
+        genotypes = f.read().splitlines()  # string of ints with space delimiter
+        #print([[np.uint8(i) for i in list(g.split()[1:])] for g in genotypes])
+    return [[np.uint8(i) for i in list(g.split()[1:])] for g in genotypes]
 
 
 # get all pairs of samples IDs along with their target distance
