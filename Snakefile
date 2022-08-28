@@ -137,7 +137,7 @@ rule run_model_database_data:
 		"	python {input.script}" \
     		" 	 --sample-list {input.database_samples}" \
     		"	 --model-path {input.model}" \
-    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.datbase-embedding" \
+    		"	 --output-path {config.segments_out_dir}/${{seg_name}}.database-embedding" \
     		"	 --batch-size {config.batch_size}" \
     		"	 --sample_id_filename {input.sample_IDs}" \
     		"	 --genotype_filename $encoding_f;"
@@ -232,6 +232,6 @@ rule faiss_embedding_EXECUTE:
 		"for f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.datbase-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.database-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"

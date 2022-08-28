@@ -33,6 +33,8 @@ void search(const faiss::IndexFlatL2 &index, int k, string query_IDs, string que
 	float* D = new float[k * num_queries];
 
 	float* queries = make_queries_arr(query_data, query_IDs, delim, num_queries, num_elements); 
+	vector<string> query_ID_vector = make_query_ID_vector(query_IDs);
+	cout << "SIZE OF QIDV: " << query_ID_vector.size() << endl;
 	//float* queries = read_queries(queriesTXT, num_elements, num_queries, delim); 
 	
 	auto start = high_resolution_clock::now();
@@ -42,7 +44,7 @@ void search(const faiss::IndexFlatL2 &index, int k, string query_IDs, string que
 	cout << "TIME:search:" << duration_search.count() << endl;
 
 	for (int i = 0; i < num_queries; i++){
-		cout << "QUERY: " << i << endl;
+		cout << "QUERY: " << query_ID_vector.at(i) << endl;
 		for (int j = 0; j < k; j++){
 			cout << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
 		}
@@ -85,3 +87,25 @@ float* make_queries_arr(string query_data, string query_IDs, char delim, int num
 	return queries;
 }
 
+/*
+ * Make a list of query IDs to print
+ * for output.
+ */
+vector<string> make_query_ID_vector(string query_IDs){
+	vector<string> query_ID_vector;
+	
+	// read through query ID file (list of samples in query)
+        // and add each ID to a vector of string
+        ifstream q_file_stream;
+        q_file_stream.open(query_IDs);
+        if (!q_file_stream.is_open()){
+                cout << "Failed to open: " << query_IDs << endl;
+                exit(1);
+        }
+        string line;
+        while (getline(q_file_stream, line)){
+		query_ID_vector.push_back(line);
+	}
+
+	return query_ID_vector;
+}
