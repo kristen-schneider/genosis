@@ -1,13 +1,10 @@
-import os, sys, inspect
+import sys
+import re
 from collections import defaultdict
 
-import distance_calculations
-
-## INPUT DATA STRUCTURES FROM START FILES
-## 1. sample IDs
-## 2. sample encodings
-## 3. plink files
-
+# sys.path.insert(1, '~genotype-encoding/python/utils/')
+# import distance_calculations
+from python.utils import distance_calculations
 
 def get_sample_ID_list(sample_ID_file):
     all_sample_IDs = []
@@ -64,7 +61,10 @@ def get_plink_dict(plink_file):
         l = line.strip().split()
         ID1 = l[1]
         ID2 = l[3]
-        plink_distance = float(l[11])
+        try:
+            plink_distance = float(l[9])
+        except ValueError:
+            plink_distance = -1
         plink_dict[ID1][ID2] = plink_distance
         plink_dict[ID2][ID1] = plink_distance
     f.close()
@@ -171,3 +171,78 @@ def get_faiss_rankings(sample_ID_list, faiss_file):
                     continue
     f.close()
     return faiss_rankings
+
+
+def get_plink_distances(database_IDs, queryIDs, plink_f):
+    header_len = 1
+    P = {}
+    with open(plink_f) as f:
+        for l in f:
+            if "time" in l:
+                break;
+            if header_len > 0:
+                header_len = header_len - 1
+                continue
+            A = l.rstrip().split()
+            a = A[1]
+            b = A[3]
+            dist = float(A[11])
+
+            if a in queryIDs:
+                if a not in P:
+                    P[a] = []
+                if b in database_IDs:
+                    P[a].append((b, dist))
+
+            if b in queryIDs:
+                if b not in P:
+                    P[b] = []
+                if a in database_IDs:
+                    P[b].append((a, dist))
+
+        f.close()
+        # sort by distance
+        for p in P:
+            P[p].sort(key=lambda tup: tup[1], reverse=True)
+
+        return P
+
+def get_faiss_distances(database_IDs, queryIDs, faiss_file):
+    F = {}
+    query_id = None
+    f = open(faiss_file, 'r')
+    for l in f:
+        if len(l) == 1:
+            continue
+        elif re.search(r'^TIME', l):
+            continue
+        elif re.search(r'^QUERY', l):
+            query_id = l.rstrip().split()[1]
+            # query_id = int(l.rstrip().split()[1])
+        elif query_id is not None and query_id in queryIDs:
+            A = l.rstrip().split()
+            idx_ID = A[0]
+            idx = int(A[1])
+            dist = float(A[2])
+            if query_id not in F:
+                F[query_id] = []
+            # if len(F[query_id]) > 50:
+            #     query_id = None
+            #     continue
+            # if idx_ID in database_IDs:
+            F[query_id].append((idx_ID, dist))
+    f.close()
+
+    # sort by distance
+    for f in F:
+        F[f].sort(key=lambda tup: tup[1])
+    return F
+
+def get_db_q_IDs(file):
+    IDs = []
+    # getting IDs of database samples
+    with open(file) as f:
+        for l in f:
+            IDs.append(l.rstrip())
+    return IDs
+
