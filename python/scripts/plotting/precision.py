@@ -12,14 +12,6 @@ import compute_conditions
 import basic_datastructures
 
 
-'''
-yeah, I think it'd just be easier to
-count the TP/FP/FN and do average/stddev
-of prec/recall across all queries.
-That would make it easier to quatifiably
-compare with the encoding based performance.
-'''
-
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir')
@@ -39,8 +31,10 @@ def main():
     database_IDs = basic_datastructures.get_db_q_IDs(args.train)
 
     [ENC_TP, EMB_TP, ENC_P, EMB_P] = many_segments(args, query_IDs, database_IDs, args.num_seg)
-    seg_precision_png = args.outdir+'many_seg_precision.png'
-    plot_many_segments(ENC_P, EMB_P, seg_precision_png, 'precision')
+    seg_true_positive_png = args.outdir+'many_seg_tp.png'
+    seg_precision_png = args.outdir+'many_seg_p.png'
+    plot_many_segments(ENC_TP, EMB_TP, seg_true_positive_png, 'True Positive')
+    plot_many_segments(ENC_P, EMB_P, seg_precision_png, 'Precision')
     return 0
 
 def many_segments(args, query_IDs, database_IDs, number_segments):
@@ -167,10 +161,12 @@ def plot_many_segments(seg_av_encoding, seg_av_embedding, out_png, metric):
 
     plt.figure(figsize=(30, 20))
     ax1 = plt.subplot(111)
-    # title_str = metric + ' for ' + str(len(query_IDs)) + ' Queries'
-    # ax1.set_title(title_str, fontsize=30)
-    ax1.plot(x, enc_y, color='olivedrab', linestyle='-', marker='o')
-    ax1.plot(x, emb_y, color='salmon', linestyle='-', marker='x')
+    title_str = metric + ' for ' + str(len(seg_av_encoding)) + ' segmenets'
+    ax1.set_title(title_str, fontsize=30)
+    ax1.plot(x, enc_y, color='olivedrab', linewidth=4, linestyle='-', marker='o')
+    ax1.plot(x, emb_y, color='salmon', linewidth=4, linestyle='-', marker='x')
+    ax1.legend(['Encodings', 'Embeddings'])
+    ax1.set_xticks(range(len(seg_av_encoding)), fontsize=10)
     ax1.set_xlabel('Segment', fontsize=20)
     ax1.set_ylabel(metric, fontsize=20)
     ax1.spines.right.set_visible(False)
