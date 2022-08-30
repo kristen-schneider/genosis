@@ -2,13 +2,10 @@ bin/
 build/
 data/
 lib/
-old_make/
-kristen/vec_src/
 plink.*
-python/plotting/png/
-python/plotting/txt/
-python/segcounts/
-python/scripts/cnn/__pycache__/
+python/scripts/plotting/png/
+python/scripts/plotting/txt/
+python/scripts/cnn/
 python/scripts/plotting/__pycache__/
 python/scripts/__pycache__/
 .snakemake/
