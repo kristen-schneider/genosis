@@ -21,7 +21,7 @@
 using idx_t = faiss::Index::idx_t;
 using namespace std;
 
-faiss::IndexFlatL2 build_index(string database_IDs, string database_data, char delim, int num_elements){
+faiss::IndexFlatL2 build_l2_index(string database_IDs, string database_data, char delim, int num_elements){
 	// make map of sample ID to sample encoding (embedding)
 	map<string, float*> ID_database_map = make_ID_data_map(database_data, delim, num_elements);
 	
