@@ -49,6 +49,36 @@ faiss::IndexFlatL2 build_l2_index(string database_IDs, string database_data, cha
 	return index;
 }
 
+
+faiss::IndexHNSWFlat build_hnsw_index(string database_IDs, string database_data, char delim, int num_elements){
+	// make map of sample ID to sample encoding (embedding)
+	map<string, float*> ID_database_map = make_ID_data_map(database_data, delim, num_elements);
+
+	faiss::IndexHNSWFlat index(num_elements, 64);
+	//int i = 0;
+	//float* sample_arr = new float[num_elements];
+
+	// read through databse file (list of samples in database)
+	// and pull those vectors from the map to add to index
+	ifstream db_file_stream;
+	db_file_stream.open(database_IDs);
+	if (!db_file_stream.is_open()){
+		cout << "Failed to open: " << database_IDs << endl;
+		exit(1);
+	}
+	string line;
+	while (getline(db_file_stream, line)){
+		// pull sample vector from map
+		float* sample_vector = ID_database_map[line];
+		//add to index
+		index.add(1, sample_vector);
+	}
+	cout << "...added " << index.ntotal << " samples to the index." << endl;
+	db_file_stream.close();
+	return index;
+}
+
+
 /*
  * Returns a map where key is sampleID and 
  * value is a vector of floats for
