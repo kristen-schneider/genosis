@@ -13,14 +13,17 @@ rule all:
 		f"{config.samples_dir}/sampleIDs.ALL",
 		f"{config.bin_dir}/slice-vcf",
 		f"{config.bin_dir}/encode-vcf", 
-		f"{config.bin_dir}/faiss",
+		f"{config.bin_dir}/faissl2",
+		f"{config.bin_dir}/faisshnsw",
                 f"{config.segments_out_dir}/segments.vcf.done", 
 		f"{config.segments_out_dir}/segments.plink.done",
 		f"{config.segments_out_dir}/segments.encoding.done",
 		f"{config.segments_out_dir}/segments.database-embeddings.done",
 		f"{config.segments_out_dir}/segments.query-embeddings.done",
 		f"{config.segments_out_dir}/segments.enc_faissL2.done",
-		f"{config.segments_out_dir}/segments.emb_faissL2.done"
+		f"{config.segments_out_dir}/segments.emb_faissL2.done",
+		f"{config.segments_out_dir}/segments.enc_faissHNSW.done",
+		f"{config.segments_out_dir}/segments.emb_faissHNSW.done"		
 
 rule sample_IDs:
 	input:
@@ -180,7 +183,7 @@ rule faiss_L2_COMPILE:
 		f"{config.segments_out_dir}/segments.encoding.done",
                 f"{config.segments_out_dir}/segments.database-embeddings.done",
                 f"{config.segments_out_dir}/segments.query-embeddings.done",
-		main=f"{config.src_dir}/faiss_L2.cpp",
+		main=f"{config.src_dir}/faiss_l2.cpp",
 		utils=f"{config.src_dir}/utils.cpp",
 		build=f"{config.src_dir}/build_index.cpp",
 		search=f"{config.src_dir}/search_index.cpp",
@@ -237,5 +240,70 @@ rule faissL2_embedding_EXECUTE:
 		"       filename=$(basename $f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.database-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"done" \
+		" && touch {output.done}"
+
+rule faiss_HNSW_COMPILE:
+	input:
+		f"{config.segments_out_dir}/segments.encoding.done",
+                f"{config.segments_out_dir}/segments.database-embeddings.done",
+                f"{config.segments_out_dir}/segments.query-embeddings.done",
+		main=f"{config.src_dir}/faiss_hnsw.cpp",
+		utils=f"{config.src_dir}/utils.cpp",
+		build=f"{config.src_dir}/build_index.cpp",
+		search=f"{config.src_dir}/search_index.cpp",
+		read=f"{config.src_dir}/read_encodings.cpp"
+	output:
+		bin=f"{config.bin_dir}/faisshnsw"
+	message:
+		"Compiling--FAISS HNSW..."
+	shell:
+		"g++ " \
+                " {input.main} " \
+                " {input.utils} " \
+                " {input.build} " \
+                " {input.search} "\
+		" {input.read} "\
+                " -I {config.include_dir}/" \
+		" -I {config.conda_dir}/include/" \
+		" -L {config.conda_dir}/lib/" \
+                " -lfaiss" \
+                " -o {output.bin}" \
+
+rule faissHNSW_encoding_EXECUTE:
+	input:
+		encodings=f"{config.segments_out_dir}/segments.encoding.done",
+		bin=f"{config.bin_dir}/faisshnsw",
+		database_IDs=f"{config.samples_dir}/train_samples.txt",
+		query_IDs=f"{config.samples_dir}/test_samples.txt"
+	output:
+		done=f"{config.segments_out_dir}/segments.enc_faissHNSW.done"
+	message:
+		"Executing--run FAISS HNSW on all input encoding segments"
+	shell:
+		"for f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {config.k} {config.enc_delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissHNSW;" \ 
+		"done" \
+		" && touch {output.done}"
+
+
+rule faissHNSW_embedding_EXECUTE:
+	input:
+		db_embeddings=f"{config.segments_out_dir}/segments.database-embeddings.done",
+		q_embeddings=f"{config.segments_out_dir}/segments.query-embeddings.done",
+		bin=f"{config.bin_dir}/faisshnsw",
+		database_IDs=f"{config.samples_dir}/train_samples.txt",
+		query_IDs=f"{config.samples_dir}/test_samples.txt"
+	output:
+		done=f"{config.segments_out_dir}/segments.emb_faissHNSW.done"
+	message:
+		"Executing--run FAISS HNSW on all input embedding segments"
+	shell:
+		"for f in {config.segments_out_dir}/*.encoding; do" \
+		"       filename=$(basename $f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.database-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissHNSW;" \ 
 		"done" \
 		" && touch {output.done}"
