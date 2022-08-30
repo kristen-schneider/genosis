@@ -3,14 +3,14 @@
 python_dir="/home/sdp/precision-medicine/python/scripts/plotting"
 data_dir="/home/sdp/precision-medicine/python/scripts/plotting/txt"
 png_dir="/home/sdp/precision-medicine/python/scripts/plotting/png"
-avgTPenc=$datadir/avg.tp.encoding.txt
-avgTPemb=$datadir/avg.tp.embedding.txt
-avgPenc=$datadir/avg.p.encoding.txt
-avgPemb=$datadir/avg.p.embedding.txt
-medTPenc=$datadir/med.tp.encoding.txt
-medTPemb=$datadir/med.tp.embedding.txt
-medPenc=$datadir/med.p.encoding.txt
-medPemb=$datadir/med.p.embedding.txt
+avgTPenc=$data_dir"/avg.tp.encoding.txt"
+avgTPemb=$data_dir"/avg.tp.embedding.txt"
+avgPenc=$data_dir"/avg.p.encoding.txt"
+avgPemb=$data_dir"/avg.p.embedding.txt"
+medTPenc=$data_dir"/med.tp.encoding.txt"
+medTPemb=$data_dir"/med.tp.embedding.txt"
+medPenc=$data_dir"/med.p.encoding.txt"
+medPemb=$data_dir"/med.p.embedding.txt"
 
 python $python_dir/plot_summary_segments.py \
  --avg_tp_encoding $avgTPenc \
