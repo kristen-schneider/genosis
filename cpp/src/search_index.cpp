@@ -26,7 +26,7 @@ using namespace std;
 
 //void search(const faiss::IndexHNSWFlat &index, int k, string queriesTXT,\
 //	       	int num_queries, int num_elements){
-void search(const faiss::IndexFlatL2 &index, int k, string database_IDs, string query_IDs, string query_data,\
+void search_l2(const faiss::IndexFlatL2 &index, int k, string database_IDs, string query_IDs, string query_data,\
 	       	int num_queries, int num_elements, char delim){
 	
 	idx_t* I = new idx_t[k * num_queries];
@@ -54,6 +54,37 @@ void search(const faiss::IndexFlatL2 &index, int k, string database_IDs, string 
 	delete[] I;
 	delete[] D;
 }
+
+void search_hnsw(const faiss::IndexHNSWFlat &index, int k, string database_IDs, string query_IDs, string query_data,\
+                int num_queries, int num_elements, char delim){
+
+	idx_t* I = new idx_t[k * num_queries];
+	float* D = new float[k * num_queries];
+
+	float* queries = make_queries_arr(query_data, query_IDs, delim, num_queries, num_elements);
+	vector<string> database_ID_vector = make_query_ID_vector(database_IDs);
+	vector<string> query_ID_vector = make_query_ID_vector(query_IDs);
+	//float* queries = read_queries(queriesTXT, num_elements, num_queries, delim);
+
+	auto start = high_resolution_clock::now();
+	index.search(num_queries, queries, k, D, I);
+	auto stop = high_resolution_clock::now();
+	auto duration_search = duration_cast<microseconds>(stop - start);
+	cout << "Sample_ID, index_match, distance_match" << endl;
+	cout << "TIME:search:" << duration_search.count() << endl;
+
+	for (int i = 0; i < num_queries; i++){
+		cout << "QUERY: " << query_ID_vector.at(i) << endl;
+		for (int j = 0; j < k; j++){
+			cout << database_ID_vector.at(I[i * k + j]) << " " << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+		}
+		cout << endl;
+	}
+	delete[] I;
+	delete[] D;
+}
+
+
 
 /*
  * makes an array of all queries
