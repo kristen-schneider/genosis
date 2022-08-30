@@ -5,7 +5,8 @@ lib/
 plink.*
 python/scripts/plotting/png/
 python/scripts/plotting/txt/
-python/scripts/cnn/
 python/scripts/plotting/__pycache__/
+python/scripts/cnn/
+python/training_loop/__pycache__/
 python/scripts/__pycache__/
 .snakemake/
