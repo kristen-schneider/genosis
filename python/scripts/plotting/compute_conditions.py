@@ -5,7 +5,7 @@ currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentfram
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import basic_datastructures
+from utils import basic_datastructures
 
 def compute_false_positives(plink_top, faiss_top):
     query_false_positives = dict()
