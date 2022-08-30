@@ -5,8 +5,8 @@ lib/
 old_make/
 kristen/vec_src/
 plink.*
-python/png
-python/txt/
+python/plotting/png/
+python/plotting/txt/
 python/segcounts/
 python/scripts/cnn/__pycache__/
 python/scripts/plotting/__pycache__/
