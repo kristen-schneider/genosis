@@ -13,13 +13,13 @@ medPenc=$data_dir"/med.p.encoding.txt"
 medPemb=$data_dir"/med.p.embedding.txt"
 
 python $python_dir/plot_summary_segments.py \
- --avg_tp_encoding $avgTPenc \
- --avg_tp_embedding $avgTPemb \
- --avg_p_encoding $avgPenc \
- --avg_p_embedding $avgPemb \
- --med_tp_encoding $medTPenc \
- --med_tp_embedding $medTPemb \
- --med_p_encoding $medPenc \
- --med_p_embedding $medPemb \
- --avg_png $png_dir/avg.png \
- --med_png $png_dir/med.png
+	--avg_tp_encoding $avgTPenc \
+ 	--avg_tp_embedding $avgTPemb \
+ 	--avg_p_encoding $avgPenc \
+ 	--avg_p_embedding $avgPemb \
+ 	--med_tp_encoding $medTPenc \
+ 	--med_tp_embedding $medTPemb \
+ 	--med_p_encoding $medPenc \
+ 	--med_p_embedding $medPemb \
+ 	--avg_png $png_dir/avg.png \
+ 	--med_png $png_dir/med.png

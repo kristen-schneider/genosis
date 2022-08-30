@@ -16,9 +16,9 @@ import basic_datastructures
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir')
-    parser.add_argument('--plink')
-    parser.add_argument('--faiss_enc')
-    parser.add_argument('--faiss_emb')
+    parser.add_argument('--plink_ext')
+    parser.add_argument('--faiss_enc_ext')
+    parser.add_argument('--faiss_emb_ext')
     parser.add_argument('--k')
     parser.add_argument('--train')
     parser.add_argument('--test')
