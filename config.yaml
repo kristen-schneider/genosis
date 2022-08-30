@@ -1,12 +1,12 @@
 vcf_file:
-  data/vcf/chr0-test.250020.vcf
+  data/vcf/chr8.10000.vcf
 samples_dir:
   data/samples
 
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/segments/chr0_test/seg_5000
+  data/segments/chr8/seg_5000
 
 bin_dir:
   cpp/bin

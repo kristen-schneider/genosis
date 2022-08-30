@@ -79,8 +79,8 @@ rule plink_genome_IBD:
 		"	milliseconds=$(( duration * 1000));" \
 		"	echo 'time (ms): ' ${{milliseconds}} >> {config.segments_out_dir}/${{seg_name}}.genome;" \
 		"done" \
-		" && rm {config.segments_out_dir}/*.log" \
-		" && rm {config.segments_out_dir}/*.nosex" \
+		#" && rm {config.segments_out_dir}/*.log" \
+		#" && rm {config.segments_out_dir}/*.nosex" \
 		" && touch {output.done}"
 
 
@@ -175,20 +175,20 @@ rule run_model_query_data:
 		" && touch {output.done}"
 
 
-rule faiss_COMPILE:
+rule faiss_L2_COMPILE:
 	input:
 		f"{config.segments_out_dir}/segments.encoding.done",
                 f"{config.segments_out_dir}/segments.database-embeddings.done",
                 f"{config.segments_out_dir}/segments.query-embeddings.done",
-		main=f"{config.src_dir}/single_faiss.cpp",
+		main=f"{config.src_dir}/faiss_L2.cpp",
 		utils=f"{config.src_dir}/utils.cpp",
 		build=f"{config.src_dir}/build_index.cpp",
 		search=f"{config.src_dir}/search_index.cpp",
 		read=f"{config.src_dir}/read_encodings.cpp"
 	output:
-		bin=f"{config.bin_dir}/faiss"
+		bin=f"{config.bin_dir}/faissl2"
 	message:
-		"Compiling--FAISS..."
+		"Compiling--FAISS L2..."
 	shell:
 		"g++ " \
                 " {input.main} " \
@@ -202,10 +202,10 @@ rule faiss_COMPILE:
                 " -lfaiss" \
                 " -o {output.bin}" \
 
-rule faiss_encoding_EXECUTE:
+rule faissL2_encoding_EXECUTE:
 	input:
 		encodings=f"{config.segments_out_dir}/segments.encoding.done",
-		bin=f"{config.bin_dir}/faiss",
+		bin=f"{config.bin_dir}/faissl2",
 		database_IDs=f"{config.samples_dir}/train_samples.txt",
 		query_IDs=f"{config.samples_dir}/test_samples.txt"
 	output:
@@ -221,11 +221,11 @@ rule faiss_encoding_EXECUTE:
 		" && touch {output.done}"
 
 
-rule faiss_embedding_EXECUTE:
+rule faissL2_embedding_EXECUTE:
 	input:
 		db_embeddings=f"{config.segments_out_dir}/segments.database-embeddings.done",
 		q_embeddings=f"{config.segments_out_dir}/segments.query-embeddings.done",
-		bin=f"{config.bin_dir}/faiss",
+		bin=f"{config.bin_dir}/faissl2",
 		database_IDs=f"{config.samples_dir}/train_samples.txt",
 		query_IDs=f"{config.samples_dir}/test_samples.txt"
 	output:
