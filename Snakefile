@@ -219,7 +219,7 @@ rule faissL2_encoding_EXECUTE:
 		"for f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {config.k} {config.enc_delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.encoding {config.all_k} {config.enc_delim} > {config.segments_out_dir}/${{seg_name}}.enc_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
@@ -239,7 +239,7 @@ rule faissL2_embedding_EXECUTE:
 		"for f in {config.segments_out_dir}/*.encoding; do" \
 		"       filename=$(basename $f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.database-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
+		"	./{input.bin} {input.database_IDs} {config.segments_out_dir}/${{seg_name}}.database-embedding {input.query_IDs} {config.segments_out_dir}/${{seg_name}}.query-embedding {config.all_k} {config.emb_delim} > {config.segments_out_dir}/${{seg_name}}.emb_faissL2;" \ 
 		"done" \
 		" && touch {output.done}"
 
