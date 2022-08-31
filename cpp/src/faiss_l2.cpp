@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
 	int num_db_samples = count_num_samples(database_IDs);
 	int num_q_samples = count_num_samples(query_IDs);
 	
-	cout << "Database file: " << database_data << ", Query file: " << query_data << endl;
+	cout << "FAISS L2" << endl;
 	cout << "Number database samples: " << num_db_samples << endl;
 	cout << "Number query samples: " << num_q_samples << endl;
 	cout << "Number vector elements: " << num_elements << endl;

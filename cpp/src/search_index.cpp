@@ -72,7 +72,7 @@ void search_hnsw(const faiss::IndexHNSWFlat &index, int k, string database_IDs, 
 	auto duration_search = duration_cast<microseconds>(stop - start);
 	cout << "Sample_ID, index_match, distance_match" << endl;
 	cout << "TIME:search:" << duration_search.count() << endl;
-
+	
 	for (int i = 0; i < num_queries; i++){
 		cout << "QUERY: " << query_ID_vector.at(i) << endl;
 		for (int j = 0; j < k; j++){

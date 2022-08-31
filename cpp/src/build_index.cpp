@@ -54,7 +54,9 @@ faiss::IndexHNSWFlat build_hnsw_index(string database_IDs, string database_data,
 	// make map of sample ID to sample encoding (embedding)
 	map<string, float*> ID_database_map = make_ID_data_map(database_data, delim, num_elements);
 
-	faiss::IndexHNSWFlat index(num_elements, 64);
+	faiss::IndexHNSWFlat index(num_elements, 40);
+	index.hnsw.efSearch = 40;
+	
 	//int i = 0;
 	//float* sample_arr = new float[num_elements];
 
