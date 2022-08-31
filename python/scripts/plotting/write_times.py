@@ -8,24 +8,26 @@ def get_args():
     parser.add_argument('--plink_ext')
     parser.add_argument('--faiss_enc_ext')
     parser.add_argument('--faiss_emb_ext')
-    parser.add_argument('--out_dir')
+    parser.add_argument('--faiss_idx')
+    parser.add_argument('--base_name')
     parser.add_argument('--num_seg')
+    parser.add_argument('--out_dir')
     return parser.parse_args()
 
 def main():
     args = get_args()
 
     [plink_seg_times, faiss_enc_seg_times, faiss_emb_seg_times] = read_file_times(args)
-    write_file_times(plink_seg_times, args.out_dir + 'plink.seg.times', args.num_seg)
-    write_file_times(faiss_enc_seg_times, args.out_dir + 'faiss_enc.seg.times', args.num_seg)
-    write_file_times(faiss_emb_seg_times, args.out_dir + 'faiss_emb.seg.times', args.num_seg)
+    write_file_times(plink_seg_times, args.out_dir + args.faiss_idx + '.plink.seg.times', args.num_seg)
+    write_file_times(faiss_enc_seg_times, args.out_dir + args.faiss_idx + '.faiss_enc.seg.times', args.num_seg)
+    write_file_times(faiss_emb_seg_times, args.out_dir + args.faiss_idx + '.faiss_emb.seg.times', args.num_seg)
 
 
-def write_file_times(times_dict, out_file, num_seg): 
+def write_file_times(times_dict, out_file, num_seg):
     print(out_file)
     o = open(out_file, 'w')
     for s in range(int(num_seg)):
-        line = str(s) + '\t' + str(times_dict[str(s)]) + '\n'
+        line = str(s) + '\t' + str(times_dict[s]) + '\n'
         o.write(line)
     o.close
 
@@ -36,28 +38,21 @@ def read_file_times(args):
     faiss_enc_seg_times = dict()
     faiss_emb_seg_times = dict()
 
+    num_seg = int(args.num_seg)
+    for s in range(num_seg):
+        plink_f = args.data_dir + args.base_name + str(s) + args.plink_ext
+        faiss_enc_f = args.data_dir + args.base_name + str(s) + args.faiss_enc_ext
+        faiss_emb_f = args.data_dir + args.base_name + str(s) + args.faiss_emb_ext
 
-    # get faiss times for each segment
-    for segment_file in os.listdir(args.data_dir):
-        f = os.path.join(args.data_dir, segment_file)
-        try: seg_i = segment_file.split('.')[2]
-        except IndexError: continue
-
-
-        # seg_i's plink file
-        if (seg_i in f and args.plink_ext in f):
-            s_time = get_plink_time(f)
-            plink_seg_times[seg_i] = s_time
-
-        # seg_i's faiss_enc file
-        elif (seg_i in f and args.faiss_enc_ext in f):
-            s_time = get_faiss_time(f)
-            faiss_enc_seg_times[seg_i] = s_time
-
-        # seg_i's faiss_emb file
-        elif (seg_i in f and args.faiss_emb_ext in f):
-            s_time = get_faiss_time(f)
-            faiss_emb_seg_times[seg_i] = s_time
+        # plink
+        s_time = get_plink_time(plink_f)
+        plink_seg_times[s] = s_time
+        # faiss_enc
+        s_time = get_faiss_time(faiss_enc_f)
+        faiss_enc_seg_times[s] = s_time
+        # faiss_emb
+        s_time = get_faiss_time(faiss_emb_f)
+        faiss_emb_seg_times[s] = s_time
 
     return [plink_seg_times, faiss_enc_seg_times, faiss_emb_seg_times]
 
@@ -94,4 +89,3 @@ def get_plink_time(plink_file):
 
 if __name__ == '__main__':
     main()
-
