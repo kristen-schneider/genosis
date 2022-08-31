@@ -16,14 +16,14 @@ def main():
     args = get_args()
 
     [plink_seg_times, faiss_enc_seg_times, faiss_emb_seg_times] = read_file_times(args)
-    write_file_times(plink_seg_times, args.out_dir + 'plink.seg.times')
-    write_file_times(faiss_enc_seg_times, args.out_dir + 'faiss_enc.seg.times')
-    write_file_times(faiss_emb_seg_times, args.out_dir + 'faiss_emb.seg.times')
+    write_file_times(plink_seg_times, args.out_dir + 'plink.seg.times', args.num_seg)
+    write_file_times(faiss_enc_seg_times, args.out_dir + 'faiss_enc.seg.times', args.num_seg)
+    write_file_times(faiss_emb_seg_times, args.out_dir + 'faiss_emb.seg.times', args.num_seg)
 
 
-def write_file_times(times_dict, out_file):
+def write_file_times(times_dict, out_file, num_seg): 
     o = open(out_file, 'w')
-    for s in times_dict.keys():
+    for s in range(num_seg):
         line = str(s) + '\t' + str(times_dict[s]) + '\n'
         o.write(line)
     o.close
@@ -79,10 +79,15 @@ def get_plink_time(plink_file):
     for line in f:
         # Start time: Tue Aug 30 18:33:35 2022
         if re.search(r'^Start time:', line):
-            start_time = int(line.split()[5].split(':')[-1])
+            start_minute = int(line.split()[5].split(':')[-2])
+            start_second = int(line.split()[5].split(':')[-1])
         elif re.search(r'^End time:', line):
-            end_time = int(line.split()[5].split(':')[-1])
-    seg_time = end_time - start_time
+            end_minute = int(line.split()[5].split(':')[-2])
+            end_second = int(line.split()[5].split(':')[-1])
+    if start_minute == end_minute:
+        seg_time = end_second - start_second
+    elif start_minute < end_minute:
+        seg_time = 60-start_second+end_second
     f.close()
     return seg_time
 
