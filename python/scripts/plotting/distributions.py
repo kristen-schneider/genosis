@@ -24,51 +24,65 @@ def get_args():
     parser.add_argument('--out_dir')
     return parser.parse_args()
 
-def main():
+n():
     args = get_args()
     query_IDs = basic_datastructures.get_db_q_IDs(args.test)
     database_IDs = basic_datastructures.get_db_q_IDs(args.train)
 
-    # plink_distributions(plink_file, plink_plot)
-    print('encodings')
-    faiss_distributions(database_IDs, query_IDs, args.data_dir, int(args.num_seg), args.faiss_enc_ext, args.out_dir + 'faiss_enc_distribution.png')
-    print('embeddings')
-    faiss_distributions(database_IDs, query_IDs, args.data_dir, int(args.num_seg), args.faiss_emb_ext, args.out_dir + 'faiss_emb_distribution.png')
+    plink_distributions(database_IDs, query_IDs, args.data_dir, int(args.num_seg), args.plink_ext, args.out_dir + 'plink_distribution.png')
+    # faiss_distributions(database_IDs, query_IDs, args.data_dir, int(args.num_seg), args.faiss_enc_ext, args.out_dir + 'faiss_enc_distribution.png')
+    # faiss_distributions(database_IDs, query_IDs, args.data_dir, int(args.num_seg), args.faiss_emb_ext, args.out_dir + 'faiss_emb_distribution.png')
 
-def plink_distributions(plink_file, plink_plot):
+def plink_distributions(database_IDs, query_IDs, data_dir, num_seg,
+                        plink_ext, out_png):
     """
-    plots histogram of distances
-    reported by plink for one plink file
-    :param plink_file:
-    :return:
+    plots boxplot of distances
+        reported by plink for many segments
     """
-    plink_distances = []
-    f = open(plink_file, 'r')
-    header = f.readline()
-    for line in f:
-        l = line.strip().split()
-        dist = float(l[9])
-        plink_distances.append(dist)
-    f.close()
+
+    plink_seg_data = dict()
+    for s in range(int(num_seg)):
+        print('getting distances for segment...' + str(s))
+
+        for segment_file in os.listdir(data_dir):
+            f = os.path.join(data_dir, segment_file)
+            base = 'seg.' + str(s)
+            if (base in f and plink_ext in f):
+                plink_dict = basic_datastructures.get_plink_distances(database_IDs, query_IDs, f)
+                plink_data = []
+                for q in query_IDs:
+                    for pair in plink_dict[q]:
+                        plink_data.append(pair[1])
+
+                plink_seg_data[s] = plink_data
+
+    faiss_plot_data = []
+    for seg in range(num_seg):
+        try:
+            faiss_plot_data.append(plink_seg_data[seg])
+        except KeyError:
+            continue
 
     # plotting
     plt.figure(figsize=(15, 15))
+    # plot for many queries in one segment file
+
     ax = plt.subplot(111)
-    ax.hist(plink_distances, bins=30, color='salmon')
+    ax.boxplot(faiss_plot_data, showfliers=False)
+    ax.set_xticks(range(num_seg), rotation=90)
     ax.spines.right.set_visible(False)
     ax.spines.top.set_visible(False)
+
     plt.title('Distribution of Plink Distances')
-    plt.xlabel('Plink Distance')
-    plt.ylabel('Frequency')
-    # plt.xlim(0.944, 1)
-    # plt.xticks(rotation=90)
-    plt.savefig(plink_plot)
+    plt.xlabel('Segment')
+    plt.ylabel('Plink Distance distance')
+    plt.savefig(out_png)
 
 def faiss_distributions(database_IDs, query_IDs, data_dir, num_seg,
                         faiss_ext, out_png):
     """
-    plots histogram of distances
-    reported by faiss for one faiss file
+    plots boxplot of distances
+    reported by faiss for many segments
     :param faiss_file:
     :return:
     """
@@ -85,6 +99,8 @@ def faiss_distributions(database_IDs, query_IDs, data_dir, num_seg,
                 faiss_data = []
                 for q in query_IDs:
                     for pair in faiss_dict[q]:
+                        if pair[1] > 5:
+                            print('segment: ', s, 'query: ', q, pair)
                         faiss_data.append(pair[1])
 
                 faiss_seg_data[s] = faiss_data
@@ -110,4 +126,4 @@ def faiss_distributions(database_IDs, query_IDs, data_dir, num_seg,
     plt.savefig(out_png)
 
 if __name__ == '__main__':
-    main()
+    ma
