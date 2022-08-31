@@ -3,10 +3,11 @@ build/
 data/
 lib/
 plink.*
+python/scripts/__pycache__/
 python/scripts/plotting/png/
 python/scripts/plotting/txt/
 python/scripts/plotting/__pycache__/
+python/scripts/utils/__pycache__/
 python/scripts/cnn/
 python/training_loop/__pycache__/
-python/scripts/__pycache__/
 .snakemake/
