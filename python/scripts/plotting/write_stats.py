@@ -8,9 +8,10 @@ import os, sys, inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+sys.path.insert(0, parentdir+'/utils/')
 
-from utils import compute_conditions
-from utils import basic_datastructures
+import compute_conditions
+import basic_datastructures
 
 
 def get_args():
@@ -24,6 +25,7 @@ def get_args():
     parser.add_argument('--test')
     parser.add_argument('--out_dir')
     parser.add_argument('--num_seg')
+    parser.add_argument('--faiss_index')
     return parser.parse_args()
 
 def main():
@@ -46,14 +48,14 @@ def main():
 def write_plotting_data(args, segment_stats, stat):
     [ENC_TP, EMB_TP, ENC_P, EMB_P] = segment_stats
     # write tp data to outfile
-    tp_enc_string = args.data_dir + stat + '.tp.encoding.txt'
+    tp_enc_string = args.data_dir + stat + '.tp.encoding.' + args.faiss_index
     tp_enc_data = open(tp_enc_string, 'w')
     for seg in ENC_TP.keys():
         tp_line = str(seg) + '\t' + str(ENC_TP[seg]) + '\n'
         tp_enc_data.write(tp_line)
     tp_enc_data.close()
 
-    tp_emb_string = args.data_dir + stat + '.tp.embedding.txt'
+    tp_emb_string = args.data_dir + stat + '.tp.embedding.' + args.faiss_index
     tp_emb_data = open(tp_emb_string, 'w')
     for seg in EMB_TP.keys():
         tp_line = str(seg) + '\t' + str(EMB_TP[seg]) + '\n'
@@ -61,14 +63,14 @@ def write_plotting_data(args, segment_stats, stat):
     tp_emb_data.close()
 
     # write p data to outfile
-    p_enc_string = args.data_dir + stat + '.p.encoding.txt'
+    p_enc_string = args.data_dir + stat + '.p.encoding.' + args.faiss_index
     p_enc_data = open(p_enc_string, 'w')
     for seg in ENC_P.keys():
         p_line = str(seg) + '\t' + str(ENC_P[seg]) + '\n'
         p_enc_data.write(p_line)
     p_enc_data.close()
 
-    p_emb_string = args.data_dir + stat + '.p.embedding.txt'
+    p_emb_string = args.data_dir + stat + '.p.embedding.' + args.faiss_index
     p_emb_data = open(p_emb_string, 'w')
     for seg in EMB_P.keys():
         p_line = str(seg) + '\t' + str(EMB_P[seg]) + '\n'
@@ -90,7 +92,7 @@ def compute_median_segment_statistic(args, query_IDs, database_IDs):
             f = os.path.join(args.data_dir, segment_file)
             base = 'seg.' + str(s)
             # segment's plink file
-            if (base in f and args.plink in f):
+            if (base in f and args.plink_ext in f):
                 s_plink_file = f
                 # plink dictionary
                 plink_dict = basic_datastructures.get_plink_distances(
@@ -98,14 +100,14 @@ def compute_median_segment_statistic(args, query_IDs, database_IDs):
                 plink_top = compute_conditions.compute_top_k(plink_dict, int(args.k))
 
             # segment's faiss file for embeddings
-            elif (base in f and args.faiss_enc in f):
+            elif (base in f and args.faiss_enc_ext in f):
                 s_faiss_enc_file = f
                 encoding_faiss_dict = basic_datastructures.get_faiss_distances(
                     database_IDs, query_IDs, s_faiss_enc_file)
                 encoding_faiss_top = compute_conditions.compute_top_k(encoding_faiss_dict, int(args.k))
 
             # segment's faiss file for encodings
-            elif (base in f and args.faiss_emb in f):
+            elif (base in f and args.faiss_emb_ext in f):
                 s_faiss_emb_file = f
                 embedding_faiss_dict = basic_datastructures.get_faiss_distances(
                     database_IDs, query_IDs, s_faiss_emb_file)
@@ -161,7 +163,7 @@ def compute_average_segment_statistic(args, query_IDs, database_IDs):
             f = os.path.join(args.data_dir, segment_file)
             base = 'seg.' + str(s)
             # segment's plink file
-            if (base in f and args.plink in f):
+            if (base in f and args.plink_ext in f):
                 s_plink_file = f
                 # plink dictionary
                 plink_dict = basic_datastructures.get_plink_distances(
@@ -169,14 +171,14 @@ def compute_average_segment_statistic(args, query_IDs, database_IDs):
                 plink_top = compute_conditions.compute_top_k(plink_dict, int(args.k))
 
             # segment's faiss file for embeddings
-            elif (base in f and args.faiss_enc in f):
+            elif (base in f and args.faiss_enc_ext in f):
                 s_faiss_enc_file = f
                 encoding_faiss_dict = basic_datastructures.get_faiss_distances(
                     database_IDs, query_IDs, s_faiss_enc_file)
                 encoding_faiss_top = compute_conditions.compute_top_k(encoding_faiss_dict, int(args.k))
 
             # segment's faiss file for encodings
-            elif (base in f and args.faiss_emb in f):
+            elif (base in f and args.faiss_emb_ext in f):
                 s_faiss_emb_file = f
                 embedding_faiss_dict = basic_datastructures.get_faiss_distances(
                     database_IDs, query_IDs, s_faiss_emb_file)
@@ -211,3 +213,6 @@ def compute_average_segment_statistic(args, query_IDs, database_IDs):
                 av_encoding_precisions, av_embedding_precisions]
     return averages
 
+
+if __name__ == '__main__':
+    main()
