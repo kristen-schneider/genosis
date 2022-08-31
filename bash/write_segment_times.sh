@@ -3,8 +3,8 @@
 python_dir="/home/sdp/precision-medicine/python/scripts/plotting"
 data_dir="/home/sdp/precision-medicine/data/segments/chr8/seg_5000/"
 plink_ext="log"
-faiss_enc_ext="enc_faissL2"
-faiss_emb_ext="emb_faissL2"
+faiss_enc_ext="enc_faissHNSW"
+faiss_emb_ext="emb_faissHNSW"
 out_dir="/home/sdp/precision-medicine/python/scripts/plotting/txt/"
 num_seg=50
 
