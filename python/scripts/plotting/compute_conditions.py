@@ -88,5 +88,24 @@ def compute_top_k(data_dict, k):
     return all_query_top
 
 
+def confusion_matrix(TP, k):
+    #    ___P________N___
+    # P |___TP___|___FN___|
+    # N |___FP___|___TN___|
+    query_precisions = dict()
+
+    for query_ID in TP.keys():
+        q_TP = TP[query_ID]
+        q_FP = k - q_TP
+        q_FN = q_FP
+        # q_TN = NA
+
+        # precision = TP/(TP+FP) = recall
+        q_precision = q_TP/(q_TP+q_FP)
+
+        query_precisions[query_ID] = q_precision
+
+    return query_precisions
+
 
 
