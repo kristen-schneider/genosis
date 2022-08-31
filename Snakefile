@@ -76,11 +76,18 @@ rule plink_genome_IBD:
 		"for vcf_f in {config.segments_out_dir}/*.vcf; do" \
 		"       filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	start=$SECONDS;" \
+		#"	start=$SECONDS;" \
+		"	start=$(date +%s.%3N);" \
+		"	echo 'START:'$start;" \
 		"	plink --vcf $vcf_f --genome --out {config.segments_out_dir}/${{seg_name}};" \
-		"	duration=$(( SECONDS - start ));" \
-		"	milliseconds=$(( duration * 1000));" \
-		"	echo 'time (ms): ' ${{milliseconds}} >> {config.segments_out_dir}/${{seg_name}}.genome;" \
+		"	end=$(date +%s.%3N);" \
+		"	echo 'END:'$end;" \
+		#"	duration=$( $((${{end}}-${{start}})) | bc);" \
+		#" 	echo $duration;" \
+		#"      echo 'time (s): ' ${{duration}} >> {config.segments_out_dir}/${{seg_name}}.genome;"
+		#"	duration=$(( SECONDS - start ));" \
+		#"	milliseconds=$(( duration * 1000));" \
+		#"	echo 'time (ms): ' ${{milliseconds}} >> {config.segments_out_dir}/${{seg_name}}.genome;" \
 		"done" \
 		#" && rm {config.segments_out_dir}/*.log" \
 		#" && rm {config.segments_out_dir}/*.nosex" \
