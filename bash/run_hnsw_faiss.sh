@@ -13,8 +13,8 @@ data_dir="/home/sdp/precision-medicine/data/"
 # path to encoded and query file
 test_samples=$data_dir"samples/test_samples.txt"
 train_samples=$data_dir"samples/train_samples.txt"
-encoded_file=$data_dir"segments/chr8/seg_5000/chr8.seg.0.encoding"
-k=100 # number of nearest neighbors to report
+encoded_file=$data_dir"segments/chr8/seg_5000/chr8.seg.5.encoding"
+k=80 # number of nearest neighbors to report
 delim="space"
 
 source ~/miniconda3/etc/profile.d/mamba.sh 

@@ -29,7 +29,7 @@ batch_size:
 all_k:
   2293
 k:
-  100
+  80
 enc_delim:
   space
 emb_delim:
