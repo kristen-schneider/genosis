@@ -45,10 +45,10 @@ def main():
     return 0
 
 def compute_segment_statistic(args, query_IDs, database_IDs, stat):
-    encoding_true_positives = dict()
-    embedding_true_positives = dict()
-    encoding_precisions = dict()
-    embedding_precisions = dict()
+    encoding_true_positives_summary = dict()
+    embedding_true_positives_summary = dict()
+    encoding_precisions_summary = dict()
+    embedding_precisions_summary = dict()
 
     for s in range(int(args.num_seg)):
         print('computing ' + stat + ' for segment ...' + str(s))
@@ -102,17 +102,17 @@ def compute_segment_statistic(args, query_IDs, database_IDs, stat):
             stat_embedding_seg_TP = statistics.median(embedding_seg_TP_values)
 
         # add medians to dictionary
-        encoding_true_positives[s] = stat_encoding_seg_TP
-        embedding_true_positives[s] = stat_embedding_seg_TP
-        encoding_precisions[s] = stat_encoding_seg_precision
-        embedding_precisions[s] = stat_embedding_seg_precision
+        encoding_true_positives_summary[s] = stat_encoding_seg_TP
+        embedding_true_positives_summary[s] = stat_embedding_seg_TP
+        encoding_precisions_summary[s] = stat_encoding_seg_precision
+        embedding_precisions_summary[s] = stat_embedding_seg_precision
 
         # debugging
         #print('enc:TP:', stat_encoding_seg_TP, 'emb:TP:', stat_embedding_seg_TP,
         #      'enc:P:', stat_encoding_seg_precision, 'emb:P:', stat_embedding_seg_precision)
 
-    stats = [encoding_true_positives, embedding_true_positives,
-               encoding_precisions, embedding_precisions]
+    stats = [encoding_true_positives_summary, embedding_true_positives_summary,
+               encoding_precisions_summary, embedding_precisions_summary]
     return stats
 
 def write_plotting_data(args, segment_stats, stat, idx):
@@ -125,7 +125,7 @@ def write_plotting_data(args, segment_stats, stat, idx):
         tp_enc_data.write(tp_line)
     tp_enc_data.close()
 
-    tp_emb_string = args.out_dir + stat + '.tp.embedding' + idx
+    tp_emb_string = args.out_dir + stat + '.tp.embedding.' + idx
     tp_emb_data = open(tp_emb_string, 'w')
     for seg in EMB_TP.keys():
         tp_line = str(seg) + '\t' + str(EMB_TP[seg]) + '\n'
