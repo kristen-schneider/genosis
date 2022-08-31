@@ -24,7 +24,7 @@ def get_args():
     parser.add_argument('--out_dir')
     return parser.parse_args()
 
-n():
+def main():
     args = get_args()
     query_IDs = basic_datastructures.get_db_q_IDs(args.test)
     database_IDs = basic_datastructures.get_db_q_IDs(args.train)
@@ -126,4 +126,4 @@ def faiss_distributions(database_IDs, query_IDs, data_dir, num_seg,
     plt.savefig(out_png)
 
 if __name__ == '__main__':
-    ma
+    main()

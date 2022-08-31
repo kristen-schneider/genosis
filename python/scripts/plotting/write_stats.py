@@ -118,7 +118,7 @@ def compute_median_segment_statistic(args, query_IDs, database_IDs):
                 embedding_faiss_dict = basic_datastructures.get_faiss_distances(
                     database_IDs, query_IDs, s_faiss_emb_file)
                 embedding_faiss_top = compute_conditions.compute_top_k(embedding_faiss_dict, int(args.k))
-
+        
         # compute metrics
         # get all true positives
         encoding_true_positives = compute_conditions.compute_true_positives(plink_top, encoding_faiss_top)
@@ -149,6 +149,8 @@ def compute_median_segment_statistic(args, query_IDs, database_IDs):
         md_embedding_true_positives[s] = med_embedding_seg_TP
         md_encoding_precisions[s] = med_encoding_seg_precision
         md_embedding_precisions[s] = med_embedding_seg_precision
+        print('enc:TP:', med_encoding_seg_TP, 'emb:TP:', med_embedding_seg_TP, 
+                'enc:P:', med_encoding_seg_precision, 'emb:P:', med_embedding_seg_precision)
 
     medians = [md_encoding_true_positives, md_embedding_true_positives,
                md_encoding_precisions, md_embedding_precisions]
@@ -214,6 +216,8 @@ def compute_average_segment_statistic(args, query_IDs, database_IDs):
         av_embedding_true_positives[s] = avg_embedding_seg_TP
         av_encoding_precisions[s] = avg_encoding_seg_precision
         av_embedding_precisions[s] = avg_embedding_seg_precision
+        print('enc:TP:', avg_encoding_seg_TP, 'emb:TP:', avg_embedding_seg_TP, 
+                'enc:P:', avg_encoding_seg_precision, 'emb:P:', avg_embedding_seg_precision)
 
     averages = [av_encoding_true_positives, av_embedding_true_positives,
                 av_encoding_precisions, av_embedding_precisions]
