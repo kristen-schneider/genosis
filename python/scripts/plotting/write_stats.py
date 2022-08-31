@@ -20,7 +20,7 @@ def get_args():
     parser.add_argument('--plink_ext')
     parser.add_argument('--faiss_enc_ext')
     parser.add_argument('--faiss_emb_ext')
-    parser.add_argument('faiss_idx')
+    parser.add_argument('--faiss_idx')
     parser.add_argument('--base_name')
     parser.add_argument('--train')
     parser.add_argument('--test')
@@ -107,8 +107,9 @@ def compute_segment_statistic(args, query_IDs, database_IDs, stat):
         encoding_precisions[s] = stat_encoding_seg_precision
         embedding_precisions[s] = stat_embedding_seg_precision
 
-        print('enc:TP:', stat_encoding_seg_TP, 'emb:TP:', stat_embedding_seg_TP,
-              'enc:P:', stat_encoding_seg_precision, 'emb:P:', stat_embedding_seg_precision)
+        # debugging
+        #print('enc:TP:', stat_encoding_seg_TP, 'emb:TP:', stat_embedding_seg_TP,
+        #      'enc:P:', stat_encoding_seg_precision, 'emb:P:', stat_embedding_seg_precision)
 
     stats = [encoding_true_positives, embedding_true_positives,
                encoding_precisions, embedding_precisions]
@@ -117,14 +118,14 @@ def compute_segment_statistic(args, query_IDs, database_IDs, stat):
 def write_plotting_data(args, segment_stats, stat, idx):
     [ENC_TP, EMB_TP, ENC_P, EMB_P] = segment_stats
     # write tp data to outfile
-    tp_enc_string = args.data_dir + stat + '.tp.encoding.' + idx
+    tp_enc_string = args.out_dir + stat + '.tp.encoding.' + idx
     tp_enc_data = open(tp_enc_string, 'w')
     for seg in ENC_TP.keys():
         tp_line = str(seg) + '\t' + str(ENC_TP[seg]) + '\n'
         tp_enc_data.write(tp_line)
     tp_enc_data.close()
 
-    tp_emb_string = args.data_dir + stat + '.tp.embedding' + idx
+    tp_emb_string = args.out_dir + stat + '.tp.embedding' + idx
     tp_emb_data = open(tp_emb_string, 'w')
     for seg in EMB_TP.keys():
         tp_line = str(seg) + '\t' + str(EMB_TP[seg]) + '\n'
@@ -132,14 +133,14 @@ def write_plotting_data(args, segment_stats, stat, idx):
     tp_emb_data.close()
 
     # write p data to outfile
-    p_enc_string = args.data_dir + stat + '.p.encoding.' + idx
+    p_enc_string = args.out_dir + stat + '.p.encoding.' + idx
     p_enc_data = open(p_enc_string, 'w')
     for seg in ENC_P.keys():
         p_line = str(seg) + '\t' + str(ENC_P[seg]) + '\n'
         p_enc_data.write(p_line)
     p_enc_data.close()
 
-    p_emb_string = args.data_dir + stat + '.p.embedding.' + idx
+    p_emb_string = args.out_dir + stat + '.p.embedding.' + idx
     p_emb_data = open(p_emb_string, 'w')
     for seg in EMB_P.keys():
         p_line = str(seg) + '\t' + str(EMB_P[seg]) + '\n'
