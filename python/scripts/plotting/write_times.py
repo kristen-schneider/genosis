@@ -22,9 +22,10 @@ def main():
 
 
 def write_file_times(times_dict, out_file, num_seg): 
+    print(out_file)
     o = open(out_file, 'w')
-    for s in range(num_seg):
-        line = str(s) + '\t' + str(times_dict[s]) + '\n'
+    for s in range(int(num_seg)):
+        line = str(s) + '\t' + str(times_dict[str(s)]) + '\n'
         o.write(line)
     o.close
 
