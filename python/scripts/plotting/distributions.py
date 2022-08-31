@@ -99,7 +99,7 @@ def faiss_distributions(database_IDs, query_IDs, data_dir, num_seg,
     # plot for many queries in one segment file
 
     ax = plt.subplot(111)
-    ax.boxplot(faiss_plot_data)
+    ax.boxplot(faiss_plot_data, showfliers=False)
     ax.set_xticks(range(num_seg), rotation=90)
     ax.spines.right.set_visible(False)
     ax.spines.top.set_visible(False)
