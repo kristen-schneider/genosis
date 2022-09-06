@@ -4,7 +4,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--vcf')
     parser.add_argument('--map')
-    parser.add_argument('--out_data')
+    parser.add_argument('--out_dir')
     parser.add_argument('--num_snps')
 
     return parser.parse_args()
