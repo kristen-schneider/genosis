@@ -6,7 +6,7 @@ def get_args():
     parser.add_argument('--map')
     parser.add_argument('--out_dir')
     parser.add_argument('--num_snps')
-
+    parser.add_argument('--chrom')
     return parser.parse_args()
 
 def main():
@@ -21,11 +21,11 @@ def main():
     cm_est_count = get_segment_cm_estimated(bp_start_end)
     cm_map_count = get_segment_cm_map(bp_start_end, cm_map_dict)
 
-    bp_distance_file = args.out_data + str(args.num_snps) + '.basepair_distance.txt'
+    bp_distance_file = args.out_dir + 'chr' + str(args.chrom) + '.' + str(args.num_snps) + '.basepair_distance.txt'
     write_snp_data(bp_start_end, bp_distance_file)
-    cm_est_distance_file = args.out_data + str(args.num_snps) + '.centimorgan_est_distance.txt'
+    cm_est_distance_file = args.out_dir + 'chr' + str(args.chrom) + '.' +str(args.num_snps) + '.centimorgan_est_distance.txt'
     write_snp_data(cm_est_count, cm_est_distance_file)
-    cm_map_distance_file = args.out_data + str(args.num_snps) + '.centimorgan_map_distance.txt'
+    cm_map_distance_file = args.out_dir + 'chr' + str(args.chrom) + '.' +str(args.num_snps) + '.centimorgan_map_distance.txt'
     write_snp_data(cm_map_count, cm_map_distance_file)
 
 def write_snp_data(snp_data, out_file):
