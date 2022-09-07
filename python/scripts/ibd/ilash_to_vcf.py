@@ -18,6 +18,7 @@ def main():
     x = ''
 
 def write_vcf_segment(vcf_file, start, end, out_vcf):
+    print(vcf_file)
     o = open(out_vcf, 'w')
     f = open(vcf_file, 'r')
     for line in f:
