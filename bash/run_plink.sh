@@ -11,6 +11,7 @@ do
 	filename=$(basename $vcf)
 	seg_name=${filename%.*}
 	echo $seg_name
+	sed '10q;d' $vcf
 	#plink --vcf $vcf --genome --out $seg_name
 done
 
