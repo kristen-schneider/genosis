@@ -28,6 +28,8 @@ def write_vcf_segment(vcf_file, start, end, out_vcf):
         pos = int(L[1])
         if pos >= start and pos <= end:
             o.write(line)
+        if pos > end:
+            break
     f.close()
     o.close()
     print('done writint to ', out_vcf)

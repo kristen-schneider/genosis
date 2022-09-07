@@ -24,6 +24,9 @@ do
 	
 	# delete vcf
 	echo "Removing ibd segment vcf..."
+	rm $out_vcf
+	rm "ibd.$i.log"
+	rm "ibd.$i.nosex"
 
 
 	i=$((i + 1))
