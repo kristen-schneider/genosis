@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # path to directories
-src_dir="/home/sdp/precision-medicine/python/scripts/phasedibd/"
+src_dir="/home/sdp/precision-medicine/python/scripts/ibd/"
 conda_dir="/home/sdp/miniconda3/envs/pm/"
 data_dir="/home/sdp/precision-medicine/data/"
 
@@ -13,4 +13,4 @@ map_file=$data_dir"maps/ALL.chr8.interpolated.map"
 
 echo $vcf_file
 
-python $src_dir"phased_ibd.py" --vcf $vcf_file --map $map_file > $data_dir"phasedibd/ALL.chr8.phasedibd.out"
+python $src_dir"phased_ibd.py" --vcf $vcf_file --map $map_file > $data_dir"ibd/phasedibd/ALL.chr8.phasedibd.out"
