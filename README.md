@@ -36,3 +36,7 @@ python /
 ### 3. Running with snakemake
 run `snakemake`
 
+## Data
+### Map files:
+[HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)
+
