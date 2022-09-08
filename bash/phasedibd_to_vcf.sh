@@ -8,25 +8,28 @@ phasedibd_file="/home/sdp/precision-medicine/data/ibd/phasedibd/pibd.csv"
 data_dir="/home/sdp/precision-medicine/data/ibd/phasedibd/"
 cd $data_dir
 
-i=0
+i=-1
 echo "phased-ibd"
-while read -r chr id1 id2 id1_h id2_h start end start_cm end_cm start_bp end_bp;
+while read -r blank chr id1 id2 id1_h id2_h start end start_cm end_cm start_bp end_bp;
 do
-
-	# make vcf from start and end of cm
-	echo "Creating ibd segment vcf..."
-	out_vcf=$data_dir"ibd.$i.vcf"
-	python $python_dir"ilash_to_vcf.py" --vcf $vcf_file --start $start_bp --end $end_bp --out_vcf $out_vcf
-
-	# run plink on vcf
-	echo "Running plink on ibd segment vcf..."
-	plink --vcf $out_vcf --genome --out "ibd.$i"
+	# ignoring header file
+	if [ $i -gt -1 ]
+	then
+		# make vcf from start and end of cm
+		echo "Creating ibd segment vcf..."
+		out_vcf=$data_dir"ibd.$i.vcf"
+		python $python_dir"ilash_to_vcf.py" --vcf $vcf_file --start $start_bp --end $end_bp --out_vcf $out_vcf
 	
-	# delete vcf
-	echo "Removing ibd segment vcf..."
-	rm $out_vcf
-	rm "ibd.$i.log"
-	rm "ibd.$i.nosex"
+		# run plink on vcf
+		echo "Running plink on ibd segment vcf..."
+		plink --vcf $out_vcf --genome --out "ibd.$i"
+		
+		# delete vcf
+		echo "Removing ibd segment vcf..."
+		rm $out_vcf
+		rm "ibd.$i.log"
+		rm "ibd.$i.nosex"
+	fi
 
 
 	i=$((i + 1))

@@ -18,15 +18,21 @@ def main():
                     + 'chr' + str(args.chr) \
                     + '.' + str(args.cm) \
                     + 'cm-segment-boundaries'
+    max_snps = dict()
     cm_boundaries = read_boundary_data(boundary_file)
     num_segs = len(cm_boundaries)
     for s in range(0, num_segs, 50):
         print('segment ', s)
         sample_snps_dict = count_sample_variants(cm_boundaries, s, args.vcf)
-        plot_hist(sample_snps_dict, s, args.chr, args.cm, args.out_png)
+        segment_counts = list(sample_snps_dict.values())
+        max_snps[s] = max(segment_counts)
+        #plot_hist(sample_snps_dict, s, args.chr, args.cm, args.out_png)
         # print('counting samples for segment ', s)
         # segment_snps = read_vcf(cm_boundaries, s, args.vcf)
         # plot_hist(segment_snps, s, args.chr, args.cm, args.out_png)
+    
+    for seg in max_snps:
+        print (seg, ', ', max_snps[seg])
 
 def read_vcf(cm_boundaries, seg_q, vcf_file):
 
