@@ -70,15 +70,16 @@ def find_segment_bp_endpoints_cm(map_file=None, cm_max=0):
 
     segment length is defined by cm length
     '''
-    segment_endpoint_dict = dict()
+    cm_segment_endpoint_dict = dict()
     seg_cm_start = 0
     seg_i = 0
     segment_bps = []
 
+    max_cm_length = cm_max
+
     f = open(map_file, 'r')
     for line in f:
         L = line.strip().split()
-        snp_count += 1
         chrm = L[0]
         cm = float(L[2])
         bp = int(L[3])
@@ -87,14 +88,14 @@ def find_segment_bp_endpoints_cm(map_file=None, cm_max=0):
         seg_cm_length = cm - seg_cm_start
         if seg_cm_length >= max_cm_length:
             seg_cm_start = cm
-            segment_endpoint_dict[seg_i] = (segment_bps[0], segment_bps[-1])
+            cm_segment_endpoint_dict[seg_i] = (segment_bps[0], segment_bps[-1])
             segment_bps = []
             seg_i += 1
 
-    segment_endpoint_dict[seg_i] = (segment_bps[0], segment_bps[-1])
+    cm_segment_endpoint_dict[seg_i] = (segment_bps[0], segment_bps[-1])
     f.close()
 
-    return segment_cm_endpoint_dict
+    return cm_segment_endpoint_dict
 
 
 def count_snps_per_cm(map_file=None, cm_max=0):
