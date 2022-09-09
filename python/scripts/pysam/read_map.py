@@ -23,6 +23,38 @@ def count_cm_per_segment(map_file=None, segment_snp_length=0):
 
     return segment_cm_dict
 
+def count_snps_per_cm(map_file=None, cm_max=0):
+
+    cm_snps_dict = dict()
+    seg_cm_start = 0
+    seg_i = 0
+    snp_count = 0
+    
+    max_cm_length = cm_max
+
+    f = open(map_file, 'r')
+    for line in f:
+        L = line.strip().split()
+        snp_count += 1
+        chrm = L[0]
+        cm = float(L[2])
+        bp = int(L[3])
+        
+        
+        snp_count += 1
+        seg_cm_length = cm - seg_cm_start
+        if  seg_cm_length >= max_cm_length:
+            seg_cm_start = cm
+            cm_snps_dict[seg_i] = snp_count
+            seg_i += 1
+
+    seg_i += 1
+    cm_snps_dict[seg_i] = snp_count
+    f.close()
+
+    return cm_snps_dict
+
+
 def make_bp_cm_dict(map_file=None):
     bp_cm_dict = dict()
     
