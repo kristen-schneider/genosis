@@ -14,16 +14,26 @@ echo "Measuring centimorgan lengths for varying segment sizes (SNPs)."
 for i in "${snp_segment_sizes[@]}"
 do
 	echo "...segment size = $i SNPs"
-	out_file="$out_dir/chr$chr.snp_size.$i.cM"
+	out_file="$out_dir/chr$chr.seg-cm.snp_size.$i"
 	echo "...writing to: $out_file"
 	python $python_dir/"count_seg_bp.py" --map $map_file --snps $i > $out_file
+done
+
+echo "Finding bp endpoints for varying segment sizes (SNPs)."
+for i in "${snp_segment_sizes[@]}"
+do
+    echo "...segment size = $i SNPs"
+    out_file="$out_dir/chr$chr.endpoints.snp_size.$i"
+    echo "...writing to: $out_file"
+    python $python_dir/"find_seg_edpoints.py" --map $map_file --snps $i > $out_file
 done
 
 echo "Counting number of SNPs in each segment for vary segment sizes (cM)."
 for i in "${cm_segment_sizes[@]}"
 do
         echo "...segment size = $i cMs"
-        out_file="$out_dir/chr$chr.cm_size.$i.cM"
+        out_file="$out_dir/chr$chr.seg-snps.cm_size.$i"
         echo "...writing to: $out_file"
         python $python_dir/"count_cm_snps.py" --map $map_file --cm_max $i > $out_file
 done
+
