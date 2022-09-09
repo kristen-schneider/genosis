@@ -20,12 +20,51 @@ def read_endpoint_file(endpoint_file):
     f.close()
     return seg_endpoint_dict
 
+def vcf_samples(vcf_file):
+    vcf_samples_list = []
+    vcf_f = pysam.VariantFile(vcf_file)
+    vcf_samples_list = list((vcf_f.header.samples))
+    return vcf_samples_list
+
+
 def sample_counts_from_vcf_block(vcf_file, chrm, start_bp, end_bp):
     '''
     Uses pysam to open vcf file with block compression.
     '''
 
+    vcf_samples_list = vcf_samples(vcf_file)
+    print("NUMBER OF SAMPLES: ", len(vcf_samples_list))
+    sample0 = vcf_samples_list[0]
+    
+    sample_snp_dict = dict()
     vcf_f = pysam.VariantFile(vcf_file)
     
     for snp in vcf_f.fetch(chrm, start_bp, end_bp):
-        print(snp)
+        
+        s = 0
+        for sample in vcf_samples_list:
+            print(s, snp.samples[sample]['GT'])
+            s += 1
+        #print(snp)
+        #print(snp[0])
+        #print(snp.info.keys())
+        #for k in snp.info.keys():
+        #    print(k, snp.info[k])
+        #print(list(snp.info.keys))
+    return sample_snp_dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
