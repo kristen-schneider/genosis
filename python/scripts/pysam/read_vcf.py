@@ -32,25 +32,24 @@ def sample_counts_from_vcf_block(vcf_file, chrm, start_bp, end_bp):
     Uses pysam to open vcf file with block compression.
     '''
 
+    chrm = 'chr'+str(chrm)
+    # gets sample list 
     vcf_samples_list = vcf_samples(vcf_file)
-    print("NUMBER OF SAMPLES: ", len(vcf_samples_list))
-    sample0 = vcf_samples_list[0]
     
     sample_snp_dict = dict()
+
+    # open vcf file and read by block record
     vcf_f = pysam.VariantFile(vcf_file)
-    
     for snp in vcf_f.fetch(chrm, start_bp, end_bp):
-        
-        s = 0
+        # get genotype for each sample
         for sample in vcf_samples_list:
-            print(s, snp.samples[sample]['GT'])
-            s += 1
-        #print(snp)
-        #print(snp[0])
-        #print(snp.info.keys())
-        #for k in snp.info.keys():
-        #    print(k, snp.info[k])
-        #print(list(snp.info.keys))
+            sample_GT = snp.samples[sample]['GT']
+            if 1 in sample_GT:
+                try:
+                    sample_snp_dict[sample] += 1
+                except KeyError:
+                    sample_snp_dict[sample] = 1
+
     return sample_snp_dict
 
 
