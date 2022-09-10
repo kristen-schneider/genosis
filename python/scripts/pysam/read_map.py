@@ -122,13 +122,12 @@ def count_snps_per_cm(map_file=None, cm_max=0):
         cm = float(L[2])
         bp = int(L[3])
         
-        
-        snp_count += 1
         seg_cm_length = cm - seg_cm_start
         if  seg_cm_length >= max_cm_length:
             seg_cm_start = cm
             cm_snps_dict[seg_i] = snp_count
             seg_i += 1
+            snp_count = 0
 
     cm_snps_dict[seg_i] = snp_count
     f.close()
