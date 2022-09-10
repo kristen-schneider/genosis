@@ -1,6 +1,7 @@
 name: pm
 channels:
   - bioconda
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -13,10 +14,12 @@ dependencies:
   - aiosignal=1.2.0=pyhd8ed1ab_0
   - amply=0.1.5=pyhd8ed1ab_0
   - appdirs=1.4.4=pyh9f0ad1d_0
+  - asttokens=2.0.5=pyhd3eb1b0_0
   - astunparse=1.6.3=pyhd8ed1ab_0
   - async-timeout=4.0.2=pyhd8ed1ab_0
   - attmap=0.13.2=pyhd8ed1ab_0
   - attrs=22.1.0=pyh71513ae_1
+  - backcall=0.2.0=pyhd3eb1b0_0
   - backports=1.0=py_2
   - backports.functools_lru_cache=1.6.4=pyhd8ed1ab_0
   - bcftools=1.15.1=h0ea216a_0
@@ -27,7 +30,7 @@ dependencies:
   - brotlipy=0.7.0=py310h5764c6d_1004
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
-  - ca-certificates=2022.6.15=ha878542_0
+  - ca-certificates=2022.07.19=h06a4308_0
   - cached-property=1.5.2=hd8ed1ab_1
   - cached_property=1.5.2=pyha770c72_1
   - cachetools=5.2.0=pyhd8ed1ab_0
@@ -53,6 +56,7 @@ dependencies:
   - docutils=0.19=py310hff52083_0
   - dpath=2.0.6=py310hff52083_1
   - dropbox=11.33.0=pyhd8ed1ab_0
+  - executing=0.8.3=pyhd3eb1b0_0
   - faiss=1.7.2=py310cuda112h76f6547_0_cuda
   - filechunkio=1.8=py_2
   - filelock=3.8.0=pyhd8ed1ab_0
@@ -86,6 +90,8 @@ dependencies:
   - importlib-metadata=4.11.4=py310hff52083_0
   - importlib_resources=5.9.0=pyhd8ed1ab_0
   - iniconfig=1.1.1=pyh9f0ad1d_0
+  - ipython=8.4.0=py310h06a4308_0
+  - jedi=0.18.1=py310h06a4308_1
   - jinja2=3.1.2=pyhd8ed1ab_1
   - jmespath=1.0.1=pyhd8ed1ab_0
   - jpeg=9e=h166bdaf_2
@@ -127,6 +133,7 @@ dependencies:
   - logmuse=0.2.6=pyh8c360ce_0
   - markdown=3.4.1=pyhd8ed1ab_0
   - markupsafe=2.1.1=py310h5764c6d_1
+  - matplotlib-inline=0.1.2=pyhd3eb1b0_2
   - multidict=6.0.2=py310h5764c6d_1
   - nbformat=5.4.0=pyhd8ed1ab_0
   - ncurses=6.3=h27087fc_1
@@ -138,8 +145,11 @@ dependencies:
   - packaging=21.3=pyhd8ed1ab_0
   - pandas=1.4.3=py310h769672d_0
   - paramiko=2.11.0=pyhd8ed1ab_0
+  - parso=0.8.3=pyhd3eb1b0_0
   - peppy=0.34.0=pyhd8ed1ab_0
   - perl=5.32.1=2_h7f98852_perl5
+  - pexpect=4.8.0=pyhd3eb1b0_3
+  - pickleshare=0.7.5=pyhd3eb1b0_1003
   - pip=22.2.2=pyhd8ed1ab_0
   - pkgutil-resolve-name=1.3.10=pyhd8ed1ab_0
   - plac=1.3.5=pyhd8ed1ab_0
@@ -147,9 +157,12 @@ dependencies:
   - pluggy=1.0.0=py310hff52083_3
   - ply=3.11=py_1
   - prettytable=3.4.0=pyhd8ed1ab_0
+  - prompt-toolkit=3.0.20=pyhd3eb1b0_0
   - protobuf=3.20.1=py310hd8f1fbe_0
   - psutil=5.9.1=py310h5764c6d_0
+  - ptyprocess=0.7.0=pyhd3eb1b0_2
   - pulp=2.6.0=py310hff52083_1
+  - pure_eval=0.2.2=pyhd3eb1b0_0
   - py=1.11.0=pyh6c4a22f_0
   - pyasn1=0.4.8=py_0
   - pyasn1-modules=0.2.7=py_0
@@ -160,6 +173,7 @@ dependencies:
   - pyopenssl=22.0.0=pyhd8ed1ab_0
   - pyparsing=3.0.9=pyhd8ed1ab_0
   - pyrsistent=0.18.1=py310h5764c6d_1
+  - pysam=0.19.1=py310hd89ff4b_0
   - pysftp=0.2.9=py_1
   - pysocks=1.7.1=py310hff52083_5
   - pytest=7.1.2=py310hff52083_0
@@ -193,6 +207,7 @@ dependencies:
   - snakemake-minimal=7.12.1=pyhdfd78af_0
   - snappy=1.1.9=hbd366e4_1
   - sqlite=3.39.2=h4ff8645_1
+  - stack_data=0.2.0=pyhd3eb1b0_0
   - stone=3.3.1=pyhd8ed1ab_0
   - stopit=1.1.2=py_0
   - tabulate=0.8.10=pyhd8ed1ab_0
@@ -225,4 +240,6 @@ dependencies:
   - yte=1.5.1=py310hff52083_0
   - zipp=3.8.1=pyhd8ed1ab_0
   - zlib=1.2.12=h166bdaf_2
+  - pip:
+    - phasedibd==0.1.dev8+g9a7b949
 prefix: /home/sdp/miniconda3/envs/pm
