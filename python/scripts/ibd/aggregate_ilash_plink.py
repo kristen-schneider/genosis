@@ -25,7 +25,7 @@ def main():
             pair_data = sample1_pairs[sample2] 
             all_ilash_pairs.append([sample1, sample2, pair_data[0], pair_data[1]]) 
     ilash_sorted = sorted(all_ilash_pairs, key = lambda x: x[3], reverse=True)
-    for s in ilash_sorted: print(s)
+    #for s in ilash_sorted: print(s)
 
     write_ilash_plink(ilash_sorted, plink_pairs, args.out_file)
 
