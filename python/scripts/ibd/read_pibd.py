@@ -1,6 +1,7 @@
 from collections import defaultdict
+import pysam
 
-def make_pibd_pairs_cumulative(pibd_file):
+def make_pibd_pairs_cumulative(pibd_file, vcf_file):
     '''
     reads output from phased IBD and generates a dictionary
     whos key is a sample name and whose value is another
@@ -9,30 +10,50 @@ def make_pibd_pairs_cumulative(pibd_file):
     cum_match_length).
 
     '''
+    sample_IDs = vcf_samples(vcf_file)
     pibd_pairs_dict = defaultdict(dict)
 
     f = open(pibd_file)
+    header = f.readline()
+    
     for line in f:
         L = line.strip().split()
-        sample1_id = int(L[1])
-        sample2_id = int(L[2])
-
-        start_match = float(L[7])
-        end_match = float(L[8])
+        sample1_idx = int(L[2])
+        sample1_name = sample_IDs[sample1_idx]
+        sample2_idx = int(L[3])
+        sample2_name = sample_IDs[sample2_idx]
+    
+        start_match = float(L[8])
+        end_match = float(L[9])
         length_match = end_match - start_match
 
         try:
-            pibd_pairs_dict[sample1_id][sample2_id][0] += 1
-            pibd_pairs_dict[sample1_id][sample2_id][1] += length_match
+            pibd_pairs_dict[sample1_name][sample2_name][0] += 1
+            pibd_pairs_dict[sample1_name][sample2_name][1] += length_match
         except KeyError:
             try: 
-                pibd_pairs_dict[sample1_id][sample2_id] = [1, length_match]
+                pibd_pairs_dict[sample1_name][sample2_name] = [1, length_match]
             except KeyError:
-                pibd_pairs_dict[sample1_id] = {sample2_id: [1, length_match]}
+                pibd_pairs_dict[sample1_name] = {sample2_name: [1, length_match]}
     f.close()
     return pibd_pairs_dict
 
+def vcf_samples(vcf_file):
+    '''
+    reads vcf and retruens a list of sample IDs
+    '''
+    vcf_samples_list = []
+    vcf_f = pysam.VariantFile(vcf_file)
+    vcf_samples_list = list((vcf_f.header.samples))
+    return vcf_samples_list
 
+
+
+
+
+
+### NOT USING INDIVIDUAL ON PHASED IBD (for now) BECAUSE
+### PHASED IBD REPORTS MANY IBD SEGMENTS
 def make_pibd_pairs_individual(pibd_file):
     '''
     reads output from pibd and generates a dictionary
