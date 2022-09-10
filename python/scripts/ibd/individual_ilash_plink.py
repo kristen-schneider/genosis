@@ -45,7 +45,8 @@ def main():
             except KeyError:
                 print('iLASH reported same sample similarity' +
                 '(could be different haplotypes).\n' +
-                'Plink does not report same sample. Cannot compare:')
+                'Plink does not report same sample. Skipping this comparison...' +
+                '\nCannot compare:')
                 print(s1_plink_notation, s2_plink_notation)
             
 
