@@ -46,7 +46,7 @@ def main():
                 print('iLASH reported same sample similarity' +
                 '(could be different haplotypes).\n' +
                 'Plink does not report same sample. Cannot compare:')
-                print(s1_plink_notations, s2_plink_notation)
+                print(s1_plink_notation, s2_plink_notation)
             
 
         try:
