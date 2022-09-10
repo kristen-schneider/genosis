@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-def make_ilash_pairs_dict(ilash_file):
+def make_ilash_pairs_cumulative(ilash_file):
     '''
     reads output from ilash and generates a dictionary
     whos key is a sample name and whose value is another
@@ -27,5 +27,30 @@ def make_ilash_pairs_dict(ilash_file):
                 ilash_pairs_dict[sample1_h][sample2_h] = [1, length_match]
             except KeyError:
                 ilash_pairs_dict[sample1_h] = {sample2_h: [1, length_match]}
+    f.close()
+    return ilash_pairs_dict
+
+
+def make_ilash_pairs_individual(ilash_file):
+    '''
+    reads output from ilash and generates a dictionary
+    whos key is a match index, and whose value is another
+    dictionary. the second dictionary has key as sample
+    pair [s1, s2] and has value as match length
+
+    '''
+    ilash_pairs_dict = defaultdict(dict)
+
+    f = open(ilash_file)
+    match_index = 0
+    for line in f:
+        L = line.strip().split()
+        sample1_h = L[1]
+        sample2_h = L[3]
+
+        length_match = float(L[9])
+
+        ilash_pairs_dict[match_index] = {sample1_h: {sample2_h: length_match}}
+        match_index += 1
     f.close()
     return ilash_pairs_dict
