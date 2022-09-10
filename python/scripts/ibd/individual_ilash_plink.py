@@ -20,6 +20,7 @@ def main():
 
     for index in ilash_pairs:
 
+        if index == 20: break
         print('getting plink dict for ilash match: ', index)
         plink_file = args.plink_dir + 'ibd.' + str(index) + '.genome'
         plink_pairs_dict = read_plink.make_plink_pairs_dict(plink_file)
@@ -38,10 +39,10 @@ def main():
         
         
         try:
-            index_plink_dist = plink_pairs_dict[s1_plink_notation][s2_plink_notation]
+            index_plink_dist = float(plink_pairs_dict[s1_plink_notation][s2_plink_notation])
         except KeyError:
             try:
-                index_plink_dist = plink_pairs_dict[s2_plink_notation][s1_plink_notation]
+                index_plink_dist = float(plink_pairs_dict[s2_plink_notation][s1_plink_notation])
             except KeyError:
                 print('iLASH reported same sample similarity' +
                 '(could be different haplotypes).\n' +
@@ -59,8 +60,14 @@ def main():
                 index_plink_pairs[sample1][sample2] = [index_plink_dist]
 
 
-    ilash_sorted = sorted(all_ilash_pairs, key = lambda x: x[3], reverse=True)
+    print('ilash pairs')
+    ilash_sorted = sorted(index_ilash_pairs, key = lambda x: x[2], reverse=True)
     for s in ilash_sorted: print(s)
+
+    print('plink dict')
+    for z in index_plink_pairs:
+        for y in index_plink_pairs[z]:
+            print(z, y, index_plink_pairs[z][y])
 
     write_ilash_plink(ilash_sorted, index_plink_pairs, args.out_file)
 
@@ -72,22 +79,28 @@ def write_ilash_plink(ilash_dict, plink_dict, out_file):
     for data in range(len(ilash_dict)):
         sample1 = ilash_dict[data][0]
         sample2 = ilash_dict[data][1]
-        cm_length = ilash_dict[data][3]
+        cm_length = ilash_dict[data][2]
 
-        ilash_y.append(cm_length)
         
-        #try:
-        plink_dist = plink_dict[sample1][sample2]
-        #except KeyError:
-        #    try:
-        #        plink_dist = plink_dict[sample2][sample1]
-        #    except KeyError:
-        #        print('iLASH reported same sample similarity' + 
-        #        '(could be different haplotypes).\n' +
-        #        'Plink does not report same sample. Cannot compare:')
-        #        print(sample1, sample2)
+        try:
+            plink_dist = plink_dict[sample1][sample2]
+        except KeyError:
+            try:
+                plink_dist = plink_dict[sample2][sample1]
+            except KeyError:
+                print('iLASH reported same sample similarity' + 
+                '(could be different haplotypes).\n' +
+                'Plink does not report same sample. Cannot compare:')
+                print(sample1, sample2)
+                plink_dist = -1
 
-        plink_x.append(plink_dist)
+        if len(plink_dist > 1):
+            for pd in range(len(plink_dist)):
+                ilash_y.append(cm_length)
+                plink_x.append(plink_dist[pd])
+        else:
+            ilash_y.append(cm_length)
+            plink_x.append(plink_dist[0])
         
     o = open(out_file, 'w')
     o.write('ilash plink\n')
