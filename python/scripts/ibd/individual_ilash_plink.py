@@ -20,7 +20,7 @@ def main():
 
     for index in ilash_pairs:
 
-        if index == 20: break
+        #if index == 20: break
         print('getting plink dict for ilash match: ', index)
         plink_file = args.plink_dir + 'ibd.' + str(index) + '.genome'
         plink_pairs_dict = read_plink.make_plink_pairs_dict(plink_file)
@@ -92,9 +92,9 @@ def write_ilash_plink(ilash_dict, plink_dict, out_file):
                 '(could be different haplotypes).\n' +
                 'Plink does not report same sample. Cannot compare:')
                 print(sample1, sample2)
-                plink_dist = -1
+                plink_dist = [-1]
 
-        if len(plink_dist > 1):
+        if len(plink_dist) > 1:
             for pd in range(len(plink_dist)):
                 ilash_y.append(cm_length)
                 plink_x.append(plink_dist[pd])
