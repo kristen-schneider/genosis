@@ -7,26 +7,27 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--ilash_matches')
     parser.add_argument('--plink_matches')
-    parser.add_argumetn('--out_file')
+    parser.add_argument('--out_file')
     return parser.parse_args()
 
 def main():
     args = get_args()
     print('getting ilash data')
-    ilash_pairs = read_ilash.make_ilash_pairs_dict(args.ilash_matches)
+    ilash_pairs = read_ilash.make_ilash_pairs_cumulative(args.ilash_matches)
     print('getting plink data')
     plink_pairs = read_plink.make_plink_pairs_dict(args.plink_matches)
-    
+    #print(plink_pairs)
+
     all_ilash_pairs = []
     for sample1 in ilash_pairs:
         sample1_pairs = ilash_pairs[sample1]
         for sample2 in sample1_pairs:
             pair_data = sample1_pairs[sample2] 
-            all_pairs.append([sample1, sample2, pair_data[0], pair_data[1]]) 
-    ilash_sorted = sorted(all_pairs, key = lambda x: x[3], reverse=True)
+            all_ilash_pairs.append([sample1, sample2, pair_data[0], pair_data[1]]) 
+    ilash_sorted = sorted(all_ilash_pairs, key = lambda x: x[3], reverse=True)
     for s in ilash_sorted: print(s)
 
-    write_ilash_plink(ilash_sorted, plink_pairs, out_file)
+    write_ilash_plink(ilash_sorted, plink_pairs, args.out_file)
 
 def write_ilash_plink(ilash_dict, plink_dict, out_file):
 
@@ -40,7 +41,17 @@ def write_ilash_plink(ilash_dict, plink_dict, out_file):
 
         ilash_y.append(cm_length)
         
-        plink_dist = plink_dict[sample1][sample2]
+        try:
+            plink_dist = plink_dict[sample1][sample2]
+        except KeyError:
+            try:
+                plink_dist = plink_dict[sample2][sample1]
+            except KeyError:
+                print('iLASH reported same sample similarity' + 
+                '(could be different haplotypes).\n' +
+                'Plink does not report same sample. Cannot compare:')
+                print(sample1, sample2)
+
         plink_x.append(plink_dist)
         
     o = open(out_file, 'w')
