@@ -4,7 +4,7 @@ PATH=$PATH:~/plink_linux_x86_64_20220402/
 
 vcf_file="/home/sdp/precision-medicine/data/vcf/chr8-30x/1kGP_high_coverage_Illumina.chr8.filtered.SNV_INDEL_SV_phased_panel.vcf"
 python_dir="/home/sdp/precision-medicine/python/scripts/ibd/"
-ilash_file="/home/sdp/precision-medicine/data/ibd/iLASH/ALL.chr8-30x.ilash.match"
+ilash_file="/home/sdp/precision-medicine/data/ibd/iLASH/chr8-30x/ALL.chr8-30x.ilash.match"
 data_dir="/home/sdp/precision-medicine/data/ibd/iLASH/chr8-30x"
 cd $data_dir
 

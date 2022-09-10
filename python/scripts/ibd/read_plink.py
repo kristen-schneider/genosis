@@ -12,7 +12,7 @@ def make_plink_pairs_dict(plink_file, delim=' '):
 
     f = open(plink_file, 'r')
     for line in f:
-        L = line.strip().split(delim)
+        L = line.strip().split()
         sample1 = L[1]
         sample2 = L[3]
         dist = L[11]
