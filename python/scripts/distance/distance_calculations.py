@@ -22,7 +22,6 @@ def hamming_distance(v1, v2):
     return hd
 
 
-
 def euclidean_distance(v1, v2):
     '''
     computes the euclidean distance between 
@@ -33,7 +32,7 @@ def euclidean_distance(v1, v2):
     running_sum = 0
 
     for v in range(size_vector):
-        diff = v1-v2
+        diff = v1[v] - v2[v]
         diff_sqrd = pow(diff, 2)
         running_sum += diff_sqrd
     ed = math.sqrt(running_sum)
