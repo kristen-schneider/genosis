@@ -1,5 +1,6 @@
 import argparse
 import distance_calculations
+import read_encoding_file
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -8,6 +9,10 @@ def get_args():
 
 def main():
     args = get_args()
+    encodings = read_encoding_file.read_encoding_file(args.encoding_file)
+
+    Query = encodings[0]
+    Database = encodings
 
 
 if __name__ == '__main__':

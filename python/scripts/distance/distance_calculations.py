@@ -4,22 +4,6 @@ from scipy.spatial import distance
 import os, sys, inspect
 
 
-
-def brute_force(i1, i2):
-    f = open(encoding_file, 'r')
-    l_count = 0
-    vector1, vector2 = '', ''
-
-    for line in f:
-        if l_count == i1:
-            vector1 = line.strip()
-        if l_count == i2:
-            vector2 = line.strip()
-        l_count += 1
-    
-    f.close()
-    return euclidean_distance(vector1, vector2)
-
 def numpy_euclidean(i1, i2):
     f = open(encoding_file, 'r')
     l_count = 0
