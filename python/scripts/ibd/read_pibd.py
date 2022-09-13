@@ -16,6 +16,7 @@ def make_pibd_pairs_cumulative(pibd_file, vcf_file):
     f = open(pibd_file)
     header = f.readline()
     
+    i = 0 
     for line in f:
         L = line.strip().split()
         sample1_idx = int(L[2])
@@ -23,18 +24,27 @@ def make_pibd_pairs_cumulative(pibd_file, vcf_file):
         sample2_idx = int(L[3])
         sample2_name = sample_IDs[sample2_idx]
     
+        sample1_h = int(L[4])
+        sample2_h = int(L[5])
+
         start_match = float(L[8])
         end_match = float(L[9])
         length_match = end_match - start_match
 
-        try:
-            pibd_pairs_dict[sample1_name][sample2_name][0] += 1
-            pibd_pairs_dict[sample1_name][sample2_name][1] += length_match
-        except KeyError:
-            try: 
-                pibd_pairs_dict[sample1_name][sample2_name] = [1, length_match]
+        if sample1_h == sample2_h:
+            try:
+                pibd_pairs_dict[sample1_name][sample2_name][0] += 1
+                pibd_pairs_dict[sample1_name][sample2_name][1] += length_match
             except KeyError:
-                pibd_pairs_dict[sample1_name] = {sample2_name: [1, length_match]}
+                try: 
+                    pibd_pairs_dict[sample1_name][sample2_name] = [1, length_match]
+                except KeyError:
+                    pibd_pairs_dict[sample1_name] = {sample2_name: [1, length_match]}
+            if sample1_idx == 348:
+                if sample2_idx == 349:
+                    print(i, sample1_name, sample1_h, sample2_name, sample2_h, start_match, end_match, length_match)
+                    i+=1
+
     f.close()
     return pibd_pairs_dict
 

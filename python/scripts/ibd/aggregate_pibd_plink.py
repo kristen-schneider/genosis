@@ -17,7 +17,7 @@ def main():
     pibd_pairs = read_pibd.make_pibd_pairs_cumulative(args.pibd_matches, args.vcf)
     print('getting plink data')
     plink_pairs = read_plink.make_plink_pairs_dict(args.plink_matches)
-    #print(plink_pairs)
+    print(len(pibd_pairs))
 
     all_pibd_pairs = []
     for sample1 in pibd_pairs:
@@ -28,7 +28,7 @@ def main():
     pibd_sorted = sorted(all_pibd_pairs, key = lambda x: x[3], reverse=True)
     for s in pibd_sorted: print(s)
 
-    write_pibd_plink(pibd_sorted, plink_pairs, args.out_file)
+    #write_pibd_plink(pibd_sorted, plink_pairs, args.out_file)
 
 def write_pibd_plink(pibd_dict, plink_dict, out_file):
 
