@@ -1,5 +1,5 @@
 vcf_file:
-  data/vcf/chr8.2000000.vcf
+  data/vcf/chr8-30x.4000.vcf
 samples_dir:
   data/samples
 
