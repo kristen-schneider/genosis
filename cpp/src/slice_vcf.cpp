@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -13,8 +14,10 @@ int main(int argc, char* argv[]){
 	// read config file for chromosome VCF file
 	string configFile = argv[1];   // configuration file will all options
 	map<string, string> config_options;
+	cout << "Reading config file..." << endl;
 	config_options = get_config_options(configFile);
-
+	
+	
 	string vcf_file = config_options["vcf_file"];
 	int slice_size = stoi(config_options["slice_size"]);
 	string out_dir = config_options["out_dir"];
@@ -31,6 +34,8 @@ int main(int argc, char* argv[]){
 	// slice full chromosome VCF file into smaller slices
 	int num_slices = slice(vcf_file, vcf_header, slice_size,
         	out_base_name, out_dir);
+	
+	
 	return 0;
 }
 
