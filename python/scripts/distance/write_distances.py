@@ -1,16 +1,32 @@
 import argparse
 import distance_calculations
 import read_encoding
+import sys
+
+sys.path.insert(0, '../')
+from ibd import read_plink
 
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--encoding_file')
     parser.add_argument('--query')
+    parser.add_argument('--plink')
     parser.add_argument('--distances_dir')
     return parser.parse_args()
 
 def main():
     args = get_args()
+
+    print('Reading Plink file...')
+    plink_dict = read_plink.make_plink_pairs_dict(args.plink)               
+    plink_query = args.query.split('_')[0]
+    o = open(args.distances_dir + 'chr8.seg.0.plink', 'w')
+    o.write('query: ' + plink_query + '\n')
+    o.write('sample_ID plink_distance\n')
+    for sample_i in plink_dict[plink_query]:
+        o.write(sample_i + ' ' + plink_dict[plink_query][sample_i] + '\n')
+    o.close()
+
     print('Reading Encodings...')
     encodings = read_encoding.read_encoding_file(args.encoding_file)
 
@@ -25,7 +41,7 @@ def main():
         v_hd = distance_calculations.hamming_distance(query, database[v_i])
         hamming_distances[v_i] = v_hd
     o.write('query: ' + args.query + '\n')
-    o.write('sample hamming_distance\n')
+    o.write('sample_ID hamming_distance\n')
     for d in hamming_distances:
         o.write(d + ' ' + str(hamming_distances[d])+ '\n')
     o.close()
@@ -38,7 +54,7 @@ def main():
         n_hd = hamming_distances[hd]/len(query)
         norm_hamming_distances[hd] = n_hd
     o.write('query: ' + args.query + '\n')
-    o.write('sample hamming_distance_normalized\n')
+    o.write('sample_ID hamming_distance_normalized\n')
     for d in norm_hamming_distances:
         o.write(d + ' ' + str(norm_hamming_distances[d])+ '\n')
     o.close()
@@ -51,7 +67,7 @@ def main():
         v_ed = distance_calculations.euclidean_distance(query, database[v_i])
         euclidean_distances[v_i] = v_ed
     o.write('query: ' + args.query + '\n')
-    o.write('sample euclidean_distance\n')
+    o.write('sample_ID euclidean_distance\n')
     for d in euclidean_distances:
         o.write(d + ' ' + str(euclidean_distances[d])+ '\n')
     o.close()
