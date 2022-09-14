@@ -9,7 +9,7 @@ python/scripts/ibd/__pycache__/
 python/scripts/plotting/png/
 python/scripts/plotting/txt/
 python/scripts/plotting/__pycache__/
-python/scripts/plotting/plink_pedigree/*.png
+python/scripts/plotting/plink_pedigree/png/
 python/scripts/plotting/plink_pedigree/*.dict
 python/scripts/pysam/__pycache__/
 python/scripts/utils/__pycache__/
