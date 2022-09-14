@@ -124,7 +124,12 @@ int slice(string vcf_file, vector<string> vcf_header,
 	// read vcf file until end
 	string line;
         while (getline (vcf_file_stream, line)){
-            	// ignore header
+            	// FOR TESTING
+		if (slice_count >= 10){
+			break;
+		}
+
+		// ignore header
 		char char1 = line.at(0);
             	if (char1 == '#'){continue;}
 		else{

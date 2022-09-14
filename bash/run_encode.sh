@@ -13,10 +13,6 @@ sample_IDs="/home/sdp/precision-medicine/data/samples/chr8-30x.samples"
 vcf_file=$data_dir"chr8.seg.0.vcf"
 encoded_file=$data_dir"chr8.seg.0.encoded"
 
-# search and encoding info
-numVariants=9   # number of variants in encoded file
-numSamples=2548   # number of samples in encoded file
-
 echo "Encoding file: " $vcf_file
 
 bin=$bin_dir"test_encode"
