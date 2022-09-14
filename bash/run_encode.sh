@@ -1,30 +1,29 @@
 #!/bin/sh
 
 # path to directories
-src_dir="/home/sdp/precision-medicine/src/"
-include_dir="/home/sdp/precision-medicine/include/"
-conda_dir="/home/sdp/miniconda3/envs/faiss/"
-bin_dir="/home/sdp/precision-medicine/bin/"
-data_dir="/home/sdp/precision-medicine/data/"
+src_dir="/home/sdp/precision-medicine/cpp/src/"
+include_dir="/home/sdp/precision-medicine/cpp/include/"
+conda_dir="/home/sdp/miniconda3/envs/pm/"
+bin_dir="/home/sdp/precision-medicine/cpp/bin/"
+data_dir="/home/sdp/precision-medicine/data/segments/test_slice/"
 
 # path to vcf and encoded file
-vcf_file=$data_dir"vcf/ten.vcf"
-encoded_file=$data_dir"encoded/ten2.encoded.txt"
+config="/home/sdp/precision-medicine/cpp/configs/sample.config"
+sample_IDs="/home/sdp/precision-medicine/data/samples/chr8-30x.samples.txt"
+vcf_file=$data_dir"chr8.seg.0.vcf"
+encoded_file=$data_dir"chr8.seg.0.encoded"
 
 # search and encoding info
 numVariants=9   # number of variants in encoded file
 numSamples=2548   # number of samples in encoded file
 
-#source ~/miniconda3/etc/profile.d/conda.sh 
-#conda activate faiss
-#export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$conda_dir"lib"
-
 echo "Encoding file: " $vcf_file
 
-bin=$bin_dir"encode"
+bin=$bin_dir"test_encode"
 
-g++ $src_dir"main_encode.cpp" \
-	$src_dir"readVCF.cpp" \
+g++ $src_dir"encode_vcf.cpp" \
+	$src_dir"map_encodings.cpp" \
+	$src_dir"read_config.cpp" \
 	$src_dir"utils.cpp" \
 	-I $include_dir \
 	-I $conda_dir"include/" \
@@ -32,4 +31,4 @@ g++ $src_dir"main_encode.cpp" \
 	-lhts \
 	-o $bin
 
-$bin $vcf_file $encoded_file
+$bin $config $sample_IDs $vcf_file $encoded_file
