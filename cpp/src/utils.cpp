@@ -22,7 +22,6 @@ vector<vector<int>> transpose(vector<vector<int>> &vmf){
          * and transposes it to
          * sample major format.
          */
-        cout << "Transposing VMF to SMF..." << endl;
         // throw error if size is bad
         if (vmf.size() == 0) {
                 cerr << "Error reading variant major format." << endl;
