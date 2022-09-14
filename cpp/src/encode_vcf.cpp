@@ -198,10 +198,10 @@ void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string ou
 			binary = 0;
 		}
 		vector<int> sample = smf.at(i);
-		output_stream << all_sample_IDs.at(SID_i) << " ";
+		output_stream << all_sample_IDs[SID_i] << " ";
 		for(int j = 0; j < sample.size(); j++) {
 			output_stream << sample.at(j) << " ";
 		}
-		output_stream << endl;
+		cout << endl;
 	}
 }
