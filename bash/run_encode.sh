@@ -9,13 +9,9 @@ data_dir="/home/sdp/precision-medicine/data/segments/test_slice/"
 
 # path to vcf and encoded file
 config="/home/sdp/precision-medicine/cpp/configs/sample.config"
-sample_IDs="/home/sdp/precision-medicine/data/samples/chr8-30x.samples"
-vcf_file=$data_dir"chr8.seg.0.vcf"
-encoded_file=$data_dir"chr8.seg.0.encoded"
-
-# search and encoding info
-numVariants=9   # number of variants in encoded file
-numSamples=2548   # number of samples in encoded file
+sample_IDs="/home/sdp/precision-medicine/data/samples/chr8-30x/chr8-30x.samples"
+vcf_file=$data_dir"chr8-30x.seg.9.vcf"
+encoded_file=$data_dir"chr8-30x.seg.9.encoded"
 
 echo "Encoding file: " $vcf_file
 

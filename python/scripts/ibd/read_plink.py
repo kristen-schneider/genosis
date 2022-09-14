@@ -18,6 +18,7 @@ def make_plink_pairs_dict(plink_file, delim=' '):
         dist = L[11]
 
         plink_pairs_dict[sample1][sample2] = dist
+        plink_pairs_dict[sample2][sample1] = dist
     f.close()
     
     return plink_pairs_dict
