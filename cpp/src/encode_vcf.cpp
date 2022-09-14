@@ -202,6 +202,6 @@ void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string ou
 		for(int j = 0; j < sample.size(); j++) {
 			output_stream << sample.at(j) << " ";
 		}
-		cout << endl;
+		output_stream << endl;
 	}
 }
