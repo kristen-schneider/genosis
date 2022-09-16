@@ -5,29 +5,27 @@ import read_encoding
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--encoding_file')
+    parser.add_argument('--hap')
     parser.add_argument('--query')
-    parser.add_argument('--dad')
-    parser.add_argument('--mom')
-    parser.add_argument('--base')
     return parser.parse_args()
 
 def main():
     args = get_args()
 
-    print('Reading Encodings...')
+    encoding_file = args.encoding_file
     encodings = read_encoding.read_encoding_file(args.encoding_file)
+    query_hap = args.query+'_'+args.hap
 
-    q = encodings[args.query]
-    d = encodings[args.dad]
-    m = encodings[args.mom]
+    print("Query: ", query_hap)
+    print("sample_ID dist")
+    q_encoding = encodings[query_hap]
+
     gaps_allowed = 0
+    for s in encodings:
+        s_encoding = encodings[s]
+        qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
+        print(s, qs_kd)
 
-    qq = distance_calculations.kristen(q, q, gaps_allowed)
-    print(qq)
-    qd = distance_calculations.kristen(q, d, gaps_allowed)
-    print(qd)
-    qm = distance_calculations.kristen(q, m, gaps_allowed)
-    print(qm)
 
 if __name__ == '__main__':
     main()
