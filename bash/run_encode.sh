@@ -3,17 +3,14 @@
 # path to directories
 src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
-conda_dir="/home/sdp/miniconda3/envs/pm/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/precision-medicine/data/segments/test_slice/"
+data_dir="/home/sdp/precision-medicine/data/segments/chr8-30x/"
 
 # path to vcf and encoded file
 config="/home/sdp/precision-medicine/cpp/configs/sample.config"
 sample_IDs="/home/sdp/precision-medicine/data/samples/chr8-30x/chr8-30x.samples"
-vcf_file=$data_dir"chr8-30x.seg.9.vcf"
-encoded_file=$data_dir"chr8-30x.seg.9.encoded"
-
-echo "Encoding file: " $vcf_file
+#vcf_file=$data_dir"chr8-30x.seg.9.vcf"
+#encoded_file=$data_dir"chr8-30x.seg.9.encoded"
 
 bin=$bin_dir"test_encode"
 
@@ -27,4 +24,12 @@ g++ $src_dir"encode_vcf.cpp" \
 	-lhts \
 	-o $bin
 
-$bin $config $sample_IDs $vcf_file $encoded_file
+for vcf_f in $data_dir*.vcf; do
+	filename=$(basename -- $vcf_f)
+	base=${filename%.*}
+	encoded_f=$data_dir$base".encoded"
+
+	echo "Encoding file: " $vcf_f
+	$bin $config $sample_IDs $vcf_f $encoded_f
+done
+
