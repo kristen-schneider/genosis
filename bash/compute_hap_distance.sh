@@ -20,6 +20,7 @@ do
         	kdist_f=$data_dir$base"hap."$h".kdist"
 
 		python $python_dir"compute_trios.py" \
+			--encoded_file $encoded_f \
 			--hap $h \
 			--query $sampleID \
 			> $kdist_f
