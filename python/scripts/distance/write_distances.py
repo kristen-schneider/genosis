@@ -75,10 +75,11 @@ def main():
 
     print('...computing new distance')
     # new distance
+    gap_allowed = 0
     o = open(args.distances_dir + args.base + '.newD', 'w')
     new_distances = dict()
     for v_i in database:
-        v_nd = distance_calculations.kristen(query, database[v_i], 1)
+        v_nd = distance_calculations.kristen(query, database[v_i], gap_allowed)
         new_distances[v_i] = v_nd
     o.write('query: ' + args.query + '\n')
     o.write('sample_ID new_distance\n')
