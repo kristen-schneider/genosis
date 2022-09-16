@@ -20,12 +20,13 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 	cout << "Encoding vectors..." << endl;
+	
 	// read config file
 	cout << "...Reading config File..." << endl;
 	string configFile = argv[1];   // configuration file will all options
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);
-
+	
 	string sample_IDs_file = argv[2];
 	string vcf_slice_file = argv[3];
 	string output_encoding_file = argv[4];
