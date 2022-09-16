@@ -37,3 +37,30 @@ def euclidean_distance(v1, v2):
         running_sum += diff_sqrd
     ed = math.sqrt(running_sum)
     return ed
+
+def kristen(v1, v2, gaps_allowed):
+    kd = 0
+    running_score = 0
+    num_consecutive_matches = 0
+    gaps = 0
+    all_scores = []
+
+    size_vector = len(v1)
+    for v in range(size_vector):
+        if int(v1[v]) == 1 and int(v1[v]) == int(v2[v]):
+            num_consecutive_matches += 1
+            running_score += num_consecutive_matches
+        else:
+            gaps += 1
+            if gaps > gaps_allowed:
+                if running_score != 0:
+                    all_scores.append(running_score)
+                running_score = 0
+                num_consecutive_matches = 0
+                gaps = 0
+            else:
+                continue
+    if running_score != 0:
+        all_scores.append(running_score)
+    kd = sum(all_scores)
+    return kd
