@@ -6,7 +6,7 @@ data_dir='/home/sdp/precision-medicine/data/segments/chr8-30x/'
 sampleID='HG00405'
 paternalID='HG00403'
 maternalID='HG00404'
-haps=(0 1)
+haps=(1)
 
 for encoded_f in $data_dir*.encoded
 do
