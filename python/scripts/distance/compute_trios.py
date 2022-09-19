@@ -22,9 +22,11 @@ def main():
 
     gaps_allowed = 0
     for s in encodings:
-        s_encoding = encodings[s]
-        qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-        print(s, qs_kd)
+        if '_'+args.hap in s:
+            s_encoding = encodings[s]
+            #print(s_encoding)
+            qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
+            print(s, qs_kd)
 
 
 if __name__ == '__main__':
