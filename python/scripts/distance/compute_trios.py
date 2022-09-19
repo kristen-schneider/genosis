@@ -25,8 +25,9 @@ def main():
         if '_'+args.hap in s:
             s_encoding = encodings[s]
             #print(s_encoding)
-            qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-            print(s, qs_kd)
+            qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+            #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
+            print(s, qs_ed)
 
 
 if __name__ == '__main__':

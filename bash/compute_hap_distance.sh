@@ -6,7 +6,7 @@ data_dir='/home/sdp/precision-medicine/data/segments/chr8-30x/'
 sampleID='HG00405'
 paternalID='HG00403'
 maternalID='HG00404'
-haps=(1)
+haps=(0 1)
 
 for encoded_f in $data_dir*.encoded
 do
@@ -18,12 +18,12 @@ do
 	do
 		echo "...haplotype" $h
         	kdist_f=$data_dir$base".hap."$h".kdist"
-
+		edist_f=$data_dir$base".hap."$h".edist"
 		python $python_dir"compute_trios.py" \
 			--encoded_file $encoded_f \
 			--hap $h \
 			--query $sampleID \
-			> $kdist_f
+			> $edist_f
 	done
 done
 

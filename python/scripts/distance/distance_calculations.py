@@ -7,6 +7,7 @@ import os, sys, inspect
 # hamming distance (hd and 1-hd)
 
 
+
 def hamming_distance(v1, v2):
     '''
     counts the number of mismatches between 
