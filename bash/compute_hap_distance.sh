@@ -17,7 +17,7 @@ do
 	for h in "${haps[@]}"
 	do
 		echo "...haplotype" $h
-        	kdist_f=$data_dir$base"hap."$h".kdist"
+        	kdist_f=$data_dir$base".hap."$h".kdist"
 
 		python $python_dir"compute_trios.py" \
 			--encoded_file $encoded_f \
