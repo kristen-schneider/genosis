@@ -7,6 +7,20 @@ import os, sys, inspect
 # hamming distance (hd and 1-hd)
 
 
+def shared_variants(v1, v2):
+    '''
+    counts number of shared variants
+    between two input vectors
+    '''
+    sv = 0
+    size_vector = len(v1)
+    for v in range(size_vector):
+        if v1[v] == 1 and v1[v] != v2[v]:
+            sv += 1
+        #elif v1[v] == 0 and v1[v] == v2[v]:
+        #    sv += 1
+
+    return sv
 
 def hamming_distance(v1, v2):
     '''

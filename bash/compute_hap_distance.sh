@@ -19,11 +19,12 @@ do
 		echo "...haplotype" $h
         	kdist_f=$data_dir$base".hap."$h".kdist"
 		edist_f=$data_dir$base".hap."$h".edist"
+		svdist_f=$data_dir$base".hap."$h".svdist"
 		python $python_dir"compute_trios.py" \
 			--encoded_file $encoded_f \
 			--hap $h \
 			--query $sampleID \
-			> $edist_f
+			> $svdist_f
 	done
 done
 
