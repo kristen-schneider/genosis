@@ -4,7 +4,7 @@ import read_encoding
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--encoding_file')
+    parser.add_argument('--encoded_file')
     parser.add_argument('--hap')
     parser.add_argument('--query')
     return parser.parse_args()
@@ -12,8 +12,8 @@ def get_args():
 def main():
     args = get_args()
 
-    encoding_file = args.encoding_file
-    encodings = read_encoding.read_encoding_file(args.encoding_file)
+    encoded_file = args.encoded_file
+    encodings = read_encoding.read_encoding_file(encoded_file)
     query_hap = args.query+'_'+args.hap
 
     print("Query: ", query_hap)
@@ -23,8 +23,15 @@ def main():
     gaps_allowed = 0
     for s in encodings:
         s_encoding = encodings[s]
-        qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-        print(s, qs_kd)
+        qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+        #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
+        print(s, qs_ed)
+        #if '_'+args.hap in s:
+        #    s_encoding = encodings[s]
+        #    #print(s_encoding)
+        #    qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+        #    #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
+        #    print(s, qs_ed)
 
 
 if __name__ == '__main__':
