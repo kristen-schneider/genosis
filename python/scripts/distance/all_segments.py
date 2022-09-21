@@ -36,13 +36,19 @@ def read_segment(samples_dict, seg_dist_file, num_seg, seg, hap):
         L = line.strip().split()
         sample = L[0]
         dist = float(L[1])
-        if '_'+hap in sample:
-            try:
-                samples_dict[sample][seg] = dist
-            except KeyError:
-                empty_list = [-1] * int(num_seg)
-                samples_dict[sample] = empty_list
-                samples_dict[sample][seg] = dist
+        try:
+            samples_dict[sample][seg] = dist
+        except KeyError:
+            empty_list = [-1] * int(num_seg)
+            samples_dict[sample] = empty_list
+            samples_dict[sample][seg] = dist
+        #if '_'+hap in sample:
+        #    try:
+        #        samples_dict[sample][seg] = dist
+        #    except KeyError:
+        #        empty_list = [-1] * int(num_seg)
+        #        samples_dict[sample] = empty_list
+        #        samples_dict[sample][seg] = dist
     f.close()
 
 
