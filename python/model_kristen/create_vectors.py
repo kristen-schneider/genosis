@@ -79,3 +79,6 @@ def compute_vectors(args):
             vectors = model(encodings)
             for s, v in zip(samples, vectors):
                 print(s.numpy().decode("utf-8"), *v.numpy(), file=f)
+
+if __name__ == '__main__':
+    main()
