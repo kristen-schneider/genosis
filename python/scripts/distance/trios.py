@@ -57,14 +57,15 @@ def main():
 
 def compute_distances(trio_encodings, trio_samples, hap):
     print('computing distances for hap: ', hap)
-    print(f"\nid\tid\t?\ted")
+    print(f"\nid\tid\t?\ted\tkd")
     start = 0
     end = len(trio_encodings[0])-1
     for s in range(len(trio_encodings)):
         sv = distance_calculations.shared_variants(trio_encodings[0][start:end], trio_encodings[s][start:end])
         ed = distance_calculations.euclidean_distance(trio_encodings[0][start:end], trio_encodings[s][start:end])
-        L = trio_samples[0], trio_samples[s], sv, ed
-        print(f"{L[0]}\t{L[1]}\t{L[2]}\t{L[3]}")
+        kd = distance_calculations.kristen(trio_encodings[0][start:end], trio_encodings[s][start:end], 0)
+        L = trio_samples[0], trio_samples[s], sv, ed, kd
+        print(f"{L[0]}\t{L[1]}\t{L[2]}\t{L[3]}\t{L[4]}")
     
 
 def plot_encodings(trio_encodings, trio_samples, hap):
@@ -76,7 +77,7 @@ def plot_encodings(trio_encodings, trio_samples, hap):
     for sp in range(len(trio_encodings)):
         ax_sp = plt.subplot(len(trio_encodings), 1, sp+1)
         if sp == 0:
-            ax_sp.set_title('Segment 25, Haplotype '+str(hap), fontsize=40)
+            ax_sp.set_title('Segment 145, Haplotype '+str(hap), fontsize=40)
         ax_sp.imshow([trio_encodings[sp]], cmap=cmap)#colors[sp])
         if sp == len(trio_encodings)-1:
             ax_sp.set_xticks(range(0, len(trio_encodings[0]), 500), pad=30)
