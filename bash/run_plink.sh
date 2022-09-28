@@ -2,7 +2,7 @@
 
 PATH=$PATH:~/plink_linux_x86_64_20220402/
 
-data_dir="/home/sdp/precision-medicine/data/ibd/iLASH/"
+data_dir="/home/sdp/precision-medicine/data/segments/chr8-30x/"
 cd $data_dir
 
 for vcf in $data_dir*.vcf;
@@ -11,7 +11,7 @@ do
 	filename=$(basename $vcf)
 	seg_name=${filename%.*}
 	echo $seg_name
-	sed '10q;d' $vcf
-	#plink --vcf $vcf --genome --out $seg_name
+	#sed '10q;d' $vcf
+	plink --vcf $vcf --genome --out $seg_name
 done
 
