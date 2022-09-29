@@ -20,11 +20,12 @@ do
         	kdist_f=$data_dir$base".hap."$h".kdist"
 		edist_f=$data_dir$base".hap."$h".edist"
 		svdist_f=$data_dir$base".hap."$h".svdist"
+		rdp_dist_f=$data_dir$base".hap."$h".rdpdist"
 		python $python_dir"compute_trios.py" \
 			--encoded_file $encoded_f \
 			--hap $h \
 			--query $sampleID \
-			> $svdist_f
+			> $rdp_dist_f
 	done
 done
 

@@ -63,11 +63,15 @@ def recombination_dp(q, v1, v2):
     r_dp = 0
     for a in range(len(q)):
         # find a match on hap0
-        if q[a] == v1[a] == 1:
-            r_dp += 0
+        if q[a] == v1[a]:
+            pass
         # find a match on hap1
-        elif q[a] == v2[a] == 1:
-
+        elif q[a] == v2[a]:
+            pass
+        # mismatch
+        else:
+            r_dp += 1
+    return r_dp
 
 
 def kristen(v1, v2, gaps_allowed):
