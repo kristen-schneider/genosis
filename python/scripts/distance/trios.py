@@ -42,18 +42,35 @@ def main():
     better_hap0 = encoding_dict[args.better0]
     better_hap1 = encoding_dict[args.better1]
 
+    all_encodings = [self_hap0, self_hap1, dad_hap0, dad_hap1, mom_hap0, mom_hap1, better_hap0, better_hap1]
+    
+    all_encoding_names = ['self_hap0', 'self_hap1', 'dad_hap0', 'dad_hap1', 'mom_hap0', 'mom_hap1', 'better_hap0', 'better_hap1']
+    for encoding in range(len(all_encodings)):
+        print(all_encoding_names[encoding] + ': ' + ','.join(str(e) for e in all_encodings[encoding]))
+        #for e in all_encodings[encoding]:
+        #    print(e, ',')
+            
+
     trio_encodings_0 = [self_hap0, dad_hap0, better_hap0, mom_hap0]
     trio_samples_0 = ['self0', 'dad0', 'better0', 'mom0']
     trio_encodings_1 = [self_hap1, mom_hap1, better_hap1, dad_hap1]
     trio_samples_1 = ['self1', 'mom1', 'better1', 'dad1']
     
     # compute distances
-    compute_distances(trio_encodings_0, trio_samples_0, 0)
-    compute_distances(trio_encodings_1, trio_samples_1, 1)
+    #compute_distances(trio_encodings_0, trio_samples_0, 0)
+    #compute_distances(trio_encodings_1, trio_samples_1, 1)
     # plot
-    print('plotting...')
-    plot_encodings(trio_encodings_0, trio_samples_0, 0)
-    plot_encodings(trio_encodings_1, trio_samples_1, 1)
+    #print('plotting...')
+    #plot_encodings(trio_encodings_0, trio_samples_0, 0)
+    #plot_encodings(trio_encodings_1, trio_samples_1, 1)
+    
+#def dp_match(encoding_0, encoding_1, encoding_2):
+#    
+#    best_encoding = []
+#    for i in range(len(encoding_0)):
+#        if encoding_0[i] == encoding_1[i]:
+#            best_encoding.append(
+    
 
 def compute_distances(trio_encodings, trio_samples, hap):
     print('computing distances for hap: ', hap)
