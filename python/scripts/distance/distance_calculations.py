@@ -53,6 +53,23 @@ def euclidean_distance(v1, v2):
     ed = math.sqrt(running_sum)
     return ed
 
+def recombination_dp(q, v1, v2):
+    '''
+    given a query binary, haplotype encoding
+    and an encoding for a pair of sample haplotypes
+    report a new metric of similarity using DP
+    to be recombination-aware
+    '''
+    r_dp = 0
+    for a in range(len(q)):
+        # find a match on hap0
+        if q[a] == v1[a] == 1:
+            r_dp += 0
+        # find a match on hap1
+        elif q[a] == v2[a] == 1:
+
+
+
 def kristen(v1, v2, gaps_allowed):
     kd = 0
     running_score = 0
