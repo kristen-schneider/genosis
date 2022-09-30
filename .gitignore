@@ -5,6 +5,7 @@ lib/
 plink.*
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
+python/scripts/distance/*
 python/scripts/distance/test_files/
 python/scripts/ibd/__pycache__/
 python/scripts/plotting/png/
