@@ -24,7 +24,7 @@ def main():
     gaps_allowed = 0
     for s in encodings:
         s_encoding = encodings[s]
-        s_base = s.split('_')[0]
+        s_base = '_'.join(s.split('_')[0:2])
         s_encoding_0 = encodings[s_base+'_'+str(0)]
         s_encoding_1 = encodings[s_base+'_'+str(1)]
 

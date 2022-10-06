@@ -1,11 +1,9 @@
 #!/bin/sh
 
 python_dir='/home/sdp/precision-medicine/python/scripts/distance/'
-data_dir='/home/sdp/precision-medicine/data/segments/chr8-30x/'
+data_dir='/home/sdp/precision-medicine/data/ped_sim_data/segments/'
 
-sampleID='HG00405'
-paternalID='HG00403'
-maternalID='HG00404'
+sampleID='fam1_g3-b1-i1'
 haps=(0 1)
 
 for encoded_f in $data_dir*.encoded
