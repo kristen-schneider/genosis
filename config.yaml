@@ -1,12 +1,12 @@
 vcf_file:
-  data/ped_sim_data/chr8-30x.simulated.vcf
+  data/ped_sim_data/GBR/GBR.simulated.vcf
 samples_dir:
   data/ped_sim/samples/
 
 configs_dir:
   cpp/configs
 segments_out_dir:
-  data/ped_sim_data/segments/
+  data/ped_sim_data/GBR/segments/
 
 bin_dir:
   cpp/bin

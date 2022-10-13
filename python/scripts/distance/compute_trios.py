@@ -19,20 +19,21 @@ def main():
 
     print("Query: ", query_hap)
     print("sample_ID dist")
-    q_encoding = encodings[query_hap]
-
+    #q_encoding = encodings[query_hap]
+    q_encoding = encodings[args.query]
     gaps_allowed = 0
     for s in encodings:
         s_encoding = encodings[s]
-        s_base = '_'.join(s.split('_')[0:2])
-        s_encoding_0 = encodings[s_base+'_'+str(0)]
-        s_encoding_1 = encodings[s_base+'_'+str(1)]
+        #s_base = '_'.join(s.split('_')[0:2])
+        #s_encoding_0 = encodings[s_base+'_'+str(0)]
+        #s_encoding_1 = encodings[s_base+'_'+str(1)]
 
         #qs_sv = distance_calculations.shared_variants(q_encoding, s_encoding)
         #qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+        qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
         #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-        qs_rdp = distance_calculations.recombination_dp(q_encoding, s_encoding_0, s_encoding_1)
-        print(s, qs_rdp)
+        #qs_rdp = distance_calculations.recombination_dp(q_encoding, s_encoding_0, s_encoding_1)
+        print(s, qs_ed)
         #if '_'+args.hap in s:
         #    s_encoding = encodings[s]
         #    #print(s_encoding)

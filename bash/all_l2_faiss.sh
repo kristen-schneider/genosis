@@ -7,12 +7,11 @@ src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 conda_dir="/home/sdp/miniconda3/envs/pm/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/precision-medicine/data/"
+data_dir="/home/sdp/precision-medicine/data/ped_sim_data/"
 
 # path to encoded and query file
-test_samples=$data_dir"samples/chr8-30x/testing.samples"
-train_samples=$data_dir"samples/chr8-30x/training.samples"
-#encoded_file=$data_dir"segments/chr8-30x/chr8-30x.seg.0.encoded"
+test_samples=$data_dir"simulated.query"
+train_samples=$data_dir"simulated.database"
 k=100 # number of nearest neighbors to report
 delim="space"
 
@@ -38,12 +37,12 @@ g++ $src_dir"faiss_l2.cpp" \
 
 echo "Executing..."
 #$bin $train_samples $encoded_file $test_samples $encoded_file $k $delim
-for encoded_f in $data_dir"segments/chr8-30x/"*.encoded
+for encoded_f in $data_dir"segments/"*.encoded
 do
 	filename=$(basename -- $encoded_f)
         base=${filename%.*}
 	echo "Running FAISS on" $filename
-	faiss_out=$data_dir"segments/chr8-30x/"$base".enc.faissl2"
+	faiss_out=$data_dir"segments/"$base".enc.faissl2"
 	#echo $faiss_out
 	$bin $train_samples $encoded_f $test_samples $encoded_f $k $delim > $faiss_out
 done

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 python_dir='/home/sdp/precision-medicine/python/scripts/distance/'
-data_dir='/home/sdp/precision-medicine/data/ped_sim_data/segments/'
+data_dir='/home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/'
 
 sampleID='fam1_g3-b1-i1'
 haps=(0 1)
@@ -23,7 +23,7 @@ do
 			--encoded_file $encoded_f \
 			--hap $h \
 			--query $sampleID \
-			> $rdp_dist_f
+			> $edist_f
 	done
 done
 

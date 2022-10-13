@@ -4,11 +4,11 @@
 src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/precision-medicine/data/ped_sim_data/segments/"
+data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/"
 
 # path to vcf and encoded file
 config="/home/sdp/precision-medicine/cpp/configs/sample.config"
-sample_IDs="/home/sdp/precision-medicine/data/ped_sim_data/simulated.samples"
+sample_IDs="/home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR.samples"
 #vcf_file=$data_dir"chr8-30x.seg.9.vcf"
 #encoded_file=$data_dir"chr8-30x.seg.9.encoded"
 
