@@ -15,12 +15,25 @@ def get_args():
 
 def main():
     args = get_args()
+    print('reading samples...')
     databaseIDs = read_samples(args.train)
     queryIDs = read_samples(args.test)
+    
+    print('reading plink...')
     plink_sorted_scores = read_plink(args.plink, databaseIDs, queryIDs)
+    print(len(plink_sorted_scores))
+
+    print('reading euclidean distances...')
     ed_sorted_scores = read_euclidean_distance(args.ed, databaseIDs, queryIDs)
+    print(len(ed_sorted_scores))
+    
+    print('reading faiss encoding...')
     faiss_sorted_encoding = read_faiss_encoding(args.faiss_enc)
+    print(len(faiss_sorted_encoding))
+    
+    print('reading faiss embedding...')
     faiss_sorted_embedding = read_faiss_embedding(args.faiss_emb)
+    print(len(faiss_sorted_embedding))
     x=1
 
 
