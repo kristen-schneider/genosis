@@ -1,0 +1,7 @@
+PYTHON_DIR=""
+FAISS_ENC=""
+FAISS_EMB=""
+PLINK=""
+EUC_DIST=""
+
+python $PYTHON_DIR
