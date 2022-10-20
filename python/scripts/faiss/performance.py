@@ -10,6 +10,7 @@ def get_args():
     parser.add_argument('--ed')
     parser.add_argument('--train')
     parser.add_argument('--test')
+    parser.add_argument('--top')
 
     return parser.parse_args()
 
@@ -18,28 +19,88 @@ def main():
     print('reading samples...')
     databaseIDs = read_samples(args.train)
     queryIDs = read_samples(args.test)
-    
-    print('reading plink...')
-    plink_sorted_scores = read_plink(args.plink, databaseIDs, queryIDs)
-    print(len(plink_sorted_scores))
+    top = int(args.top)
 
     print('reading euclidean distances...')
-    ed_sorted_scores = read_euclidean_distance(args.ed, databaseIDs, queryIDs)
+    ed_sorted_scores = read_euclidean_distance(args.ed, queryIDs, queryIDs)
     print(len(ed_sorted_scores))
-    
+    top_k_ED = dict()
+    for sample in ed_sorted_scores:
+        top_k_ED[sample] = ed_sorted_scores[sample][0:top]
+    ED_TP = compute_true_positive(top_k_ED, top_k_ED)
+    #print(top_k_ED)
+    print('GOLD TP: ', [ED_TP[tp] for tp in ED_TP])
+
+    print('reading plink...')
+    plink_sorted_scores = read_plink(args.plink, queryIDs, queryIDs)
+    print(len(plink_sorted_scores))
+    top_k_P = dict()
+    for sample in plink_sorted_scores:
+        top_k_P[sample] = plink_sorted_scores[sample][0:top]
+    P_TP = compute_true_positive_plink(top_k_ED, top_k_P)
+    #print(top_k_P)
+    print('PLINK TP: ', [P_TP[tp] for tp in P_TP])
+
     print('reading faiss encoding...')
     faiss_sorted_encoding = read_faiss_encoding(args.faiss_enc)
     print(len(faiss_sorted_encoding))
-    
+    top_k_Fenc = dict()
+    for sample in faiss_sorted_encoding:
+        top_k_Fenc[sample] = faiss_sorted_encoding[sample][0:top]
+    FENC_TP = compute_true_positive(top_k_ED, top_k_Fenc)
+    #print(top_k_Fenc)
+    print('FAISS ENC TP: ', [FENC_TP[tp] for tp in FENC_TP])
+
     print('reading faiss embedding...')
     faiss_sorted_embedding = read_faiss_embedding(args.faiss_emb)
     print(len(faiss_sorted_embedding))
-    x=1
+    top_k_Femb = dict()
+    for sample in faiss_sorted_embedding:
+        top_k_Femb[sample] = faiss_sorted_embedding[sample][0:top]
+    FEMB_TP = compute_true_positive(top_k_ED, top_k_Femb)
+    #print(top_k_Femb)
+    print('FAISS EMB TP: ', [FEMB_TP[tp] for tp in FEMB_TP])
 
+    x = 1
+
+def compute_true_positive(truth, check):
+    TP_dict = dict()
+    for sample in check:
+        TP = 0
+        truth_set = [m[0] for m in truth[sample]]
+        for match in check[sample]:
+            if match[0] in truth_set:
+                TP += 1
+            TP_dict[sample] = TP
+    return TP_dict#print('match')
+
+def compute_true_positive_plink(truth, plink):
+    TP_dict = dict()
+    for sample in plink:
+        TP = 0
+        truth_set_0 = [m[0] for m in truth[sample+'_0']]
+        truth_set_1 = [m[0] for m in truth[sample+'_1']]
+        for match in plink[sample]:
+            if match[0] in truth_set_0 or match[0] in truth_set_1:
+                TP += 1
+            TP_dict[sample] = TP
+    return TP_dict#print('match')
+
+# def agg_haplotypes(haplotype_scores):
+#     genotype_scores = dict()
+#     for h in haplotype_scores:
+#         sample = h.split('_')[0]
+#         for score in haplotype_scores[h]:
+#             sum = haplotype_scores[sample+'_0'][1]+haplotype_scores[sample+'_1']
+#         genotype_scores[sample].append()
+#
+#     for g in genotype_scores:
+#         genotype_scores[g].sort(key=lambda tup: tup[1], reverse=False)
+#     return genotype_scores
 
 def read_faiss_encoding(faiss_encoding_file):
     F = {}
-    header = 9
+    header = 12
     with open(faiss_encoding_file) as f:
         for i in range(header):
            f.readline()

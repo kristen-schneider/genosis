@@ -5,7 +5,7 @@ import read_encoding
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--encoded_file')
-    parser.add_argument('--hap')
+    #parser.add_argument('--hap')
     parser.add_argument('--query')
     return parser.parse_args()
 
@@ -15,9 +15,8 @@ def main():
     #print('Reading encodings...')
     encoded_file = args.encoded_file
     encodings = read_encoding.read_encoding_file(encoded_file)
-    query_hap = args.query+'_'+args.hap
 
-    print("Query: ", query_hap)
+    print("Query: ", args.query)
     print("sample_ID dist")
     #q_encoding = encodings[query_hap]
     q_encoding = encodings[args.query]

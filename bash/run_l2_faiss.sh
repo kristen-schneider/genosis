@@ -15,7 +15,7 @@ test_samples=$data_dir"samples/chr8-30x/testing.samples"
 train_samples=$data_dir"samples/chr8-30x/training.samples"
 encoded_file=$data_dir"segments/chr8-30x/chr8-30x.seg.0.encoded"
 embedded_file=$data_dir"segments/chr8-30x/chr8-30x.seg.86.embedding"
-k=32 # number of nearest neighbors to report
+k=100 # number of nearest neighbors to report
 delim="space"
 
 source ~/miniconda3/etc/profile.d/mamba.sh 
@@ -40,5 +40,5 @@ g++ $src_dir"faiss_l2.cpp" \
 
 echo "Executing..."
 
-#$bin $train_samples $encoded_file $test_samples $encoded_file $k $delim
+#$bin $test_samples $encoded_file $test_samples $encoded_file $k $delim
 $bin $test_samples $embedded_file $test_samples $embedded_file $k $delim
