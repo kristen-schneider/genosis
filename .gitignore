@@ -2,6 +2,7 @@ bin/
 build/
 data/
 lib/
+pipelines/
 plink.*
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
