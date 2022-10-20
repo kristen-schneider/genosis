@@ -20,10 +20,11 @@ rule get_sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		sample_IDs=f"{config.samples_dir}GBR_sampleIDs.txt"
+		sample_IDs=f"{config.samples_dir}GBR_sampleIDs.txt",
+		sample_IDs_done=f"{config.samples_dir}GBR_sampleIDs.done"
 	message:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
-		" && touch GBR_sampleIDs.done"
+		" && touch {output.sample_IDs_done}"
 
