@@ -93,7 +93,6 @@ rule encode_vcf_segments_execute:
 		"Executing--encode vcf segments..."
 	shell:
 		"for vcf_f in {config.out_dir}*.vcf; do" \
-		"	echo $vcf_f;" \
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	./{input.bin} {input.config_file} {input.sample_IDs} $vcf_f {config.out_dir}${{seg_name}}.encoded > {output.encode_log};" \
