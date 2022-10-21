@@ -12,20 +12,21 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 rule all:
 	input:
 		f"{config.vcf_file}",
-		f"{config.samples_dir}GBR_sampleIDs.txt",
+		f"{config.data_dir}GBR_sampleIDs.txt",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode-vcf",
-		f"{config.out_dir}encode.log"
-
+		f"{config.out_dir}encode.log",
+		f"{config.data_dir}plink.log"
+	
 # 0. create a file with all sample IDs
 # one line per sample ID
 rule get_sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		sample_IDs=f"{config.samples_dir}GBR_sampleIDs.txt",
-		sample_IDs_done=f"{config.samples_dir}GBR_sampleIDs.done"
+		sample_IDs=f"{config.data_dir}GBR_sampleIDs.txt",
+		sample_IDs_done=f"{config.data_dir}GBR_sampleIDs.done"
 	message:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
@@ -85,7 +86,7 @@ rule encode_vcf_segments_compile:
 rule encode_vcf_segments_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}encode-vcf",
-		sample_IDs=f"{config.samples_dir}GBR_sampleIDs.txt",
+		sample_IDs=f"{config.data_dir}GBR_sampleIDs.txt",
 		config_file=f"{config.cpp_configs_dir}sample.config"
 	output:
 		encode_log=f"{config.out_dir}encode.log"
@@ -97,3 +98,14 @@ rule encode_vcf_segments_execute:
 		"	seg_name=${{filename%.*}};" \
 		"	./{input.bin} {input.config_file} {input.sample_IDs} $vcf_f {config.out_dir}${{seg_name}}.encoded > {output.encode_log};" \
 		"done"
+
+# 3 run plink on full vcf
+rule plink:
+	input:
+		vcf=f"{config.vcf_file}"
+	output:
+		plink_done=f"{config.data_dir}plink.log"
+	message:
+		"Running plink --genome on full vcf file"
+	shell:
+		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
