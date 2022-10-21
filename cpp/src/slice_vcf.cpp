@@ -163,7 +163,7 @@ int slice(string vcf_file, vector<string> vcf_header,
 		}
         }
 	// write last line
-	if (SNPS_in_slice < slice_snp_count){
+	if (SNPS_in_slice < slice_snp_count && line.size() > 0){
 		slice_file_stream << line << endl;
 	}
 	slice_file_stream.close();	

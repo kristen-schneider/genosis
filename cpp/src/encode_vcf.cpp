@@ -91,7 +91,6 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
 
 	cout << "...reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
-
 		bcf_unpack(vcf_record, BCF_UN_ALL);
 		bcf_unpack(vcf_record, BCF_UN_INFO);
 
@@ -102,6 +101,7 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
 		string ref = vcf_record->d.allele[0];
 		string alt = vcf_record->d.allele[1];
 		double_t qual = vcf_record->qual;
+		cout << pos << endl;
 
 		// make chromosome through quality into one vector of strings
 		vector<string> chrm_thru_qual_vector = 
