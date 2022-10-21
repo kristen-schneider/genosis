@@ -1,0 +1,20 @@
+home_dir:
+  /home/sdp/precision-medicine/
+conda_dir:
+  /home/sdp/miniconda3/envs/pm
+
+vcf_file:
+  /home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR.simulated.vcf
+samples_dir:
+  /home/sdp/precision-medicine/data/ped_sim_data/GBR/
+out_dir:
+  /home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/
+
+cpp_bin_dir:
+  cpp/bin/
+cpp_src_dir:
+  cpp/src/
+cpp_include_dir:
+  cpp/include/
+cpp_configs_dir:
+  cpp/configs/
