@@ -14,7 +14,9 @@ rule all:
 		f"{config.vcf_file}",
 		f"{config.samples_dir}GBR_sampleIDs.txt",
 		f"{config.cpp_bin_dir}slice-vcf",
-		f"{config.out_dir}slice.log"
+		f"{config.out_dir}slice.log",
+		f"{config.cpp_bin_dir}encode-vcf",
+		f"{config.out_dir}encode.log"
 
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -58,3 +60,41 @@ rule slice_VCF_execute:
 	shell:
 		"./{input.bin} {input.config_file} > {output.slice_log}"
 
+# 2.1 encode vcf segments (compile)
+rule encode_vcf_segments_compile:
+	input:
+		slice_log=f"{config.out_dir}slice.log",
+		encode_vcf_cpp=f"{config.cpp_src_dir}encode_vcf.cpp",
+		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}encode-vcf"
+	message:
+		"Compiling--encode vcf segments..."
+	shell:
+		"g++" \
+		" {input.encode_vcf_cpp}" \
+		" {input.read_config_cpp}" \
+		" {input.map_encodings_cpp}" \
+		" {input.utils_cpp}" \
+		" -I {config.cpp_include_dir}" \
+		" -lhts" \
+		" -o {output.bin}"
+# 2.2 encode vcf segments (execute)
+rule encode_vcf_segments_execute:
+	input:
+		bin=f"{config.cpp_bin_dir}encode-vcf",
+		sample_IDs=f"{config.samples_dir}GBR_sampleIDs.txt",
+		config_file=f"{config.cpp_configs_dir}sample.config"
+	output:
+		encode_log=f"{config.out_dir}encode.log"
+	message:
+		"Executing--encode vcf segments..."
+	shell:
+		"for vcf_f in {config.out_dir}*.vcf; do" \
+		"	echo $vcf_f;" \
+		"	filename=$(basename $vcf_f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	./{input.bin} {input.config_file} {input.sample_IDs} $vcf_f {config.out_dir}${{seg_name}}.encoded > {output.encode_log};" \
+		"done"
