@@ -6,7 +6,9 @@ pipelines/
 plink.*
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
-python/scripts/distance/*
+python/scripts/distance/dist_data/
+python/scripts/distance/ped_intf/
+python/scripts/distance/ped_poiss/
 python/scripts/distance/test_files/
 python/scripts/ibd/__pycache__/
 python/scripts/plotting/png/
