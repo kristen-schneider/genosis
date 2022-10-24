@@ -125,4 +125,5 @@ rule segment_distance:
 		"	filename=$(basename $encoded_f);" \
                 "	seg_name=${{filename%.*}};" \
 		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
-		"done"
+		"done" \
+		" && touch {config.out_dir}distance.log"
