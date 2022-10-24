@@ -20,7 +20,7 @@ def main():
             read_segment(queries_dict, file_path, int(args.num_seg), seg)
     
     for q in queries_dict:
-        print(q)
+        print('Query: ', q)
         header = 'sampleID ' + ' '.join([str(i) for i in range(int(args.num_seg))])
         print(header)
         for sample in queries_dict[q]:

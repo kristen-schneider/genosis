@@ -18,7 +18,8 @@ rule all:
 		f"{config.cpp_bin_dir}encode-vcf",
 		f"{config.out_dir}encode.log",
 		f"{config.data_dir}plink.log",
-		f"{config.out_dir}distance.log"		
+		f"{config.out_dir}distance.log"	,
+		f"{config.data_dir}aggregate.log"	
 	
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -112,7 +113,7 @@ rule plink:
 		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
 
 # 4.1 compute euclidean distance for all segments
-rule segment_distance:
+rule compute_segment_distance:
 	input:
 		encode_log=f"{config.out_dir}encode.log",
 		query_file=f"{config.query_file}"
@@ -124,6 +125,18 @@ rule segment_distance:
 		"for encoded_f in {config.out_dir}*.encoded; do" \
 		"	filename=$(basename $encoded_f);" \
                 "	seg_name=${{filename%.*}};" \
+		"	echo $encoded_f >> {output.distance_log};" \
 		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
-		"done" \
-		" && touch {config.out_dir}distance.log"
+		"done"
+# 4.2 aggregate euclidean distance for all segments
+rule aggregate_segment_distance:
+	input:
+		distance_log=f"{config.out_dir}distance.log"
+	output:
+		aggregate_log=f"{config.data_dir}aggregate.log"
+	message:
+		"Aggregating all distance files for all queries"
+	shell:
+		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+		" && touch {config.data_dir}aggregate.log"
