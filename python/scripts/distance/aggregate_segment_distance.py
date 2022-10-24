@@ -3,7 +3,6 @@ import os
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--query_file')
     parser.add_argument('--out_dir')
     parser.add_argument('--dist_ext')
     parser.add_argument('--num_seg')
@@ -54,18 +53,6 @@ def read_segment(samples_dict, seg_dist_file, num_seg, seg, hap):
     #if seg == 0:
     #    print(samples_dict['HG00403_0'])
 
-def read_queries(queries_file):
-    '''
-    read a file of sample IDs for queries
-    and return a list
-    '''
-    queries = []
-    f = open(queries_file, 'r')
-    for line in f:
-        q = line.strip()
-        queries.append(q)
-    f.close()
-    return queries
 
 if __name__ == '__main__':
     main()

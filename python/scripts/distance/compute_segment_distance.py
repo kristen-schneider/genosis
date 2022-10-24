@@ -5,41 +5,39 @@ import read_encoding
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--encoded_file')
-    #parser.add_argument('--hap')
-    parser.add_argument('--query')
+    parser.add_argument('--query_file')
     return parser.parse_args()
 
 def main():
     args = get_args()
-
-    #print('Reading encodings...')
     encoded_file = args.encoded_file
     encodings = read_encoding.read_encoding_file(encoded_file)
+    
+    queries = read_queries(args.query_file)
+    haps = [0,1]
+    for q in queries:
+        for hap in haps:
+            query_hap = q+str('_')+str(hap)
+            print("Query: ", query_hap)
+            q_encoding = encodings[query_hap]
+            for s in encodings:
+                s_encoding = encodings[s]
+                dist = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+                print(s, dist)
+            print()
 
-    print("Query: ", args.query)
-    print("sample_ID dist")
-    #q_encoding = encodings[query_hap]
-    q_encoding = encodings[args.query]
-    gaps_allowed = 0
-    for s in encodings:
-        s_encoding = encodings[s]
-        #s_base = '_'.join(s.split('_')[0:2])
-        #s_encoding_0 = encodings[s_base+'_'+str(0)]
-        #s_encoding_1 = encodings[s_base+'_'+str(1)]
-
-        #qs_sv = distance_calculations.shared_variants(q_encoding, s_encoding)
-        #qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
-        qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
-        #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-        #qs_rdp = distance_calculations.recombination_dp(q_encoding, s_encoding_0, s_encoding_1)
-        print(s, qs_ed)
-        #if '_'+args.hap in s:
-        #    s_encoding = encodings[s]
-        #    #print(s_encoding)
-        #    qs_ed = distance_calculations.euclidean_distance(q_encoding, s_encoding)
-        #    #qs_kd = distance_calculations.kristen(q_encoding, s_encoding, gaps_allowed)
-        #    print(s, qs_ed)
-
+def read_queries(query_file):
+    '''
+    read a file of sample IDs for queries
+    and return a list
+    '''
+    queries = []
+    f = open(query_file, 'r')
+    for line in f:
+        q = line.strip()
+        queries.append(q)
+    f.close()
+    return queries
 
 if __name__ == '__main__':
     main()
