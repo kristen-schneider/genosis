@@ -17,7 +17,8 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode-vcf",
 		f"{config.out_dir}encode.log",
-		f"{config.data_dir}plink.log"
+		f"{config.data_dir}plink.log",
+		f"{config.out_dir}distance.log"		
 	
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -109,3 +110,19 @@ rule plink:
 		"Running plink --genome on full vcf file"
 	shell:
 		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
+
+# 4.1 compute euclidean distance for all segments
+rule segment_distance:
+	input:
+		encode_log=f"{config.out_dir}encode.log",
+		query_file=f"{config.query_file}"
+	output:
+		distance_log=f"{config.out_dir}distance.log"
+	message:
+		"Computing Euclidean distance for query against all segments"
+	shell:
+		"for encoded_f in {config.out_dir}*.encoded; do" \
+		"	filename=$(basename $encoded_f);" \
+                "	seg_name=${{filename%.*}};" \
+		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
+		"done"
