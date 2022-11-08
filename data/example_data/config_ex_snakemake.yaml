@@ -1,12 +1,12 @@
 vcf_file:
-  data/ped_sim_data/GBR/GBR.simulated.vcf
+  data/example_data/example.vcf
 samples_dir:
-  data/ped_sim/samples/
+  data/example_data/
 
 configs_dir:
-  cpp/configs
+  data/example_data/
 segments_out_dir:
-  data/ped_sim_data/GBR/segments/
+  data/example_data/segments/
 
 bin_dir:
   cpp/bin
