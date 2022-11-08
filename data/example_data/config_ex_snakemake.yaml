@@ -1,0 +1,36 @@
+vcf_file:
+  data/ped_sim_data/GBR/GBR.simulated.vcf
+samples_dir:
+  data/ped_sim/samples/
+
+configs_dir:
+  cpp/configs
+segments_out_dir:
+  data/ped_sim_data/GBR/segments/
+
+bin_dir:
+  cpp/bin
+src_dir:
+  cpp/src
+include_dir:
+  cpp/include
+conda_dir:
+  /home/sdp/miniconda3/envs/pm
+python_dir:
+  python
+model_dir:
+  python/training_loop
+model:
+  python/training_loop/model_8_26.h5
+
+batch_size:
+  32
+
+all_k:
+  2293
+k:
+  80
+enc_delim:
+  space
+emb_delim:
+  space
