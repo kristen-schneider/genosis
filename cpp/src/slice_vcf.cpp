@@ -95,9 +95,9 @@ int slice(string vcf_file, vector<string> vcf_header,
 		string base_name, string out_dir){
 
 	// to return
-	int slice_count = 0;
-	int slice_snp_count = segment_SNP_counts[slice_count];
-
+	int slice_index = 0;
+	int slice_snp_count = segment_SNP_counts[slice_index];
+	//int slice_end = segment_SNP_counts[slice_index];
     	// open vcf file and check success
     	ifstream vcf_file_stream;
     	vcf_file_stream.open(vcf_file);
@@ -114,7 +114,7 @@ int slice(string vcf_file, vector<string> vcf_header,
 	ofstream slice_file_stream;
 	// name slice out file
         string out_vcf_slice_file = out_dir + base_name + \
-        	".seg." + to_string(slice_count) + \
+        	".seg." + to_string(slice_index) + \
                 ".vcf";
        	slice_file_stream.open(out_vcf_slice_file);
         for (int i = 0; i < vcf_header.size(); i ++){
@@ -146,11 +146,11 @@ int slice(string vcf_file, vector<string> vcf_header,
 			else if (SNPS_in_slice == slice_snp_count){
 				//slice_file_stream << line;
 				slice_file_stream.close();
-				slice_count += 1;
+				slice_index += 1;
 				
 				// open next slice file and write header 
                                 string out_vcf_slice_file = out_dir + base_name + \
-                                        ".seg." + to_string(slice_count) + \
+                                        ".seg." + to_string(slice_index) + \
                                         ".vcf";
                                 slice_file_stream.open(out_vcf_slice_file);
                                 for (int i = 0; i < vcf_header.size(); i ++){
@@ -158,7 +158,7 @@ int slice(string vcf_file, vector<string> vcf_header,
                                 }
 				slice_file_stream << line << endl;
 				SNPS_in_slice = 1;
-				slice_snp_count = segment_SNP_counts[slice_count];
+				slice_snp_count = segment_SNP_counts[slice_index];
 			}
 		}
         }
@@ -168,9 +168,38 @@ int slice(string vcf_file, vector<string> vcf_header,
 	}
 	slice_file_stream.close();	
         
-	return slice_count;
+	return slice_index;
 }
+/*
+ * Open a map file and create a vector of 
+ * start basepairs for each segment
+ 
+vector<int> segment_end_bp(string map_file, float slice_size){
+	int max_cm = slice_size; // start max at slice sice
+	int cm_index = 2;	 // column index where cm data is
+	int bp_index = 3;	 // column index where bp data is 
+	vector<int> slice_end_points;	// vector of all ending points
 
+	ifstream map_file_stream;
+	map_file_stream.open(map_file);
+	if (!map_file_stream.is_open()){
+		cout << "FAILED TO OPEN: " << map_file << endl;
+		exit(1);
+	}
+	cout << "...Reading map file..." << endl;
+	string line;
+	while (getline (map_file_stream, line)){
+		split_line(line, ' ', single_SNP);
+		float record_cm = stof(single_SNP[cm_index]);
+		int record_bp = stoi(single_SNP[bp_index]);
+		if (record_cm >= max_cm){
+			slice_end_points.push_back(record_bp);
+			max_cm += slice_size;
+		}
+	}
+	return slice_end_points;
+}
+*/
 
 /*
  * Open a map file and read each SNP record
