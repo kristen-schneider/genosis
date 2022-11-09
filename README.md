@@ -2,7 +2,7 @@
 #### 0. Clone the latest version of the repository.
 #### 1. Create and activate the mamba environment.
 `mamba env create -f environment.yml`<br>
-`mamba activate pm`
+`mamba activate pmed`
 #### 2. Create new yaml file for snakemake options. (See below for more information)
 - create a new directory to house your data `mkdir ./my_dir`
 - create a new directory to house your segments `mkdir ./my_dir/segments`
