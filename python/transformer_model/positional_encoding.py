@@ -9,6 +9,12 @@ from tensorflow.keras.layers import TextVectorization, Embedding, Layer
 
 class PositionEmbeddingFixedWeights(Layer):
     def __init__(self, sequence_length, vocab_size, output_length, **kwargs):
+        """
+        :param sequence_length: length of input encodings
+        :param vocab_size: number of words in alphabet
+        :param output_length: length of output embeddings
+        :param kwargs: keyword arguments
+        """
         super(PositionEmbeddingFixedWeights, self).__init__(**kwargs)
         gt_embedding_matrix = self.get_position_encoding(vocab_size, output_length)
         position_embedding_matrix = self.get_position_encoding(sequence_length, output_length)
@@ -23,7 +29,17 @@ class PositionEmbeddingFixedWeights(Layer):
             trainable=False
         )
 
-    def get_position_encoding(self, seq_len, d, n=10000):
+    def get_position_encoding(self, sequence_length, d, n=10000):
+        """
+        Creates a positional encoding matrix as followed by the
+        paper Attention is All You Need
+
+        :param sequence_length: length of input encodings
+        :param d: dimension of output embedding space
+        :param n: user-defined scalar
+            (10000 default by authors of Attention is All You Need)
+        :return: positional encoding matrix
+        """
         P = np.zeros((seq_len, d))
         for k in range(seq_len):
             for i in np.arange(int(d / 2)):
