@@ -2,7 +2,7 @@
 https://machinelearningmastery.com/implementing-the-transformer-encoder-from-scratch-in-tensorflow-and-keras/
 """
 from tensorflow.keras.layers import LayerNormalization, Layer, Dense, ReLU, Dropout
-from multihead_attention import MultiHeadAttention
+from attention import MultiHeadAttention
 from positional_encoding import PositionEmbeddingFixedWeights
 
 # Implementing the Add & Norm Layer
