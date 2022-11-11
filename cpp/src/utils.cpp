@@ -6,6 +6,7 @@
 #include <htslib/kstring.h>
 #include <htslib/kseq.h>
 #include <htslib/synced_bcf_reader.h>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <map>
@@ -118,3 +119,16 @@ int count_length_input_vector(string in_file, char delim){
 	// uncount sampleID
 	return num_variants - 1;
 }
+
+void split_line(const string &s, char delim, vector<string> &elems){
+/*
+ * Splits a string by some delimiter
+ */
+    stringstream ss;
+    ss.str(s);
+    string item;
+    while (getline(ss, item, delim)) {
+            elems.push_back(item);
+    }
+}
+

@@ -21,4 +21,6 @@ vector<vector<int>> transpose(vector<vector<int>> &vmf);
 vector<string> get_sample_IDs(string sample_IDs_file);
 int get_num_samples(bcf_hdr_t *vcf_header);
 int count_num_samples(string in_file);
+void split_line(const string &s, char delim, vector<string> &elems);
 int count_length_input_vector(string in_file, char delim);
+const char **get_sequence_names(bcf_hdr_t *vcf_header);
