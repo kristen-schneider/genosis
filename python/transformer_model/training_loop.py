@@ -1,10 +1,20 @@
 # python libraries
 import argparse
+from keras.losses import sparse_categorical_crossentropy
+from model import TransformerModel
 import numpy as np
+from prepare_dataset import PrepareDataset
 import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.schedules import LearningRateSchedule
+from tensorflow.keras.metrics import Mean
+from tensorflow import data, train, math, reduce_sum, cast, equal, argmax, float32, GradientTape, TensorSpec, function, int64
+from time import time
+    
 
 # project scripts
 from attention import MultiHeadAttention
+from decoder import Decoder
 from encoder import Encoder
 from positional_encoding import PositionEmbeddingFixedWeights
 from utils import map_sample_names_to_index, \
@@ -16,6 +26,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--sample_names')
     parser.add_argument('--sample_encodings')
+
     return parser.parse_args()
 
 def main():
@@ -68,16 +79,9 @@ def main():
 
 
 def procedures():
-    from tensorflow.keras.optimizers import Adam
-    from tensorflow.keras.optimizers.schedules import LearningRateSchedule
-    from tensorflow.keras.metrics import Mean
-    from tensorflow import data, train, math, reduce_sum, cast, equal, argmax, float32, GradientTape, TensorSpec, function, int64
-    from keras.losses import sparse_categorical_crossentropy
-    from model import TransformerModel
-    from prepare_dataset import PrepareDataset
-    from time import time
-    
-    
+    """
+    https://machinelearningmastery.com/training-the-transformer-model
+    """
     # Define the model parameters
     h = 8  # Number of self-attention heads
     d_k = 64  # Dimensionality of the linearly projected queries and keys
@@ -114,7 +118,8 @@ def procedures():
     
     # Instantiate an Adam optimizer
     optimizer = Adam(LRScheduler(d_model), beta_1, beta_2, epsilon)
-    
+   
+    # TODO: CHANGE THIS FOR OUR GENOTYPE ENCODING INPUT
     # Prepare the training and test splits of the dataset
     dataset = PrepareDataset()
     trainX, trainY, train_orig, enc_seq_length, dec_seq_length, enc_vocab_size, dec_vocab_size = dataset('english-german-both.pkl')
