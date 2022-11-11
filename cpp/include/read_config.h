@@ -10,3 +10,4 @@
 using namespace std;
 
 map<string,string> get_config_options(string config_file);
+map<string,string> get_config_options_old(string config_file);
