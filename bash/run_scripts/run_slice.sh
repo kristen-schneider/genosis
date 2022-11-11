@@ -5,13 +5,12 @@ src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
 
-# path to vcf and encoded file
+# path to config file
 config_file="/home/sdp/precision-medicine/cpp/configs/sample.config"
 
-echo "Slicing file: " $vcf_file
+bin=$bin_dir"slice"
 
-bin=$bin_dir"test_slice"
-
+# compile
 g++ $src_dir"slice_vcf.cpp" \
 	$src_dir"read_config.cpp" \
 	-I $include_dir \
@@ -20,4 +19,5 @@ g++ $src_dir"slice_vcf.cpp" \
 	-lhts \
 	-o $bin
 
+# execute
 $bin $config_file
