@@ -33,7 +33,6 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	int num_segments = slice(vcf_file, vcf_header, segment_SNP_counts,
         	out_base_name, out_dir);
 	
-	cout << "...Number of slices made: " << num_segments << endl;
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
 	return num_segments;
@@ -103,6 +102,7 @@ int slice(string vcf_file,
         string out_vcf_slice_file = out_dir + base_name + \
         	".seg." + to_string(slice_count) + \
                 ".vcf";
+	//cout << "... ... slice " << slice_count << endl;
        	slice_file_stream.open(out_vcf_slice_file);
         for (int i = 0; i < vcf_header.size(); i ++){
                 slice_file_stream << vcf_header[i] << endl;
@@ -134,7 +134,7 @@ int slice(string vcf_file,
 				//slice_file_stream << line;
 				slice_file_stream.close();
 				slice_count += 1;
-				
+				//cout << "... ... slice " << slice_count << endl;
 				// open next slice file and write header 
                                 string out_vcf_slice_file = out_dir + base_name + \
                                         ".seg." + to_string(slice_count) + \
