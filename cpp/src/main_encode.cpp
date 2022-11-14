@@ -19,6 +19,7 @@ int main(int argc, char* argv[]){
 	string configFile = argv[1];   		// configuration file will all options
 	string vcf_slice_file = argv[2];	// input vcf (slice) file
 	string output_encoding_file = argv[3];	// output encoding (slice) file
+	string output_position_file = argv[4];	// output positional encoding (slice) file
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	// access each option by variable name
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]){
 	map<string, vector<int>> encoding_map = make_biallelic_encoding_map(encoding_file);
 
 	// encode single vcf
-	encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file);	
+	encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file, output_position_file);	
 	
 	return 0;
 }
