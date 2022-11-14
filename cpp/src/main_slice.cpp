@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 
-//#include "encode_vcf.h"
 #include "map_encodings.h"
 #include "read_config.h"
 #include "slice_vcf.h"
@@ -23,27 +22,14 @@ int main(int argc, char* argv[]){
 	// access each option by variable name
 	string vcf_file = config_options["vcf_file"];
 	string map_file = config_options["map_file"];
-	string encoding_file = config_options["encoding_file"];
-	string query_file = config_options["query_file"];
 	string out_dir = config_options["out_dir"];
     	string out_base_name = config_options["out_base_name"];
 	int segment_size = stoi(config_options["segment_size"]);
-	cout << segment_size << endl;
-	
-	// make encoding map
-	cout << "Loading Encoding Map..." << endl;
-	map<string, int> encoding_map = make_encoding_map(encoding_file);
 	
 	// slice vcf into segments
 	cout << "Slicing VCF..." << endl;
 	int num_segments = slice_main(map_file, segment_size, vcf_file, out_base_name, out_dir);
-	//int num_segments = slice(vcf_file, segment_size, output_base_name, out_dir);
-
-	/*
-	// encoded vcf segments 
-	cout << "Encoding VCF..." << endl;
-	write_all_segments(num_segments, encoding_map, out_dir, output_base_name);
-	*/
+	cout << "Wrote " << num_segments + 1 << " slices." << endl; // zero-index
 	
 	return 0;
 }
