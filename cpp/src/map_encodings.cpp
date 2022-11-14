@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "map_encodings.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -105,7 +106,7 @@ map<string,vector<int>> make_biallelic_encoding_map(string encodingFile){
 
 /*
  * Splits a string by some delimiter
- */
+ 
 void split_line(const string &s, char delim, vector<string> &elems){
     stringstream ss;
     ss.str(s);
@@ -113,4 +114,4 @@ void split_line(const string &s, char delim, vector<string> &elems){
     while (getline(ss, item, delim)) {
             elems.push_back(item);
     }
-}
+}*/
