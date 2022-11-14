@@ -30,13 +30,13 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 
 	// slice full chromosome VCF file into smaller slices
 	cout << "...Slice size: " << segment_size << "cM." << endl;
-	int num_slices = slice(vcf_file, vcf_header, segment_SNP_counts,
+	int num_segments = slice(vcf_file, vcf_header, segment_SNP_counts,
         	out_base_name, out_dir);
 	
-	cout << "...Number of slices made: " << num_slices << endl;
+	cout << "...Number of slices made: " << num_segments << endl;
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
-	return 0;
+	return num_segments;
 }
 
 /*

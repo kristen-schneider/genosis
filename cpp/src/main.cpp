@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
 	
 	// slice vcf into segments
 	cout << "Slicing VCF..." << endl;
-	int slicem = slice_main(map_file, segment_size, vcf_file, out_base_name, out_dir);
+	int num_segments = slice_main(map_file, segment_size, vcf_file, out_base_name, out_dir);
 	//int num_segments = slice(vcf_file, segment_size, output_base_name, out_dir);
 
 	/*
