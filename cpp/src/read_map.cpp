@@ -45,15 +45,3 @@ vector<int> read_map_file(string map_file, float slice_size){
 	cout << "...Done reading map file." << endl;
 	return slice_SNP_counts;
 }
-
-/*
- * Splits a string by some delimiter
- 
-void split_line(const string &s, char delim, vector<string> &elems){
-    stringstream ss;
-    ss.str(s);
-    string item;
-    while (getline(ss, item, delim)) {
-	    elems.push_back(item);
-    }
-}*/
