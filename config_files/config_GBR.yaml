@@ -1,30 +1,30 @@
 home_dir:
- ./
+./
 conda_dir:
-  /home/sdp/miniconda3/envs/pm
+/home/sdp/miniconda3/envs/pm
 cpp_bin_dir:
-  cpp/bin/
+cpp/bin/
 cpp_src_dir:
-  cpp/src/
+cpp/src/
 cpp_include_dir:
-  cpp/include/
+cpp/include/
 cpp_configs_dir:
-  cpp/configs/
+cpp/configs/
 python_dir:
-  python/scripts/
+python/scripts/
 data_dir:
-  /home/sdp/precision-medicine/data/ped_sim_data/GBR/
+/home/sdp/precision-medicine/data/ped_sim_data/GBR/
 vcf_file:
-  /home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR.simulated.vcf
+/home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR.simulated.vcf
 map_file:
-  /home/sdp/precision-medicine/data/maps/chr8-30x.vcf2ped.interpolated.map
+/home/sdp/precision-medicine/data/maps/chr8-30x.vcf2ped.interpolated.map
 encoding_file:
-  /home/sdp/precision-medicine/data/encodings/encoding.biallelic
+/home/sdp/precision-medicine/data/encodings/encoding.biallelic
 query_file:
-  /home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR_queryIDs.txt
+/home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR_queryIDs.txt
 out_dir:
-  /home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/
+/home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/
 out_base_name:
-  GBR.simulated
+GBR.simulated
 segment_size:
-  1
+1
