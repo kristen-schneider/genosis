@@ -20,6 +20,8 @@ map_file:
 /home/sdp/precision-medicine/data/maps/chr8-30x.vcf2ped.interpolated.map
 encoding_file:
 /home/sdp/precision-medicine/data/encodings/encoding.biallelic
+sample_IDs_file:
+/home/sdp/precision-medicine/data/ped_sim_data/GBR/sample_IDs.txt
 query_file:
 /home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR_queryIDs.txt
 out_dir:
