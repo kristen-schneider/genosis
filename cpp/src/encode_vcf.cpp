@@ -18,39 +18,6 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]){
-	cout << "Encoding vectors..." << endl;
-	
-	// read config file
-	cout << "...Reading config File..." << endl;
-	string configFile = argv[1];   // configuration file will all options
-	map<string, string> config_options;
-	config_options = get_config_options(configFile);
-	
-	string sample_IDs_file = argv[2];
-	string vcf_slice_file = argv[3];
-	string output_encoding_file = argv[4];
-
-	// access each option by variable name
-	string encoding_file = config_options["encoding_file"];
-	int slice_size = stoi(config_options["slice_size"]);
-	string out_dir = config_options["out_dir"];
-    	string output_base_name = config_options["out_base_name"];
-	cout << "...Done reading config file" << endl;
-
-	// make encoding map
-	//map<string, int> encoding_map = make_encoding_map(encoding_file);
-	cout << "...Making encoding map..." << endl;
-	map<string, vector<int>> biallelic_encoding_map = make_biallelic_encoding_map(encoding_file); 
-	cout << "...Done making encoding map." << endl;
-
-	//encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file);
-	cout << "...Ecoding VCF..." << endl;
-	encode_vcf(sample_IDs_file, vcf_slice_file, biallelic_encoding_map, output_encoding_file);
-	cout << "Done." << endl;
-	return 0;
-}
-
 /*
  * takes one sliced vcf file and encoding instructions
  * and writes output encoiding file
@@ -83,11 +50,7 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
         	cout << "ERROR: record is empty" << endl;
         }
 
-	//vector<vector<int>> all_genotype_encodings; // vector of vectors
 	vector<vector<int>> all_haplotype_encodings;
-	//vector<vector<int>> all_haplotypeA_encodings; // vector of vectors
-	//vector<vector<int>> all_haplotypeB_encodings; // vector of vectors
-
 
 	cout << "...reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
@@ -101,7 +64,7 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
 		string ref = vcf_record->d.allele[0];
 		string alt = vcf_record->d.allele[1];
 		double_t qual = vcf_record->qual;
-		cout << pos << endl;
+		//cout << pos << endl;
 
 		// make chromosome through quality into one vector of strings
 		vector<string> chrm_thru_qual_vector = 
@@ -122,10 +85,7 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
 		int *gt = NULL;
 		int num_alleles = 0;
 		int ngt_arr = 0;
-		//vector<int> record_encoding_vector;
 		vector<int> haplotype_encoding_vector;
-		//vector<int> haplotypeA_encoding_vector;
-		//vector<int> haplotypeB_encoding_vector;
 
 		num_alleles = bcf_get_genotypes(vcf_header, vcf_record,  &gt, &ngt_arr);
 		int alleles_per_gt = num_alleles/num_samples;
@@ -139,39 +99,25 @@ void encode_vcf(string sample_IDs_file, string vcf_slice_file, map<string, vecto
 				allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 				s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
-			//record_encoding_vector.push_back(encoding_map[s_gt]);
 			vector<int> biallelic_encoding = encoding_map[s_gt];
 			haplotype_encoding_vector.push_back(biallelic_encoding[0]);
 			haplotype_encoding_vector.push_back(biallelic_encoding[1]);
-			//haplotypeA_encoding_vector.push_back(biallelic_encoding[0])
-			//haplotypeB_encoding_vector.push_back(biallelic_encoding[1])
 				
 		}
-		//all_genotype_encodings.push_back(record_encoding_vector);
 		all_haplotype_encodings.push_back(haplotype_encoding_vector);
-		//all_haplotypeA_encodings.push_back(haplotypeA_encoding_vector);
-		//all_haplotypeB_encodings.push_back(haplotypeB_encoding_vector);
 
-		//record_encoding_vector.clear();
 		haplotype_encoding_vector.clear();
-		//haplotypeA_encoding_vector.clear();
-		//haplotypeB_encoding_vector.clear();
 		
 	} // end of reading records
 	// transposing data
 	cout << "...transposing data..." << endl;
-	//vector<vector<int>> sample_major_format_vec = transpose(all_genotype_encodings);
 	vector<vector<int>> sample_major_format_hap_vec = transpose(all_haplotype_encodings); 
-	//vector<vector<int>> sample_major_format_hapA = transpose(all_haplotypeA_encodings);
-	//vector<vector<int>> sample_major_format_hapB = transpose(all_haplotypeB_encodings);
 
 	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file); 
 	// writing smf
 	cout << "...writing sample major format encodings to file..." << endl;
-	//write_SMF(all_sample_IDs, sample_major_format_vec, output_encoding_file);	
 	cout << sample_major_format_hap_vec.size() << endl;
 	write_SMF(all_sample_IDs, sample_major_format_hap_vec, output_encoding_file);
-	//write_SMF_haplotype(all_sample_IDs, sample_major_format_hapA, sample_major_format_hapB, output_encoding_file);	
 }	
 
 /*
