@@ -10,6 +10,8 @@ import tensorflow as tf
 #from encoder import Encoder
 #from positional_encoding import PositionEmbeddingFixedWeights
 from models import GTTransformer as gtt
+from models import build_siamese_network
+from models import SiameseModel
 from utils import map_sample_names_to_index, \
                                 map_genotype_encoding_to_index, \
                                 map_positional_encoding_to_index, \

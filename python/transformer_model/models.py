@@ -1,4 +1,5 @@
 import tensorflow as tf
+import keras_nlp
 
 class GTTransformer(tf.keras.Model):
     def __init__(self,
@@ -18,7 +19,7 @@ class GTTransformer(tf.keras.Model):
 
         # input layer        
         self.encoder_input_layer = tf.keras.layers.Dense(
-            units=out_seq_length, 
+            units=out_seq_len, 
             activation=activation 
             )
         # positional layer 
@@ -27,10 +28,10 @@ class GTTransformer(tf.keras.Model):
         # attention layer (multihead)
         self.attention_layer = tf.keras.layers.MultiHeadAttention(
                 num_heads,
-                key_dim,)
+                dim_val,)
 
         # encoder layer
-        encoder_layer = tf.keras_nlp.layers.TransformerEncoder(
+        encoder_layer = keras_nlp.layers.TransformerEncoder(
             dim_val,
             num_heads,
             dropout=dropout_encoder,
