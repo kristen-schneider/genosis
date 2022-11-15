@@ -1,50 +1,93 @@
 import tensorflow as tf
+import keras_nlp
 
-class GTTransformer(tf.keras.Model):
-    def __init__(self,
-        input_size: int,
-        out_seq_len: int=58,
-        dim_val: int=512,
-        num_encoder_layers: int=4,
-        num_heads: int=8,
-        dropout_encoder: float=0.2,
-        dropout_pos_enc: float=0.1,
-        dim_feedforward_encoder: int=2048,
-        activation: str='relu',
-        ):
-        """
-        """
-        super().__init__() 
-
-        # input layer        
-        self.encoder_input_layer = tf.keras.layers.Dense(
-            units=out_seq_length, 
-            activation=activation 
-            )
-        # positional layer 
-        # TODO: positional layer for variable-length input
-        
-        # attention layer (multihead)
-        self.attention_layer = tf.keras.layers.MultiHeadAttention(
+def gt_transformer(
+        dim_val=512,
+        num_encoder_layers=4,
+        num_heads=8,
+        dropout=0,
+        activation='relu',
+        layer_norm_epsilon=1e-05,
+        kernel_initializer="glorot_uniform",
+        bias_initializer="zeros",
+        ) -> tf.keras.Model:
+    """
+    [https://keras.io/api/keras_nlp/layers/transformer_encoder/]
+    intermediate_dim: int, the hidden size of feedforward network.
+    num_heads: int, the number of heads in the keras.layers.MultiHeadAttention layer.
+    dropout: float, defaults to 0. the dropout value, shared by keras.layers.MultiHeadAttention and feedforward network.
+    activation: string or keras.activations. the activation function of feedforward network.
+    layer_norm_epsilon: float. The epsilon value in layer normalization components.
+    kernel_initializer: string or keras.initializers initializer. The kernel initializer for the dense and multiheaded attention layers.
+    bias_initializer: string or keras.initializers initializer. The bias initializer for the dense and multiheaded attention layers.
+    """
+    # input layer (Dense Layer)
+    # TODO: connect inputs and x (encoder)...inputs vs dense layer
+    inputs = tf.keras.layers.Dense(dim_val, activation)(inputs)
+    
+    # TODO: positional encoding / embedding 
+    
+    # encoder with mulit-head attention
+    # TODO: to use this built in encoder or not?
+    for _ in range(num_encoder_layers):
+        x = keras_nlp.layers.TransformerEncoder(
+                dim_val,
                 num_heads,
-                key_dim,)
+                dropout,
+                activation,
+                layer_norm_epsilon,
+                kernel_initializer,
+                bias_initializer,
+                )
 
-        # encoder layer
-        encoder_layer = tf.keras_nlp.layers.TransformerEncoder(
-            dim_val,
-            num_heads,
-            dropout=dropout_encoder,
-            activation=activation,
-            layer_norm_epsilon=1e-05,
-            kernel_initializer="glorot_uniform",
-            bias_initializer="zeros",
-            )
-        
-        # feed forward loop
-        def feed_forward():
-            x = self.encoder_input_layer(src)
-            x = self.encoder_layer(x=x)
-            return x
+    return tf.keras.Model(inputs=inputs, outputs=x)
+
+# Not used anymore. Keeping for old code
+#class GTTransformer(tf.keras.Model):
+#    def __init__(self,
+#        input_size: int,
+#        out_seq_len: int=58,
+#        dim_val: int=512,
+#        num_encoder_layers: int=4,
+#        num_heads: int=8,
+#        dropout_encoder: float=0.2,
+#        dropout_pos_enc: float=0.1,
+#        dim_feedforward_encoder: int=2048,
+#        activation: str='relu',
+#        ):
+#        """
+#        """
+#        super().__init__() 
+#
+#        # input layer        
+#        self.encoder_input_layer = tf.keras.layers.Dense(
+#            units=out_seq_len, 
+#            activation=activation 
+#            )
+#        # positional layer 
+#        # TODO: positional layer for variable-length input
+#        
+#        # attention layer (multi-head)
+#        self.attention_layer = tf.keras.layers.MultiHeadAttention(
+#                num_heads,
+#                dim_val,)
+#
+#        # encoder layer
+#        encoder_layer = keras_nlp.layers.TransformerEncoder(
+#            dim_val,
+#            num_heads,
+#            dropout=dropout_encoder,
+#            activation=activation,
+#            layer_norm_epsilon=1e-05,
+#            kernel_initializer="glorot_uniform",
+#            bias_initializer="zeros",
+#            )
+#        
+#        # feed forward loop
+#        def feed_forward():
+#            x = self.encoder_input_layer(src)
+#            x = self.encoder_layer(x=x)
+#            return x
 
 
 class DistanceLayer(tf.keras.layers.Layer):
