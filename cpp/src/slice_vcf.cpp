@@ -5,33 +5,19 @@
 #include <string>
 #include <vector>
 
-#include "read_config.h"
+#include "read_map.h"
 #include "slice_vcf.h"
+#include "utils.h"
 
 using namespace std;
 
-int main(int argc, char* argv[]){
-
-	// read config file for chromosome VCF file
-	string configFile = argv[1];   // configuration file will all options
-	map<string, string> config_options;
-	cout << "....Reading config file..." << endl;
-	config_options = get_config_options(configFile);
-	
-	
-	string vcf_file = config_options["vcf_file"];
-	string map_file = config_options["map_file"];
-	float slice_size = stof(config_options["slice_size"]);
-	string out_dir = config_options["out_dir"];
-    	string out_base_name = config_options["out_base_name"];
-	cout << "...Done reading config file.\n" << endl;
-
+int slice_main(string map_file, int segment_size, string vcf_file, string out_base_name, string out_dir){
 	// read map file and report number
 	// of slices that should be generated
 	vector<int> segment_SNP_counts;
-	segment_SNP_counts = read_map_file(map_file, slice_size);
+	segment_SNP_counts = read_map_file(map_file, segment_size);
 	int map_slice_count = segment_SNP_counts.size();
-	cout << "...Counted " << map_slice_count << " " << slice_size << "cM slices.\n" << endl;
+	cout << "...Counted " << map_slice_count << " " << segment_size << "cM slices.\n" << endl;
 
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
@@ -43,14 +29,13 @@ int main(int argc, char* argv[]){
 
 
 	// slice full chromosome VCF file into smaller slices
-	cout << "...Slice size: " << slice_size << "cM." << endl;
-	int num_slices = slice(vcf_file, vcf_header, segment_SNP_counts,
+	cout << "...Slice size: " << segment_size << "cM." << endl;
+	int num_segments = slice(vcf_file, vcf_header, segment_SNP_counts,
         	out_base_name, out_dir);
 	
-	cout << "...Number of slices made: " << num_slices << endl;
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
-	return 0;
+	return num_segments;
 }
 
 /*
@@ -90,7 +75,8 @@ vector<string> read_vcf_header(string vcf_file){
  * write a one slice to slice file
  * return number of slices
  */
-int slice(string vcf_file, vector<string> vcf_header, 
+int slice(string vcf_file, 
+		vector<string> vcf_header, 
 		vector<int> segment_SNP_counts, 
 		string base_name, string out_dir){
 
@@ -116,6 +102,7 @@ int slice(string vcf_file, vector<string> vcf_header,
         string out_vcf_slice_file = out_dir + base_name + \
         	".seg." + to_string(slice_index) + \
                 ".vcf";
+	//cout << "... ... slice " << slice_count << endl;
        	slice_file_stream.open(out_vcf_slice_file);
         for (int i = 0; i < vcf_header.size(); i ++){
                 slice_file_stream << vcf_header[i] << endl;
@@ -147,7 +134,7 @@ int slice(string vcf_file, vector<string> vcf_header,
 				//slice_file_stream << line;
 				slice_file_stream.close();
 				slice_index += 1;
-				
+
 				// open next slice file and write header 
                                 string out_vcf_slice_file = out_dir + base_name + \
                                         ".seg." + to_string(slice_index) + \
