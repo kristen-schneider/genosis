@@ -1,0 +1,11 @@
+encoding_file=data/example_data/example_encoding.txt
+
+vcf_file=data/example_data/example.vcf
+
+map_file=data/example_data/example.map
+
+slice_size=1
+
+out_dir=data/example_data/segments/
+
+out_base_name=example

@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "config_examples/config_GBR.yaml" # path to the config
+configfile: "data/example_data/config_ex_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -12,7 +12,7 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 rule all:
 	input:
 		f"{config.vcf_file}",
-		f"{config.data_dir}GBR_sampleIDs.txt",
+		f"{config.data_dir}samples.txt",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode-vcf",
@@ -27,8 +27,8 @@ rule get_sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		sample_IDs=f"{config.data_dir}GBR_sampleIDs.txt",
-		sample_IDs_done=f"{config.data_dir}GBR_sampleIDs.done"
+		sample_IDs=f"{config.data_dir}samples.txt",
+		sample_IDs_done=f"{config.data_dir}samples.done"
 	message:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
@@ -55,7 +55,7 @@ rule slice_VCF_compile:
 rule slice_VCF_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}slice-vcf",
-		config_file=f"{config.cpp_configs_dir}sample.config"
+		config_file=f"{config.cpp_configs_dir}config_ex.yaml"
 	output:
 		slice_log=f"{config.out_dir}slice.log"
 	message:
@@ -88,8 +88,8 @@ rule encode_vcf_segments_compile:
 rule encode_vcf_segments_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}encode-vcf",
-		sample_IDs=f"{config.data_dir}GBR_sampleIDs.txt",
-		config_file=f"{config.cpp_configs_dir}sample.config"
+		sample_IDs=f"{config.data_dir}samples.txt",
+		config_file=f"{config.cpp_configs_dir}config_ex.yaml"
 	output:
 		encode_log=f"{config.out_dir}encode.log"
 	message:
