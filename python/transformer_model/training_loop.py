@@ -38,14 +38,25 @@ def main():
     # splitting IDs into training, testing, and validating sets
     training_IDs, testing_IDs, validating_IDs = split_samples(args.sample_names, .8)
 
+    num_variants = len(genotype_encodings_index[0])
+    num_samples = training_IDs
+
+    # convert input data to tensors
+    gt_tensors = get_tensors(sample_names_index,
+                    genotype_encodings_index,
+                    training_IDs)
     # TODO:
     #   positional encoding with variable length input (basepair encoding)
-    #   is the transformera model or a module...? must be callable?
-    
-    num_variants = len(genotype_encodings_index[0])
+    #   this does not work with variable length input
+    pe_tensors = get_tensors(sample_names_index,
+                    positional_encodings_index, 
+                    training_IDs)
+
 
     # Buildling base model (transformer positional encoding + encoder)
-    # TODO: define input??
+    # TODO:
+    #   define input (pe input tensor)...?
+    #   check base model for correctness...
     base_model = gtt(
             dim_val=512,
             num_encoder_layers=4,
