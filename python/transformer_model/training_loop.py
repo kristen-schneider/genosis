@@ -9,7 +9,7 @@ import tensorflow as tf
 #from decoder import Decoder
 #from encoder import Encoder
 #from positional_encoding import PositionEmbeddingFixedWeights
-from models import GTTransformer as gtt
+from models import gt_transformer as gtt
 from models import build_siamese_network
 from models import SiameseModel
 from utils import map_sample_names_to_index, \
@@ -40,23 +40,22 @@ def main():
 
     # TODO:
     #   positional encoding with variable length input (basepair encoding)
-    #   
-    #
+    #   is the transformera model or a module...? must be callable?
     
     num_variants = len(genotype_encodings_index[0])
 
-    # Buildling base model (transformer encoder)
+    # Buildling base model (transformer positional encoding + encoder)
+    # TODO: define input??
     base_model = gtt(
-                input_size = 64,
-                out_seq_len = 58,
-                dim_val = 512,
-                num_encoder_layers = 4,
-                num_heads = 8,
-                dropout_encoder = 0.2,
-                dropout_pos_enc = 0.1,
-                dim_feedforward_encoder = 2048,
-                activation = 'relu',
-                )
+            dim_val=512,
+            num_encoder_layers=4,
+            num_heads=8,
+            dropout=0,
+            activation='relu',
+            layer_norm_epsilon=1e-05,
+            kernel_initializer="glorot_uniform",
+            bias_initializer="zeros",
+            )
     
 
     # Siamese network using base model
