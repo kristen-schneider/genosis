@@ -36,7 +36,7 @@ def map_sample_names_to_index(sample_names_file: str) -> Mapping[str, int]:
     sample_names_index = {sample_name: i*2 for i, sample_name in enumerate(sample_names_list)}
     return sample_names_index
 
-def map_genotype_encoding_to_index(genotype_encoding_file: str) -> Mapping[str, int]:
+def map_genotype_encoding_to_index(genotype_encoding_file: str) -> Mapping[int, list]:
     """
     A dictionary mapping with key = integer ID, value = genotype encoding
 
@@ -53,7 +53,7 @@ def map_genotype_encoding_to_index(genotype_encoding_file: str) -> Mapping[str, 
                                            for g in genotype_encodings])}
     return genotype_encodings_index
 
-def map_positional_encoding_to_index(positional_encoding_file: str) -> Mapping[str, int]:
+def map_positional_encoding_to_index(positional_encoding_file: str) -> Mapping[int, list]:
     """
     A dictionary mapping with key = integer ID, value = positional encoding
 
@@ -101,7 +101,7 @@ def split_samples(sample_names_file: Mapping[str, int],
     return training_sample_names, testing_sample_names, validating_sample_names
 
 def get_both_haplotypes(sample_names_index: Mapping[str, int] ,
-                        IDs: list[str]): -> list[list[int]]
+                        input_IDs: list[str]):
     """
     Takes a list of sample IDs and creates a list of indexes
     coresponding to hap0 and hap1 for each sample ID
@@ -110,8 +110,8 @@ def get_both_haplotypes(sample_names_index: Mapping[str, int] ,
                         key: sample name, value: index.
     :param IDs: list of strings which are sample IDs
     """
-    sample_idx_hap_0 = [sample_names_index[ID] for ID in training_IDs]
-    sample_idx_hap_1 = [sample_names_index[ID]+1 for ID in training_IDs]
+    sample_idx_hap_0 = [sample_names_index[ID] for ID in input_IDs]
+    sample_idx_hap_1 = [sample_names_index[ID]+1 for ID in input_IDs]
     sample_idx_all = sample_idx_hap_0 + sample_idx_hap_1
     return sample_idx_all
 

@@ -9,13 +9,15 @@ import tensorflow as tf
 #from decoder import Decoder
 #from encoder import Encoder
 #from positional_encoding import PositionEmbeddingFixedWeights
-from models import gt_transformer as gtt
-from models import build_siamese_network
-from models import SiameseModel
+#from models import gt_transformer as gtt
+#from models import build_siamese_network
+#from models import SiameseModel
+from datasets import PairsDatasetUnsupervised
 from utils import map_sample_names_to_index, \
                                 map_genotype_encoding_to_index, \
                                 map_positional_encoding_to_index, \
                                 split_samples, \
+                                get_both_haplotypes, \
                                 get_tensors
 
 def get_args():
@@ -41,18 +43,20 @@ def main():
     num_variants = len(genotype_encodings_index[0])
     num_samples = training_IDs
 
+    sample_idx_all = get_both_haplotypes(
+                        sample_names_index,
+                        training_IDs,
+                        )
     # convert input data to tensors
     gt_tensors = get_tensors(sample_names_index,
                     genotype_encodings_index,
                     training_IDs)
     train_ds = PairsDatasetUnsupervised(
-        sample_id_filename=train_samples,
-        genotype_filename=genotype_filename,
-        shuffle=True,
-        repeat=False,
-        batch_size=batch_size,
-    )
-
+        sample_idx_all,
+        genotype_encodings_index,
+        training_IDs,
+        )
+    '''
     # TODO:
     #   positional encoding with variable length input (basepair encoding)
     #   this does not work with variable length input
@@ -96,7 +100,7 @@ def main():
             epochs=10,
             #...
             )
-
+'''
 
 
 if __name__ == '__main__':
