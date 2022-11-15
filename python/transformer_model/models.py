@@ -25,7 +25,9 @@ def gt_transformer(
     # TODO: connect inputs and x (encoder)...inputs vs dense layer
     inputs = tf.keras.layers.Dense(dim_val, activation)(inputs)
     
-    # TODO: positional encoding / embedding 
+    # TODO: positional encoding / embedding
+    #   we have a file with variable length vectors with bp position
+    #   need to make it into a tensor for input...
     
     # encoder with mulit-head attention
     # TODO: to use this built in encoder or not?
@@ -42,7 +44,7 @@ def gt_transformer(
 
     return tf.keras.Model(inputs=inputs, outputs=x)
 
-# Not used anymore. Keeping for old code
+# Not used anymore. Keeping for reference example...
 #class GTTransformer(tf.keras.Model):
 #    def __init__(self,
 #        input_size: int,

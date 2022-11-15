@@ -45,6 +45,14 @@ def main():
     gt_tensors = get_tensors(sample_names_index,
                     genotype_encodings_index,
                     training_IDs)
+    train_ds = PairsDatasetUnsupervised(
+        sample_id_filename=train_samples,
+        genotype_filename=genotype_filename,
+        shuffle=True,
+        repeat=False,
+        batch_size=batch_size,
+    )
+
     # TODO:
     #   positional encoding with variable length input (basepair encoding)
     #   this does not work with variable length input
@@ -52,6 +60,8 @@ def main():
                     positional_encodings_index, 
                     training_IDs)
 
+    # TODO: 
+    #   sample pairs
 
     # Buildling base model (transformer positional encoding + encoder)
     # TODO:

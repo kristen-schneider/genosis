@@ -71,14 +71,14 @@ def map_positional_encoding_to_index(positional_encoding_file: str) -> Mapping[s
     return positional_encodings_index
 
 
-def split_samples(sample_names_file: str,
+def split_samples(sample_names_file: Mapping[str, int],
                   train_ratio: float
                   ) -> Tuple[list[str], list[str], list[str]]:
     """
     splits a list of data files into training, testing,
     and validating samples.
 
-    :param sample_names_file: (str) file with all sample names
+    :param genotype_names_index: (str) file with all sample names
     :param train_ratio: percent of samples to be used for training
     :return: training set, testing set, validation set
     """
@@ -100,6 +100,22 @@ def split_samples(sample_names_file: str,
 
     return training_sample_names, testing_sample_names, validating_sample_names
 
+def get_both_haplotypes(sample_names_index: Mapping[str, int] ,
+                        IDs: list[str]): -> list[list[int]]
+    """
+    Takes a list of sample IDs and creates a list of indexes
+    coresponding to hap0 and hap1 for each sample ID
+
+    :param sample_names_index: dictionary with
+                        key: sample name, value: index.
+    :param IDs: list of strings which are sample IDs
+    """
+    sample_idx_hap_0 = [sample_names_index[ID] for ID in training_IDs]
+    sample_idx_hap_1 = [sample_names_index[ID]+1 for ID in training_IDs]
+    sample_idx_all = sample_idx_hap_0 + sample_idx_hap_1
+    return sample_idx_all
+
+
 def get_tensors(sample_names_index,
                     encodings_index,
                     training_IDs):
@@ -113,9 +129,8 @@ def get_tensors(sample_names_index,
     :param training_IDs: list of sample names for training
     :return: gt_tensors: tensors object of genotypes
     """
-    sample_idx_hap_0 = [sample_names_index[ID] for ID in training_IDs]
-    sample_idx_hap_1 = [sample_names_index[ID]+1 for ID in training_IDs]
-    sample_idx_all = sample_idx_hap_0 + sample_idx_hap_1
+    sample_idx_all = get_both_haplotypes(sample_names_index,
+                        training_IDs)
 
     training_encodings = [encodings_index[ID_idx] for ID_idx in sample_idx_all]
     tensors = convert_to_tensor(training_encodings, dtype=tf.int32)
