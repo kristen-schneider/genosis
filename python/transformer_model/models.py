@@ -39,6 +39,12 @@ class GTTransformer(tf.keras.Model):
             kernel_initializer="glorot_uniform",
             bias_initializer="zeros",
             )
+        
+        # feed forward loop
+        def feed_forward():
+            x = self.encoder_input_layer(src)
+            x = self.encoder_layer(x=x)
+            return x
 
 
 
