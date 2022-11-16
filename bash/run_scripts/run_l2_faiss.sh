@@ -11,6 +11,7 @@ bin_dir="/home/sdp/precision-medicine/cpp/bin/"
 data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR/"
 
 # path to encoded and query file
+all_samples=$data_dir"sample_hap_IDs.txt"
 test_samples=$data_dir"query_IDs.txt"
 train_samples=$data_dir"database_IDs.txt"
 encoded_file=$data_dir"segments/GBR.simulated.seg.0.encoded"
@@ -46,7 +47,7 @@ do
         echo "Running FAISS on" $filename
         faiss_out=$data_dir"segments/"$base".enc.faissl2"
         #echo $faiss_out
-        $bin $train_samples $encoded_f $train_samples $encoded_f $k $delim > $faiss_out
+        $bin $all_samples $encoded_f $all_samples $encoded_f $k $delim > $faiss_out
 done
 
 
