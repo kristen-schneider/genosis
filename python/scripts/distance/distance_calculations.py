@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from numpy.linalg import norm
 from scipy.spatial import distance
 import os, sys, inspect
 
@@ -52,6 +53,14 @@ def euclidean_distance(v1, v2):
         running_sum += diff_sqrd
     ed = math.sqrt(running_sum)
     return ed
+
+def cosine_similarity(v1, v2):
+    '''
+    computes cosine similarity between two 
+    normalized vectors
+    '''
+    cosine_sim = np.dot(v1, v2)/(norm(v1)*norm(v2))
+    return cosine_sim
 
 def recombination_dp(q, v1, v2):
     '''

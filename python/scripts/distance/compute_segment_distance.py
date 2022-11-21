@@ -22,7 +22,8 @@ def main():
             q_encoding = encodings[query_hap]
             for s in encodings:
                 s_encoding = encodings[s]
-                dist = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+                #dist = distance_calculations.euclidean_distance(q_encoding, s_encoding)
+                dist = distance_calculations.cosine_similarity(q_encoding, s_encoding)
                 print(s, dist)
             print()
 

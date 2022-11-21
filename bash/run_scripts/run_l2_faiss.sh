@@ -38,12 +38,12 @@ g++ $src_dir"faiss_l2.cpp" \
 	-o $bin
 
 echo "Executing..."
-for encoded_f in $data_dir"segments/"*.encoded
+for encoded_f in $data_dir"segments/"*.norm
 do
         filename=$(basename -- $encoded_f)
         base=${filename%.*}
         echo "Running FAISS on" $filename
-        faiss_out=$data_dir"segments/"$base".enc.faissl2"
+        faiss_out=$data_dir"segments/"$base".norm.faissl2"
         #echo $faiss_out
         $bin $all_samples $encoded_f $all_samples $encoded_f $k $delim > $faiss_out
 done
