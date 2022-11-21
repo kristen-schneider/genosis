@@ -8,15 +8,13 @@ src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 conda_dir="/home/sdp/miniconda3/envs/pm/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR/"
+data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR_large/"
 
 # path to encoded and query file
 all_samples=$data_dir"sample_hap_IDs.txt"
 test_samples=$data_dir"query_IDs.txt"
 train_samples=$data_dir"database_IDs.txt"
-encoded_file=$data_dir"segments/GBR.simulated.seg.0.encoded"
-#embedded_file=$data_dir"segments/chr8-30x/chr8-30x.seg.86.embedding"
-k=10 # number of nearest neighbors to report
+k=20 # number of nearest neighbors to report
 delim="space"
 
 source ~/miniconda3/etc/profile.d/mamba.sh 

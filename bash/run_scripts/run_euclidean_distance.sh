@@ -5,7 +5,7 @@
 
 # path to directories
 conda_dir="/home/sdp/miniconda3/envs/pm/"
-data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR/"
+data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR_large/"
 python_dir="/home/sdp/precision-medicine/python/scripts/distance/"
 
 # path to encoded and query file
