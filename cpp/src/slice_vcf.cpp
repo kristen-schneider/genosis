@@ -80,6 +80,7 @@ int slice(string vcf_file,
 		vector<int> segment_SNP_counts, 
 		string base_name, string out_dir){
 
+	cout << out_dir << endl;
 	// to return
 	int slice_index = 0;
 	int slice_snp_count = segment_SNP_counts[slice_index];

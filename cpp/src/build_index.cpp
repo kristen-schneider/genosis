@@ -81,12 +81,13 @@ faiss::IndexHNSWFlat build_hnsw_index(string database_IDs, string database_data,
 }
 
 
-/*
- * Returns a map where key is sampleID and 
- * value is a vector of floats for
- * the encoding (or embedding)
- */
 map<string, float*> make_ID_data_map(string data_file, char delim, int num_elements){
+	/*
+	 * Returns a map where key is sampleID and 
+	 * value is a vector of floats for
+	 * the encoding (or embedding)
+	 */
+
 	// open data_file
 	ifstream data_file_stream;
 	data_file_stream.open(data_file);
@@ -95,10 +96,11 @@ map<string, float*> make_ID_data_map(string data_file, char delim, int num_eleme
 		exit(1);
 	}
 
+	// returned map
 	map<string, float*> ID_data_map;
 
-	string line;
 	// read file
+	string line;
 	while (getline(data_file_stream, line)){
 		size_t start;
 		size_t end = 0;
