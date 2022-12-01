@@ -11,6 +11,8 @@ query_file:
   /home/sdp/precision-medicine/data/example_data/query_example.txt
 out_dir:
   /home/sdp/precision-medicine/data/example_data/segments/
+config_file:
+  /home/sdp/precision-medicine/data/example_data/config_ex.yaml
 
 
 cpp_bin_dir:
