@@ -45,7 +45,7 @@ rule slice_VCF_compile:
 	message:
 		"Compiling--slice vcf into segments..."
 	shell:
-		"g++" \
+		"g++ -std=c++11" \
 		" {input.slice_vcf_cpp}" \
 		" {input.read_config_cpp}" \
 		" -I {config.cpp_include_dir}" \
@@ -76,7 +76,7 @@ rule encode_vcf_segments_compile:
 	message:
 		"Compiling--encode vcf segments..."
 	shell:
-		"g++" \
+		"g++ -std=c++11" \
 		" {input.encode_vcf_cpp}" \
 		" {input.read_config_cpp}" \
 		" {input.map_encodings_cpp}" \
