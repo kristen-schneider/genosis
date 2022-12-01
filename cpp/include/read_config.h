@@ -3,6 +3,7 @@
 
 #endif //READ_CONFIG_H
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <map>

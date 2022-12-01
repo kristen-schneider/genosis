@@ -1,7 +1,8 @@
+#include <cstdlib>
+#include <chrono>
 #include <faiss/IndexFlat.h>
 #include <faiss/IndexHNSW.h>
 #include <iostream>
-#include <chrono>
 
 #include "build_index.h"
 #include "search_index.h"

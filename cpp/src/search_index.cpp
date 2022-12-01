@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <faiss/IndexFlat.h>
 #include <faiss/IndexHNSW.h>
 #include <fstream>

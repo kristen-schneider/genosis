@@ -3,6 +3,7 @@
 
 #endif //READENCODINGS_H
 
+#include <cstdlib>
 #include <iostream>
 #include <string> 
 

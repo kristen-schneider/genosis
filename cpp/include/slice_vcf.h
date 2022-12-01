@@ -3,6 +3,7 @@
 
 #endif //SLICE_VCF_H
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>

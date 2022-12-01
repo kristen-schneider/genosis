@@ -3,6 +3,7 @@
 
 #endif //UTILS_H
 
+#include <cstdlib>
 #include <iostream>
 #include <htslib/hts.h>
 #include <htslib/vcf.h>
