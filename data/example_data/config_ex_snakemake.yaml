@@ -8,9 +8,11 @@ data_dir:
 vcf_file:
   /home/sdp/precision-medicine/data/example_data/example.vcf
 query_file:
-  /home/sdp/precision-medicine/data/example_data/query_example.txt
+  /home/sdp/precision-medicine/data/example_data/samples_query.txt
 out_dir:
   /home/sdp/precision-medicine/data/example_data/segments/
+config_file:
+  /home/sdp/precision-medicine/data/example_data/config_ex.yaml
 
 
 cpp_bin_dir:

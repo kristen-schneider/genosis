@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #include "read_map.h"
 #include "slice_vcf.h"

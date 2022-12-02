@@ -3,6 +3,7 @@
 
 #endif //ENCODEVCF_H
 
+#include <cstdlib>
 #include <htslib/hts.h>
 #include <htslib/vcf.h>
 #include <htslib/vcfutils.h>

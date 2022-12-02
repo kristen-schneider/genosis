@@ -3,6 +3,7 @@
 
 #endif //MAP_ENCODINGS_H
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <map>

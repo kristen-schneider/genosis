@@ -3,6 +3,7 @@
 
 #endif //BUILDINDEX_H
 
+#include <cstdlib>
 #include <iostream>
 #include <faiss/IndexFlat.h>
 #include <faiss/IndexHNSW.h>

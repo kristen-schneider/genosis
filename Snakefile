@@ -12,7 +12,8 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 rule all:
 	input:
 		f"{config.vcf_file}",
-		f"{config.data_dir}samples.txt",
+		f"{config.data_dir}samples_IDs.txt",
+		f"{config.data_dir}samples.log",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode-vcf",
@@ -27,8 +28,8 @@ rule get_sample_IDs:
 	input:
 		vcf=f"{config.vcf_file}"
 	output:
-		sample_IDs=f"{config.data_dir}samples.txt",
-		sample_IDs_done=f"{config.data_dir}samples.done"
+		sample_IDs=f"{config.data_dir}samples_IDs.txt",
+		sample_IDs_done=f"{config.data_dir}samples.log"
 	message:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
@@ -38,16 +39,22 @@ rule get_sample_IDs:
 # 1.1 slice VCF into segments (compile)
 rule slice_VCF_compile:
 	input:
+		main_slice_cpp=f"{config.cpp_src_dir}main_slice.cpp",
 		slice_vcf_cpp=f"{config.cpp_src_dir}slice_vcf.cpp",
-		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp"
+		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
+		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
 	output:
 		bin=f"{config.cpp_bin_dir}slice-vcf"
 	message:
 		"Compiling--slice vcf into segments..."
 	shell:
-		"g++" \
+		"g++ -std=c++11" \
+		" {input.main_slice_cpp}" \
 		" {input.slice_vcf_cpp}" \
 		" {input.read_config_cpp}" \
+		" {input.read_map_cpp}" \
+		" {input.utils_cpp}" \
 		" -I {config.cpp_include_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
@@ -55,7 +62,7 @@ rule slice_VCF_compile:
 rule slice_VCF_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}slice-vcf",
-		config_file=f"{config.cpp_configs_dir}config_ex.yaml"
+		config_file=f"{config.config_file}"
 	output:
 		slice_log=f"{config.out_dir}slice.log"
 	message:
@@ -67,6 +74,7 @@ rule slice_VCF_execute:
 rule encode_vcf_segments_compile:
 	input:
 		slice_log=f"{config.out_dir}slice.log",
+		main_encode_cpp=f"{config.cpp_src_dir}main_encode.cpp",
 		encode_vcf_cpp=f"{config.cpp_src_dir}encode_vcf.cpp",
 		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
 		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
@@ -76,7 +84,8 @@ rule encode_vcf_segments_compile:
 	message:
 		"Compiling--encode vcf segments..."
 	shell:
-		"g++" \
+		"g++ -std=c++11" \
+		" {input.main_encode_cpp}" \
 		" {input.encode_vcf_cpp}" \
 		" {input.read_config_cpp}" \
 		" {input.map_encodings_cpp}" \
@@ -88,8 +97,8 @@ rule encode_vcf_segments_compile:
 rule encode_vcf_segments_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}encode-vcf",
-		sample_IDs=f"{config.data_dir}samples.txt",
-		config_file=f"{config.cpp_configs_dir}config_ex.yaml"
+		sample_IDs=f"{config.data_dir}samples_IDs.txt",
+		config_file=f"{config.config_file}"
 	output:
 		encode_log=f"{config.out_dir}encode.log"
 	message:
@@ -98,8 +107,9 @@ rule encode_vcf_segments_execute:
 		"for vcf_f in {config.out_dir}*.vcf; do" \
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.config_file} {input.sample_IDs} $vcf_f {config.out_dir}${{seg_name}}.encoded > {output.encode_log};" \
-		"done"
+		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.encoded {config.out_dir}${{seg_name}}.position;" \
+		"done;"
+		"touch {output.encode_log};"
 
 # 3 run plink on full vcf
 rule plink:

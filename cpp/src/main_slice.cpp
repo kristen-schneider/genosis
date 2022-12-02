@@ -1,9 +1,9 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <vector>
 
-#include "map_encodings.h"
 #include "read_config.h"
 #include "read_map.h"
 #include "slice_vcf.h"

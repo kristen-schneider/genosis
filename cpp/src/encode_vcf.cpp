@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <math.h>
@@ -31,7 +32,7 @@ void encode_vcf(string sample_IDs_file,
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
 	// open VCF file with htslib
-	cout << "VCF; " << vcf_slice << endl;
+	cout << "VCF: " << vcf_slice << endl;
 	htsFile *vcf_stream = bcf_open(vcf_slice, "r");
 	if (!vcf_stream){
 		cout << "FAILED TO OPEN: " << vcf_slice << endl;
@@ -40,7 +41,7 @@ void encode_vcf(string sample_IDs_file,
 		
 	bcf_hdr_t *vcf_header = bcf_hdr_read(vcf_stream);
 	if (vcf_header == NULL) {
-        	throw runtime_error("Unable to read header.");
+		throw runtime_error("Unable to read header.");
 		exit(1);
         }
 	
@@ -125,8 +126,8 @@ void encode_vcf(string sample_IDs_file,
 	write_SMF(all_sample_IDs, sample_major_format_hap_vec, output_encoding_file);
 
 	// writing positinal encoding
-	cout << "...writing positional encodings to file..." << endl;
-	write_positional_encoding(all_positions, all_sample_IDs, sample_major_format_hap_vec, output_position_file);	
+	//cout << "...writing positional encodings to file..." << endl;
+	//write_positional_encoding(all_positions, all_sample_IDs, sample_major_format_hap_vec, output_position_file);	
 }	
 
 /*
