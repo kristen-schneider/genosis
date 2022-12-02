@@ -189,4 +189,3 @@ dependencies:
   - yte=1.5.1=py310hff52083_1
   - zipp=3.10.0=pyhd8ed1ab_0
   - zlib=1.2.13=h166bdaf_4
-prefix: /home/sdp/miniconda3/envs/pmed
