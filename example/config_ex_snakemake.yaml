@@ -26,3 +26,6 @@ cpp_configs_dir:
 
 python_dir:
   python/scripts/
+
+htslib_dir:
+  lib/htslib/

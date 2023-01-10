@@ -1,0 +1,13 @@
+Loading Config Options...
+Slicing VCF...
+...Reading map file...
+...Done reading map file.
+...Counted 4 1cM slices.
+
+...Reading VCF file...
+...Read 113 lines from VCF header.
+...Slice size: 1cM.
+/home/sdp/precision-medicine/data/example_data/segments/
+...Done reading VCF file.
+Done slicing.
+Wrote 4 slices.
