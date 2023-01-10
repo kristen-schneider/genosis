@@ -4,15 +4,15 @@ conda_dir:
   /home/sdp/miniconda3/envs/pm
 
 data_dir:
-  /home/sdp/precision-medicine/data/example_data/
+  /home/sdp/precision-medicine/example/
 vcf_file:
-  /home/sdp/precision-medicine/data/example_data/example.vcf
+  /home/sdp/precision-medicine/example/example.vcf
 query_file:
-  /home/sdp/precision-medicine/data/example_data/samples_query.txt
+  /home/sdp/precision-medicine/example/samples_query.txt
 out_dir:
-  /home/sdp/precision-medicine/data/example_data/segments/
+  /home/sdp/precision-medicine/example/segments/
 config_file:
-  /home/sdp/precision-medicine/data/example_data/config_ex.yaml
+  /home/sdp/precision-medicine/example/config_ex.yaml
 
 
 cpp_bin_dir:
@@ -22,7 +22,7 @@ cpp_src_dir:
 cpp_include_dir:
   cpp/include/
 cpp_configs_dir:
-  /home/sdp/precision-medicine/data/example_data/
+  /home/sdp/precision-medicine/example/
 
 python_dir:
   python/scripts/
