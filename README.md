@@ -1,5 +1,9 @@
 ### How to run the full pipeline (vcf-->summary distances)
-#### 0. Clone the latest version of the repository.
+#### 0. Clone the latest version of the repository and update submodules.
+`git clone git@github.com:kristen-schneider/precision-medicine.git`
+`cd precision-medicine`
+`git submodule init`
+`git submodule update`
 #### 1. Create and activate the mamba environment.
 `mamba env create -f environment.yml`<br>
 `mamba activate pmed`
