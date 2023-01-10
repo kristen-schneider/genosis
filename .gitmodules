@@ -1,3 +1,6 @@
 [submodule "lib/htslib"]
 	path = lib/htslib
-	url = https://github.com/samtools/htslib
+	url = git@github.com:samtools/htslib.git
+[submodule "lib/ped-sim"]
+	path = lib/ped-sim
+	url = git@github.com:williamslab/ped-sim.git
