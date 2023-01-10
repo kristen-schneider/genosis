@@ -56,6 +56,7 @@ rule slice_VCF_compile:
 		" {input.read_map_cpp}" \
 		" {input.utils_cpp}" \
 		" -I {config.cpp_include_dir}" \
+		" -I {config.htslib_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
 # 1.2 slice VCF into segments (execute)
@@ -91,6 +92,7 @@ rule encode_vcf_segments_compile:
 		" {input.map_encodings_cpp}" \
 		" {input.utils_cpp}" \
 		" -I {config.cpp_include_dir}" \
+		" -I {config.htslib_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
 # 2.2 encode vcf segments (execute)
