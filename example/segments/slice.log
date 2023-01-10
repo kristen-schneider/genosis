@@ -7,7 +7,7 @@ Slicing VCF...
 ...Reading VCF file...
 ...Read 113 lines from VCF header.
 ...Slice size: 1cM.
-/home/sdp/precision-medicine/data/example_data/segments/
+/home/sdp/precision-medicine/example/segments/
 ...Done reading VCF file.
 Done slicing.
 Wrote 4 slices.
