@@ -20,6 +20,8 @@ dependencies:
   - bcrypt=3.2.2=py310h5764c6d_1
   - binutils_impl_linux-64=2.39=h6ceecb4_0
   - blas=1.0=openblas
+  - boost=1.80.0=py310hc4a4660_4
+  - boost-cpp=1.80.0=h75c5d50_0
   - boto3=1.26.4=pyhd8ed1ab_0
   - botocore=1.29.4=pyhd8ed1ab_0
   - brotlipy=0.7.0=py310h5764c6d_1005
@@ -73,6 +75,7 @@ dependencies:
   - gxx_impl_linux-64=12.2.0=hcc96c02_19
   - htslib=1.16=h6bc39ce_0
   - httplib2=0.21.0=pyhd8ed1ab_0
+  - icu=70.1=h27087fc_0
   - idna=3.4=pyhd8ed1ab_0
   - importlib-metadata=5.0.0=pyha770c72_1
   - importlib_resources=5.10.0=pyhd8ed1ab_0
@@ -199,6 +202,7 @@ dependencies:
   - yte=1.5.1=py310hff52083_1
   - zipp=3.10.0=pyhd8ed1ab_0
   - zlib=1.2.13=h166bdaf_4
+  - zstd=1.5.2=h6239696_4
   - pip:
       - arrow==1.2.3
       - autoconf==2022.11.26.11
@@ -207,4 +211,3 @@ dependencies:
       - mypy-extensions==0.4.3
       - pyyaml==5.4.1
       - typing-inspect==0.8.0
-prefix: /home/sdp/miniconda3/envs/pmed
