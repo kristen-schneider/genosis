@@ -7,6 +7,9 @@
 -[PED-SIM, simulated](https://github.com/williamslab/ped-sim)
 - following instructions on the README.md, all necessary dependencies should be installed with mamba.<br>
 - ped-sim Makefile needs a simple change to include mamba environment include directory. copy of this edit is [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/Makefile).<br>
+- def files for subpopulations are included [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/def_files)
+- bash file to run a ped-sim simulation [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/def_files)
+- bash file to run a ped-sim simulation [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/run_ped-sim.sh)
 ### MAP FILES
 -[HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br>
 -[ilash analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
