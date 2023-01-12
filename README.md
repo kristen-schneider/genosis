@@ -1,4 +1,4 @@
-### How to run the full pipeline (vcf-->summary distances)
+## RUN FOR TEST DATA
 #### 0. Clone the latest version of the repository and update submodules.
 ```
 git clone git@github.com:kristen-schneider/precision-medicine.git
@@ -11,7 +11,7 @@ git submodule update
 mamba env create -f environment.yml
 mamba activate pmed
 ```
-#### 2. Run my example script.
+#### 2. Run the provided example script with toy data.
 I have added a very small set of example data in the directory `data/example_data/`.<br>
 This should be an easy way to test that software is working without having to make changes yet.<br>
 The snakemake file should already be fit to use example data.<br>
@@ -20,7 +20,8 @@ test with:<br>
 snakemake -c1
 ```
 
-#### 3. Create new yaml file for snakemake options. (See below for more information)
+## RUN FOR REAL DATA (edits to come)
+#### 1. Create new yaml file for snakemake options. (See below for more information)
 - create a new directory to house your data `mkdir ./my_dir`
 - create a new directory to house your segments `mkdir ./my_dir/segments`
 - create a new config file `<snakemake_config_file>.yaml`
@@ -40,7 +41,7 @@ snakemake -c1
   out_dir:
    /path/to/my_dir/segments/
   ```
-#### 4. Create new config file for slicing into segments. (See below for more information)
+#### 2. Create new config file for slicing into segments. (See below for more information)
 - create a new file `./my_dir/<config_file>.yaml`
 - follow example at[`./cpp/configs/config_ex.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/data/example_data/config_ex.yaml). Modify the following options to reflect appropriate file paths.
   ```
@@ -52,7 +53,7 @@ snakemake -c1
 
   out_base_name=<output_name>
   ```
-#### 5. Running with snakemake
+#### 3. Running with snakemake
 `snakemake -c1`
 
 ### More information about making yaml and config files.
