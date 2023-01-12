@@ -4,3 +4,6 @@
 [submodule "lib/ped-sim"]
 	path = lib/ped-sim
 	url = git@github.com:williamslab/ped-sim.git
+[submodule "lib/boost"]
+	path = lib/boost
+	url = git@github.com:boostorg/boost.git
