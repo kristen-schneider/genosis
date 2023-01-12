@@ -157,7 +157,6 @@ dependencies:
   - python_abi=3.10=2_cp310
   - pytz=2022.6=pyhd8ed1ab_0
   - pyu2f=0.1.5=pyhd8ed1ab_0
-  - pyyaml=6.0=py310h5764c6d_5
   - ratelimiter=1.2.0=pyhd8ed1ab_1003
   - re2=2022.06.01=h27087fc_0
   - readline=8.1.2=h0f457ee_0
@@ -200,4 +199,12 @@ dependencies:
   - yte=1.5.1=py310hff52083_1
   - zipp=3.10.0=pyhd8ed1ab_0
   - zlib=1.2.13=h166bdaf_4
+  - pip:
+      - arrow==1.2.3
+      - autoconf==2022.11.26.11
+      - jinja2-time==0.2.0
+      - make==0.1.6.post2
+      - mypy-extensions==0.4.3
+      - pyyaml==5.4.1
+      - typing-inspect==0.8.0
 prefix: /home/sdp/miniconda3/envs/pmed
