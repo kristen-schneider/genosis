@@ -1,7 +1,7 @@
 ## RUN FOR TEST DATA
 #### 0. Clone the latest version of the repository and update submodules.
 ```
-git clone git@github.com:kristen-schneider/precision-medicine.git
+git clone https://github.com/kristen-schneider/precision-medicine.git
 cd precision-medicine
 git submodule init
 git submodule update
