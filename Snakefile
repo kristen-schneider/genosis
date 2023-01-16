@@ -19,8 +19,9 @@ rule all:
 		f"{config.cpp_bin_dir}encode-vcf",
 		f"{config.out_dir}encode.log",
 		f"{config.data_dir}plink.log",
-		f"{config.out_dir}distance.log"	,
-		f"{config.data_dir}aggregate.log"	
+		#f"{config.out_dir}distance.log"	,
+		#f"{config.data_dir}aggregate.log"	
+		f"{config.cpp_bin_dir}faiss-l2"
 	
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -166,7 +167,7 @@ rule faiss_compile:
         output:
                 bin=f"{config.cpp_bin_dir}faiss-l2"
         message:
-                "Compiling--encode vcf segments..."
+                "Compiling--FAISS..."
         shell:
                 "g++ -std=c++11" \
                 " {input.faiss_l2_cpp}" \
@@ -175,8 +176,9 @@ rule faiss_compile:
                 " {input.search_index_cpp}" \
                 " {input.utils_cpp}" \
                 " -I {config.cpp_include_dir}" \
-                " -I {config.htslib_dir}" \
-                " -lhts" \
+                " -I {config.conda_dir}include/" \
+		" -L {config.conda_dir}lib/" \
+                " -lfaiss" \
                 " -o {output.bin}"
 
 
