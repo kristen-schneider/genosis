@@ -19,3 +19,4 @@ tabix -p vcf subset_sample.vcf.gz
 ### MAP FILES
 -[HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br>
 -[ilash analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
+
