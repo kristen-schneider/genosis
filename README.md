@@ -50,7 +50,9 @@ snakemake -c1
   query_file:
     /path/to/my_dir/samples_query.txt
   out_dir:
-   /path/to/my_dir/segments/
+    /path/to/my_dir/segments/
+  config_file
+    /path/to/my_dir/config_new.yaml
   ```
 ###### [`config_ex.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_ex.yaml)
 - copy `config_ex.yaml` into your new directory: `cp example/config_ex.yaml ./my_dir/`
@@ -82,7 +84,12 @@ snakemake -c1
   segment_size:
   1
   ```
-##### 2. Running with snakemake
+##### 2. Edit snakemake file to point to new configs.
+```
+configfile: "./my_dir/config_new_snakemake.yaml"
+```
+
+##### 3. Running with snakemake
 ```
 snakemake -c1
 ```
