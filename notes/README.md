@@ -4,7 +4,7 @@
 -[phased VCFs](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20220422_3202_phased_SNV_INDEL_SV/)<br>
 -[sample information](https://www.internationalgenome.org/api/beta/sample/_search/igsr-1000%20genomes%2030x%20on%20grch38.tsv.tsv)<br>
 -[pedigree information](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/1kGP.3202_samples.pedigree_info.txt)<br>
--```
+```
 bcftools view -S subset_sample_IDs.txt full.vcf.gz > subset_sample.vcf
 bgzip -c subset_sample.vcf > subset_sample.vcf.gz
 tabix -p vcf subset_sample.vcf.gz
