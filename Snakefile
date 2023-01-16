@@ -124,31 +124,60 @@ rule plink:
 	shell:
 		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
 
-# 4.1 compute euclidean distance for all segments
-rule compute_segment_distance:
-	input:
+## 4.1 compute euclidean distance for all segments
+#rule compute_segment_distance:
+#	input:
+#		encode_log=f"{config.out_dir}encode.log",
+#		query_file=f"{config.query_file}"
+#	output:
+#		distance_log=f"{config.out_dir}distance.log"
+#	message:
+#		"Computing Euclidean distance for query against all segments"
+#	shell:
+#		"for encoded_f in {config.out_dir}*.encoded; do" \
+#		"	filename=$(basename $encoded_f);" \
+#                "	seg_name=${{filename%.*}};" \
+#		"	echo $encoded_f >> {output.distance_log};" \
+#		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
+#		"done"
+## 4.2 aggregate euclidean distance for all segments
+#rule aggregate_segment_distance:
+#	input:
+#		distance_log=f"{config.out_dir}distance.log"
+#	output:
+#		aggregate_log=f"{config.data_dir}aggregate.log"
+#	message:
+#		"Aggregating all distance files for all queries"
+#	shell:
+#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+#		" && touch {config.data_dir}aggregate.log"
+
+## 5.1 faiss (compile)
+rule faiss_compile:
+        input:
+                slice_log=f"{config.out_dir}slice.log",
 		encode_log=f"{config.out_dir}encode.log",
-		query_file=f"{config.query_file}"
-	output:
-		distance_log=f"{config.out_dir}distance.log"
-	message:
-		"Computing Euclidean distance for query against all segments"
-	shell:
-		"for encoded_f in {config.out_dir}*.encoded; do" \
-		"	filename=$(basename $encoded_f);" \
-                "	seg_name=${{filename%.*}};" \
-		"	echo $encoded_f >> {output.distance_log};" \
-		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
-		"done"
-# 4.2 aggregate euclidean distance for all segments
-rule aggregate_segment_distance:
-	input:
-		distance_log=f"{config.out_dir}distance.log"
-	output:
-		aggregate_log=f"{config.data_dir}aggregate.log"
-	message:
-		"Aggregating all distance files for all queries"
-	shell:
-		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
-		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
-		" && touch {config.data_dir}aggregate.log"
+                faiss_l2_cpp=f"{config.cpp_src_dir}faiss_l2.cpp",
+		build_index_cpp=f"{config.cpp_src_dir}build_index.cpp",
+                read_encodings_cpp=f"{config.cpp_src_dir}read_encodings.cpp",
+                search_index_cpp=f"{config.cpp_src_dir}search_index.cpp",
+                utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+        output:
+                bin=f"{config.cpp_bin_dir}faiss-l2"
+        message:
+                "Compiling--encode vcf segments..."
+        shell:
+                "g++ -std=c++11" \
+                " {input.faiss_l2_cpp}" \
+                " {input.build_index_cpp}" \
+                " {input.read_encodings_cpp}" \
+                " {input.search_index_cpp}" \
+                " {input.utils_cpp}" \
+                " -I {config.cpp_include_dir}" \
+                " -I {config.htslib_dir}" \
+                " -lhts" \
+                " -o {output.bin}"
+
+
+## 5.2 faiss (execute)

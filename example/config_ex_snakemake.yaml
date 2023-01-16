@@ -1,7 +1,7 @@
 home_dir:
   ./
 conda_dir:
-  ~/miniconda3/envs/pm
+  ~/miniconda3/envs/pmed
 
 data_dir:
   example/
