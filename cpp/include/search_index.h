@@ -3,7 +3,7 @@
 
 #endif //SEARCHINDEX_H
 
-#include <cstlib>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <faiss/IndexFlat.h>
