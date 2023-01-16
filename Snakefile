@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "example/config_ex_snakemake.yaml" # path to the config
+configfile: "notes/ancestry_configs/config_EAS_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
