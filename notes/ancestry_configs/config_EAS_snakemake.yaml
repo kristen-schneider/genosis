@@ -6,7 +6,7 @@ conda_dir:
 data_dir:
   ../pmed-local/data/EAS/
 vcf_file:
-  ../pmed-local/data/EAS/EAS_unrelated.vcf.gz
+  ../pmed-local/data/EAS/EAS_unrelated.vcf
 query_file:
   ../pmed-local/data/EAS/EAS_queries.txt
 out_dir:
