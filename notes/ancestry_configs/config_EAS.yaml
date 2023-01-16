@@ -17,7 +17,7 @@ data_dir:
 vcf_file:
 ../pmed-local/data/EAS/EAS_unrelated.vcf.gz
 map_file:
-../pmed-local/data/.map
+../pmed-local/data/plink_maps/plink.chr8.GRCh38.map
 encoding_file:
 example/example_encoding.txt
 sample_IDs_file:
