@@ -22,7 +22,7 @@ cpp_src_dir:
 cpp_include_dir:
   cpp/include/
 cpp_configs_dir:
-  /home/sdp/precision-medicine/example/
+  example/
 
 python_dir:
   python/scripts/
