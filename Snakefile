@@ -157,6 +157,19 @@ rule encode_vcf_segments_execute:
 #		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
 #		" && touch {config.data_dir}aggregate.log"
 #
+# 4.2 aggregate euclidean distance for all segments
+#rule aggregate_segment_distance:
+#	input:
+#		distance_log=f"{config.out_dir}distance.log"
+#	output:
+#		aggregate_log=f"{config.data_dir}aggregate.log"
+#	message:
+#		"Aggregating all distance files for all queries"
+#	shell:
+#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+#		" && touch {config.data_dir}aggregate.log"
+#
 # 5.0 make hap IDs
 rule hap_IDs:
 	input:
@@ -219,3 +232,7 @@ rule faiss_execute:
                	"	echo $bin ${input.database_IDs} $encoded_f ${input.query_IDs} $encoded_f ${config.k} ${config.delim};" \
 		"done;"
 		"touch {output.faiss_log};"
+                "	seg_name=${{filename%.*}};" \
+		"	echo $encoded_f >> {output.distance_log};" \
+		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
+		"done"
