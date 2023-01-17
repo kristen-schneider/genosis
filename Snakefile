@@ -20,9 +20,11 @@ rule all:
 		f"{config.out_dir}encode.log",
 		#f"{config.data_dir}plink.log",
 		#f"{config.out_dir}distance.log",
-		#f"{config.data_dir}aggregate.log",	
+		#f"{config.data_dir}aggregate.log",
+		f"{config.data_dir}hapID.log",
+		f"{config.data_dir}all_hap_IDs.txt",	
 		f"{config.cpp_bin_dir}faiss-l2",
-		faiss_log=f"{config.out_dir}faiss.log"
+		f"{config.out_dir}faiss.log"
 	
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -51,7 +53,7 @@ rule slice_VCF_compile:
 	message:
 		"Compiling--slice vcf into segments..."
 	shell:
-		"g++ -std=c++11" \
+		"g++" \
 		" {input.main_slice_cpp}" \
 		" {input.slice_vcf_cpp}" \
 		" {input.read_config_cpp}" \
@@ -87,7 +89,7 @@ rule encode_vcf_segments_compile:
 	message:
 		"Compiling--encode vcf segments..."
 	shell:
-		"g++ -std=c++11" \
+		"g++" \
 		" {input.main_encode_cpp}" \
 		" {input.encode_vcf_cpp}" \
 		" {input.read_config_cpp}" \
@@ -154,20 +156,22 @@ rule encode_vcf_segments_execute:
 #		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
 #		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
 #		" && touch {config.data_dir}aggregate.log"
-
+#
 # 5.0 make hap IDs
 rule hap_IDs:
 	input:
 		encode_log=f"{config.out_dir}encode.log"
 	output:
+		hapID_txt=f"{config.data_dir}all_hap_IDs.txt",
 		hapID_log=f"{config.data_dir}hapID.log"
 	message:
 		"generating list of hap IDs..."
 	shell:
 		"for seg_0 in {config.out_dir}*.seg.0.encoded; do" \
-		"	awk '{print $1}' > all_sample_IDs.txt;" \
+		"	echo $seg_0;" \
+		"	(awk '{{print $1}}' $seg_0) > {config.data_dir}all_hap_IDs.txt;" \
 		"done"
-		"&& touch {config.data_dir}hapID.log"
+		" && touch {config.data_dir}hapID.log"
 
 # 6.1 faiss (compile)
 rule faiss_compile:
@@ -184,7 +188,7 @@ rule faiss_compile:
         message:
                 "Compiling--FAISS..."
         shell:
-                "g++ -std=c++11" \
+                "g++" \
                 " {input.faiss_l2_cpp}" \
                 " {input.build_index_cpp}" \
                 " {input.read_encodings_cpp}" \
@@ -201,7 +205,9 @@ rule faiss_compile:
 rule faiss_execute:
 	input:
                 bin=f"{config.cpp_bin_dir}faiss-l2",
-		encode_log=f"{config.out_dir}encode.log"
+		encode_log=f"{config.out_dir}encode.log",
+		database_IDs=f"{config.database_file}",
+		query_IDs=f"{config.query_file}"
 	output:
 		faiss_log=f"{config.out_dir}faiss.log"
 	message:
@@ -210,7 +216,6 @@ rule faiss_execute:
 		"for encoded_f in {config.out_dir}*.encoded; do" \
 		"	filename=$(basename $encoded_f);" \
 		"	seg_name=${{filename%.*}};" \
-               	"	echo $filename;" \
-		#"	$bin 
+               	"	echo $bin ${input.database_IDs} $encoded_f ${input.query_IDs} $encoded_f ${config.k} ${config.delim};" \
 		"done;"
 		"touch {output.faiss_log};"

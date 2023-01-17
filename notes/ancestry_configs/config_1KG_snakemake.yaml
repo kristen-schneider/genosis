@@ -6,14 +6,19 @@ conda_dir:
 data_dir:
   ../pmed-local/data/1KG/
 vcf_file:
-  ../pmed-local/data/1KG/1kGP_high_coverage_Illumina.chr8.filtered.SNV_INDEL_SV_phased_panel.vcf.gz
+  ../pmed-local/data/1KG/1kGP_high_coverage_Illumina.chr8.filtered.SNV_INDEL_SV_phased_panel.vcf
+database_file:
+  ../pmed-local/data/1KG/all_hap_IDs.txt
 query_file:
-  ../pmed-local/data/1KG/all_sample_IDs.txt
+  ../pmed-local/data/1KG/test_query.txt
 out_dir:
   ../pmed-local/data/1KG/segments/
 config_file:
   notes/ancestry_configs/config_1KG.yaml
-
+k:
+  10
+delim:
+  space
 
 cpp_bin_dir:
   cpp/bin/
