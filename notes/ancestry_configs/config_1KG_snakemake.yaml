@@ -1,7 +1,7 @@
 home_dir:
   ./
 conda_dir:
-  ~/miniconda3/envs/pmed/
+  ~/miniconda3/envs/pm/
 
 data_dir:
   ../pmed-local/data/1KG/
