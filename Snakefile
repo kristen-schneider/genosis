@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "example/config_ex_snakemake.yaml" # path to the config
+configfile: "notes/ancestry_configs/config_1KG_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -18,9 +18,13 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode-vcf",
 		f"{config.out_dir}encode.log",
-		f"{config.data_dir}plink.log",
-		f"{config.out_dir}distance.log"	,
-		f"{config.data_dir}aggregate.log"	
+		#f"{config.data_dir}plink.log",
+		#f"{config.out_dir}distance.log",
+		#f"{config.data_dir}aggregate.log",
+		f"{config.data_dir}hapID.log",
+		f"{config.data_dir}all_hap_IDs.txt",	
+		f"{config.cpp_bin_dir}faiss-l2",
+		f"{config.out_dir}faiss.log"
 	
 # 0. create a file with all sample IDs
 # one line per sample ID
@@ -49,7 +53,7 @@ rule slice_VCF_compile:
 	message:
 		"Compiling--slice vcf into segments..."
 	shell:
-		"g++ -std=c++11" \
+		"g++" \
 		" {input.main_slice_cpp}" \
 		" {input.slice_vcf_cpp}" \
 		" {input.read_config_cpp}" \
@@ -85,7 +89,7 @@ rule encode_vcf_segments_compile:
 	message:
 		"Compiling--encode vcf segments..."
 	shell:
-		"g++ -std=c++11" \
+		"g++" \
 		" {input.main_encode_cpp}" \
 		" {input.encode_vcf_cpp}" \
 		" {input.read_config_cpp}" \
@@ -113,43 +117,122 @@ rule encode_vcf_segments_execute:
 		"done;"
 		"touch {output.encode_log};"
 
-# 3 run plink on full vcf
-rule plink:
+## 3 run plink on full vcf
+#rule plink:
+#	input:
+#		vcf=f"{config.vcf_file}"
+#	output:
+#		plink_done=f"{config.data_dir}plink.log"
+#	message:
+#		"Running plink --genome on full vcf file"
+#	shell:
+#		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
+#
+## 4.1 compute euclidean distance for all segments
+#rule compute_segment_distance:
+#	input:
+#		encode_log=f"{config.out_dir}encode.log",
+#		query_file=f"{config.query_file}"
+#	output:
+#		distance_log=f"{config.out_dir}distance.log"
+#	message:
+#		"Computing Euclidean distance for query against all segments"
+#	shell:
+#		"for encoded_f in {config.out_dir}*.encoded; do" \
+#		"	filename=$(basename $encoded_f);" \
+#               "	seg_name=${{filename%.*}};" \
+#		"	echo $encoded_f >> {output.distance_log};" \
+#		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
+#		"done"
+## 4.2 aggregate euclidean distance for all segments
+#rule aggregate_segment_distance:
+#	input:
+#		distance_log=f"{config.out_dir}distance.log"
+#	output:
+#		aggregate_log=f"{config.data_dir}aggregate.log"
+#	message:
+#		"Aggregating all distance files for all queries"
+#	shell:
+#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+#		" && touch {config.data_dir}aggregate.log"
+#
+# 4.2 aggregate euclidean distance for all segments
+#rule aggregate_segment_distance:
+#	input:
+#		distance_log=f"{config.out_dir}distance.log"
+#	output:
+#		aggregate_log=f"{config.data_dir}aggregate.log"
+#	message:
+#		"Aggregating all distance files for all queries"
+#	shell:
+#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+#		" && touch {config.data_dir}aggregate.log"
+#
+# 5.0 make hap IDs
+rule hap_IDs:
 	input:
-		vcf=f"{config.vcf_file}"
+		encode_log=f"{config.out_dir}encode.log"
 	output:
-		plink_done=f"{config.data_dir}plink.log"
+		hapID_txt=f"{config.data_dir}all_hap_IDs.txt",
+		hapID_log=f"{config.data_dir}hapID.log"
 	message:
-		"Running plink --genome on full vcf file"
+		"generating list of hap IDs..."
 	shell:
-		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
+		"for seg_0 in {config.out_dir}*.seg.0.encoded; do" \
+		"	echo $seg_0;" \
+		"	(awk '{{print $1}}' $seg_0) > {config.data_dir}all_hap_IDs.txt;" \
+		"done"
+		" && touch {config.data_dir}hapID.log"
 
-# 4.1 compute euclidean distance for all segments
-rule compute_segment_distance:
+# 6.1 faiss (compile)
+rule faiss_compile:
+        input:
+                slice_log=f"{config.out_dir}slice.log",
+                encode_log=f"{config.out_dir}encode.log",
+                faiss_l2_cpp=f"{config.cpp_src_dir}faiss_l2.cpp",
+                build_index_cpp=f"{config.cpp_src_dir}build_index.cpp",
+                read_encodings_cpp=f"{config.cpp_src_dir}read_encodings.cpp",
+                search_index_cpp=f"{config.cpp_src_dir}search_index.cpp",
+                utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+        output:
+                bin=f"{config.cpp_bin_dir}faiss-l2"
+        message:
+                "Compiling--FAISS..."
+        shell:
+                "g++" \
+                " {input.faiss_l2_cpp}" \
+                " {input.build_index_cpp}" \
+                " {input.read_encodings_cpp}" \
+                " {input.search_index_cpp}" \
+                " {input.utils_cpp}" \
+                " -I {config.cpp_include_dir}" \
+                " -I {config.conda_dir}include/" \
+		" -L {config.conda_dir}lib/" \
+                " -lfaiss" \
+                " -o {output.bin}"
+
+
+# 6.2 faiss (execute)
+rule faiss_execute:
 	input:
+                bin=f"{config.cpp_bin_dir}faiss-l2",
 		encode_log=f"{config.out_dir}encode.log",
-		query_file=f"{config.query_file}"
+		database_IDs=f"{config.database_file}",
+		query_IDs=f"{config.query_file}"
 	output:
-		distance_log=f"{config.out_dir}distance.log"
+		faiss_log=f"{config.out_dir}faiss.log"
 	message:
-		"Computing Euclidean distance for query against all segments"
+		"Executing--FAISS..."
 	shell:
 		"for encoded_f in {config.out_dir}*.encoded; do" \
 		"	filename=$(basename $encoded_f);" \
+		"	seg_name=${{filename%.*}};" \
+               	"	echo $bin ${input.database_IDs} $encoded_f ${input.query_IDs} $encoded_f ${config.k} ${config.delim};" \
+		"done;"
+		"touch {output.faiss_log};"
                 "	seg_name=${{filename%.*}};" \
 		"	echo $encoded_f >> {output.distance_log};" \
 		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
 		"done"
-# 4.2 aggregate euclidean distance for all segments
-rule aggregate_segment_distance:
-	input:
-		distance_log=f"{config.out_dir}distance.log"
-	output:
-		aggregate_log=f"{config.data_dir}aggregate.log"
-	message:
-		"Aggregating all distance files for all queries"
-	shell:
-		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
-		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
-		" && touch {config.data_dir}aggregate.log"
-

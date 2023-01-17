@@ -20,3 +20,25 @@ tabix -p vcf subset_sample.vcf.gz
 -[HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br>
 -[ilash analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
 
+# CONDA/MAMBA 
+```
+mamba create -n pmed -c bioconda -c conda-forge -c defaults bcftools boost bzip2 faiss gxx htslib make numpy plink pysam python snakemake vcftools
+```
+### CHANNELS
+- bioconda
+- conda-forge
+- defaults
+### DEPENDENCIES
+- bcftools
+- boost
+- bzip2
+- faiss
+- gxx
+- htslib
+- make
+- numpy
+- plink
+- pysam
+- python
+- snakemake
+- vcftools
