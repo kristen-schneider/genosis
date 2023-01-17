@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "notes/ancestry_configs/config_1KG_snakemake.yaml" # path to the config
+configfile: "example/config_ex_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -117,59 +117,59 @@ rule encode_vcf_segments_execute:
 		"done;"
 		"touch {output.encode_log};"
 
-## 3 run plink on full vcf
-#rule plink:
-#	input:
-#		vcf=f"{config.vcf_file}"
-#	output:
-#		plink_done=f"{config.data_dir}plink.log"
-#	message:
-#		"Running plink --genome on full vcf file"
-#	shell:
-#		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
-#
-## 4.1 compute euclidean distance for all segments
-#rule compute_segment_distance:
-#	input:
-#		encode_log=f"{config.out_dir}encode.log",
-#		query_file=f"{config.query_file}"
-#	output:
-#		distance_log=f"{config.out_dir}distance.log"
-#	message:
-#		"Computing Euclidean distance for query against all segments"
-#	shell:
-#		"for encoded_f in {config.out_dir}*.encoded; do" \
-#		"	filename=$(basename $encoded_f);" \
-#               "	seg_name=${{filename%.*}};" \
-#		"	echo $encoded_f >> {output.distance_log};" \
-#		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
-#		"done"
-## 4.2 aggregate euclidean distance for all segments
-#rule aggregate_segment_distance:
-#	input:
-#		distance_log=f"{config.out_dir}distance.log"
-#	output:
-#		aggregate_log=f"{config.data_dir}aggregate.log"
-#	message:
-#		"Aggregating all distance files for all queries"
-#	shell:
-#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
-#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
-#		" && touch {config.data_dir}aggregate.log"
-#
+# 3 run plink on full vcf
+rule plink:
+	input:
+		vcf=f"{config.vcf_file}"
+	output:
+		plink_done=f"{config.data_dir}plink.log"
+	message:
+		"Running plink --genome on full vcf file"
+	shell:
+		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
+
+# 4.1 compute euclidean distance for all segments
+rule compute_segment_distance:
+	input:
+		encode_log=f"{config.out_dir}encode.log",
+		query_file=f"{config.query_file}"
+	output:
+		distance_log=f"{config.out_dir}distance.log"
+	message:
+		"Computing Euclidean distance for query against all segments"
+	shell:
+		"for encoded_f in {config.out_dir}*.encoded; do" \
+		"	filename=$(basename $encoded_f);" \
+               "	seg_name=${{filename%.*}};" \
+		"	echo $encoded_f >> {output.distance_log};" \
+		"	python {config.python_dir}distance/compute_segment_distance.py --encoded_file $encoded_f --query_file {input.query_file} > {config.out_dir}${{seg_name}}.dist;" \
+		"done"
 # 4.2 aggregate euclidean distance for all segments
-#rule aggregate_segment_distance:
-#	input:
-#		distance_log=f"{config.out_dir}distance.log"
-#	output:
-#		aggregate_log=f"{config.data_dir}aggregate.log"
-#	message:
-#		"Aggregating all distance files for all queries"
-#	shell:
-#		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
-#		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
-#		" && touch {config.data_dir}aggregate.log"
-#
+rule aggregate_segment_distance:
+	input:
+		distance_log=f"{config.out_dir}distance.log"
+	output:
+		aggregate_log=f"{config.data_dir}aggregate.log"
+	message:
+		"Aggregating all distance files for all queries"
+	shell:
+		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+		" && touch {config.data_dir}aggregate.log"
+
+# 4.2 aggregate euclidean distance for all segments
+rule aggregate_segment_distance:
+	input:
+		distance_log=f"{config.out_dir}distance.log"
+	output:
+		aggregate_log=f"{config.data_dir}aggregate.log"
+	message:
+		"Aggregating all distance files for all queries"
+	shell:
+		"num_segments=$(ls {config.out_dir}*dist | wc -l)"
+		" && python {config.python_dir}distance/aggregate_segment_distance.py --out_dir {config.out_dir} --ext dist --num_seg $num_segments > {config.data_dir}aggregate.txt"
+		" && touch {config.data_dir}aggregate.log"
+
 # 5.0 make hap IDs
 rule hap_IDs:
 	input:
