@@ -6,7 +6,7 @@
 
 #include "build_index.h"
 #include "search_index.h"
-#include "utils.h"
+#include "faiss_utils.h"
 
 // 64-bit int
 using idx_t = faiss::Index::idx_t;

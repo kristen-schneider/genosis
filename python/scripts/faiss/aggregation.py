@@ -37,7 +37,7 @@ def main():
             #sum_distances = utils.sum_distances(queries_dict[q][sample_id])
             line = sample_id + ' ' + ' '.join([d for d in queries_dict[q][sample_id]]) + '\n'
             o.write(line)
-    o.close()
+        o.close()
     # sum distances
     #for q in queries_dict:
     #    for sample_id in queries_dict[q]:
