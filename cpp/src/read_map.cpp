@@ -57,13 +57,14 @@ map<int,vector<int>> make_cm_dict(string map_file, int slice_size){
 		
 			// fill out the map 
 			cm_map[cm_index] = bp_start_end;
-			
+			cm_index += 1;
 			//slice_SNP_counts.push_back(snp_count);
                         //snp_count = 0;
                         //max_cm = record_cm + slice_size;
                         //slice_count ++;
                 }
         }
+	cout << "...counted " << cm_map.size() << " slices." << endl;
         return cm_map;
 
 }
