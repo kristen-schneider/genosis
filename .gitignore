@@ -1,6 +1,7 @@
 bin/
 build/
 data/
+lib/faiss/
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
 python/scripts/distance/dist_data/
@@ -8,6 +9,7 @@ python/scripts/distance/ped_intf/
 python/scripts/distance/ped_poiss/
 python/scripts/distance/test_files/
 python/scripts/faiss/*.txt
+python/scripts/faiss/__pycache__/
 python/scripts/ibd/__pycache__/
 python/scripts/plotting/png/
 python/scripts/plotting/txt/
