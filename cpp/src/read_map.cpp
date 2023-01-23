@@ -1,12 +1,25 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <string>
 
 #include "read_map.h"
 #include "utils.h"
 
 using namespace std;
+/*
+ * Open a map file and real each SNP record
+ * return a map of cm start and end bp positions
+ * cm_idx: <start_bp, end_bp>
+*/
+ 
+map<int,vector<int>> make_cm_dict(string map_file, float slice_size){
+
+	// cm_index: <start_bp, end_bp>
+	map<int, vector<int>>
+}
+
 
 /*
  * Open a map file and read each SNP record
