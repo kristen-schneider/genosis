@@ -39,7 +39,7 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
-	return 0;
+	return num_segments;
 	//return num_segments;
 }
 
@@ -134,7 +134,15 @@ int slice(string vcf_file,
         		split_line(line, '\t', single_SNP);
 			int pos_col_idx = 1; // index of position in vcf
 			int pos = stoi(single_SNP[pos_col_idx]);
-			if (pos <= bp_max){
+			
+			// if at last slice, write
+			if (slice_index == cm_map.size() - 1){
+				slice_file_stream << line << endl;
+                                total_line_count ++;
+			}
+			
+			// if not at last slice,
+			else if (pos <= bp_max){
 				slice_file_stream << line << endl;
 				total_line_count ++;
 			}
@@ -148,7 +156,6 @@ int slice(string vcf_file,
 			// close file-->increment slice count
 			// open new file-->write header-->write line
 			else if (pos > bp_max){
-				cout << slice_index << endl;
 				slice_file_stream.close();
 				slice_index += 1;
 
@@ -162,6 +169,7 @@ int slice(string vcf_file,
                                 }
                                 slice_file_stream << line << endl;
 			}
+			
 			/*else if (SNPS_in_slice == slice_snp_count){
 				//slice_file_stream << line;
 				slice_file_stream.close();
@@ -188,10 +196,11 @@ int slice(string vcf_file,
 	}
 	*/
 	if (line.size() > 0){
+		cout << line << endl;
 		slice_file_stream << line << endl;
 	}
 	slice_file_stream.close();	
-        
+        cout << slice_index << endl;
 	return slice_index;
 }
 /*
