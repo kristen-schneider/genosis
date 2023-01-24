@@ -13,8 +13,21 @@ def main():
     segment_dir = args.segment_dir
     ext = args.ext
 
-    vector_sizes = vector_size(segment_dir, ext)
-    plot_vector_sizes(vector_sizes)
+    #vector_sizes = vector_size(segment_dir, ext)
+    #plot_vector_sizes(vector_sizes)
+
+    max_variants = num_variants(segment_dir, ext)
+    plot_vector_sizes(max_variants)
+
+def num_variants(segment_dir, ext):
+    max_variants = []
+
+    for file in os.listdir(segment_dir):
+        if ext in file:
+            print(file)
+            file_max_size = get_num_variants(segment_dir+file)
+            max_variants.append(file_max_size)
+    return max_variants
 
 def vector_size(segment_dir, ext):
     vector_sizes = []
@@ -29,11 +42,15 @@ def vector_size(segment_dir, ext):
 def get_num_variants(file):
     f = open(file, 'r')
     line = f.readline()
-    num_variants = len(line)
-    #for line in f:
-    #    if len(line) != vector_size:
-    #        print('inconsistent vector size')
-    return vector_size
+    max_variants = -1
+    for line in f:
+        num_variants = 0
+        for v in line:
+            if v == '1':
+                num_variants += 1
+        if num_variants > max_variants:
+            max_variants = num_variants
+    return max_variants
 
 def get_vector_size(file):
     f = open(file, 'r')
@@ -44,15 +61,15 @@ def get_vector_size(file):
 def plot_vector_sizes(vector_sizes):
     plt.figure(figsize=(15, 10))
     ax1 = plt.subplot(111)
-    ax1.set_title('Segment Vector Size', fontsize=30)
-    ax1.set_xlabel('vector size (number SNPs)', fontsize=20)
-    ax1.hist(vector_sizes, bins=40, color='olivedrab')
+    ax1.set_title('Segment Number Variants', fontsize=30)
+    ax1.set_xlabel('Number Variants (number SNPs)', fontsize=20)
+    ax1.hist(vector_sizes, bins=40, color='steelblue')
     #ax1.set_xlim(xrange)
     # ax1.set_ylim(yrange)
     #ax1.set_xticks([])
     ax1.spines.right.set_visible(False)
     ax1.spines.top.set_visible(False)
-    plt.savefig('vector_size.png')
+    plt.savefig('num_variants.png')
 
 if __name__ == '__main__':
     main()
