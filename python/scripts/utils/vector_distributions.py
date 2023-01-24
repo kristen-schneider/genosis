@@ -26,21 +26,27 @@ def vector_size(segment_dir, ext):
             vector_sizes.append(file_vec_size)
     return vector_sizes
 
-def get_vector_size(file):
+def get_num_variants(file):
     f = open(file, 'r')
     line = f.readline()
-    vector_size = len(line)
+    num_variants = len(line)
     #for line in f:
     #    if len(line) != vector_size:
     #        print('inconsistent vector size')
     return vector_size
 
+def get_vector_size(file):
+    f = open(file, 'r')
+    line = f.readline()
+    vector_size = len(line)
+    return vector_size
+
 def plot_vector_sizes(vector_sizes):
-    #plt.figure(figsize=(10, 15))
+    plt.figure(figsize=(15, 10))
     ax1 = plt.subplot(111)
-    ax1.set_title('segment SNP counts')
-    ax1.set_xlabel('vector size')
-    ax1.hist(vector_sizes, bins=20, color='olivedrab')
+    ax1.set_title('Segment Vector Size', fontsize=30)
+    ax1.set_xlabel('vector size (number SNPs)', fontsize=20)
+    ax1.hist(vector_sizes, bins=40, color='olivedrab')
     #ax1.set_xlim(xrange)
     # ax1.set_ylim(yrange)
     #ax1.set_xticks([])
