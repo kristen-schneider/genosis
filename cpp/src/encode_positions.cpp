@@ -1,18 +1,30 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <math.h>
 #include <map>
 #include <string>
 #include <vector>
 
+#include <htslib/hts.h>
+#include <htslib/vcf.h>
+#include <htslib/vcfutils.h>
+#include <htslib/kstring.h>
+#include <htslib/kseq.h>
+#include <htslib/synced_bcf_reader.h>
+
 #include "encode_positions.h"
 #include "read_map.h"
+#include "utils.h"
 
 
 using namespace std;
 
 void encode_positions(string map_file,
-		string vcf_slice_file){
+		string vcf_slice_file, 
+		string sample_IDs_file,
+		string output_encoding_file){
+	
 	// make map from map file
 	map<int, float> bp_cm_map;
 	bp_cm_map = make_bp_cm_map(map_file);
@@ -43,8 +55,8 @@ void encode_positions(string map_file,
         	cout << "ERROR: record is empty" << endl;
         }
 
-	vector<vector<int>> all_haplotype_encodings;
-	vector<int> all_positions;
+	vector<vector<float>> all_haplotype_pos_encodings;
+	//vector<int> all_positions;
 	
 	cout << "...reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
@@ -58,7 +70,7 @@ void encode_positions(string map_file,
 		string ref = vcf_record->d.allele[0];
 		string alt = vcf_record->d.allele[1];
 		double_t qual = vcf_record->qual;
-		all_positions.push_back(pos);
+		//all_positions.push_back(pos);
 		
 		// make chromosome through quality into one vector of strings
 		vector<string> chrm_thru_qual_vector = 
@@ -79,7 +91,7 @@ void encode_positions(string map_file,
 		int *gt = NULL;
 		int num_alleles = 0;
 		int ngt_arr = 0;
-		vector<int> haplotype_encoding_vector;
+		vector<float> haplotype_pos_encoding_vector;
 
 		num_alleles = bcf_get_genotypes(vcf_header, vcf_record,  &gt, &ngt_arr);
 		int alleles_per_gt = num_alleles/num_samples;
@@ -89,17 +101,74 @@ void encode_positions(string map_file,
 			
 			// replace unknowns
 			if (allele1 == -1){ s_gt = ".|.";}
-			else{
-				allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
-				s_gt = to_string(allele1)+"|"+to_string(allele2);
+			// if non reference vairant for either allele
+			else if (allele1 != 0 or allele2 != 0){
+				float cm_pos = bp_cm_map[pos];		
+				haplotype_pos_encoding_vector.push_back(cm_pos);
+				//allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
+				//s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
-			vector<int> biallelic_encoding = encoding_map[s_gt];
-			haplotype_encoding_vector.push_back(biallelic_encoding[0]);
-			haplotype_encoding_vector.push_back(biallelic_encoding[1]);
+			// homozygous reference
+			else{
+				continue;
+			}
+			
+			//vector<int> biallelic_encoding = encoding_map[s_gt];
+			//haplotype_encoding_vector.push_back(biallelic_encoding[0]);
+			//haplotype_encoding_vector.push_back(biallelic_encoding[1]);
 				
 		}
-		all_haplotype_encodings.push_back(haplotype_encoding_vector);
+		all_haplotype_pos_encodings.push_back(haplotype_pos_encoding_vector);
 
-		haplotype_encoding_vector.clear();
+		haplotype_pos_encoding_vector.clear();
+	
+	} // end of reading records
+	 
+	// transposing data
+	cout << "...transposing data..." << endl;
+	vector<vector<float>> sample_major_format_hap_pos_vec = transpose_float(all_haplotype_pos_encodings);
+
+	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file);
+	
+	// writing smf
+	cout << "...writing sample major format encodings to file..." << endl;
+	cout << sample_major_format_hap_pos_vec.size() << endl;
+	write_SMF(all_sample_IDs, sample_major_format_hap_pos_vec, output_encoding_file);
 
 }
+
+/*
+ * given a set of sample IDs,
+ * and a set of smf encoded vectors, 
+ * write: sampleID encoding
+ */
+void write_SMF(vector<string> all_sample_IDs,
+	       	vector<vector<float>> smf,
+	       	string output_encoding_file){
+	
+	// open output file to write encoding
+	ofstream output_stream;
+	output_stream.open(output_encoding_file);
+
+	// format sample ID float float float...
+	// space delim
+	int SID_i = 0;
+	int binary = -1;
+	for (int i = 0; i < smf.size(); i++) {
+		if (binary == -1){
+			binary = 0;
+		}else if (binary == 0){
+			binary = 1;		
+		}else{
+			SID_i ++;
+			binary = 0;
+		}
+		vector<float> sample = smf.at(i);
+		output_stream << all_sample_IDs[SID_i] << "_" << binary << " ";
+		for(int j = 0; j < sample.size(); j++) {
+			output_stream << sample.at(j) << " ";
+		}
+		output_stream << endl;
+	}
+}
+

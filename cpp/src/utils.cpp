@@ -17,7 +17,7 @@
 using namespace std;
 
 // transpose a vector of vectors of ints
-vector<vector<int>> transpose(vector<vector<int>> &vmf){
+vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
         /*
          * Takes a variant major format
          * vector of vector of ints
@@ -38,6 +38,30 @@ vector<vector<int>> transpose(vector<vector<int>> &vmf){
         }
     return smf_vec;
 }
+
+// transpose a vector of vectors of floats
+vector<vector<float>> transpose_float(vector<vector<float>> &vmf){
+        /*
+         * Takes a variant major format
+         * vector of vector of ints
+         * and transposes it to
+         * sample major format.
+         */
+        // throw error if size is bad
+        if (vmf.size() == 0) {
+                cerr << "Error reading variant major format." << endl;
+        }
+
+        // transpose data
+        vector<vector<float>> smf_vec(vmf[0].size(), vector<float>());
+        for (size_t i = 0; i < vmf.size(); i++) {
+                for (size_t j = 0; j < vmf[i].size(); j++) {
+                        smf_vec[j].push_back(vmf[i][j]);
+                }
+        }
+    return smf_vec;
+}
+
 
 /*
  * get a list of all sample IDs

@@ -33,7 +33,10 @@ int main(int argc, char* argv[]){
     	string out_base_name = config_options["out_base_name"];
 	
 	// make positional  map
-	encode_positions(map_file);
+	encode_positions(map_file,
+			vcf_slice_file,
+			sample_IDs_file,
+			output_position_file);
 
 	// encode single vcf
 	//encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file, output_position_file);	

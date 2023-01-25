@@ -117,7 +117,7 @@ void encode_vcf(string sample_IDs_file,
 	} // end of reading records
 	// transposing data
 	cout << "...transposing data..." << endl;
-	vector<vector<int>> sample_major_format_hap_vec = transpose(all_haplotype_encodings); 
+	vector<vector<int>> sample_major_format_hap_vec = transpose_int(all_haplotype_encodings); 
 
 	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file); 
 	// writing smf

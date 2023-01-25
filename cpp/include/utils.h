@@ -18,7 +18,8 @@
 
 using namespace std;
 
-vector<vector<int>> transpose(vector<vector<int>> &vmf);
+vector<vector<int>> transpose_int(vector<vector<int>> &vmf);
+vector<vector<float>> transpose_float(vector<vector<float>> &vmf);
 vector<string> get_sample_IDs(string sample_IDs_file);
 int get_num_samples(bcf_hdr_t *vcf_header);
 int count_num_samples(string in_file);

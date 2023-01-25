@@ -19,4 +19,9 @@
 using namespace std;
 
 void encode_positions(string map_file,
-		string vcf_slice_file);
+		string vcf_slice_file,
+		string sample_IDs_file, 
+		string output_encoding_file);
+void write_SMF(vector<string> all_sample_IDs,
+                vector<vector<float>> smf,
+                string output_encoding_file);

@@ -12,7 +12,9 @@ vcf_slice="/home/sdp/pmed-local/data/1KG/segments/1KG.data.seg.0.vcf"
 pos_encode="test_slice.pos"
 #map_file="/home/sdp/pmed-local/data/1KG/chr8.interpolated.map"
 
+
 bin=$bin_dir"test_pos_encode"
+rm $bin
 g++ $src_dir"main_positional_encode.cpp" \
 	$src_dir"encode_positions.cpp" \
 	$src_dir"read_map.cpp" \
