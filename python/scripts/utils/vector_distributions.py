@@ -61,8 +61,8 @@ def get_vector_size(file):
 def plot_vector_sizes(vector_sizes):
     plt.figure(figsize=(15, 10))
     ax1 = plt.subplot(111)
-    ax1.set_title('Segment Number Variants', fontsize=30)
-    ax1.set_xlabel('Number Variants (number SNPs)', fontsize=20)
+    ax1.set_title('Maximum non-reference variants\nper segment', fontsize=30)
+    ax1.set_xlabel('non-reference variants\n(number SNPs)', fontsize=20)
     ax1.hist(vector_sizes, bins=40, color='steelblue')
     #ax1.set_xlim(xrange)
     # ax1.set_ylim(yrange)

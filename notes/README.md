@@ -17,8 +17,14 @@ tabix -p vcf subset_sample.vcf.gz
 - bash file to run a ped-sim simulation [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/def_files)
 - bash file to run a ped-sim simulation [here](https://github.com/kristen-schneider/precision-medicine/tree/main/notes/run_ped-sim.sh)
 ### MAP FILES
--[HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br>
--[ilash analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
+- [HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br>
+- [ilash analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
+```
+# create ped/map files from VCF using plink
+plink --vcf /path/to/vcf --recode 01 --output-missing-genotype . --out
+# interpolate map file with genetic distance using HapMap or OMNI map
+python python/scripts/utils/interploate_map.py --map /path/to/map --ref_map /path/to/ref_map  --out /path/to/out_map
+```
 
 # CONDA/MAMBA 
 ```
