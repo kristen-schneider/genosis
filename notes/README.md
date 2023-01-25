@@ -23,7 +23,7 @@ tabix -p vcf subset_sample.vcf.gz
 # create ped/map files from VCF using plink
 plink --vcf /path/to/vcf --recode 01 --output-missing-genotype . --out
 # interpolate map file with genetic distance using HapMap or OMNI map
-python python/scripts/utils/interploate_map.py --map /path/to/map --ref_map /path/to/ref_map  --out /path/to/out_map
+python python/scripts/utils/interploate_map.py --map /path/to/map --ref_map /path/to/ref_map  --out_map /path/to/out_map
 ```
 
 # CONDA/MAMBA 

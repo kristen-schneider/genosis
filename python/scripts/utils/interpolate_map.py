@@ -24,24 +24,29 @@ def main():
     genmap_addr = args.ref_map  # input map file, either the HapMap map or the 1000 Genomes OMNI map
     output_addr = args.out_map  # output map file (interpolated)
     
+    chrm_idx = 0
+    id_idx = 1
+    cm_idx = 2
+    pos_idx = 3
+    
     positions = []
     ids = []
-    
     chrm = None
     with open(map_addr,'r') as map_file:
         for line in map_file:
             data = line.strip().split()
-            positions.append(int(data[3]))
-            ids.append(data[1])
-            chrm = data[0]
+            positions.append(int(data[pos_idx]))
+            ids.append(data[id_idx])
+            chrm = data[chrm_idx]
+
     map_positions = []
     map_distances = []        
     with open(genmap_addr,'r') as genmap_file:
         line = genmap_file.readline()
         for line in genmap_file:
             data = line.strip().split()
-            map_positions.append(int(data[1]))
-            map_distances.append(float(data[3]))
+            map_positions.append(int(data[pos_idx]))      # bp positions
+            map_distances.append(float(data[cm_idx]))    # map positions
     index1 = 0
     index2 = 0
     sindex = 0
@@ -65,7 +70,7 @@ def main():
         
 
 def write_to_file(handle,chrm,id,dist,position):
-    handle.write(f'{chrm} {id} {dist} {position}\n)'
+    handle.write(f'{chrm} {id} {dist} {position}\n')
 
 
 if __name__ == '__main__':
