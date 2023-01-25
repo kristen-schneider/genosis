@@ -11,4 +11,5 @@
 
 using namespace std;
 
+map<int,vector<int>> make_cm_dict(string map_file, int slice_size);
 vector<int> read_map_file(string map_file, float slice_size);

@@ -14,10 +14,59 @@ using namespace std;
  * cm_idx: <start_bp, end_bp>
 */
  
-map<int,vector<int>> make_cm_dict(string map_file, float slice_size){
+map<int,vector<int>> make_cm_dict(string map_file, int slice_size){
 
 	// cm_index: <start_bp, end_bp>
-	map<int, vector<int>>
+	map<int, vector<int>> cm_map;
+	int cm_index = 0;
+	int bp_start = 0;
+	int bp_end = -1;
+
+	// open map file
+	ifstream map_file_stream;
+        map_file_stream.open(map_file);
+        if (!map_file_stream.is_open()){
+                cout << "FAILED TO OPEN: " << map_file << endl;
+                exit(1);
+        }
+	
+	// read map file
+        cout << "...Reading map file..." << endl;
+        string line;
+        while (getline (map_file_stream, line)){
+                // column with cm and bp data
+		float cm_col = 2;
+		int bp_col = 3;
+
+		// read and split line
+               	vector<string> map_line;
+                split_line(line, ' ', map_line);
+                
+		
+		vector<int> bp_start_end;			// vector for bp start and end
+		float curr_cm = stof(map_line[cm_col]);		// current cm data
+		int curr_bp = stoi(map_line[bp_col]);		// current bp data
+		float curr_slice_size = curr_cm - cm_index;	// current slice size
+                
+		if (curr_slice_size >= slice_size){
+			// start and end
+			bp_start_end.push_back(bp_start);
+			bp_start = curr_bp;
+			bp_end = curr_bp;
+			bp_start_end.push_back(bp_end);
+		
+			// fill out the map 
+			cm_map[cm_index] = bp_start_end;
+			cm_index += 1;
+			//slice_SNP_counts.push_back(snp_count);
+                        //snp_count = 0;
+                        //max_cm = record_cm + slice_size;
+                        //slice_count ++;
+                }
+        }
+	cout << "...counted " << cm_map.size() << " slices." << endl;
+        return cm_map;
+
 }
 
 

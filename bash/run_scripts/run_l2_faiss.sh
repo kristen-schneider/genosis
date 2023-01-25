@@ -10,7 +10,7 @@ data_dir="/home/sdp/pmed-local/data/"
 
 # path to encoded and query file
 all_samples=$data_dir"/1KG/all_hap_IDs.txt"
-query_samples=$data_dir"/AMR/AMR_hap_IDs.txt"
+query_samples=$data_dir"/EAS/EAS_hap_IDs.txt"
 train_samples=$data_dir"database_IDs.txt"
 k=20 # number of nearest neighbors to report
 delim="space"

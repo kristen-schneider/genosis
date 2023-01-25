@@ -15,10 +15,12 @@ using namespace std;
 int slice_main(string map_file, int segment_size, string vcf_file, string out_base_name, string out_dir){
 	// read map file and report number
 	// of slices that should be generated
-	vector<int> segment_SNP_counts;
-	segment_SNP_counts = read_map_file(map_file, segment_size);
-	int map_slice_count = segment_SNP_counts.size();
-	cout << "...Counted " << map_slice_count << " " << segment_size << "cM slices.\n" << endl;
+	map<int, vector<int>> cm_map;
+	
+	//vector<int> segment_SNP_counts;
+	//segment_SNP_counts = read_map_file(map_file, segment_size);
+	//int map_slice_count = segment_SNP_counts.size();
+	//cout << "...Counted " << map_slice_count << " " << segment_size << "cM slices.\n" << endl;
 
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
@@ -31,12 +33,14 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 
 	// slice full chromosome VCF file into smaller slices
 	cout << "...Slice size: " << segment_size << "cM." << endl;
-	int num_segments = slice(vcf_file, vcf_header, segment_SNP_counts,
+	cm_map = make_cm_dict(map_file, segment_size);
+	int num_segments = slice(vcf_file, vcf_header, cm_map,
         	out_base_name, out_dir);
 	
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
 	return num_segments;
+	//return num_segments;
 }
 
 /*
@@ -78,13 +82,14 @@ vector<string> read_vcf_header(string vcf_file){
  */
 int slice(string vcf_file, 
 		vector<string> vcf_header, 
-		vector<int> segment_SNP_counts, 
-		string base_name, string out_dir){
+		map<int, vector<int>> cm_map, 
+		string base_name,
+		string out_dir){
 
 	cout << out_dir << endl;
 	// to return
 	int slice_index = 0;
-	int slice_snp_count = segment_SNP_counts[slice_index];
+	//int slice_snp_count = segment_SNP_counts[slice_index];
 	//int slice_end = segment_SNP_counts[slice_index];
     	// open vcf file and check success
     	ifstream vcf_file_stream;
@@ -94,7 +99,7 @@ int slice(string vcf_file,
         	exit(1);
 	}
         int total_line_count = 0;
-        int SNPS_in_slice = 0;
+        //int SNPS_in_slice = 0;
 	
 	// at start of a new slice,
 	// open new slice file
@@ -124,15 +129,48 @@ int slice(string vcf_file,
             	if (char1 == '#'){continue;}
 		else{
 			// still building a slice
-			if (SNPS_in_slice < slice_snp_count){
+			int bp_max = cm_map[slice_index][1];
+			vector<string> single_SNP;
+        		split_line(line, '\t', single_SNP);
+			int pos_col_idx = 1; // index of position in vcf
+			int pos = stoi(single_SNP[pos_col_idx]);
+			
+			// if at last slice, write
+			if (slice_index == cm_map.size() - 1){
+				slice_file_stream << line << endl;
+                                total_line_count ++;
+			}
+			
+			// if not at last slice,
+			else if (pos <= bp_max){
+				slice_file_stream << line << endl;
+				total_line_count ++;
+			}
+			/*if (SNPS_in_slice < slice_snp_count){
 				slice_file_stream << line << endl;
 				SNPS_in_slice ++;
 				total_line_count ++;
-			}
+			}*/
+
 			// reached end of slice-->increment slice count
 			// close file-->increment slice count
 			// open new file-->write header-->write line
-			else if (SNPS_in_slice == slice_snp_count){
+			else if (pos > bp_max){
+				slice_file_stream.close();
+				slice_index += 1;
+
+				// open next slice file and write header 
+                                string out_vcf_slice_file = out_dir + base_name + \
+                                        ".seg." + to_string(slice_index) + \
+                                        ".vcf";
+                                slice_file_stream.open(out_vcf_slice_file);
+                                for (int i = 0; i < vcf_header.size(); i ++){
+                                        slice_file_stream << vcf_header[i] << endl;
+                                }
+                                slice_file_stream << line << endl;
+			}
+			
+			/*else if (SNPS_in_slice == slice_snp_count){
 				//slice_file_stream << line;
 				slice_file_stream.close();
 				slice_index += 1;
@@ -148,15 +186,21 @@ int slice(string vcf_file,
 				slice_file_stream << line << endl;
 				SNPS_in_slice = 1;
 				slice_snp_count = segment_SNP_counts[slice_index];
-			}
+			}*/
 		}
         }
 	// write last line
+	/*
 	if (SNPS_in_slice < slice_snp_count && line.size() > 0){
 		slice_file_stream << line << endl;
 	}
+	*/
+	if (line.size() > 0){
+		cout << line << endl;
+		slice_file_stream << line << endl;
+	}
 	slice_file_stream.close();	
-        
+        cout << slice_index << endl;
 	return slice_index;
 }
 /*
