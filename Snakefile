@@ -16,6 +16,8 @@ rule all:
 		f"{config.data_dir}samples.log",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
+		f"{config.cpp_bin_dir}pos-encode",
+		f"{config.out_dir}pos-encode.log",
 		#f"{config.cpp_bin_dir}encode-vcf",
 		#f"{config.out_dir}encode.log",
 		#f"{config.data_dir}plink.log",
@@ -74,6 +76,50 @@ rule slice_VCF_execute:
 		"Executing--slice vcf into segments..."
 	shell:
 		"./{input.bin} {input.config_file} > {output.slice_log}"
+
+# 2.1 positional encoding vcf segemnts (compile)
+rule pos_encode_vcf_segments_compile:
+	input:
+		slice_log=f"{config.out_dir}slice.log",
+		main_positional_encode_cpp=f"{config.cpp_src_dir}main_positional_encode.cpp",
+		encode_positions_cpp=f"{config.cpp_src_dir}encode_positions.cpp", 
+		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
+		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}pos-encode"
+	message:
+		"Compiling--positional encode vcf segments..."
+	shell:
+		"g++" \
+ 		" {input.main_positional_encode_cpp}" \
+        	" {input.encode_positions_cpp}" \
+        	" {input.map_encodings_cpp}" \
+        	" {input.read_config_cpp}" \
+        	" {input.read_map_cpp}" \
+        	" {input.utils_cpp}" \
+        	" -I {config.cpp_include_dir}" \
+                " -I {config.htslib_dir}" \
+                " -lhts" \
+                " -o {output.bin}"
+# 2.2 positional encoding vcf segments (execute)
+rule pos_encode_vcf_segments_execute:	
+	input:
+		bin=f"{config.cpp_bin_dir}pos-encode",
+		config_file=f"{config.config_file}"
+	output:
+		pos_encode_log=f"{config.out_dir}pos-encode.log"
+	message:
+		"Executing--positional encode vcf segments..."
+	shell:
+		"for vcf_f in {config.out_dir}*.vcf; do" \
+                "       filename=$(basename $vcf_f);" \
+                "       seg_name=${{filename%.*}};" \
+                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded;" \
+                "done;"
+                "touch {output.pos_encode_log};"
+		## $bin $config_file $vcf_slice $pos_encode
 
 # 2.1 encode vcf segments (compile)
 rule encode_vcf_segments_compile:
