@@ -19,6 +19,7 @@ g++ $src_dir"main_positional_encode.cpp" \
 	$src_dir"encode_positions.cpp" \
 	$src_dir"read_map.cpp" \
 	$src_dir"read_config.cpp" \
+	$src_dir"map_encodings.cpp" \
 	$src_dir"utils.cpp" \
 	-I $include_dir \
 	-I $include_htslib \
