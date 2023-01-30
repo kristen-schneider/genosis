@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -15,6 +16,7 @@
 
 #include "encode_positions.h"
 #include "read_map.h"
+#include "map_encodings.h"
 #include "utils.h"
 
 
@@ -28,7 +30,12 @@ void encode_positions(string map_file,
 	// make map from map file
 	map<int, float> bp_cm_map;
 	bp_cm_map = make_bp_cm_map(map_file);
-
+	/*
+	for(auto it = bp_cm_map.cbegin(); it != bp_cm_map.cend(); ++it)
+	{
+    		std::cout << it->first << " " << it->second << "\n";
+	}
+	*/
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
 	// open VCF file with htslib
@@ -65,7 +72,7 @@ void encode_positions(string map_file,
 
 		// making variable names for each column
 		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);
-		int pos = (unsigned long)vcf_record->pos;
+		int pos = (unsigned long)vcf_record->pos + 1;
 		string id = vcf_record->d.id;
 		string ref = vcf_record->d.allele[0];
 		string alt = vcf_record->d.allele[1];
@@ -91,6 +98,11 @@ void encode_positions(string map_file,
 		int *gt = NULL;
 		int num_alleles = 0;
 		int ngt_arr = 0;
+		
+		//map<string, vector<int>> encoding_map;
+		//encoding_map = make_biallelic_encoding_map("/home/sdp/precision-medicine/example/example_encoding.txt");
+		//vector<float> haplotype_0_pos_vector;
+		//vector<float> haplotype_1_pos_vector;
 		vector<float> haplotype_pos_encoding_vector;
 
 		num_alleles = bcf_get_genotypes(vcf_header, vcf_record,  &gt, &ngt_arr);
@@ -101,29 +113,63 @@ void encode_positions(string map_file,
 			
 			// replace unknowns
 			if (allele1 == -1){ s_gt = ".|.";}
-			// if non reference vairant for either allele
-			else if (allele1 != 0 or allele2 != 0){
-				float cm_pos = bp_cm_map[pos];		
+			else{
+				allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
+				s_gt = to_string(allele1)+"|"+to_string(allele2);
+			}
+			// record positions	
+			//if (allele1 != 0 or allele2 != 0){
+			//cout << allele1 << " " << allele2 << endl;
+			float cm_pos = bp_cm_map[pos];
+			//cout << pos << " " << cm_pos << endl;
+			if (allele1 != 0){
 				haplotype_pos_encoding_vector.push_back(cm_pos);
+			}else if(allele1 == 0){
+				haplotype_pos_encoding_vector.push_back(0);
+			}
+			if (allele2 != 0){
+				haplotype_pos_encoding_vector.push_back(cm_pos);
+			}else if(allele2 == 0){
+                                haplotype_pos_encoding_vector.push_back(0);
+                        }
+			//}
+			//vector<int> biallelic_encoding = encoding_map[s_gt];
+			//cout << biallelic_encoding.size() << endl;
+			//haplotype_pos_encoding_vector.push_back(biallelic_encoding[0]);
+			//haplotype_pos_encoding_vector.push_back(biallelic_encoding[1]);
+			// if non reference variant for first allele
+			// if non reference variant for second allele
+			//if (allele1 != 0 or allele2 != 0){
+
+			//	float cm_pos = bp_cm_map[pos];		
+				//cout << "allele2: " << allele2 << " " << pos << " " << cm_pos << endl;
+			//	haplotype_pos_encoding_vector.push_back(cm_pos);
 				//allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 				//s_gt = to_string(allele1)+"|"+to_string(allele2);
-			}
 			// homozygous reference
-			else{
-				continue;
-			}
+			//else{
+			//	continue;
+			//}
 			
 			//vector<int> biallelic_encoding = encoding_map[s_gt];
 			//haplotype_encoding_vector.push_back(biallelic_encoding[0]);
 			//haplotype_encoding_vector.push_back(biallelic_encoding[1]);
 				
 		}
+		
+		//cout << haplotype_pos_encoding_vector.size() << endl;
 		all_haplotype_pos_encodings.push_back(haplotype_pos_encoding_vector);
-
+		/*cout << haplotype_pos_encoding_vector.size() << ": " << endl;
+		for (int z = 0; z < haplotype_pos_encoding_vector.size(); z++){
+			cout << haplotype_pos_encoding_vector[z] << " ";;
+		}
+		cout << endl;
+		*/
 		haplotype_pos_encoding_vector.clear();
-	
+		//cout << all_haplotype_pos_encodings.size() << endl;
 	} // end of reading records
-	 
+	cout << all_haplotype_pos_encodings.size() << endl;
+	
 	// transposing data
 	cout << "...transposing data..." << endl;
 	vector<vector<float>> sample_major_format_hap_pos_vec = transpose_float(all_haplotype_pos_encodings);
@@ -134,7 +180,6 @@ void encode_positions(string map_file,
 	cout << "...writing sample major format encodings to file..." << endl;
 	cout << sample_major_format_hap_pos_vec.size() << endl;
 	write_SMF(all_sample_IDs, sample_major_format_hap_pos_vec, output_encoding_file);
-
 }
 
 /*
@@ -163,11 +208,24 @@ void write_SMF(vector<string> all_sample_IDs,
 			SID_i ++;
 			binary = 0;
 		}
+		
 		vector<float> sample = smf.at(i);
+		//cout << sample.size() << " ";
+		//remove zeros
+		//sample.erase(remove(sample.begin(), sample.end(), 0));
+		//vector<float> sample_no_zeros;
+		//sample_no_zeros = remove_zeros_float(sample);
+		//cout << sample.size() << endl;
+		// write to file
 		output_stream << all_sample_IDs[SID_i] << "_" << binary << " ";
 		for(int j = 0; j < sample.size(); j++) {
-			output_stream << sample.at(j) << " ";
+			float curr_encoding = sample.at(j);
+			if(curr_encoding > 0){
+				//cout << sample.at(j) << " ";
+				output_stream << sample.at(j) << " ";
+			}
 		}
+		//cout << endl;
 		output_stream << endl;
 	}
 }

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -15,6 +16,17 @@
 #include "utils.h"
 
 using namespace std;
+
+// remove zeros from a vector of floats
+vector<float> remove_zeros_float(vector<float> vec_flt){
+	
+	// removes zeros from a single vector of floats
+	vec_flt.erase(remove(vec_flt.begin(), vec_flt.end(), 0));
+	vec_flt.shrink_to_fit();
+	cout << vec_flt.size() << " ";
+	//remove_vec_vec_flt.push_back(curr_vec_flt);
+	return vec_flt;
+}
 
 // transpose a vector of vectors of ints
 vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
@@ -40,7 +52,7 @@ vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
 }
 
 // transpose a vector of vectors of floats
-vector<vector<float>> transpose_float(vector<vector<float>> &vmf){
+vector<vector<float>> transpose_float(vector<vector<float>> vmf){
         /*
          * Takes a variant major format
          * vector of vector of ints
@@ -54,11 +66,20 @@ vector<vector<float>> transpose_float(vector<vector<float>> &vmf){
 
         // transpose data
         vector<vector<float>> smf_vec(vmf[0].size(), vector<float>());
-        for (size_t i = 0; i < vmf.size(); i++) {
+	for (size_t i = 0; i < vmf.size(); i++) {
                 for (size_t j = 0; j < vmf[i].size(); j++) {
                         smf_vec[j].push_back(vmf[i][j]);
                 }
         }
+	/*
+        vector<vector<float>> smf_vec;
+	for (int i = 0; i < vmf.size(); i++){
+		vector<float> curr_vec = vmf[i];
+		for (int j = 0; j < curr_vec.size(); j++){
+			float curr_var = curr_vec[j];
+			smf_vec.push_back(curr_var);
+		}
+	}*/
     return smf_vec;
 }
 
