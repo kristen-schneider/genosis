@@ -71,6 +71,44 @@ map<int,vector<int>> make_cm_dict(string map_file, int slice_size){
 
 
 /*
+ * reads a map file and returns a < pos, cm > map
+ * which maps a bp pos to a cm pos from the map file
+ */
+map<int, float> make_bp_cm_map(string map_file){
+
+        // map data structure <bp, cm>
+        map<int, float> bp_cm_map;
+
+	// open map file
+	ifstream map_file_stream;
+        map_file_stream.open(map_file);
+        if (!map_file_stream.is_open()){
+                cout << "FAILED TO OPEN: " << map_file << endl;
+                exit(1);
+        }
+	
+	// read map file
+        cout << "...Reading map file..." << endl;
+        cout << "...mapping positional encodings..." << endl;
+        string line;
+        while (getline (map_file_stream, line)){
+                // column with cm and bp data
+		float cm_col = 2;
+		int bp_col = 3;
+
+		// read and split line
+               	vector<string> map_line;
+                split_line(line, ' ', map_line);
+		float curr_cm = stof(map_line[cm_col]);	// current cm data
+		int curr_bp = stoi(map_line[bp_col]);	// current bp data
+
+		bp_cm_map[curr_bp] = curr_cm;
+	}
+	return bp_cm_map;
+}
+
+
+/*
  * Open a map file and read each SNP record
  * count SNPs until XcM is reached
  * return a vector of SNP lengths for each XcM slice

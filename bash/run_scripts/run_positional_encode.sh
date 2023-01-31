@@ -3,26 +3,30 @@
 # path to directories
 src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
+include_htslib="/home/sdp/precision-medicine/lib/htslib/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
 data_dir="/home/sdp/pmed-local/data/1KG/segments/"
 
-# path to vcf and encoded file
-config="/home/sdp/precision-medicine/cpp/configs/sample.config"
-sample_IDs=$data_dir"/"
-#vcf_file=$data_dir"chr8-30x.seg.9.vcf"
-#encoded_file=$data_dir"chr8-30x.seg.9.encoded"
+config_file="/home/sdp/precision-medicine/notes/ancestry_configs/config_1KG.yaml"
+vcf_slice="/home/sdp/pmed-local/data/1KG/segments/1KG.data.seg.0.vcf"
+pos_encode="test_slice.pos"
+#map_file="/home/sdp/pmed-local/data/1KG/chr8.interpolated.map"
 
-bin=$bin_dir"test_encode"
 
-g++ $src_dir"encode_vcf.cpp" \
-	$src_dir"map_encodings.cpp" \
+bin=$bin_dir"test_pos_encode"
+rm $bin
+g++ $src_dir"main_positional_encode.cpp" \
+	$src_dir"encode_positions.cpp" \
+	$src_dir"read_map.cpp" \
 	$src_dir"read_config.cpp" \
+	$src_dir"map_encodings.cpp" \
 	$src_dir"utils.cpp" \
 	-I $include_dir \
-	-I $conda_dir"include/" \
-	-L $conda_dir"lib" \
+	-I $include_htslib \
 	-lhts \
 	-o $bin
+
+$bin $config_file $vcf_slice $pos_encode
 
 
 #for vcf_f in $data_dir*.vcf; do
