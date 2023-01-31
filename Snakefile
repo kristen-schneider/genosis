@@ -18,8 +18,8 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}pos-encode",
 		f"{config.out_dir}pos-encode.log",
-		#f"{config.cpp_bin_dir}encode-vcf",
-		#f"{config.out_dir}encode.log",
+		f"{config.cpp_bin_dir}encode-vcf",
+		f"{config.out_dir}encode.log",
 		#f"{config.data_dir}plink.log",
 		#f"{config.out_dir}distance.log",
 		#f"{config.data_dir}aggregate.log",
@@ -121,7 +121,7 @@ rule pos_encode_vcf_segments_execute:
                 "touch {output.pos_encode_log};"
 		## $bin $config_file $vcf_slice $pos_encode
 
-# 2.1 encode vcf segments (compile)
+# 3.1 encode vcf segments (compile)
 rule encode_vcf_segments_compile:
 	input:
 		slice_log=f"{config.out_dir}slice.log",
@@ -145,7 +145,7 @@ rule encode_vcf_segments_compile:
 		" -I {config.htslib_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
-# 2.2 encode vcf segments (execute)
+# 3.2 encode vcf segments (execute)
 rule encode_vcf_segments_execute:
 	input:
 		bin=f"{config.cpp_bin_dir}encode-vcf",
@@ -163,18 +163,18 @@ rule encode_vcf_segments_execute:
 		"done;"
 		"touch {output.encode_log};"
 
-# 3 run plink on full vcf
-rule plink:
-	input:
-		vcf=f"{config.vcf_file}"
-	output:
-		plink_done=f"{config.data_dir}plink.log"
-	message:
-		"Running plink --genome on full vcf file"
-	shell:
-		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
-
-## 4.1 compute euclidean distance for all segments
+## 4 run plink on full vcf
+#rule plink:
+#	input:
+#		vcf=f"{config.vcf_file}"
+#	output:
+#		plink_done=f"{config.data_dir}plink.log"
+#	message:
+#		"Running plink --genome on full vcf file"
+#	shell:
+#		"plink --vcf {input.vcf} --genome --out {config.data_dir}plink"
+#
+## 5.1 compute euclidean distance for all segments
 #rule compute_segment_distance:
 #	input:
 #		encode_log=f"{config.out_dir}encode.log",

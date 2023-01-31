@@ -4,11 +4,11 @@
 src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/precision-medicine/data/ped_sim_data/GBR/segments/"
+data_dir="/home/sdp/pmed-local/data/1KG/segments/"
 
 # path to vcf and encoded file
 config="/home/sdp/precision-medicine/cpp/configs/sample.config"
-sample_IDs="/home/sdp/precision-medicine/data/ped_sim_data/GBR/GBR.samples"
+sample_IDs=$data_dir"/"
 #vcf_file=$data_dir"chr8-30x.seg.9.vcf"
 #encoded_file=$data_dir"chr8-30x.seg.9.encoded"
 
@@ -24,12 +24,13 @@ g++ $src_dir"encode_vcf.cpp" \
 	-lhts \
 	-o $bin
 
-for vcf_f in $data_dir*.vcf; do
-	filename=$(basename -- $vcf_f)
-	base=${filename%.*}
-	encoded_f=$data_dir$base".encoded"
 
-	echo "Encoding file: " $vcf_f
-	$bin $config $sample_IDs $vcf_f $encoded_f
-done
+#for vcf_f in $data_dir*.vcf; do
+#	filename=$(basename -- $vcf_f)
+#	base=${filename%.*}
+#	encoded_f=$data_dir$base".encoded"
+#
+#	echo "Encoding file: " $vcf_f
+#	$bin $config $sample_IDs $vcf_f $encoded_f
+#done
 
