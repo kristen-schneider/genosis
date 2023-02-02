@@ -18,8 +18,8 @@ rule all:
 		f"{config.data_dir}interpolated.map",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
-		#f"{config.cpp_bin_dir}pos-encode",
-		#f"{config.out_dir}pos-encode.log",
+		f"{config.cpp_bin_dir}pos-encode",
+		f"{config.out_dir}pos-encode.log",
 		#f"{config.cpp_bin_dir}encode-vcf",
 		#f"{config.out_dir}encode.log",
 		#f"{config.data_dir}plink.log",
@@ -148,9 +148,11 @@ rule pos_encode_vcf_segments_execute:
 		"for vcf_f in {config.out_dir}*.vcf; do" \
                 "       filename=$(basename $vcf_f);" \
                 "       seg_name=${{filename%.*}};" \
-                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded;" \
+		"	echo Positional Encoding: $vcf_f;" \
+		"	num_samples=$(bcftools query -l $vcf_f | wc -l);" \
+                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded > {output.pos_encode_log};" \
                 "done;"
-                "touch {output.pos_encode_log};"
+                ##"touch {output.pos_encode_log};"
 		## $bin $config_file $vcf_slice $pos_encode
 
 # 3.1 encode vcf segments (compile)
