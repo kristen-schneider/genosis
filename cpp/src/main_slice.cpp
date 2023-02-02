@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
 	config_options = get_config_options(configFile);		
 	// access each option by variable name
 	string vcf_file = config_options["vcf_file"];
-	string map_file = config_options["map_file"];
+	string map_file = config_options["interpolated_map"];
 	string out_dir = config_options["out_dir"];
     	string out_base_name = config_options["out_base_name"];
 	int segment_size = stoi(config_options["segment_size"]);
