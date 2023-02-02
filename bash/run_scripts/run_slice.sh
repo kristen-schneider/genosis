@@ -7,10 +7,12 @@ include_conda="/home/sdp/miniconda3/envs/pmed/include/"
 lib_conda="/home/sdp/miniconda3/envs/pmed/lib/"
 include_htslib="/home/sdp/precision-medicine/lib/htslib/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
+config_file="/home/sdp/precision-medicine/example/config_ex_snakemake.yaml"
 
-bin=$bin_dir"slice"
+bin=$bin_dir"slice-one"
 
 # compile
+echo "...compiling"
 g++ $src_dir"main_slice.cpp" \
 	$src_dir"slice_vcf.cpp" \
 	$src_dir"read_map.cpp" \
@@ -22,4 +24,5 @@ g++ $src_dir"main_slice.cpp" \
 	-o $bin
 
 # execute
-#$bin $config_file
+echo "...executing."
+$bin $config_file

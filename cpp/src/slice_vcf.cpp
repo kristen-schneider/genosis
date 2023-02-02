@@ -17,15 +17,10 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	// of slices that should be generated
 	map<int, vector<int>> cm_map;
 	
-	//vector<int> segment_SNP_counts;
-	//segment_SNP_counts = read_map_file(map_file, segment_size);
-	//int map_slice_count = segment_SNP_counts.size();
-	//cout << "...Counted " << map_slice_count << " " << segment_size << "cM slices.\n" << endl;
-
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
 	// smaller VCF files
-	cout << "...Reading VCF file..." << endl;
+	cout << "...Reading VCF file... (" << vcf_file << ")" <<  endl;
 	vector<string> vcf_header = read_vcf_header(vcf_file);
 	int header_num_lines = vcf_header.size();
 	cout << "...Read " << header_num_lines << " lines from VCF header." << endl;
@@ -36,11 +31,10 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	cm_map = make_cm_dict(map_file, segment_size);
 	int num_segments = slice(vcf_file, vcf_header, cm_map,
         	out_base_name, out_dir);
-	
+		
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
 	return num_segments;
-	//return num_segments;
 }
 
 /*
