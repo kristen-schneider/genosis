@@ -6,7 +6,13 @@ git clone https://github.com/kristen-schneider/precision-medicine.git
 cd precision-medicine
 git submodule init
 git submodule update
+
 ```
+#### 0. or pull the latest changes
+```
+cd precision-medicine
+git pull
+``` 
 
 ##### 1. Create and activate the mamba environment.
 ```
@@ -27,16 +33,18 @@ snakemake -c1
 
 ##### 0. Prepare input data.
 ###### Generate encodings (part 1)
-- create a new directory to house your data `mkdir ./my_dir`
-- `./my_dir/data.vcf`: single chromosome vcf file for all samples. see [`example/example.vcf`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.vcf).
-- `./my_dir/data.map`: map file (format: chr start cm end). see [`example/example.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [links at bottom of page](https://github.com/kristen-schneider/precision-medicine/edit/main/README.md#more-information-about-data-included-in-config-files) for more map file resources.
-- `./my_dir/samples_query.txt`: list of sample IDs against which to query. see [`example/samples_query.txt`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/samples_query.txt) for a single query; add rows for multiple query.
-- create a new directory to house your segments `mkdir ./my_dir/segments`
+1. create a new directory to house your data `mkdir ./my_dir`
+2. prepare input VCF file. `./my_dir/data.vcf`: single chromosome vcf file for all samples. see [`example/example.vcf`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.vcf).
+3. prepare reference map file. `./my_dir/data.map`: map file (format: chr start cm end). this file will serve as reference to the interpolate map script.
+	- see [`python/scripts/utils/interpolate_map.py`](https://github.com/kristen-schneider/precision-medicine/blob/main/python/scripts/utils/interpolate_map.py)
+	- see [`example/example.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [links at bottom of page](https://github.com/kristen-schneider/precision-medicine/edit/main/README.md#more-information-about-data-included-in-config-files) for more map file resources.
+4. prepare a list of query samples.`./my_dir/samples_query.txt`: list of sample IDs against which to query. see [`example/samples_query.txt`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/samples_query.txt) for a single query; add rows for multiple query.
+5. create a new directory to house your segments `mkdir ./my_dir/segments`
 
 ##### 1. Edit yaml files for snakemake options.
 ###### [`config_ex_snakemake.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_ex_snakemake.yaml)
-- copy `config_ex_snakemake.yaml` into your new directory: `cp example/config_ex_snakemake.yaml ./my_dir/`
-- Modify the following options to reflect appropriate file paths.
+1. copy `config_ex_snakemake.yaml` into your new directory: `cp example/config_ex_snakemake.yaml ./my_dir/config_my_snakemake.yaml`
+2. Modify the following options to reflect appropriate file paths.
   ```
   home_dir:
     /path/to/project/directory/
@@ -47,12 +55,14 @@ snakemake -c1
     /path/to/my_dir/
   vcf_file:
     /path/to/my_dir/file.vcf
+  ref_map:
+    /path/to/my_dir/ref_map.map
   query_file:
     /path/to/my_dir/samples_query.txt
   out_dir:
     /path/to/my_dir/segments/
   config_file
-    /path/to/my_dir/config_new.yaml
+    /path/to/my_dir/config_my.yaml
   ```
 ###### [`config_ex.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_ex.yaml)
 - copy `config_ex.yaml` into your new directory: `cp example/config_ex.yaml ./my_dir/`
@@ -69,8 +79,8 @@ snakemake -c1
   example/
   vcf_file:
   example/example.vcf
-  map_file:
-  example/example.map
+  interpolated_map: 
+  example/interpolated.map ## <-- this file name should not change, but the path should.
   encoding_file:
   example/example_encoding.txt
   sample_IDs_file:
