@@ -6,7 +6,7 @@ conda_dir:
 data_dir:
   example/
 vcf_file:
-  example/EUR_sim.vcf.gz
+  example/EUR_sim.vcf
 ref_map:
   /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
 interpolated_map:

@@ -15,8 +15,8 @@ python/scripts/
 data_dir:
 example/
 vcf_file:
-example/EUR_sim.vcf.gz
-map_file:
+example/EUR_sim.vcf
+interpolated_map:
 example/interpolated.map
 encoding_file:
 example/example_encoding.txt
