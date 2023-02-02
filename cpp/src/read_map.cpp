@@ -31,7 +31,8 @@ map<int,vector<int>> make_cm_dict(string map_file, int slice_size){
         }
 	
 	// read map file
-        cout << "...Reading map file..." << endl;
+        cout << "......Reading map file." << endl;
+        cout << "......Creating bp:cm." << endl;
         string line;
         while (getline (map_file_stream, line)){
                 // column with cm and bp data
@@ -64,7 +65,7 @@ map<int,vector<int>> make_cm_dict(string map_file, int slice_size){
                         //slice_count ++;
                 }
         }
-	cout << "...counted " << cm_map.size() << " slices." << endl;
+	cout << "......counted " << cm_map.size() << " slices." << endl;
         return cm_map;
 
 }
@@ -126,7 +127,7 @@ vector<int> read_map_file(string map_file, float slice_size){
                 cout << "FAILED TO OPEN: " << map_file << endl;
                 exit(1);
         }
-	cout << "...Reading map file..." << endl;
+	cout << "......Reading map file..." << endl;
 	string line;
 	while (getline (map_file_stream, line)){
 		snp_count ++;
