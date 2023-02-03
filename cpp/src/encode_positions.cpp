@@ -44,7 +44,7 @@ void encode_positions(string map_file,
 	if (!vcf_stream){
 		cout << "FAILED TO OPEN: " << vcf_slice << endl;
 		exit(1);
-	}
+	}else{ cout << "opened: " << vcf_slice << endl; }
 		
 	bcf_hdr_t *vcf_header = bcf_hdr_read(vcf_stream);
 	if (vcf_header == NULL) {
@@ -54,7 +54,7 @@ void encode_positions(string map_file,
 	
 	// getting number of samples
 	int num_samples = get_num_samples(vcf_header);
-	cout << "NUM SAMPLES: " << num_samples << endl;
+	//cout << "NUM SAMPLES: " << num_samples << endl;
 	
 	// initialize and allocate bcf1_t object
         bcf1_t *vcf_record = bcf_init();
@@ -109,14 +109,26 @@ void encode_positions(string map_file,
 		int alleles_per_gt = num_alleles/num_samples;
 		for (int i = 0; i < num_samples; i++){
 			int allele1 = bcf_gt_allele(gt[i*alleles_per_gt+0]);
-			int allele2;
+			int allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 			
-			// replace unknowns
-			if (allele1 == -1){ s_gt = ".|.";}
+			// if allele1 is not 0, 1, 2, or 3 replace as uknown
+			if (allele1 != 0 or allele1 != 1 or allele1 != 2 or allele1 != 3){
+				s_gt = ".|.";
+				//allele1 = ".";
+			}
+			if (allele2 != 0 or allele2 != 1 or allele2 != 2 or allele2 != 3){
+				s_gt = ".|.";
+				//allele2 = ".";
+			}
+			else{
+				s_gt = to_string(allele1)+"|"+to_string(allele2);
+			}
+			/*
 			else{
 				allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 				s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
+			*/
 			// record positions	
 			//if (allele1 != 0 or allele2 != 0){
 			//cout << allele1 << " " << allele2 << endl;

@@ -27,6 +27,9 @@ map<string, string> get_config_options(string config_file){
 		cout << "FAILED TO OPEN: " << config_file << endl;
 		exit(EXIT_FAILURE);
 	}
+	else{
+		cout << "...opened " << config_file << "." << endl;
+	}
 		
 	char delim = ':';
 	string line;
@@ -40,10 +43,13 @@ map<string, string> get_config_options(string config_file){
 			key = _line[0];
 			continue;
 		}else{
+		//	cout << line << " did not find delim" << endl;
 			user_specified_option = line;
 		}
 		pair<string, string> key_option_pair (key, user_specified_option);
 		config_options.insert(key_option_pair);
+		//cout << key << " " << user_specified_option << endl;
 	}
+	cout << "...read all config options." << endl;
 	return config_options;
 }

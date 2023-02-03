@@ -26,9 +26,13 @@ plink --vcf /path/to/vcf --recode 01 --output-missing-genotype . --out
 python python/scripts/utils/interploate_map.py --map /path/to/map --ref_map /path/to/ref_map  --out_map /path/to/out_map
 ```
 
+# KING
+```
+plink2 --vcf /path/to/vcf.vcf.gz --make-king-table`
+```
 # CONDA/MAMBA 
 ```
-mamba create -n pmed -c bioconda -c conda-forge -c defaults bcftools boost bzip2 faiss gxx htslib make numpy plink pysam python snakemake vcftools
+mamba create -n pmed -c bioconda -c conda-forge -c defaults bcftools boost bzip2 faiss gxx htslib make numpy plink plink2 pysam python snakemake vcftools
 ```
 ### CHANNELS
 - bioconda

@@ -17,15 +17,10 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	// of slices that should be generated
 	map<int, vector<int>> cm_map;
 	
-	//vector<int> segment_SNP_counts;
-	//segment_SNP_counts = read_map_file(map_file, segment_size);
-	//int map_slice_count = segment_SNP_counts.size();
-	//cout << "...Counted " << map_slice_count << " " << segment_size << "cM slices.\n" << endl;
-
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
 	// smaller VCF files
-	cout << "...Reading VCF file..." << endl;
+	cout << "...Reading VCF file... (" << vcf_file << ")" <<  endl;
 	vector<string> vcf_header = read_vcf_header(vcf_file);
 	int header_num_lines = vcf_header.size();
 	cout << "...Read " << header_num_lines << " lines from VCF header." << endl;
@@ -36,11 +31,10 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	cm_map = make_cm_dict(map_file, segment_size);
 	int num_segments = slice(vcf_file, vcf_header, cm_map,
         	out_base_name, out_dir);
-	
+		
 	cout << "...Done reading VCF file." << endl;
 	cout << "Done slicing." << endl;
 	return num_segments;
-	//return num_segments;
 }
 
 /*
@@ -52,7 +46,6 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 vector<string> read_vcf_header(string vcf_file){
 	// stores VCF header
 	vector<string> vcf_header;
-	
 	// open file and check success
     	ifstream vcf_file_stream;
     	vcf_file_stream.open(vcf_file);
@@ -86,7 +79,6 @@ int slice(string vcf_file,
 		string base_name,
 		string out_dir){
 
-	cout << out_dir << endl;
 	// to return
 	int slice_index = 0;
 	//int slice_snp_count = segment_SNP_counts[slice_index];
@@ -117,6 +109,7 @@ int slice(string vcf_file,
 
 	// read vcf file until end
 	string line;
+	int start_pos = -1;
         while (getline (vcf_file_stream, line)){
             	/*
 		// FOR TESTING
@@ -128,12 +121,18 @@ int slice(string vcf_file,
 		char char1 = line.at(0);
             	if (char1 == '#'){continue;}
 		else{
+
 			// still building a slice
 			int bp_max = cm_map[slice_index][1];
 			vector<string> single_SNP;
         		split_line(line, '\t', single_SNP);
 			int pos_col_idx = 1; // index of position in vcf
 			int pos = stoi(single_SNP[pos_col_idx]);
+			
+			// if first line in slice
+			if (start_pos == -1){
+				start_pos = pos;
+			}
 			
 			// if at last slice, write
 			if (slice_index == cm_map.size() - 1){
@@ -156,8 +155,11 @@ int slice(string vcf_file,
 			// close file-->increment slice count
 			// open new file-->write header-->write line
 			else if (pos > bp_max){
+				cout << "...writing slice " << slice_index \
+					<< ", " << start_pos << " :" << pos << endl;
 				slice_file_stream.close();
 				slice_index += 1;
+				start_pos = -1;
 
 				// open next slice file and write header 
                                 string out_vcf_slice_file = out_dir + base_name + \

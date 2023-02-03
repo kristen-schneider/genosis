@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	// access each option by variable name
-	string map_file = config_options["map_file"];
+	string map_file = config_options["interpolated_map"];
 	string encoding_file = config_options["encoding_file"];
 	string sample_IDs_file = config_options["sample_IDs_file"];
 	string out_dir = config_options["out_dir"];

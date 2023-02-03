@@ -6,7 +6,11 @@ conda_dir:
 data_dir:
   example/
 vcf_file:
-  example/example.vcf
+  example/EUR_sim.vcf
+ref_map:
+  /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
+interpolated_map:
+  example/interpolated.map
 query_file:
   example/samples_query.txt
 out_dir:

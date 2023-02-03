@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "notes/ancestry_configs/config_1KG_snakemake.yaml" # path to the config
+configfile: "example/config_ex_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -14,12 +14,14 @@ rule all:
 		f"{config.vcf_file}",
 		f"{config.data_dir}samples_IDs.txt",
 		f"{config.data_dir}samples.log",
+		f"{config.data_dir}plink_map.map",
+		f"{config.data_dir}interpolated.map",
 		f"{config.cpp_bin_dir}slice-vcf",
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}pos-encode",
 		f"{config.out_dir}pos-encode.log",
-		f"{config.cpp_bin_dir}encode-vcf",
-		f"{config.out_dir}encode.log",
+		#f"{config.cpp_bin_dir}encode-vcf",
+		#f"{config.out_dir}encode.log",
 		#f"{config.data_dir}plink.log",
 		#f"{config.out_dir}distance.log",
 		#f"{config.data_dir}aggregate.log",
@@ -28,7 +30,7 @@ rule all:
 		#f"{config.cpp_bin_dir}faiss-l2",
 		#f"{config.out_dir}faiss.log"
 	
-# 0. create a file with all sample IDs
+# 0.1 create a file with all sample IDs
 # one line per sample ID
 rule get_sample_IDs:
 	input:
@@ -42,9 +44,39 @@ rule get_sample_IDs:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
 		" && touch {output.sample_IDs_done}"
 
+# 0.2 create an map file with plink
+rule create_map:
+	input:
+		vcf=f"{config.vcf_file}"
+	output:
+		plink_map=f"{config.data_dir}plink_map.map"
+	message:
+		"Using plink recode to create a map file."
+	shell:
+		"plink --vcf {input.vcf}" \
+		" --recode 01" \
+		" --output-missing-genotype ." \
+		" --out {config.data_dir}plink_map"
+	
+# 0.3 create an interpolated map file
+rule interpolate_map:
+	input:
+		plink_map=f"{config.data_dir}plink_map.map"
+	output:
+		interpolated_map=f"{config.data_dir}interpolated.map"
+	message:
+		"Using ilash_analyzer to create a new map file"
+	shell:
+		"python {config.python_dir}utils/interpolate_map.py" \
+		" --map {input.plink_map}" \
+		" --ref_map {config.ref_map}" \
+		" --out_map {output.interpolated_map}"	
+
+
 # 1.1 slice VCF into segments (compile)
 rule slice_VCF_compile:
 	input:
+		interpolate_map=f"{config.data_dir}interpolated.map",
 		main_slice_cpp=f"{config.cpp_src_dir}main_slice.cpp",
 		slice_vcf_cpp=f"{config.cpp_src_dir}slice_vcf.cpp",
 		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
@@ -116,9 +148,11 @@ rule pos_encode_vcf_segments_execute:
 		"for vcf_f in {config.out_dir}*.vcf; do" \
                 "       filename=$(basename $vcf_f);" \
                 "       seg_name=${{filename%.*}};" \
-                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded;" \
+		"	echo Positional Encoding: $vcf_f;" \
+		"	num_samples=$(bcftools query -l $vcf_f | wc -l);" \
+                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded > {output.pos_encode_log};" \
                 "done;"
-                "touch {output.pos_encode_log};"
+                ##"touch {output.pos_encode_log};"
 		## $bin $config_file $vcf_slice $pos_encode
 
 # 3.1 encode vcf segments (compile)
