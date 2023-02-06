@@ -11,17 +11,17 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-    const char ibd_file = argv[1];
+    string ibd_file = argv[1];
     char delim = ' ';
     main_ibd_aggregate(ibd_file, delim);
 
     
 }
 
-void main_ibd_aggregate(const char ibd_file, char delim=' '){
+void main_ibd_aggregate(string ibd_file, char delim=' '){
 /* open pairwise ibd file
  * 
-*/
+ */
     ifstream ibd_file_stream;
     ibd_file_stream.open(ibd_file);
     cout << "Reading IBD file..." << ibd_file << endl;
