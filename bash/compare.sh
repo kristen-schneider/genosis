@@ -1,0 +1,32 @@
+#! bin/bash
+vcf="/home/sdp/pmed-local/data/1KG/1kGP_high_coverage_Illumina.chr8.filtered.SNV_INDEL_SV_phased_panel.vcf.gz"
+map="/home/sdp/pmed-local/data/1KG/chr8.interpolated.map"
+out_dir="/home/sdp/precision-medicine/compare/"
+iLASH_ex="/home/sdp/iLASH/"
+
+# ilash
+ilash_start=`date +%s.%N`
+$iLASH_ex"/build/ilash" $iLASH_ex/"1kg-chr8.config" > $out_dir"ilash.1kg-chr8.out"
+sleep 5s
+ilash_end=`date +%s.%N`
+ilash_runtime=$( echo "$ilash_end - $ilash_start" | bc -l )
+echo "ilash runtime: $ilash_runtime"
+
+# hap-ibd to go here
+
+# plink --genome
+pg_start=`date +%s.%N`
+plink --vcf $vcf --genome --out $out_dir"plink.1kg-chr8.genome"
+sleep 5s
+pg_end=`date +%s.%N`
+pg_runtime=$( echo "$pg_end - $pg_start" | bc -l )
+echo "plink --genome runtime: $pg_runtime"
+
+# plink --make-king-table
+pk_start=`date +%s.%N`
+plink2 --vcf $vcf --make-king-table --out $out_dir"plink.1kg-chr8.king"
+sleep 5s
+pk_end=`date +%s.%N`
+pk_runtime=$( echo "$pk_end - $pk_start" | bc -l )
+echo "plink --make-king runtime: $pk_runtime"
+
