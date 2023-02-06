@@ -20,7 +20,7 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
 	// read header of full chromosome VCF file
 	// store as list to write to header of 
 	// smaller VCF files
-	cout << "...Reading VCF file... (" << vcf_file << ")" <<  endl;
+	cout << "...Reading VCF file..." << vcf_file <<  endl;
 	vector<string> vcf_header = read_vcf_header(vcf_file);
 	int header_num_lines = vcf_header.size();
 	cout << "...Read " << header_num_lines << " lines from VCF header." << endl;
@@ -44,6 +44,7 @@ int slice_main(string map_file, int segment_size, string vcf_file, string out_ba
  * top of every smaller VCF file)
  */
 vector<string> read_vcf_header(string vcf_file){
+	cout << "...reading VCF header..." << endl;
 	// stores VCF header
 	vector<string> vcf_header;
 	// open file and check success
