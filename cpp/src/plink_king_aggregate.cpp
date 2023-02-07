@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -6,14 +7,17 @@
 #include <map>
 #include <vector>
 
+#include "plink_king_aggregate.h"
 
 using namespace std;
 
 
 int main(int argc, char* argv[]){
-    string plink_file = "/Users/kristen/CLionProjects/aggregate/small.king";
-    string queries_file = "/Users/kristen/CLionProjects/aggregate/queries.txt";
-    int k = 10;
+    string plink_file = argv[1];
+    int k = stoi(argv[2]);
+    string output_file = argv[3];
+    string query_file = argv[4];
+
     char delim = '\t';
 
     // create plink map from plink file
@@ -25,12 +29,11 @@ int main(int argc, char* argv[]){
     sorted_plink_map = sort_full_map(plink_map);
 
     // return top k for each sample in the queries file
-    vector<string> queries = read_query_file(queries_file);
+    vector<string> queries = read_query_file(query_file);
     map<string, vector<pair<string, float>>> top_k_map;
     top_k_map = return_top_k(sorted_plink_map, queries, k);
 
     // write top k to file
-    string output_file = "/Users/kristen/CLionProjects/aggregate/small.king.top_k";
     write_top_k(top_k_map, k, output_file);
 
     cout << "DONE" << endl;
