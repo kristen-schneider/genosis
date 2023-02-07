@@ -34,5 +34,7 @@ void main_ibd_aggregate(string ibd_file, char delim=' '){
     while (getline(ibd_file_stream, line)){
         vector<string> vec_line;
         split_line(line, delim, vec_line);
+	cout << line[0] << endl;
     } 
+    
 }

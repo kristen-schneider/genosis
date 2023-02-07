@@ -7,29 +7,32 @@ out_dir="/home/sdp/precision-medicine/compare/"
 iLASH_ex="/home/sdp/iLASH/"
 k=20
 
-## ilash
-#ilash_start=`date +%s.%N`
-#$iLASH_ex"/build/ilash" $iLASH_ex/"1kg-chr8.config" > $out_dir"ilash.1kg-chr8.out"
-#sleep 5s
-#ilash_end=`date +%s.%N`
-#ilash_runtime=$( echo "$ilash_end - $ilash_start" | bc -l )
-#echo "ilash runtime: $ilash_runtime"
+# ilash
+echo "RUNNING iLASH"
+ilash_start=`date +%s.%N`
+$iLASH_ex"/build/ilash" $iLASH_ex/"1kg-chr8.config" > $out_dir/"1kg-chr8.ilash.out"
+ilash_end=`date +%s.%N`
+ilash_runtime=$( echo "$ilash_end - $ilash_start" | bc -l )
+echo "ilash runtime: $ilash_runtime"
+echo 
 
 # hap-ibd to go here
 
-# plink --genome
-pg_start=`date +%s.%N`
-plink --vcf $vcf --genome --out $out_dir"plink.1kg-chr8.genome"
-pg_end=`date +%s.%N`
-pg_runtime=$( echo "$pg_end - $pg_start" | bc -l )
-$bin_dir"plink-genome" $out_dir"plink.1kg-chr8.genome.genome" $k $out_dir"topk_genome.SAS" $queries_file
-echo "plink --genome runtime: $pg_runtime"
-
-# plink --make-king-table
-pk_start=`date +%s.%N`
-plink2 --vcf $vcf --make-king-table --out $out_dir"plink.1kg-chr8.king"
-$bin_dir"plink-king" $out_dir"plink.1kg-chr8.king.kin0" $k $out_dir"topk_king.SAS" $queries_file
-pk_end=`date +%s.%N`
-pk_runtime=$( echo "$pk_end - $pk_start" | bc -l )
-echo "plink --make-king runtime: $pk_runtime"
+## plink --genome
+#echo "RUNNING PLINK --GENOME"
+#pg_start=`date +%s.%N`
+#plink --vcf $vcf --genome --out $out_dir"plink.1kg-chr8.genome"
+#pg_end=`date +%s.%N`
+#pg_runtime=$( echo "$pg_end - $pg_start" | bc -l )
+#$bin_dir"plink-genome" $out_dir"plink.1kg-chr8.genome.genome" $k $out_dir"topk_genome.SAS" $queries_file
+#echo "plink --genome runtime: $pg_runtime"
+#
+## plink --make-king-table
+#echo "RUNNING PLINK --MAKE-KING-TABLE"
+#pk_start=`date +%s.%N`
+#plink2 --vcf $vcf --make-king-table --out $out_dir"plink.1kg-chr8.king"
+#$bin_dir"plink-king" $out_dir"plink.1kg-chr8.king.kin0" $k $out_dir"topk_king.SAS" $queries_file
+#pk_end=`date +%s.%N`
+#pk_runtime=$( echo "$pk_end - $pk_start" | bc -l )
+#echo "plink --make-king runtime: $pk_runtime"
 
