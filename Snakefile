@@ -56,6 +56,7 @@ rule create_map:
 		"plink --vcf {input.vcf}" \
 		" --recode 01" \
 		" --output-missing-genotype ." \
+		" --vcf-half-call m" \
 		" --out {config.data_dir}plink_map"
 	
 # 0.3 create an interpolated map file
