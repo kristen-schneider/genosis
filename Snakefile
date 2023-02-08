@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "example/config_ex_snakemake.yaml" # path to the config
+configfile: "/home/sdp/precision-medicine/notes/ancestry_configs/config_1KG_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -11,24 +11,24 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
-		f"{config.vcf_file}",
-		f"{config.data_dir}samples_IDs.txt",
-		f"{config.data_dir}samples.log",
-		f"{config.data_dir}plink_map.map",
-		f"{config.data_dir}interpolated.map",
-		f"{config.cpp_bin_dir}slice-vcf",
-		f"{config.out_dir}slice.log",
-		f"{config.cpp_bin_dir}pos-encode",
-		f"{config.out_dir}pos-encode.log",
+		#f"{config.vcf_file}",
+		#f"{config.data_dir}samples_IDs.txt",
+		#f"{config.data_dir}samples.log",
+		#f"{config.data_dir}plink_map.map",
+		#f"{config.data_dir}interpolated.map",
+		#f"{config.cpp_bin_dir}slice-vcf",
+		#f"{config.out_dir}slice.log",
+		#f"{config.cpp_bin_dir}pos-encode",
+		#f"{config.out_dir}pos-encode.log",
 		#f"{config.cpp_bin_dir}encode-vcf",
 		#f"{config.out_dir}encode.log",
+		f"{config.cpp_bin_dir}faiss-l2-build",
+		#f"{config.out_dir}faiss.log"
 		#f"{config.data_dir}plink.log",
 		#f"{config.out_dir}distance.log",
 		#f"{config.data_dir}aggregate.log",
 		#f"{config.data_dir}hapID.log",
 		#f"{config.data_dir}all_hap_IDs.txt",	
-		#f"{config.cpp_bin_dir}faiss-l2",
-		#f"{config.out_dir}faiss.log"
 	
 # 0.1 create a file with all sample IDs
 # one line per sample ID
@@ -197,6 +197,29 @@ rule encode_vcf_segments_execute:
 		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.encoded {config.out_dir}${{seg_name}}.position;" \
 		"done;"
 		"touch {output.encode_log};"
+
+# 4.1 build FAISS index (compile)
+rule build_faiss_index:
+	input:
+		#slice_log=f"{config.out_dir}slice.log",
+		#pos_encode_log=f"{config.out_dir}pos-encode.log",
+		#encode_log=f"{config.out_dir}encode.log",
+		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
+		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}faiss-l2-build"
+	message:
+		"Compiling--build faiss l2 index..."
+	shell:
+		"g++" \
+		" {input.faiss_l2_build_cpp}" \
+		" {input.faiss_utils_cpp}" \
+		" -I {config.conda_dir}/include" \
+		" -I {config.cpp_include_dir}" \
+		" -I {config.faisslib_dir}" \
+		" -lfaiss" \
+		" -o {output.bin}"
+ 
 
 ## 4 run plink on full vcf
 #rule plink:
