@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "/home/sdp/precision-medicine/notes/ancestry_configs/config_1KG_snakemake.yaml" # path to the config
+configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -11,18 +11,20 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
-		#f"{config.vcf_file}",
-		#f"{config.data_dir}samples_IDs.txt",
-		#f"{config.data_dir}samples.log",
-		#f"{config.data_dir}plink_map.map",
-		#f"{config.data_dir}interpolated.map",
-		#f"{config.cpp_bin_dir}slice-vcf",
-		#f"{config.out_dir}slice.log",
+		f"{config.vcf_file}",
+		f"{config.data_dir}samples_IDs.txt",
+		f"{config.data_dir}samples.log",
+		f"{config.data_dir}plink_map.map",
+		f"{config.data_dir}interpolated.map",
+		f"{config.cpp_bin_dir}segment-boundary",
+		f"{config.data_dir}segment_boundary.log",
+                f"{config.data_dir}segment_boundary.map",
+		f"{config.out_dir}slice.log",
+		f"{config.cpp_bin_dir}encode-gt",
+		f"{config.out_dir}encode_gt.log",
 		#f"{config.cpp_bin_dir}pos-encode",
 		#f"{config.out_dir}pos-encode.log",
-		#f"{config.cpp_bin_dir}encode-vcf",
-		#f"{config.out_dir}encode.log",
-		f"{config.cpp_bin_dir}faiss-l2-build",
+		#f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss.log"
 		#f"{config.data_dir}plink.log",
 		#f"{config.out_dir}distance.log",
@@ -73,24 +75,23 @@ rule interpolate_map:
 		" --ref_map {config.ref_map}" \
 		" --out_map {output.interpolated_map}"	
 
-
-# 1.1 slice VCF into segments (compile)
-rule slice_VCF_compile:
+# 1.1 write segment boundary file (compile)
+rule segment_boundary_file_compile:
 	input:
-		interpolate_map=f"{config.data_dir}interpolated.map",
-		main_slice_cpp=f"{config.cpp_src_dir}main_slice.cpp",
-		slice_vcf_cpp=f"{config.cpp_src_dir}slice_vcf.cpp",
+		vcf_file=f"{config.vcf_file}",
+		main_segment_cpp=f"{config.cpp_src_dir}main_segment.cpp",
+		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
 		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
 		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
 		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
 	output:
-		bin=f"{config.cpp_bin_dir}slice-vcf"
+		bin=f"{config.cpp_bin_dir}segment-boundary"
 	message:
-		"Compiling--slice vcf into segments..."
+		"Compiling--write segment boundary file..."
 	shell:
 		"g++" \
-		" {input.main_slice_cpp}" \
-		" {input.slice_vcf_cpp}" \
+		" {input.main_segment_cpp}" \
+		" {input.segment_boundary_map_cpp}" \
 		" {input.read_config_cpp}" \
 		" {input.read_map_cpp}" \
 		" {input.utils_cpp}" \
@@ -98,81 +99,53 @@ rule slice_VCF_compile:
 		" -I {config.htslib_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
-# 1.2 slice VCF into segments (execute)
-rule slice_VCF_execute:
+
+# 1.2 write segment boundary file (execute)
+rule segment_boundary_file_execute:
 	input:
-		bin=f"{config.cpp_bin_dir}slice-vcf",
+		bin=f"{config.cpp_bin_dir}segment-boundary",
 		config_file=f"{config.config_file}"
+	output:
+		segment_boundary_log=f"{config.data_dir}segment_boundary.log",
+		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
+	message:
+		"Executing--write segment boundary file..."
+	shell:
+		"./{input.bin} {input.config_file} > {output.segment_boundary_log}"
+
+# 1.3 slice VCF into segments
+rule slice_VCF:
+	input:
+		vcf_file=f"{config.vcf_file}",
+		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
 	output:
 		slice_log=f"{config.out_dir}slice.log"
 	message:
-		"Executing--slice vcf into segments..."
+		"Slicing VCF into segments..."
 	shell:
-		"./{input.bin} {input.config_file} > {output.slice_log}"
+		"while IFs= read -r segment start_bp end_bp; do" \
+		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
+		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
+		"	tabix {input.vcf_file} chr8:${{start_bp}}-${{end_bp}} >> {config.out_dir}segment.${{segment}}.vcf;" \
+		" done < {input.segment_boundary_file};" \
 
-# 2.1 positional encoding vcf segemnts (compile)
-rule pos_encode_vcf_segments_compile:
-	input:
-		slice_log=f"{config.out_dir}slice.log",
-		main_positional_encode_cpp=f"{config.cpp_src_dir}main_positional_encode.cpp",
-		encode_positions_cpp=f"{config.cpp_src_dir}encode_positions.cpp", 
-		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
-		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
-		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
-		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
-	output:
-		bin=f"{config.cpp_bin_dir}pos-encode"
-	message:
-		"Compiling--positional encode vcf segments..."
-	shell:
-		"g++" \
- 		" {input.main_positional_encode_cpp}" \
-        	" {input.encode_positions_cpp}" \
-        	" {input.map_encodings_cpp}" \
-        	" {input.read_config_cpp}" \
-        	" {input.read_map_cpp}" \
-        	" {input.utils_cpp}" \
-        	" -I {config.cpp_include_dir}" \
-                " -I {config.htslib_dir}" \
-                " -lhts" \
-                " -o {output.bin}"
-# 2.2 positional encoding vcf segments (execute)
-rule pos_encode_vcf_segments_execute:	
-	input:
-		bin=f"{config.cpp_bin_dir}pos-encode",
-		config_file=f"{config.config_file}"
-	output:
-		pos_encode_log=f"{config.out_dir}pos-encode.log"
-	message:
-		"Executing--positional encode vcf segments..."
-	shell:
-		"for vcf_f in {config.out_dir}*.vcf; do" \
-                "       filename=$(basename $vcf_f);" \
-                "       seg_name=${{filename%.*}};" \
-		"	echo Positional Encoding: $vcf_f;" \
-		"	num_samples=$(bcftools query -l $vcf_f | wc -l);" \
-                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded > {output.pos_encode_log};" \
-                "done;"
-                ##"touch {output.pos_encode_log};"
-		## $bin $config_file $vcf_slice $pos_encode
-
-# 3.1 encode vcf segments (compile)
-rule encode_vcf_segments_compile:
+# 2.1 encode genoypes for VCF segments (compile)
+rule encode_gt_compile:
 	input:
 		slice_log=f"{config.out_dir}slice.log",
 		main_encode_cpp=f"{config.cpp_src_dir}main_encode.cpp",
-		encode_vcf_cpp=f"{config.cpp_src_dir}encode_vcf.cpp",
-		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
-		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
-		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+                encode_gt_cpp=f"{config.cpp_src_dir}encode_gt.cpp",
+                read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+                map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+                utils_cpp=f"{config.cpp_src_dir}utils.cpp"
 	output:
-		bin=f"{config.cpp_bin_dir}encode-vcf"
+		bin=f"{config.cpp_bin_dir}encode-gt"
 	message:
-		"Compiling--encode vcf segments..."
+		"Compiling--encoding genotype segments..."
 	shell:
 		"g++" \
 		" {input.main_encode_cpp}" \
-		" {input.encode_vcf_cpp}" \
+		" {input.encode_gt_cpp}" \
 		" {input.read_config_cpp}" \
 		" {input.map_encodings_cpp}" \
 		" {input.utils_cpp}" \
@@ -180,47 +153,174 @@ rule encode_vcf_segments_compile:
 		" -I {config.htslib_dir}" \
 		" -lhts" \
 		" -o {output.bin}"
-# 3.2 encode vcf segments (execute)
-rule encode_vcf_segments_execute:
+		
+# 2.2 encode genotypes for VCF segments (execute)
+rule encode_gt_execute:
 	input:
-		bin=f"{config.cpp_bin_dir}encode-vcf",
-		sample_IDs=f"{config.data_dir}samples_IDs.txt",
+		bin=f"{config.cpp_bin_dir}encode-gt",
 		config_file=f"{config.config_file}"
 	output:
-		encode_log=f"{config.out_dir}encode.log"
+		encode_gt_log=f"{config.out_dir}encode_gt.log"
 	message:
-		"Executing--encode vcf segments..."
+                "Compiling--encoding genotype segments..."
 	shell:
+		"echo 2. ---ENCODING VCF SEGMENTS---;" \
 		"for vcf_f in {config.out_dir}*.vcf; do" \
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
-		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.encoded {config.out_dir}${{seg_name}}.position;" \
+		"	echo SEGMENT: $seg_name;" \
+		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
+		"	 > {output.encode_gt_log};" \
 		"done;"
-		"touch {output.encode_log};"
 
-# 4.1 build FAISS index (compile)
-rule build_faiss_index:
-	input:
-		#slice_log=f"{config.out_dir}slice.log",
-		#pos_encode_log=f"{config.out_dir}pos-encode.log",
-		#encode_log=f"{config.out_dir}encode.log",
-		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
-		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
-	output:
-		bin=f"{config.cpp_bin_dir}faiss-l2-build"
-	message:
-		"Compiling--build faiss l2 index..."
-	shell:
-		"g++" \
-		" {input.faiss_l2_build_cpp}" \
-		" {input.faiss_utils_cpp}" \
-		" -I {config.conda_dir}/include" \
-		" -I {config.cpp_include_dir}" \
-		" -I {config.faisslib_dir}" \
-		" -lfaiss" \
-		" -o {output.bin}"
- 
 
+## 1.1 slice VCF into segments (compile)
+#rule slice_VCF_compile:
+#	input:
+#		interpolate_map=f"{config.data_dir}interpolated.map",
+#		main_slice_cpp=f"{config.cpp_src_dir}main_slice.cpp",
+#		slice_vcf_cpp=f"{config.cpp_src_dir}slice_vcf.cpp",
+#		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+#		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
+#		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+#	output:
+#		bin=f"{config.cpp_bin_dir}slice-vcf"
+#	message:
+#		"Compiling--slice vcf into segments..."
+#	shell:
+#		"g++" \
+#		" {input.main_slice_cpp}" \
+#		" {input.slice_vcf_cpp}" \
+#		" {input.read_config_cpp}" \
+#		" {input.read_map_cpp}" \
+#		" {input.utils_cpp}" \
+#		" -I {config.cpp_include_dir}" \
+#		" -I {config.htslib_dir}" \
+#		" -lhts" \
+#		" -o {output.bin}"
+## 1.2 slice VCF into segments (execute)
+#rule slice_VCF_execute:
+#	input:
+#		bin=f"{config.cpp_bin_dir}slice-vcf",
+#		config_file=f"{config.config_file}"
+#	output:
+#		slice_log=f"{config.out_dir}slice.log"
+#	message:
+#		"Executing--slice vcf into segments..."
+#	shell:
+#		"./{input.bin} {input.config_file} > {output.slice_log}"
+#
+## 2.1 positional encoding vcf segemnts (compile)
+#rule pos_encode_vcf_segments_compile:
+#	input:
+#		slice_log=f"{config.out_dir}slice.log",
+#		main_positional_encode_cpp=f"{config.cpp_src_dir}main_positional_encode.cpp",
+#		encode_positions_cpp=f"{config.cpp_src_dir}encode_positions.cpp", 
+#		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+#		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+#		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
+#		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+#	output:
+#		bin=f"{config.cpp_bin_dir}pos-encode"
+#	message:
+#		"Compiling--positional encode vcf segments..."
+#	shell:
+#		"g++" \
+# 		" {input.main_positional_encode_cpp}" \
+#        	" {input.encode_positions_cpp}" \
+#        	" {input.map_encodings_cpp}" \
+#        	" {input.read_config_cpp}" \
+#        	" {input.read_map_cpp}" \
+#        	" {input.utils_cpp}" \
+#        	" -I {config.cpp_include_dir}" \
+#                " -I {config.htslib_dir}" \
+#                " -lhts" \
+#                " -o {output.bin}"
+## 2.2 positional encoding vcf segments (execute)
+#rule pos_encode_vcf_segments_execute:	
+#	input:
+#		bin=f"{config.cpp_bin_dir}pos-encode",
+#		config_file=f"{config.config_file}"
+#	output:
+#		pos_encode_log=f"{config.out_dir}pos-encode.log"
+#	message:
+#		"Executing--positional encode vcf segments..."
+#	shell:
+#		"for vcf_f in {config.out_dir}*.vcf; do" \
+#                "       filename=$(basename $vcf_f);" \
+#                "       seg_name=${{filename%.*}};" \
+#		"	echo Positional Encoding: $vcf_f;" \
+#		"	num_samples=$(bcftools query -l $vcf_f | wc -l);" \
+#                "       ./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.pos_encoded > {output.pos_encode_log};" \
+#                "done;"
+#                ##"touch {output.pos_encode_log};"
+#		## $bin $config_file $vcf_slice $pos_encode
+#
+## 3.1 encode vcf segments (compile)
+#rule encode_vcf_segments_compile:
+#	input:
+#		slice_log=f"{config.out_dir}slice.log",
+#		main_encode_cpp=f"{config.cpp_src_dir}main_encode.cpp",
+#		encode_vcf_cpp=f"{config.cpp_src_dir}encode_vcf.cpp",
+#		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+#		map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+#		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+#	output:
+#		bin=f"{config.cpp_bin_dir}encode-vcf"
+#	message:
+#		"Compiling--encode vcf segments..."
+#	shell:
+#		"g++" \
+#		" {input.main_encode_cpp}" \
+#		" {input.encode_vcf_cpp}" \
+#		" {input.read_config_cpp}" \
+#		" {input.map_encodings_cpp}" \
+#		" {input.utils_cpp}" \
+#		" -I {config.cpp_include_dir}" \
+#		" -I {config.htslib_dir}" \
+#		" -lhts" \
+#		" -o {output.bin}"
+## 3.2 encode vcf segments (execute)
+#rule encode_vcf_segments_execute:
+#	input:
+#		bin=f"{config.cpp_bin_dir}encode-vcf",
+#		sample_IDs=f"{config.data_dir}samples_IDs.txt",
+#		config_file=f"{config.config_file}"
+#	output:
+#		encode_log=f"{config.out_dir}encode.log"
+#	message:
+#		"Executing--encode vcf segments..."
+#	shell:
+#		"for vcf_f in {config.out_dir}*.vcf; do" \
+#		"	filename=$(basename $vcf_f);" \
+#		"	seg_name=${{filename%.*}};" \
+#		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.encoded {config.out_dir}${{seg_name}}.position;" \
+#		"done;"
+#		"touch {output.encode_log};"
+#
+## 4.1 build FAISS index (compile)
+#rule build_faiss_index:
+#	input:
+#		#slice_log=f"{config.out_dir}slice.log",
+#		#pos_encode_log=f"{config.out_dir}pos-encode.log",
+#		#encode_log=f"{config.out_dir}encode.log",
+#		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
+#		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
+#	output:
+#		bin=f"{config.cpp_bin_dir}faiss-l2-build"
+#	message:
+#		"Compiling--build faiss l2 index..."
+#	shell:
+#		"g++" \
+#		" {input.faiss_l2_build_cpp}" \
+#		" {input.faiss_utils_cpp}" \
+#		" -I {config.conda_dir}/include" \
+#		" -I {config.cpp_include_dir}" \
+#		" -I {config.faisslib_dir}" \
+#		" -lfaiss" \
+#		" -o {output.bin}"
+# 
+#
 ## 4 run plink on full vcf
 #rule plink:
 #	input:
