@@ -10,7 +10,7 @@ k=20
 # ilash
 echo "RUNNING iLASH"
 ilash_start=`date +%s.%N`
-$iLASH_ex"/build/ilash" $iLASH_ex/"1kg-chr8.config" > $out_dir/"1kg-chr8.ilash.out"
+$iLASH_ex"/build/ilash" $iLASH_ex/"1kg-chr8.config" > $out_dir/"ilash.out"
 ilash_end=`date +%s.%N`
 ilash_runtime=$( echo "$ilash_end - $ilash_start" | bc -l )
 echo "ilash runtime: $ilash_runtime"
