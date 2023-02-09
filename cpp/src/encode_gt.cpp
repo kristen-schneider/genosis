@@ -12,7 +12,7 @@
 #include <htslib/synced_bcf_reader.h>
 #include <vector>
 
-#include "encode_vcf.h"
+#include "encode_gt.h"
 #include "map_encodings.h"
 #include "read_config.h"
 #include "utils.h"
