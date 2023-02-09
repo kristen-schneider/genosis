@@ -2,6 +2,9 @@ bin/
 build/
 data/
 lib/faiss/
+example/plink_map.nosex
+example/plink_map.ped
+example/segments/*.vcf
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
 python/scripts/distance/dist_data/

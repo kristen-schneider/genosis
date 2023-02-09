@@ -1,0 +1,42 @@
+home_dir:
+  ./
+conda_dir:
+  /home/sdp/miniconda3/envs/pm/
+
+data_dir:
+  /home/sdp/pmed-local/data/example/
+vcf_file:
+  /home/sdp/pmed-local/data/example/example.vcf.gz
+database_file:
+  /home/sdp/pmed-local/data/example/all_hap_IDs.txt
+query_file:
+  /home/sdp/pmed-local/data/example/test_query.txt
+ref_map:
+  /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
+interpolated_map:
+  /home/sdp/pmed-local/data/example/interpolated.map
+out_dir:
+  /home/sdp/pmed-local/data/example/segments/
+config_file:
+  /home/sdp/pmed-local/data/example/config.yaml
+k:
+  10
+delim:
+  space
+
+cpp_bin_dir:
+  cpp/bin/
+cpp_src_dir:
+  cpp/src/
+cpp_include_dir:
+  cpp/include/
+cpp_configs_dir:
+  notes/ancestry_configs
+
+python_dir:
+  python/scripts/
+
+htslib_dir:
+  lib/htslib/
+faisslib_dir:
+  lib/faiss/

@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "/home/sdp/pmed-local/data/small/config_snakemake.yaml" # path to the config
+configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"

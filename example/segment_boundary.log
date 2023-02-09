@@ -1,0 +1,18 @@
+
+1. ---SLICING VCF---
+
+Loading config options from: /home/sdp/pmed-local/data/small/config.yaml.
+...Reading config file.
+...Done reading config file.
+CONFIG OPTIONS: 
+	-vcf file: /home/sdp/pmed-local/data/small/small.vcf.gz
+	-map file: /home/sdp/pmed-local/data/small/interpolated.map
+	-data dir: /home/sdp/pmed-local/data/small/
+	-segment size: 1
+
+Making segment boundary map for: /home/sdp/pmed-local/data/small/interpolated.map @ 1cm slices.
+...Reading map file.
+......Creating segment boundary map (segment index: start_bp, end_bp)
+......counted 5 slices.
+...Done reading map file.
+Writing segment boundary map to: /home/sdp/pmed-local/data/small/segment_boundary.map
