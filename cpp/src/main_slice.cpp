@@ -6,7 +6,7 @@
 
 #include "read_config.h"
 #include "read_map.h"
-#include "slice_vcf.h"
+#include "segment_boundary_map.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ int main(int argc, char* argv[]){
 	// read config file
 	string configFile = argv[1];   // configuration file will all options
 	cout << endl << "1. ---SLICING VCF---" << endl << endl;
-	cout << "Loading config options from: " << configFile << "..." << endl;
+	cout << "Loading config options from: " << configFile << "." << endl;
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	
@@ -37,14 +37,18 @@ int main(int argc, char* argv[]){
 	cout << "\t-segment size: " << segment_size << endl << endl;
 
 	// slice vcf into segments
-	cout << "Slicing VCF: " << vcf_file << endl;
-	
-	int num_segments = slice_main(map_file,
+	cout << "Making segment boundary map for: " << map_file << " @ " << segment_size << "cm slices." << endl;
+	map<int, vector<int>> segment_boundary_map;
+	segment_boundary_map = make_segment_boundary_map(
+			map_file,
 			segment_size,
-			vcf_file,
-			out_base_name,
 			out_dir);
-	cout << "Wrote " << num_segments + 1 << " slices to: " << out_dir << endl; // zero-index
-	
+	string segment_boundary_file = out_dir + "segment_boundary.map";
+	cout << "Writing segment boundary map to: " << segment_boundary_file << endl;
+	write_segment_boundary_map(
+			segment_boundary_map,
+			segment_boundary_file);
+
+
 	return 0;
 }

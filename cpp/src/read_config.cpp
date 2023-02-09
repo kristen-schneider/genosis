@@ -28,7 +28,7 @@ map<string, string> get_config_options(string config_file){
 		exit(EXIT_FAILURE);
 	}
 	else{
-		cout << "...opened " << config_file << "." << endl;
+		cout << "...Reading config file." << endl;
 	}
 		
 	char delim = ':';
@@ -50,6 +50,6 @@ map<string, string> get_config_options(string config_file){
 		config_options.insert(key_option_pair);
 		//cout << key << " " << user_specified_option << endl;
 	}
-	cout << "...read all config options." << endl;
+	cout << "...Done reading config file." << endl;
 	return config_options;
 }
