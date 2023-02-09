@@ -17,7 +17,8 @@ int main(int argc, char* argv[]){
 		
 	// read config file
 	string configFile = argv[1];   // configuration file will all options
-	cout << "Loading Config Options from: " << configFile << "..." << endl;
+	cout << endl << "1. ---SLICING VCF---" << endl << endl;
+	cout << "Loading config options from: " << configFile << "..." << endl;
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	
@@ -28,10 +29,21 @@ int main(int argc, char* argv[]){
     	string out_base_name = config_options["out_base_name"];
 	int segment_size = stoi(config_options["segment_size"]);
 	
+	// report relevant config options
+	cout << "CONFIG OPTIONS: " << endl;
+	cout << "\t-vcf file: " << vcf_file << endl;
+	cout << "\t-map file: " << map_file << endl;
+	cout << "\t-out dir: " << out_dir << endl;
+	cout << "\t-segment size: " << segment_size << endl << endl;
+
 	// slice vcf into segments
 	cout << "Slicing VCF: " << vcf_file << endl;
 	
-	int num_segments = slice_main(map_file, segment_size, vcf_file, out_base_name, out_dir);
+	int num_segments = slice_main(map_file,
+			segment_size,
+			vcf_file,
+			out_base_name,
+			out_dir);
 	cout << "Wrote " << num_segments + 1 << " slices to: " << out_dir << endl; // zero-index
 	
 	return 0;
