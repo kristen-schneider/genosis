@@ -35,12 +35,13 @@ int main(int argc, char* argv[]){
 	cout << "\t-data dir: " << data_dir << endl;
 	cout << "\t-segment size: " << segment_size << endl << endl;
 
-	// slice vcf into segments
+	// create segment boundary map
 	cout << "Making segment boundary map for: " << map_file << " @ " << segment_size << "cm slices." << endl;
 	map<int, vector<int>> segment_boundary_map;
 	segment_boundary_map = generate_segment_boundary_map(
 			map_file,
 			segment_size);
+	// write segment boundary map
 	string segment_boundary_file = data_dir + "segment_boundary.map";
 	cout << "Writing segment boundary map to: " << segment_boundary_file << endl;
 	write_segment_boundary_map(
