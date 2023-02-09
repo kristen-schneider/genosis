@@ -1,0 +1,16 @@
+name: torch-gpu
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=11.7
+  - pytorch-lightning
+  - numpy
+  - pip
+    - transformers
+    - wandb
+
