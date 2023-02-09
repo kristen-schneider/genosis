@@ -18,11 +18,10 @@
 
 using namespace std;
 
-void encode_vcf(string sample_IDs_file,
+void encode_gt_vectors(string sample_IDs_file,
 	       	string input_vcf_file, 
 		map<string, vector<int>> encoding_map, 
-		string output_encoding_file,
-		string output_position_file);
+		string output_encoding_file);
 
 void write_SMF(vector<string> all_sample_IDs, 
 		vector<vector<int>> smf, 

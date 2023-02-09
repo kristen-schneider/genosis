@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 
-#include "encode_vcf.h"
+#include "encode_gt.h"
 #include "map_encodings.h"
 #include "read_config.h"
 
@@ -23,19 +23,23 @@ int main(int argc, char* argv[]){
 	string output_position_file = argv[4];	// output positional encoding (slice) file
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
+
 	// access each option by variable name
 	string map_file = config_options["interpolated_map"];
 	string encoding_file = config_options["encoding_file"];
 	string sample_IDs_file = config_options["sample_IDs_file"];
 	string out_dir = config_options["out_dir"];
     	string out_base_name = config_options["out_base_name"];
-	
+
 	// make encoding map
 	cout << "Loading Encoding Map..." << endl;
 	map<string, vector<int>> encoding_map = make_biallelic_encoding_map(encoding_file);
 
 	// encode single vcf
-	encode_vcf(sample_IDs_file, vcf_slice_file, encoding_map, output_encoding_file, output_position_file);	
+	encode_gt_vectors(sample_IDs_file,
+			vcf_slice_file,
+			encoding_map,
+			output_encoding_file);	
 	
 	return 0;
 }

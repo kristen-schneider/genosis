@@ -23,97 +23,91 @@ using namespace std;
  * takes one sliced vcf file and encoding instructions
  * and writes output encoiding file
  */
-void encode_vcf(string sample_IDs_file, 
+void encode_gt_vectors(string sample_IDs_file, 
 		string vcf_slice_file, 
 		map<string, vector<int>> encoding_map, 
-		string output_encoding_file, 
-		string output_position_file){
+		string output_encoding_file){
 	
+	cout << "Encoding " << vcf_slice_file << "..." << endl;
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
+	
 	// open VCF file with htslib
-	cout << "VCF: " << vcf_slice << endl;
 	htsFile *vcf_stream = bcf_open(vcf_slice, "r");
 	if (!vcf_stream){
 		cout << "FAILED TO OPEN: " << vcf_slice << endl;
 		exit(1);
-	}
-		
+	}	
+
+	// read vcf header
 	bcf_hdr_t *vcf_header = bcf_hdr_read(vcf_stream);
 	if (vcf_header == NULL) {
 		throw runtime_error("Unable to read header.");
 		exit(1);
-        }
-	
-	// getting number of samples
-	int num_samples = get_num_samples(vcf_header);
-	cout << "NUM SAMPLES: " << num_samples << endl;
-	
-	// initialize and allocate bcf1_t object
+        } 
+
+	// get number of samples
+	int num_samples;
+	num_samples = bcf_hdr_nsamples(vcf_header);
+	char ** sample_ids = vcf_header->samples;
+
+	// allocate space for vcf record
         bcf1_t *vcf_record = bcf_init();
         if (vcf_record == NULL) {
         	cout << "ERROR: record is empty" << endl;
         }
 
 	vector<vector<int>> all_haplotype_encodings;
-	vector<int> all_positions;
+	vector<int> all_bp_positions;
 	
 	cout << "...reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
 		bcf_unpack(vcf_record, BCF_UN_ALL);
 		bcf_unpack(vcf_record, BCF_UN_INFO);
 
-		// making variable names for each column
-		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);
-		int pos = (unsigned long)vcf_record->pos;
-		string id = vcf_record->d.id;
-		string ref = vcf_record->d.allele[0];
-		string alt = vcf_record->d.allele[1];
-		double_t qual = vcf_record->qual;
-		all_positions.push_back(pos);
-		
-		// make chromosome through quality into one vector of strings
-		vector<string> chrm_thru_qual_vector = 
-			{chrm, to_string(pos), id, ref, alt, to_string(qual)};
-		string s;
-		for (const auto &col : chrm_thru_qual_vector) s += "\t" + col;
-		string chrm_thru_qual_string;
-		chrm_thru_qual_string = chrm_thru_qual_string +
-			chrm + "\t" +
-			to_string(pos) + "\t" +
-			id + "\t" +
-			ref + "\t" +
-			alt + "\t" +
-			to_string(qual) + "\t";
-
+		// storing data for each column
+		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);	// chrom
+		int pos = (unsigned long)vcf_record->pos;			// pos
+		string id = vcf_record->d.id;					// sample id
+		string ref = vcf_record->d.allele[0];				// ref allele
+		string alt = vcf_record->d.allele[1];				// alt allele
+		double_t qual = vcf_record->qual;				// quality
+		all_bp_positions.push_back(pos);				// add pos to vector
+	
 		// reading genotypes
 		string s_gt;
 		int *gt = NULL;
-		int num_alleles = 0;
+		int number_total_alleles = 0;
 		int ngt_arr = 0;
 		vector<int> haplotype_encoding_vector;
-
-		num_alleles = bcf_get_genotypes(vcf_header, vcf_record,  &gt, &ngt_arr);
-		int alleles_per_gt = num_alleles/num_samples;
+		number_total_alleles = bcf_get_genotypes(vcf_header, vcf_record,  &gt, &ngt_arr);
+		int alleles_per_gt = number_total_alleles/num_samples;
+		
+		// for each sample in the record, convert gt to encoding
 		for (int i = 0; i < num_samples; i++){
+
+			// separate two alleles for each gt
 			int allele1 = bcf_gt_allele(gt[i*alleles_per_gt+0]);
-			int allele2;
+			int allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 			
-			// replace unknowns
-			if (allele1 == -1){ s_gt = ".|.";}
+			// replace unknowns and concatinate genotypes to " | " format
+			if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
+				s_gt = ".|" + to_string(allele2);
+			}
+			if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
+				s_gt = to_string(allele1) + "|.";
+                        }
 			else{
-				allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
 				s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
+
+			// mapping genotype to encoding vector
 			vector<int> biallelic_encoding = encoding_map[s_gt];
 			haplotype_encoding_vector.push_back(biallelic_encoding[0]);
 			haplotype_encoding_vector.push_back(biallelic_encoding[1]);
-				
 		}
 		all_haplotype_encodings.push_back(haplotype_encoding_vector);
-
 		haplotype_encoding_vector.clear();
-		
 	} // end of reading records
 	// transposing data
 	cout << "...transposing data..." << endl;
@@ -127,7 +121,7 @@ void encode_vcf(string sample_IDs_file,
 
 	// writing positinal encoding
 	//cout << "...writing positional encodings to file..." << endl;
-	//write_positional_encoding(all_positions, all_sample_IDs, sample_major_format_hap_vec, output_position_file);	
+	//write_positional_encoding(all_bp_positions, all_sample_IDs, sample_major_format_hap_vec, output_position_file);	
 }	
 
 /*
@@ -163,7 +157,7 @@ void write_SMF(vector<string> all_sample_IDs, vector<vector<int>> smf, string ou
 	}
 }
 
-void write_positional_encoding(vector<int> all_positions, 
+void write_positional_encoding(vector<int> all_bp_positions, 
 		vector<string> all_sample_IDs, 
 		vector<vector<int>> smf, 
 		string output_positional_encoding_file){
@@ -189,7 +183,7 @@ void write_positional_encoding(vector<int> all_positions,
 		output_stream << all_sample_IDs[SID_i] << "_" << binary << " ";
                 for(int j = 0; j < sample.size(); j++) {
 			if (sample.at(j) == 1){
-				relative_position = all_positions.at(j) - all_positions.at(0);
+				relative_position = all_bp_positions.at(j) - all_bp_positions.at(0);
 				output_stream << relative_position << " ";
 			}
 
