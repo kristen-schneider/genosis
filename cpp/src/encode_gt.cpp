@@ -28,7 +28,6 @@ void encode_gt_vectors(string sample_IDs_file,
 		map<string, vector<int>> encoding_map, 
 		string output_encoding_file){
 	
-	cout << "Encoding " << vcf_slice_file << "..." << endl;
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
 	
@@ -60,7 +59,7 @@ void encode_gt_vectors(string sample_IDs_file,
 	vector<vector<int>> all_haplotype_encodings;
 	vector<int> all_bp_positions;
 	
-	cout << "...reading genotypes." << endl;
+	cout << "...Reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
 		bcf_unpack(vcf_record, BCF_UN_ALL);
 		bcf_unpack(vcf_record, BCF_UN_INFO);
@@ -109,15 +108,18 @@ void encode_gt_vectors(string sample_IDs_file,
 		all_haplotype_encodings.push_back(haplotype_encoding_vector);
 		haplotype_encoding_vector.clear();
 	} // end of reading records
+	cout << "...Done reading genotypes." << endl;
+	
 	// transposing data
-	cout << "...transposing data..." << endl;
+	cout << "...Transposing data." << endl;
 	vector<vector<int>> sample_major_format_hap_vec = transpose_int(all_haplotype_encodings); 
+	cout << "...Done transposing data." << endl;
 
 	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file); 
 	// writing smf
-	cout << "...writing sample major format encodings to file..." << endl;
-	cout << sample_major_format_hap_vec.size() << endl;
+	cout << "...Writing sample major format encodings to file: " << output_encoding_file << "." << endl;
 	write_SMF(all_sample_IDs, sample_major_format_hap_vec, output_encoding_file);
+	cout << "...Done writing sample major format." << endl;
 
 	// writing positinal encoding
 	//cout << "...writing positional encodings to file..." << endl;

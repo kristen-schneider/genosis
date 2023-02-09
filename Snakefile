@@ -20,10 +20,10 @@ rule all:
 		f"{config.data_dir}segment_boundary.log",
                 f"{config.data_dir}segment_boundary.map",
 		f"{config.out_dir}slice.log",
+		f"{config.cpp_bin_dir}encode-gt",
+		f"{config.out_dir}encode_gt.log",
 		#f"{config.cpp_bin_dir}pos-encode",
 		#f"{config.out_dir}pos-encode.log",
-		#f"{config.cpp_bin_dir}encode-vcf",
-		#f"{config.out_dir}encode.log",
 		#f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss.log"
 		#f"{config.data_dir}plink.log",
@@ -128,6 +128,50 @@ rule slice_VCF:
 		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
 		"	tabix {input.vcf_file} chr8:${{start_bp}}-${{end_bp}} >> {config.out_dir}segment.${{segment}}.vcf;" \
 		" done < {input.segment_boundary_file};" \
+
+# 2.1 encode genoypes for VCF segments (compile)
+rule encode_gt_compile:
+	input:
+		slice_log=f"{config.out_dir}slice.log",
+		main_encode_cpp=f"{config.cpp_src_dir}main_encode.cpp",
+                encode_gt_cpp=f"{config.cpp_src_dir}encode_gt.cpp",
+                read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+                map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
+                utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}encode-gt"
+	message:
+		"Compiling--encoding genotype segments..."
+	shell:
+		"g++" \
+		" {input.main_encode_cpp}" \
+		" {input.encode_gt_cpp}" \
+		" {input.read_config_cpp}" \
+		" {input.map_encodings_cpp}" \
+		" {input.utils_cpp}" \
+		" -I {config.cpp_include_dir}" \
+		" -I {config.htslib_dir}" \
+		" -lhts" \
+		" -o {output.bin}"
+		
+# 2.2 encode genotypes for VCF segments (execute)
+rule encode_gt_execute:
+	input:
+		bin=f"{config.cpp_bin_dir}encode-gt",
+		config_file=f"{config.config_file}"
+	output:
+		encode_gt_log=f"{config.out_dir}encode_gt.log"
+	message:
+                "Compiling--encoding genotype segments..."
+	shell:
+		"echo 2. ---ENCODING VCF SEGMENTS---;" \
+		"for vcf_f in {config.out_dir}*.vcf; do" \
+		"	filename=$(basename $vcf_f);" \
+		"	seg_name=${{filename%.*}};" \
+		"	echo SEGMENT: $seg_name;" \
+		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
+		"	 > {output.encode_gt_log};" \
+		"done;"
 
 
 ## 1.1 slice VCF into segments (compile)
