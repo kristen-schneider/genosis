@@ -2,8 +2,73 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from torch import nn, optim
-from torch.utils import data
+from torch import nn
+from transformers.models.longformer.configuration_longformer import \
+    LongformerConfig
+from transformers.models.longformer.modeling_longformer import LongformerModel
+
+
+# Notes:
+#   - provide our own input "embeddings" using a conv1d layer
+#   - maybe still get positional embeddings from Longformer?
+#   - still use token type ids for
+class LongformerGTEncoder(pl.LightningModule):
+    def __init__(self, **config):
+        super().__init__()
+        # model will consist of
+        #  - conv1d layer for positional embeddings
+        #  - LongformerModel(with pooling)
+
+        # TODO do the params for this better
+        if not config:
+            self.config = LongformerConfig(
+                attention_window=512,
+                hidden_size=512,
+                intermediate_size=1024,
+                num_attention_heads=4,
+                num_hidden_layers=4,
+                type_vocab_size=2,  # how many token types there are
+                max_position_embeddings=10000,  # max sequence length we can handle
+                # vocab_size=None,  # may not use since we will pass input embeddings
+                padding_idx=0, # NOTE: won't be used
+            )
+
+        else:
+            self.config = LongformerConfig(**config)
+
+        self.conv1d = nn.Conv1d(
+            in_channels=1,
+            out_channels=self.config.hidden_size,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+        )
+        self.activation = nn.GELU()
+        self.longformer = LongformerModel(self.config, add_pooling_layer=True)
+
+    def forward(self, x, attention_mask, token_type_ids=None):
+        """
+        - Conv1D expects   (batch, channels, seq_len) in.
+        - Conv1D output is (batch, hidden_size, seq_len) out.
+        - TODO try a couple convolutional layers.
+        - Longformer embeddings have LayerNorm applied before attention.
+        - LayerNorm expects (batch, *) so seems like anything goes.
+        - Attention expects (batch, seq_len, hidden_size)?
+        - So do a permute to get (batch, hidden_size, seq_len) out.
+        """
+        x = self.conv1d(x)
+        x = self.activation(x)
+        x = x.permute(0, 2, 1)
+        x = self.longformer(
+            inputs_embeds=x,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+        )[1] # pooler output
+        return x
+
+    def predict_step(self, batch, batch_idx, dataloader_idx=None):
+        x = batch["P"]
+        return self(x)
 
 
 class ResidualBlock(nn.Module):
@@ -195,6 +260,8 @@ class SiameseModule(pl.LightningModule):
 
         if self.encoder_type == "conv1d_siamese":
             self.encoder = Conv1DEncoder(**encoder_params)
+        elif self.encoder_type == "transformer_siamese":
+            self.encoder = LongformerGTEncoder(**encoder_params)
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
 
@@ -213,9 +280,14 @@ class SiameseModule(pl.LightningModule):
         x1 = batch["P1"]
         x2 = batch["P2"]
         d = batch["D"]
-        u = self.encoder(x1)
-        with torch.no_grad():
-            v = self.encoder(x2)
+        if self.encoder_type == "transformer_siamese":
+            u = self.encoder(x1, batch["attention_mask1"])
+            with torch.no_grad():
+                v = self.encoder(x2, batch["attention_mask2"])
+        else:
+            u = self.encoder(x1)
+            with torch.no_grad():
+                v = self.encoder(x2)
 
         dpred = F.cosine_similarity(u, v, dim=1)
         return self.loss_fn(dpred, d)

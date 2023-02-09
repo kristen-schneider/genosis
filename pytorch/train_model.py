@@ -2,12 +2,13 @@ import argparse
 import os
 import random
 from datetime import datetime
+from functools import partial
 from glob import glob
 
 import numpy as np
 import pytorch_lightning as pl
 from data_utils.gt_datasets import GTDataset, pad_data, train_val_split
-from models.encoder import Conv1DEncoder, SiameseModule
+from models.encoder import Conv1DEncoder, LongformerGTEncoder, SiameseModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
@@ -41,7 +42,7 @@ def get_dataloaders(args):
     train_dataloader = data.DataLoader(
         train_ds,
         batch_size=args.batch_size,
-        collate_fn=pad_data,
+        collate_fn=partial(pad_data, model_type=args.model_type),
         shuffle=True,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -51,7 +52,7 @@ def get_dataloaders(args):
     val_dataloader = data.DataLoader(
         val_ds,
         batch_size=args.batch_size,
-        collate_fn=pad_data,
+        collate_fn=partial(pad_data, model_type=args.model_type),
         shuffle=False,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -65,18 +66,19 @@ def get_dataloaders(args):
     }
 
 
-def conv1d_siamese(args):
+def siamese(args):
 
     data = get_dataloaders(args)
 
     siamese_model = SiameseModule(
         encoder_type=args.model_type,
-        encoder_params={
+        encoder_params={  # TODO add more for transformer if needed
             "n_layers": args.n_layers,
             "dropout": args.dropout,
             "kernel_size": args.kernel_size,
             "stride": args.stride,
             "padding": args.padding,
+            # "enc_dimension": args.enc_dimension,
         },
         lr=args.lr,
         optimizer=optim.AdamW,
@@ -148,13 +150,6 @@ def conv1d_siamese(args):
         train_dataloaders=data["train_dataloader"],
         val_dataloaders=data["val_dataloader"],
     )
-
-
-def transformer_siamese(args):
-    """
-    Use a transformer as the encoder in a siamese network.
-    """
-    raise NotImplementedError
 
 
 def transformer_paired_lm_pretrain(args):
@@ -286,10 +281,8 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.model_type == "conv1d_siamese":
-        conv1d_siamese(args)
-    elif args.model_type == "transformer_siamese":
-        transformer_siamese(args)
+    if args.model_type == "conv1d_siamese" or args.model_type == "transformer_siamese":
+        siamese(args)
     elif args.model_type == "transformer_paired_lm_pretrain":
         transformer_paired_lm_pretrain(args)
     else:

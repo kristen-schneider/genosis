@@ -95,7 +95,9 @@ class GTInferenceWriter(BasePredictionWriter):
             for sample, segment, embedding in zip(
                 batch["sample"], batch["segment"], outputs
             ):
-                f.write(f"{sample}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n")
+                f.write(
+                    f"{sample}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n"
+                )
 
 
 class GTDataset(Dataset):
@@ -106,7 +108,7 @@ class GTDataset(Dataset):
     def __init__(
         self,
         *,
-        pos_files: tuple[str, str],
+        pos_files: Sequence[str],
         dist_file: str,
         model_type: str = "conv1d_siamese",
     ):
@@ -126,6 +128,8 @@ class GTDataset(Dataset):
         return self.n_data
 
 
+# TODO maybe not the best way to do this
+# could just separate out the functions
 def pad_data(data, model_type="conv1d_siamese"):
     if model_type == "conv1d_siamese":
         # variable length tensors
@@ -147,6 +151,27 @@ def pad_data(data, model_type="conv1d_siamese"):
         segments = [x["segment"] for x in data]
 
         return {"P": P, "sample": samples, "segment": segments}
+
+    elif model_type == "transformer_siamese":
+        # variable length tensors
+        P1 = [torch.tensor(x["P1"], dtype=torch.float32) for x in data]
+        P2 = [torch.tensor(x["P2"], dtype=torch.float32) for x in data]
+
+        # scalars
+        dists = torch.tensor([x["D"] for x in data], dtype=torch.float32)
+
+        P1 = pad_sequence(P1, batch_first=True).unsqueeze(1)
+        P2 = pad_sequence(P2, batch_first=True).unsqueeze(1)
+
+        attention_mask1 = torch.where(P1 == 0, 0, 1).squeeze(2)
+        attention_mask2 = torch.where(P2 == 0, 0, 1).squeeze(2)
+        return {
+            "P1": P1,
+            "P2": P2,
+            "attention_mask1": attention_mask1,
+            "attention_mask2": attention_mask2,
+            "D": dists,
+        }
 
     else:
         raise ValueError(f"Unknown model type: {model_type}")
@@ -173,28 +198,26 @@ def train_val_split(
 if __name__ == "__main__":
     # files = glob("/data/segments/*.pos_encoded")[:10]
 
-    files = [
-        "/data/segments/1KG.data.seg.90.pos_encoded",
-        "/data/segments/1KG.data.seg.91.pos_encoded",
-        "/data/segments/1KG.data.seg.92.pos_encoded",
-        "/data/segments/1KG.data.seg.93.pos_encoded",
-        "/data/segments/1KG.data.seg.94.pos_encoded",
-        "/data/segments/1KG.data.seg.95.pos_encoded",
-        "/data/segments/1KG.data.seg.96.pos_encoded",
-        "/data/segments/1KG.data.seg.97.pos_encoded",
-        "/data/segments/1KG.data.seg.98.pos_encoded",
-        "/data/segments/1KG.data.seg.99.pos_encoded",
-        "/data/segments/1KG.data.seg.9.pos_encoded",
-    ]
-    infer_dataset = GTInferenceDataset(files=files)
+    # files = [
+    #     "/data/segments/1KG.data.seg.90.pos_encoded",
+    #     "/data/segments/1KG.data.seg.91.pos_encoded",
+    #     "/data/segments/1KG.data.seg.92.pos_encoded",
+    #     "/data/segments/1KG.data.seg.93.pos_encoded",
+    #     "/data/segments/1KG.data.seg.94.pos_encoded",
+    #     "/data/segments/1KG.data.seg.95.pos_encoded",
+    #     "/data/segments/1KG.data.seg.96.pos_encoded",
+    #     "/data/segments/1KG.data.seg.97.pos_encoded",
+    #     "/data/segments/1KG.data.seg.98.pos_encoded",
+    #     "/data/segments/1KG.data.seg.99.pos_encoded",
+    #     "/data/segments/1KG.data.seg.9.pos_encoded",
+    # ]
+    # infer_dataset = GTInferenceDataset(files=files)
 
-    print("data loader")
-    infer_loader = DataLoader(
-        infer_dataset,
-        batch_size=64,
-        num_workers=4,
-        collate_fn=partial(pad_data, model_type="conv1d_inference"),
+    dataset = GTDataset(
+        pos_files=("/data/P1", "/data/P2"),
+        dist_file="/data/precomputed_distances/D.txt",
+        model_type="transformer_siamese",
     )
 
-    for data in infer_loader:
-        print(data["segment"], data["sample"], data["P"].shape)
+    print(max([len(x["P1"]) for x in dataset]))
+
