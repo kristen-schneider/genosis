@@ -16,9 +16,8 @@ using namespace std;
  * creating segment boundary map with format
  * segment index: <bp_start, bp_end>
  */	
-map<int, vector<int>> make_segment_boundary_map(string map_file,
-		int segment_size,
-		string out_dir){
+map<int, vector<int>> generate_segment_boundary_map(string map_file,
+		int segment_size){
 	
 	// map segment index to bp start, bp end
 	map<int, vector<int>> segment_boundary_map;

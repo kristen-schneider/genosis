@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-configfile: "/home/sdd/pmed-local/config_snakemake.yaml" # path to the config
+configfile: "/home/sdp/pmed-local/data/small/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -16,7 +16,9 @@ rule all:
 		f"{config.data_dir}samples.log",
 		f"{config.data_dir}plink_map.map",
 		f"{config.data_dir}interpolated.map",
-		f"{config.cpp_bin_dir}slice-vcf",
+		f"{config.cpp_bin_dir}segment-boundary",
+		f"{config.data_dir}segment_boundary.log",
+                f"{config.data_dir}segment_boundary.map",
 		f"{config.out_dir}slice.log",
 		#f"{config.cpp_bin_dir}pos-encode",
 		#f"{config.out_dir}pos-encode.log",
@@ -74,9 +76,59 @@ rule interpolate_map:
 		" --out_map {output.interpolated_map}"	
 
 # 1.1 write segment boundary file (compile)
-rule segment_boundary_file:
+rule segment_boundary_file_compile:
 	input:
-		
+		vcf_file=f"{config.vcf_file}",
+		main_segment_cpp=f"{config.cpp_src_dir}main_segment.cpp",
+		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
+		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
+		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}segment-boundary"
+	message:
+		"Compiling--write segment boundary file..."
+	shell:
+		"g++" \
+		" {input.main_segment_cpp}" \
+		" {input.segment_boundary_map_cpp}" \
+		" {input.read_config_cpp}" \
+		" {input.read_map_cpp}" \
+		" {input.utils_cpp}" \
+		" -I {config.cpp_include_dir}" \
+		" -I {config.htslib_dir}" \
+		" -lhts" \
+		" -o {output.bin}"
+
+# 1.2 write segment boundary file (execute)
+rule segment_boundary_file_execute:
+	input:
+		bin=f"{config.cpp_bin_dir}segment-boundary",
+		config_file=f"{config.config_file}"
+	output:
+		segment_boundary_log=f"{config.data_dir}segment_boundary.log",
+		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
+	message:
+		"Executing--write segment boundary file..."
+	shell:
+		"./{input.bin} {input.config_file} > {output.segment_boundary_log}"
+
+# 1.3 slice VCF into segments
+rule slice_VCF:
+	input:
+		vcf_file=f"{config.vcf_file}",
+		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
+	output:
+		slice_log=f"{config.out_dir}slice.log"
+	message:
+		"Slicing VCF into segments..."
+	shell:
+		"while IFs= read -r segment start_bp end_bp; do" \
+		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
+		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
+		"	tabix {input.vcf_file} chr8:${{start_bp}}-${{end_bp}} >> {config.out_dir}segment.${{segment}}.vcf;" \
+		" done < {input.segment_boundary_file};" \
+
 
 ## 1.1 slice VCF into segments (compile)
 #rule slice_VCF_compile:
