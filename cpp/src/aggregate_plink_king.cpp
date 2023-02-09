@@ -7,7 +7,7 @@
 #include <map>
 #include <vector>
 
-#include "plink_king_aggregate.h"
+#include "aggregate_plink_king.h"
 
 using namespace std;
 

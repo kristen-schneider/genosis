@@ -1,7 +1,7 @@
-#ifndef IBD_AGGREGATE_H
-#define IBD_AGGREGATE_H
+#ifndef AGGREGATE_IBD_H
+#define AGGREGATE_IBD_H
 
-#endif //IBD_AGGREGATE_H
+#endif //AGGREGATE_IBD_H
 
 #include <cstdlib>
 #include <iostream>

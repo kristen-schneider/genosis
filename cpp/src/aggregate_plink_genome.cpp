@@ -7,7 +7,7 @@
 #include <map>
 #include <vector>
 
-#include "plink_genome_aggregate.h"
+#include "aggregate_plink_genome.h"
 
 using namespace std;
 

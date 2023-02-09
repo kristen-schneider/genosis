@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 
-#include "ibd_aggregate.h"
+#include "aggregate_ibd.h"
 #include "utils.h"
 
 using namespace std;
