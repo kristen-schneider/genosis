@@ -1,7 +1,7 @@
-#ifndef ENCODEVCF_H
-#define ENCODEVCF_H
+#ifndef ENCODE_SEGMENT_H
+#define ENCODE_SEGMENT_H
 
-#endif //ENCODEVCF_H
+#endif //ENCODE_SEGMENT_H
 
 #include <cstdlib>
 #include <htslib/hts.h>
@@ -18,14 +18,21 @@
 
 using namespace std;
 
-void encode_gt_vectors(string sample_IDs_file,
+void encode_vectors(string sample_IDs_file,
 	       	string input_vcf_file, 
-		map<string, vector<int>> encoding_map, 
-		string output_encoding_file);
+		map<string, vector<int>> encoding_map,
+		map<int, float> bp_cm_map,
+		string output_gt_file,
+		string output_pos_file);
 
-void write_SMF(vector<string> all_sample_IDs, 
+void write_SMF_gt(vector<string> all_sample_IDs, 
 		vector<vector<int>> smf, 
-		string output_encoding_file);
+		string output_gt_file);
+void write_SMF_pos(vector<string> all_sample_IDs,
+                vector<vector<int>> smf,
+		vector<int> all_bp_positions,
+		map<int, float> bp_cm_map,
+                string output_pos_file);
 
 //void write_SMF_haplotype(vector<string> all_sample_IDs, vector<vector<int>> smf, string output_encoding_file);
 void write_positional_encoding(vector<int> all_positions,

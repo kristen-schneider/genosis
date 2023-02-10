@@ -12,3 +12,4 @@
 using namespace std;
 
 map<int,vector<int>> make_segment_boundary_map(string map_file, int slice_size);
+map<int, float> make_bp_cm_map(string map_file);

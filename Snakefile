@@ -20,8 +20,8 @@ rule all:
 		f"{config.data_dir}segment_boundary.log",
                 f"{config.data_dir}segment_boundary.map",
 		f"{config.out_dir}slice.log",
-		f"{config.cpp_bin_dir}encode-gt",
-		f"{config.out_dir}encode_gt.log",
+		f"{config.cpp_bin_dir}encode",
+		f"{config.out_dir}encode.log",
 		#f"{config.cpp_bin_dir}pos-encode",
 		#f"{config.out_dir}pos-encode.log",
 		#f"{config.cpp_bin_dir}faiss-l2-build",
@@ -123,6 +123,7 @@ rule slice_VCF:
 	message:
 		"Slicing VCF into segments..."
 	shell:
+		"echo 2. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r segment start_bp end_bp; do" \
 		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
 		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
@@ -130,23 +131,25 @@ rule slice_VCF:
 		" done < {input.segment_boundary_file};" \
 
 # 2.1 encode genoypes for VCF segments (compile)
-rule encode_gt_compile:
+rule encode_compile:
 	input:
 		slice_log=f"{config.out_dir}slice.log",
 		main_encode_cpp=f"{config.cpp_src_dir}main_encode.cpp",
-                encode_gt_cpp=f"{config.cpp_src_dir}encode_gt.cpp",
+                encode_segment_cpp=f"{config.cpp_src_dir}encode_segment.cpp",
                 read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
+                read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
                 map_encodings_cpp=f"{config.cpp_src_dir}map_encodings.cpp",
                 utils_cpp=f"{config.cpp_src_dir}utils.cpp"
 	output:
-		bin=f"{config.cpp_bin_dir}encode-gt"
+		bin=f"{config.cpp_bin_dir}encode"
 	message:
-		"Compiling--encoding genotype segments..."
+		"Compiling--encoding segments..."
 	shell:
 		"g++" \
 		" {input.main_encode_cpp}" \
-		" {input.encode_gt_cpp}" \
+		" {input.encode_segment_cpp}" \
 		" {input.read_config_cpp}" \
+		" {input.read_map_cpp}" \
 		" {input.map_encodings_cpp}" \
 		" {input.utils_cpp}" \
 		" -I {config.cpp_include_dir}" \
@@ -155,14 +158,14 @@ rule encode_gt_compile:
 		" -o {output.bin}"
 		
 # 2.2 encode genotypes for VCF segments (execute)
-rule encode_gt_execute:
+rule encode_execute:
 	input:
-		bin=f"{config.cpp_bin_dir}encode-gt",
+		bin=f"{config.cpp_bin_dir}encode",
 		config_file=f"{config.config_file}"
 	output:
-		encode_gt_log=f"{config.out_dir}encode_gt.log"
+		encode_log=f"{config.out_dir}encode.log"
 	message:
-                "Compiling--encoding genotype segments..."
+                "Compiling--encoding segments..."
 	shell:
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
 		"for vcf_f in {config.out_dir}*.vcf; do" \
@@ -170,7 +173,7 @@ rule encode_gt_execute:
 		"	seg_name=${{filename%.*}};" \
 		"	echo SEGMENT: $seg_name;" \
 		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
-		"	 > {output.encode_gt_log};" \
+		"	 > {output.encode_log};" \
 		"done;"
 
 
