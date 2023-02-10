@@ -4,9 +4,10 @@
 #include <map>
 #include <vector>
 
-#include "encode_gt.h"
+#include "encode_segment.h"
 #include "map_encodings.h"
 #include "read_config.h"
+#include "read_map.h"
 
 using namespace std;
 
@@ -18,8 +19,8 @@ int main(int argc, char* argv[]){
 	// read config file
 	string configFile = argv[1];   		// configuration file will all options
 	string vcf_slice_file = argv[2];	// input vcf (slice) file
-	string output_encoding_file = argv[3];	// output encoding (slice) file
-	string output_position_file = argv[4];	// output positional encoding (slice) file
+	string output_gt_file = argv[3];	// output encoding (slice) file
+	string output_pos_file = argv[4];	// output positional encoding (slice) file
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	
@@ -30,16 +31,24 @@ int main(int argc, char* argv[]){
 	string out_dir = config_options["out_dir"];
     	string out_base_name = config_options["out_base_name"];
 
-	// make encoding map
-	cout << "...Loading encoding map." << endl;
+	// make nominal gt encoding map
+	cout << "...Loading gt encoding map." << endl;
 	map<string, vector<int>> encoding_map = make_biallelic_encoding_map(encoding_file);
-	cout << "...Done loading encoding map." << endl;
-
+	cout << "...Done loading gt encoding map." << endl;
+	// make cm positional encoding map
+	cout << "...Loading pos encoding map." << endl;
+	map<int, float> bp_cm_map;
+	bp_cm_map = make_bp_cm_map(map_file);
+	cout << "...Done loading pos encoding map." << endl;
+	
 	// encode single vcf
-	encode_gt_vectors(sample_IDs_file,
+	encode_vectors(sample_IDs_file,
 			vcf_slice_file,
 			encoding_map,
-			output_encoding_file);	
+			bp_cm_map,
+			output_gt_file,
+			output_pos_file);	
+	
 	
 	return 0;
 }

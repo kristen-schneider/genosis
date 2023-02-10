@@ -82,3 +82,29 @@ map<int,vector<int>> make_segment_boundary_map(string map_file,
 	cout << "...Done reading map file." << endl;
         return segment_boundary_map;
 }
+/*
+ * read map file, map bp pos to cm pos
+ */
+map<int, float> make_bp_cm_map(string map_file){
+	map<int, float> bp_cm_map;
+	ifstream map_file_stream(map_file);
+	string line;
+        while (getline (map_file_stream, line)){
+
+                // column with cm and bp data
+                float cm_col = 2;
+                int bp_col = 3;
+
+                // read and split line
+                vector<string> map_line;
+                split_line(line, ' ', map_line);
+		// extract bp and cm values
+		int bp_value = stoi(map_line[bp_col]);
+		float cm_value = stof(map_line[cm_col]);
+		// add pair to map
+        	bp_cm_map[bp_value] = cm_value;
+	}
+
+
+    return bp_cm_map;
+}
