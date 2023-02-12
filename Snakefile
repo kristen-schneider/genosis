@@ -1,5 +1,6 @@
 from types import SimpleNamespace
-configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
+configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml" # path to the config
+#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -22,8 +23,6 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.cpp_bin_dir}encode",
 		f"{config.out_dir}encode.log",
-		#f"{config.cpp_bin_dir}pos-encode",
-		#f"{config.out_dir}pos-encode.log",
 		#f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss.log"
 		#f"{config.data_dir}plink.log",
@@ -173,9 +172,29 @@ rule encode_execute:
 		"	seg_name=${{filename%.*}};" \
 		"	echo SEGMENT: $seg_name;" \
 		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
-		"	 > {output.encode_log};" \
-		"done;"
+		"	 >> {output.encode_log};" \
+		"done;" \
+		#"touch output.encode_log;"
 
+
+# 3.1 build faiss index for encoding segments (compile)
+rule faiss_index_compile:
+	input:
+		encode_log=f"{config.out_dir}encode.log",
+		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
+		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}faiss-l2-build"
+	message:
+		"Compiling--building faiss index for all segments..."
+	shell:
+		"g++" \
+		" {input.faiss_l2_build_cpp}" \
+		" {input.faiss_utils_cpp}" \
+		" -I {config.cpp_include_dir}" \
+		" -I /home/sdp/miniconda3/envs/faiss/include/" \
+		" -lfaiss" \
+		" -o {output.bin}"	
 
 ## 1.1 slice VCF into segments (compile)
 #rule slice_VCF_compile:
