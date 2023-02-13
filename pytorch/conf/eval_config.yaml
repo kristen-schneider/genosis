@@ -1,0 +1,17 @@
+model: "/home/murad/Repositories/precision-medicine/pytorch/high_lr2.checkpoints/siamese-epoch-02d=0-val_loss-.2f=0.ckpt"
+gpu: True
+input_files:
+  # - "/data/segments/1KG.data.seg.163.pos_encoded"
+  # - "/data/segments/1KG.data.seg.164.pos_encoded"
+  # - "/data/segments/1KG.data.seg.165.pos_encoded"
+  # - "/data/segments/1KG.data.seg.166.pos_encoded"
+  # - "/data/segments/1KG.data.seg.167.pos_encoded"
+  - "/data/segments/1KG.data.seg.10.pos_encoded"
+  - "/data/segments/1KG.data.seg.11.pos_encoded"
+  - "/data/segments/1KG.data.seg.12.pos_encoded"
+  - "/data/segments/1KG.data.seg.13.pos_encoded"
+  - "/data/segments/1KG.data.seg.14.pos_encoded"
+outdir: "/data/test_encodings"
+batch_size: 128
+num_workers: 4
+num_neighbors: 100

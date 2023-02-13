@@ -22,15 +22,15 @@ class LongformerGTEncoder(pl.LightningModule):
         # TODO do the params for this better
         if not config:
             self.config = LongformerConfig(
-                attention_window=512,
-                hidden_size=512,
-                intermediate_size=1024,
+                attention_window=128,
+                hidden_size=128,
+                intermediate_size=128,
                 num_attention_heads=4,
-                num_hidden_layers=4,
+                num_hidden_layers=1,
                 type_vocab_size=2,  # how many token types there are
                 max_position_embeddings=10000,  # max sequence length we can handle
                 # vocab_size=None,  # may not use since we will pass input embeddings
-                padding_idx=0, # NOTE: won't be used
+                padding_idx=0,  # NOTE: won't be used
             )
 
         else:
@@ -63,7 +63,9 @@ class LongformerGTEncoder(pl.LightningModule):
             inputs_embeds=x,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
-        )[1] # pooler output
+        )[
+            1
+        ]  # pooler output
         return x
 
     def predict_step(self, batch, batch_idx, dataloader_idx=None):
@@ -225,7 +227,6 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.fc = nn.Linear(n_layers * 32, enc_dimension)
         self.fc_dropout = nn.Dropout(dropout)
-        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.conv_in(x)
@@ -234,7 +235,7 @@ class Conv1DEncoder(pl.LightningModule):
         x = self.avg_pool(x).squeeze(2)
         x = self.fc(x)
         x = self.fc_dropout(x)
-        return x
+        return F.normalize(x, dim=1)
 
     def predict_step(self, batch, _):
         return self.forward(batch["P"])
@@ -276,14 +277,22 @@ class SiameseModule(pl.LightningModule):
             self.learning_rate = lr
         self.save_hyperparameters()
 
+
     def forward(self, batch):
         x1 = batch["P1"]
         x2 = batch["P2"]
         d = batch["D"]
+        # TODO clean this up
         if self.encoder_type == "transformer_siamese":
-            u = self.encoder(x1, batch["attention_mask1"])
+            u = self.encoder.forward(
+                x1,
+                attention_mask=batch["attention_mask1"],
+            )
             with torch.no_grad():
-                v = self.encoder(x2, batch["attention_mask2"])
+                v = self.encoder(
+                    inputs_embeds=x2,
+                    attention_mask=batch["attention_mask2"],
+                )
         else:
             u = self.encoder(x1)
             with torch.no_grad():

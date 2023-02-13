@@ -51,9 +51,9 @@ python train_model.py \
     --grad_accum 1 \
     --n_workers 4 \
     --n_epochs 100 \
-    --early_stop_patience 20 \
-    --lr 0.001 \
-    --weight_decay 0.01 \
+    --early_stop_patience 50 \
+    --lr 0.005 \
+    --weight_decay 0.001 \
     --n_layers 3 \
     --dropout 0.0 \
     --kernel_size 3 \

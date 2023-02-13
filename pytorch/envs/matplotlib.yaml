@@ -1,0 +1,8 @@
+name: matplotlib
+channels:
+ - conda-forge
+dependencies:
+ - scikit-learn
+ - matplotlib
+ - seaborn
+ - numpy

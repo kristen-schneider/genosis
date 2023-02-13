@@ -70,12 +70,11 @@ class GTInferenceWriter(BasePredictionWriter):
     $SAMPLE $SEGMENT $EMBEDDING (tab separated, newline terminated)
     """
 
-    def __init__(self, *, output_dir, filename, write_interval):
+    def __init__(self, *, output, write_interval):
         super().__init__(write_interval)
-        self.output_dir = output_dir
-        self.filename = filename
+        self.output = output
         # if the file already exists, delete it
-        with open(f"{self.output_dir}/{self.filename}", "w") as f:
+        with open(f"{self.output}", "w") as f:
             f.write("")
 
     def write_on_batch_end(
@@ -91,7 +90,7 @@ class GTInferenceWriter(BasePredictionWriter):
         if trainer.num_devices > 0:
             outputs = outputs.cpu()
 
-        with open(f"{self.output_dir}/{self.filename}", "a") as f:
+        with open(f"{self.output}", "a") as f:
             for sample, segment, embedding in zip(
                 batch["sample"], batch["segment"], outputs
             ):

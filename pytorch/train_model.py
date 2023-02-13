@@ -86,13 +86,6 @@ def siamese(args):
             # "lr": args.lr,
             "weight_decay": args.weight_decay,
         },
-        # scheduler=optim.lr_scheduler.ReduceLROnPlateau,
-        # scheduler_params={
-        #     "mode": "min",
-        #     "factor": 0.1,
-        #     "patience": 2,
-        #     "verbose": True,
-        # },
         scheduler=optim.lr_scheduler.CosineAnnealingWarmRestarts,
         scheduler_params={
             "T_0": 2
@@ -115,11 +108,13 @@ def siamese(args):
             verbose=True,
             mode="min",
         ),
+        # save the last 10 checkpoints
         ModelCheckpoint(
             monitor="val_loss",
             dirpath=f"{args.prefix}.checkpoints",
-            filename="siamese-{epoch:02d}-{val_loss:.2f}",
-            save_top_k=3,
+            filename="siamese-{epoch-02d}-{val_loss-.2f}",
+            save_top_k=10,
+            save_last=True,
             mode="min",
         ),
     ]
