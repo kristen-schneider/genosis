@@ -202,22 +202,6 @@ rule faiss_index_compile:
 		" -o {output.bin}"
 # 3.2 build faiss index for encoding segments (execute)
 rule faiss_index_execute:
-<<<<<<< HEAD
-	input:
-		bin=f"{config.cpp_bin_dir}faiss-l2-build}",
-		database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
-	output:
-		faiss_idx_log=f"{config.out_dir}faiss_idx.log"
-	message:
-		"Executing--building faiss indices for all segments..."
-	shell:
-		"for enc_f in {config.out_dir}*.gt; do" \
-		"	filename=$(basename $enc_f);" \
-                "       seg_name=${{filename%.*}};" \
-                "       echo SEGMENT: $seg_name;" \
-                "       ./{input.bin} {input.database_hap_IDs} $enc_ {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
-                "        >> {output.encode_log};" \
-=======
         input:
                 bin=f"{config.cpp_bin_dir}faiss-l2-build",
                 database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
@@ -233,7 +217,6 @@ rule faiss_index_execute:
                 "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faiss.idx" \
                 "        >> {output.faiss_idx_log};" \
 		"done;"
->>>>>>> 81cc1c59a243cb8b013925c328c1e1cfc5d41856
 
 ## 0.2 create an map file with plink
 #rule create_map:
