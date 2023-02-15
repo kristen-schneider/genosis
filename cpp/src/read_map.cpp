@@ -41,14 +41,13 @@ map<int,vector<int>> make_segment_boundary_map(string map_file,
         cout << "......Creating segment boundary map (segment index: start_bp, end_bp)" << endl;
         string line;
         while (getline (map_file_stream, line)){
-                
 		// column with cm and bp data
 		float cm_col = 2;
 		int bp_col = 3;
 
 		// read and split line
                	vector<string> map_line;
-                split_line(line, ' ', map_line);
+                split_line(line, '\t', map_line);
                 
 		// read values from line
 		curr_cm = stof(map_line[cm_col]);		// current cm data
@@ -97,7 +96,7 @@ map<int, float> make_bp_cm_map(string map_file){
 
                 // read and split line
                 vector<string> map_line;
-                split_line(line, ' ', map_line);
+                split_line(line, '\t', map_line);
 		// extract bp and cm values
 		int bp_value = stoi(map_line[bp_col]);
 		float cm_value = stof(map_line[cm_col]);

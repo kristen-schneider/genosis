@@ -8,7 +8,7 @@ vcf_chr = []
 vcf_info = []
 
 # make list of all bp in vcf
-print('reading vcf...')
+print('reading vcf positions and writing to outfile')
 for line in vcf_file:
     #ignore header
     if line.startswith(b'#'):

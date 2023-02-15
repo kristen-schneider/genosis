@@ -15,7 +15,7 @@ map_bp = []
 map_cm = []
 
 # make list of all bp in vcf
-print('reading vcf bps...')
+print('reading vcf bps...:')
 for line in vcf_bps:
     line = line.strip().split()
     chrm = int(line[0])

@@ -43,7 +43,7 @@ tabix -p vcf small_vcf.vcf
 ```
 # CONDA/MAMBA 
 ```
-mamba create -n pmed -c bioconda -c conda-forge -c defaults bcftools boost bzip2 faiss gxx htslib make numpy plink plink2 pysam python snakemake vcftools
+mamba create -n pmed -c bioconda -c conda-forge -c pytorch -c defaults bcftools boost bzip2 faiss-cpu gxx htslib make numpy plink plink2 pysam python snakemake vcftools
 ```
 ### CHANNELS
 - bioconda
