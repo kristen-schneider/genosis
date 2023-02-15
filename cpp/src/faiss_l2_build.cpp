@@ -48,7 +48,7 @@ faiss::IndexFlatL2 build_write_l2_index(string database_IDs, string database_enc
 
 	// make faiss index
 	faiss::IndexFlatL2 faiss_l2_index = build_l2_index(vector_size, database_IDs, ID_encodings_map);
-	cout << "wting index to " << index_out_file << endl;
+	cout << "writing index to " << index_out_file << endl;
 	faiss::write_index(&faiss_l2_index, index_out_file);
 	return faiss_l2_index;
 }
@@ -63,7 +63,6 @@ faiss::IndexFlatL2 build_l2_index(int vector_size, string database_IDs, map<stri
 	
 	// read through databse file (list of samples in database)
 	// and pull those vectors from the map to add to index
-	
 	ifstream db_file_stream;
 	db_file_stream.open(database_IDs);
 	if (!db_file_stream.is_open()){
@@ -115,9 +114,7 @@ map<string, float*> make_ID_data_map(string data_file, char delim, int num_eleme
 
 		//vector<float> sample_vector;
 		string sampleID;
-		//cout << "before" << endl;
 		auto* sample_vector = new float[num_elements];
-		//cout << "after" << endl;
 		int float_i = 0;
 		while ((start = line.find_first_not_of(delim, end)) != std::string::npos){
 			end = line.find(delim, start);

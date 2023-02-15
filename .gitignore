@@ -2,9 +2,7 @@ bin/
 build/
 compare/
 data/
-example/plink_map.nosex
-example/plink_map.ped
-example/segments/*.vcf
+example/
 lib/faiss/
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/

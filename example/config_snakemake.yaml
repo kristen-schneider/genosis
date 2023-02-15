@@ -1,16 +1,16 @@
 home_dir:
   ./
 conda_dir:
-  /home/sdp/miniconda3/envs/pm/
+  /home/sdp/miniconda3/envs/pmed/
 
 data_dir:
   /home/sdp/precision-medicine/example/
 vcf_file:
   /home/sdp/precision-medicine/example/example.vcf.gz
-database_file:
-  /home/sdp/precision-medicine/example/all_hap_IDs.txt
-query_file:
-  /home/sdp/precision-medicine/example/test_query.txt
+database_IDs:
+  /home/sdp/precision-medicine/example/database_IDs.txt
+query_IDs:
+  /home/sdp/precision-medicine/example/query_IDs.txt
 ref_map:
   /home/sdp/precision-medicine/example/plink.chr8.GRCh38.map
 interpolated_map:

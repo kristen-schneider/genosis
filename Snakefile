@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml" # path to the config
 configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
@@ -7,6 +8,9 @@ shell.prefix("""
 set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
+#export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
+#""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH+FAISS_LIBRARY_PATH))
+
 
 
 rule all:
@@ -14,23 +18,16 @@ rule all:
 		f"{config.vcf_file}",
 		f"{config.data_dir}samples_IDs.txt",
 		f"{config.data_dir}samples.log",
-		f"{config.data_dir}plink_map.map",
-		f"{config.data_dir}interpolated.map",
-		f"{config.cpp_bin_dir}segment-boundary",
+		f"{config.data_dir}vcf.bps",
+                f"{config.data_dir}interpolated.map",
+                f"{config.data_dir}interpolated.log",
 		f"{config.data_dir}segment_boundary.log",
                 f"{config.data_dir}segment_boundary.map",
 		f"{config.out_dir}slice.log",
-		f"{config.cpp_bin_dir}encode",
 		f"{config.out_dir}encode.log",
-		#f"{config.cpp_bin_dir}pos-encode",
-		#f"{config.out_dir}pos-encode.log",
-		#f"{config.cpp_bin_dir}faiss-l2-build",
+		f"{config.data_dir}samples_hap_IDs.txt",
+		f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss.log"
-		#f"{config.data_dir}plink.log",
-		#f"{config.out_dir}distance.log",
-		#f"{config.data_dir}aggregate.log",
-		#f"{config.data_dir}hapID.log",
-		#f"{config.data_dir}all_hap_IDs.txt",	
 	
 # 0.1 create a file with all sample IDs
 # one line per sample ID
@@ -46,38 +43,30 @@ rule get_sample_IDs:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
 		" && touch {output.sample_IDs_done}"
 
-# 0.2 create an map file with plink
-rule create_map:
-	input:
-		vcf=f"{config.vcf_file}"
-	output:
-		plink_map=f"{config.data_dir}plink_map.map"
-	message:
-		"Using plink recode to create a map file."
-	shell:
-		"plink --vcf {input.vcf}" \
-		" --recode 01" \
-		" --output-missing-genotype ." \
-		" --vcf-half-call m" \
-		" --out {config.data_dir}plink_map"
-	
-# 0.3 create an interpolated map file
+# 0.2 interpolate map
+# one cm for every bp in 1kg
 rule interpolate_map:
 	input:
-		plink_map=f"{config.data_dir}plink_map.map"
+		vcf_file=f"{config.vcf_file}",
+		ref_map=f"{config.ref_map}",
+		vcf_bp_py=f"{config.python_dir}utils/vcf_bps.py",
+		interpolate_py=f"{config.python_dir}utils/interpolate_map_1kg.py"
 	output:
-		interpolated_map=f"{config.data_dir}interpolated.map"
+		vcf_bps=f"{config.data_dir}vcf.bps",
+		interpolated_map=f"{config.data_dir}interpolated.map",
+		interpolated_log=f"{config.data_dir}interpolated.log",
 	message:
-		"Using ilash_analyzer to create a new map file"
+		"Interpolating map file..."
 	shell:
-		"python {config.python_dir}utils/interpolate_map.py" \
-		" --map {input.plink_map}" \
-		" --ref_map {config.ref_map}" \
-		" --out_map {output.interpolated_map}"	
+		"python {input.vcf_bp_py} {input.vcf_file} {output.vcf_bps};"
+		"python {input.interpolate_py} {output.vcf_bps} {input.ref_map} {output.interpolated_map};"
+		"touch {output.interpolated_log};"
 
 # 1.1 write segment boundary file (compile)
 rule segment_boundary_file_compile:
 	input:
+		interpolated_map=f"{config.data_dir}interpolated.map",
+                interpolated_log=f"{config.data_dir}interpolated.log",
 		vcf_file=f"{config.vcf_file}",
 		main_segment_cpp=f"{config.cpp_src_dir}main_segment.cpp",
 		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
@@ -111,13 +100,14 @@ rule segment_boundary_file_execute:
 	message:
 		"Executing--write segment boundary file..."
 	shell:
-		"./{input.bin} {input.config_file} > {output.segment_boundary_log}"
+		"{input.bin} {input.config_file} > {output.segment_boundary_log}"
 
 # 1.3 slice VCF into segments
 rule slice_VCF:
 	input:
 		vcf_file=f"{config.vcf_file}",
-		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
+		segment_boundary_file=f"{config.data_dir}segment_boundary.map",
+		segment_boundary_log=f"{config.data_dir}segment_boundary.log",
 	output:
 		slice_log=f"{config.out_dir}slice.log"
 	message:
@@ -173,10 +163,73 @@ rule encode_execute:
 		"	seg_name=${{filename%.*}};" \
 		"	echo SEGMENT: $seg_name;" \
 		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
-		"	 > {output.encode_log};" \
-		"done;"
+		"	 >> {output.encode_log};" \
+		"done;" \
+		#"touch output.encode_log;"
 
+# 3.0 get hap_IDs for database samples
+rule hap_IDs:
+	input:
+		encode_log=f"{config.out_dir}encode.log"
+	output:
+		hap_ids=f"{config.data_dir}samples_hap_IDs.txt"
+	message:
+		"Getting haplotype IDs from encoding file..."
+	shell:
+		"for enc_f in {config.out_dir}*.gt; do" \
+		"	awk '{{print $1}}' $enc_f > {output.hap_ids};" \
+		"	break;" \
+		"done;" \
 
+# 3.1 build faiss index for encoding segments (compile)
+rule faiss_index_compile:
+	input:
+		encode_log=f"{config.out_dir}encode.log",
+		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
+		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
+	output:
+		bin=f"{config.cpp_bin_dir}faiss-l2-build"
+	message:
+		"Compiling--building faiss index for all segments..."
+	shell:
+		"g++" \
+		" {input.faiss_l2_build_cpp}" \
+		" {input.faiss_utils_cpp}" \
+		" -I {config.conda_dir}/include/" \
+		" -I {config.cpp_include_dir}" \
+		" -L {config.conda_dir}/lib/" \
+		" -lfaiss" \
+		" -o {output.bin}"
+
+## 0.2 create an map file with plink
+#rule create_map:
+#	input:
+#		vcf=f"{config.vcf_file}"
+#	output:
+#		plink_map=f"{config.data_dir}plink_map.map"
+#	message:
+#		"Using plink recode to create a map file."
+#	shell:
+#		"plink --vcf {input.vcf}" \
+#		" --recode 01" \
+#		" --output-missing-genotype ." \
+#		" --vcf-half-call m" \
+#		" --out {config.data_dir}plink_map"
+#	
+## 0.3 create an interpolated map file
+#rule interpolate_map:
+#	input:
+#		plink_map=f"{config.data_dir}plink_map.map"
+#	output:
+#		interpolated_map=f"{config.data_dir}interpolated.map"
+#	message:
+#		"Using ilash_analyzer to create a new map file"
+#	shell:
+#		"python {config.python_dir}utils/interpolate_map.py" \
+#		" --map {input.plink_map}" \
+#		" --ref_map {config.ref_map}" \
+#		" --out_map {output.interpolated_map}"	
+#
 ## 1.1 slice VCF into segments (compile)
 #rule slice_VCF_compile:
 #	input:
