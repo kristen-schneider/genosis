@@ -48,7 +48,7 @@ faiss::IndexFlatL2 build_write_l2_index(string database_IDs, string database_enc
 
 	// make faiss index
 	faiss::IndexFlatL2 faiss_l2_index = build_l2_index(vector_size, database_IDs, ID_encodings_map);
-	cout << "wting index to " << index_out_file << endl;
+	cout << "writing index to " << index_out_file << endl;
 	faiss::write_index(&faiss_l2_index, index_out_file);
 	return faiss_l2_index;
 }
