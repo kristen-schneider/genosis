@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml" # path to the config
-configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml" # path to the config
+configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml" # path to the config
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -27,7 +27,7 @@ rule all:
 		f"{config.out_dir}encode.log",
 		f"{config.data_dir}samples_hap_IDs.txt",
 		f"{config.cpp_bin_dir}faiss-l2-build",
-		#f"{config.out_dir}faiss.log"
+		f"{config.out_dir}faiss_idx.log"
 	
 # 0.1 create a file with all sample IDs
 # one line per sample ID
@@ -200,6 +200,23 @@ rule faiss_index_compile:
 		" -L {config.conda_dir}/lib/" \
 		" -lfaiss" \
 		" -o {output.bin}"
+# 3.2 build faiss index for encoding segments (execute)
+rule faiss_index_execute:
+        input:
+                bin=f"{config.cpp_bin_dir}faiss-l2-build",
+                database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
+        output:
+                faiss_idx_log=f"{config.out_dir}faiss_idx.log"
+        message:
+                "Executing--building faiss indices for all segments..."
+        shell:
+                "for enc_f in {config.out_dir}*.gt; do" \
+                "       filename=$(basename $enc_f);" \
+                "       seg_name=${{filename%.*}};" \
+                "       echo SEGMENT: $seg_name;" \
+                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faiss.idx" \
+                "        >> {output.faiss_idx_log};" \
+		"done;"
 
 ## 0.2 create an map file with plink
 #rule create_map:
