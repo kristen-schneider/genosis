@@ -25,6 +25,10 @@ int main(int argc, char* argv[]){
 	string query_IDs = argv[3];
 	string query_encodings = argv[4];
 	int k = stoi(argv[5]);
+	string out_file = argv[6];
+
+	ofstream out_faiss;
+	out_faiss.open(out_file);
 
 	char delim = ' ';
 	int num_q_samples = count_num_samples(query_IDs);
@@ -35,6 +39,7 @@ int main(int argc, char* argv[]){
 	vector<string> database_ID_vector = make_query_ID_vector(database_IDs);
 	vector<string> query_ID_vector = make_query_ID_vector(query_IDs);
 
+	cout << "Searching index..." << endl;
 	faiss::Index* index = faiss::read_index(index_file);
 	idx_t* I = new idx_t[k * num_q_samples];
 	float* D = new float[k * num_q_samples];
@@ -45,12 +50,13 @@ int main(int argc, char* argv[]){
 	index->search(num_q_samples, queries, k, D, I);
 
 	for (int i = 0; i < num_q_samples; i++){
-		cout << "QUERY: " << query_ID_vector.at(i) << endl;
+		out_faiss << "QUERY: " << query_ID_vector.at(i) << endl;
 		for (int j = 0; j < k; j++){
-			cout << database_ID_vector.at(I[i * k + j]) << " " << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
+			out_faiss << database_ID_vector.at(I[i * k + j]) << " " << I[i * k + j] << "\t" << sqrt(D[i * k + j]) << endl;
 		}
-		cout << endl;
+		out_faiss << endl;
 	}	
+	out_faiss.close();
 }
 
 
@@ -84,7 +90,7 @@ float* make_queries_arr(string query_data, string query_IDs, char delim, int num
 		sample_i ++;
         }
         q_file_stream.close();
-
+	cout << "finished making query array" << endl;
 	return queries;
 }
 
