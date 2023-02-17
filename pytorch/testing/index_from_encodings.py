@@ -68,7 +68,7 @@ def main(
 
     # Create a faiss index with inner product distance
     # NOTE: to get cosine similarity, we must use 1 - distance
-    index = faiss.IndexFlatIP(embeddings.shape[1])
+    index = faiss.IndexFlatL2(embeddings.shape[1])
     index.add(embeddings)
 
     # Save the index and the sample ids

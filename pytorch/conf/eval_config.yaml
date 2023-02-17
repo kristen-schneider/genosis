@@ -1,5 +1,9 @@
-model: "/home/murad/Repositories/precision-medicine/pytorch/high_lr2.checkpoints/siamese-epoch-02d=0-val_loss-.2f=0.ckpt"
+# model: "/home/murad/Repositories/precision-medicine/pytorch/high_lr2.checkpoints/siamese-epoch-02d=0-val_loss-.2f=0.ckpt"
+model: "/home/murad/Repositories/precision-medicine/pytorch/cos_sim_2.checkpoints/siamese-conv1d-epoch=38-val_loss=0.01.ckpt"
 gpu: True
+samples_list: "/data/segments/sample_list.txt"
+sample_table: "/data/1kg_sample_table.tsv"
+segments_dir: "/data/segments/"
 input_files:
   # - "/data/segments/1KG.data.seg.163.pos_encoded"
   # - "/data/segments/1KG.data.seg.164.pos_encoded"

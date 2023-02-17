@@ -7,11 +7,12 @@ import pytorch_lightning as pl
 import torch
 from data_utils.gt_datasets import (GTInferenceDataset, GTInferenceWriter,
                                     pad_data)
-from models.encoder import Conv1DEncoder, SiameseModule
+from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from torch.utils.data import DataLoader
 
 
 def load_siamese_encoder(path: str) -> pl.LightningModule:
+    # model = SiameseModule.load_from_checkpoint(path)
     model = SiameseModule.load_from_checkpoint(path)
     encoder = model.encoder
     return encoder

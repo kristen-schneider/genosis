@@ -46,13 +46,14 @@ python train_model.py \
     --P2 "/data/P2" \
     --D "/data/precomputed_distances/D.txt" \
     --val_segments 5 \
-    --model_type conv1d_siamese \
+    --train_method siamese \
+    --model_type conv1d \
     --batch_size 64 \
     --grad_accum 1 \
     --n_workers 4 \
     --n_epochs 100 \
     --early_stop_patience 50 \
-    --lr 0.005 \
+    --lr 0.001 \
     --weight_decay 0.001 \
     --n_layers 3 \
     --dropout 0.0 \

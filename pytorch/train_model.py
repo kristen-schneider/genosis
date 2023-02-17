@@ -7,8 +7,10 @@ from glob import glob
 
 import numpy as np
 import pytorch_lightning as pl
-from data_utils.gt_datasets import GTDataset, pad_data, train_val_split
-from models.encoder import Conv1DEncoder, LongformerGTEncoder, SiameseModule
+from data_utils.gt_datasets import (GTDataset, GTRandomAugmentDataset,
+                                    pad_data, random_augment_pairs,
+                                    train_val_split)
+from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
@@ -25,12 +27,14 @@ def compute_steps_per_epoch(train_dataset, batch_size):
 
 
 def get_dataloaders(args):
-    # make main dataset
-    dataset = GTDataset(
-        pos_files=(args.P1, args.P2),
-        dist_file=args.D,
-        model_type=args.model_type,
-    )
+    if args.train_method == "sim_siam":
+        dataset = GTRandomAugmentDataset(args.P1)
+    else:
+        # make main dataset
+        dataset = GTDataset(
+            pos_files=(args.P1, args.P2),
+            dist_file=args.D,
+        )
 
     N = len(dataset)
     train_ds, val_ds = train_val_split(
@@ -38,11 +42,15 @@ def get_dataloaders(args):
         val_segments=range(N - 10, N - 5),
         dataset=dataset,
     )
+    if args.train_method == "sim_siam":
+        collate_fn = random_augment_pairs
+    else:
+        collate_fn = partial(pad_data, model_type=args.model_type)
 
     train_dataloader = data.DataLoader(
         train_ds,
         batch_size=args.batch_size,
-        collate_fn=partial(pad_data, model_type=args.model_type),
+        collate_fn=collate_fn,
         shuffle=True,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -52,7 +60,7 @@ def get_dataloaders(args):
     val_dataloader = data.DataLoader(
         val_ds,
         batch_size=args.batch_size,
-        collate_fn=partial(pad_data, model_type=args.model_type),
+        collate_fn=collate_fn,
         shuffle=False,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -70,7 +78,12 @@ def siamese(args):
 
     data = get_dataloaders(args)
 
-    siamese_model = SiameseModule(
+    if args.train_method == "sim_siam":
+        cls = SimSiamModule
+    else:
+        cls = SiameseModule
+
+    siamese_model = cls(
         encoder_type=args.model_type,
         encoder_params={  # TODO add more for transformer if needed
             "n_layers": args.n_layers,
@@ -112,7 +125,7 @@ def siamese(args):
         ModelCheckpoint(
             monitor="val_loss",
             dirpath=f"{args.prefix}.checkpoints",
-            filename="siamese-{epoch-02d}-{val_loss-.2f}",
+            filename=f"{args.train_method}-{args.model_type}-{{epoch:02d}}-{{val_loss:.2f}}",
             save_top_k=10,
             save_last=True,
             mode="min",
@@ -192,14 +205,24 @@ def main():
         help="number of validation segments to use",
     )
     parser.add_argument(
+        "--train_method",
+        type=str,
+        default="sim_siam",
+        help="training method",
+        choices=[
+            "sim_siam",
+            "siamese",
+            "transformer_paired_lm_pretrain",
+        ],
+    )
+    parser.add_argument(
         "--model_type",
         type=str,
         default="conv1d_siamese",
         help="model type to train",
         choices=[
-            "conv1d_siamese",
-            "transformer_siamese",
-            "transformer_paired_lm_pretrain",
+            "conv1d",
+            "transformer",
         ],
     )
     parser.add_argument(
@@ -276,7 +299,7 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.model_type == "conv1d_siamese" or args.model_type == "transformer_siamese":
+    if args.model_type == "conv1d" or args.model_type == "transformer_siamese":
         siamese(args)
     elif args.model_type == "transformer_paired_lm_pretrain":
         transformer_paired_lm_pretrain(args)

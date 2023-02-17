@@ -8,69 +8,11 @@ from transformers.models.longformer.configuration_longformer import \
 from transformers.models.longformer.modeling_longformer import LongformerModel
 
 
-# Notes:
-#   - provide our own input "embeddings" using a conv1d layer
-#   - maybe still get positional embeddings from Longformer?
-#   - still use token type ids for
-class LongformerGTEncoder(pl.LightningModule):
-    def __init__(self, **config):
-        super().__init__()
-        # model will consist of
-        #  - conv1d layer for positional embeddings
-        #  - LongformerModel(with pooling)
-
-        # TODO do the params for this better
-        if not config:
-            self.config = LongformerConfig(
-                attention_window=128,
-                hidden_size=128,
-                intermediate_size=128,
-                num_attention_heads=4,
-                num_hidden_layers=1,
-                type_vocab_size=2,  # how many token types there are
-                max_position_embeddings=10000,  # max sequence length we can handle
-                # vocab_size=None,  # may not use since we will pass input embeddings
-                padding_idx=0,  # NOTE: won't be used
-            )
-
-        else:
-            self.config = LongformerConfig(**config)
-
-        self.conv1d = nn.Conv1d(
-            in_channels=1,
-            out_channels=self.config.hidden_size,
-            kernel_size=3,
-            stride=1,
-            padding=1,
-        )
-        self.activation = nn.GELU()
-        self.longformer = LongformerModel(self.config, add_pooling_layer=True)
-
-    def forward(self, x, attention_mask, token_type_ids=None):
-        """
-        - Conv1D expects   (batch, channels, seq_len) in.
-        - Conv1D output is (batch, hidden_size, seq_len) out.
-        - TODO try a couple convolutional layers.
-        - Longformer embeddings have LayerNorm applied before attention.
-        - LayerNorm expects (batch, *) so seems like anything goes.
-        - Attention expects (batch, seq_len, hidden_size)?
-        - So do a permute to get (batch, hidden_size, seq_len) out.
-        """
-        x = self.conv1d(x)
-        x = self.activation(x)
-        x = x.permute(0, 2, 1)
-        x = self.longformer(
-            inputs_embeds=x,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-        )[
-            1
-        ]  # pooler output
-        return x
-
-    def predict_step(self, batch, batch_idx, dataloader_idx=None):
-        x = batch["P"]
-        return self(x)
+def cos_sim_loss(x, y):
+    """
+    Loss function for sim_siam style training.
+    """
+    return -F.cosine_similarity(x, y, dim=1).mean()
 
 
 class ResidualBlock(nn.Module):
@@ -111,11 +53,12 @@ class ResidualBlock(nn.Module):
                 kernel_size=1,
                 stride=stride,
             ),
-            # nn.BatchNorm1d(out_channels),
-            nn.GroupNorm(1, out_channels),
+            nn.BatchNorm1d(out_channels),
+            # nn.GroupNorm(1, out_channels),
         )
         self.dropout = nn.Dropout(dropout)
-        self.norm = nn.GroupNorm(1, out_channels)
+        # self.norm = nn.GroupNorm(1, out_channels)
+        self.norm = nn.BatchNorm1d(out_channels)
         self.act1 = nn.GELU()
         self.act2 = nn.GELU()
         self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
@@ -209,7 +152,7 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.conv_blocks = nn.ModuleList(
             [
-                ResidualBlock(
+                Conv1DBlock(
                     in_channels=32 * i,
                     out_channels=(i + 1) * 32,
                     dropout=dropout,
@@ -235,10 +178,78 @@ class Conv1DEncoder(pl.LightningModule):
         x = self.avg_pool(x).squeeze(2)
         x = self.fc(x)
         x = self.fc_dropout(x)
-        return F.normalize(x, dim=1)
+        return x
+        # return F.normalize(x, dim=1)
 
     def predict_step(self, batch, _):
         return self.forward(batch["P"])
+
+
+class SimSiamModule(pl.LightningModule):
+    def __init__(
+        self,
+        *,
+        encoder_type,
+        encoder_params,
+        lr,
+        optimizer,
+        optimizer_params,
+        scheduler,
+        scheduler_params,
+        loss_fn=None,  # not used
+    ):
+        super().__init__()
+
+        self.encoder_type = encoder_type
+        self.encoder = Conv1DEncoder(**encoder_params)
+        self.enc_dimension = self.encoder.enc_dimension
+        self.projection_head = nn.Sequential(
+            nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+            nn.BatchNorm1d(self.enc_dimension // 2),
+            nn.ReLU(),
+            nn.Linear(self.enc_dimension // 2, self.enc_dimension),
+        )
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.optimizer_params = optimizer_params
+        self.scheduler_params = scheduler_params
+
+        # 2-layer projection head
+        # TODO todo make the input and output satisfy the encoder params in general
+
+        if lr:
+            # precedence to lr passed in
+            self.optimizer_params["lr"] = lr
+            self.learning_rate = lr
+        self.save_hyperparameters()
+
+    def forward(self, x):
+        p1 = self.encoder(x["P1"])
+        z1 = self.projection_head(p1)
+
+        p2 = self.encoder(x["P2"])
+        z2 = self.projection_head(p2)
+        return cos_sim_loss(p1.detach(), z2)  # + cos_sim_loss(p2.detach(), z1))
+
+    def training_step(self, batch, _):
+        loss = self.forward(batch)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        return loss
+
+    def validation_step(self, batch, _):
+        loss = self.forward(batch)
+        self.log("val_loss", loss, prog_bar=True)
+        return loss
+
+    def configure_optimizers(self):
+        optimizer = self.optimizer(self.parameters(), **self.optimizer_params)
+        scheduler = self.scheduler(optimizer, **self.scheduler_params)
+        # return [optimizer], [scheduler]
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": scheduler,
+            "monitor": "val_loss",
+        }
 
 
 # TODO change the args so that we can load from checkpoint without specifying it
@@ -259,12 +270,19 @@ class SiameseModule(pl.LightningModule):
 
         self.encoder_type = encoder_type
 
-        if self.encoder_type == "conv1d_siamese":
+        if self.encoder_type == "conv1d":
             self.encoder = Conv1DEncoder(**encoder_params)
-        elif self.encoder_type == "transformer_siamese":
-            self.encoder = LongformerGTEncoder(**encoder_params)
+            self.enc_dimension = self.encoder.enc_dimension
+            self.projection_head = nn.Sequential(
+                nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+                nn.BatchNorm1d(self.enc_dimension // 2),
+                nn.ReLU(),
+                nn.Linear(self.enc_dimension // 2, self.enc_dimension),
+        )
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
+
+
 
         self.optimizer = optimizer
         self.scheduler = scheduler
@@ -277,28 +295,15 @@ class SiameseModule(pl.LightningModule):
             self.learning_rate = lr
         self.save_hyperparameters()
 
-
     def forward(self, batch):
         x1 = batch["P1"]
         x2 = batch["P2"]
         d = batch["D"]
         # TODO clean this up
-        if self.encoder_type == "transformer_siamese":
-            u = self.encoder.forward(
-                x1,
-                attention_mask=batch["attention_mask1"],
-            )
-            with torch.no_grad():
-                v = self.encoder(
-                    inputs_embeds=x2,
-                    attention_mask=batch["attention_mask2"],
-                )
-        else:
-            u = self.encoder(x1)
-            with torch.no_grad():
-                v = self.encoder(x2)
+        u = self.encoder(x1)
+        v = self.encoder(x2)
 
-        dpred = F.cosine_similarity(u, v, dim=1)
+        dpred = F.cosine_similarity(u.detach(), v, dim=1)
         return self.loss_fn(dpred, d)
 
     def training_step(self, batch, _):

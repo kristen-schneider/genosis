@@ -27,46 +27,13 @@ config = SimpleNamespace(**config) # for dot access of config items
 # file format for now 1KG.data.seg.N.pos_encoded where N is the segment number
 segments = [x.split('.')[-2] for x in config.input_files]
 
+samples = [line.rstrip() for line in open(config.samples_list)]
+
 rule all:
   input:
-    # f"{config.outdir}/tsne_embeddings/tsne.embeddings.png",
+    f"{config.outdir}/jaccard_similarities/jaccard.by_sample.pdf",
     f"{config.outdir}/jaccard_similarities/jaccard.similarities.png",
 
-    # # embedding vectors ------------------------------------------------------
-    # embeddings = expand(f"{config.outdir}/embeddings.txt"),
-    # # Faiss index for the test set --------------------------------------------
-    # test_index = expand(
-    #   f"{config.outdir}/faiss_encoded/index.{{segment}}.faiss",
-    #   segment=segments
-    # ),
-    # test_ids =  expand(
-    #   f"{config.outdir}/faiss_encoded/ids.{{segment}}.txt",
-    #   segment=segments
-    # ),
-    # # Faiss index for the gold standard ---------------------------------------
-    # gold_index = expand(
-    #   f"{config.outdir}/faiss_gold/index.{{segment}}.faiss",
-    #   segment=segments
-    # ),
-    # gold_ids = expand(
-    #   f"{config.outdir}/faiss_gold/ids.{{segment}}.txt",
-    #   segment=segments
-    # ),
-    # # Embedding Query results -------------------------------------------------
-    # embedding_queries = expand(
-    #   f"{config.outdir}/embedding_queries/queries.{{segment}}.txt",
-    #   segment=segments
-    # ),
-    # # Gold standard query results ---------------------------------------------
-    # gold_queries = expand(
-    #   f"{config.outdir}/gold_queries/queries.{{segment}}.txt",
-    #   segment=segments,
-    # ),
-    # # jacard similarities -----------------------------------------------------
-    # jaccard_similarities =expand(
-    #   f"{config.outdir}/jaccard_similarities/jaccard.similarity.{{segment}}.txt",
-    #   segment=segments
-    # ),
 
 rule EncodeSequences:
   """
@@ -223,22 +190,22 @@ rule VisualizeJaccardSimilarity:
     --output {{output}}
     """
 
-# rule TsneEmbeddings:
-#   """
-#   Visualize the embeddings using t-SNE
-#   """
-#   input:
-#     rules.EncodeSequences.output
-#   output:
-#     f"{config.outdir}/tsne_embeddings/tsne.embeddings.png"
-#   threads:
-#     1
-#   conda: 
-#     "envs/matplotlib.yaml"
-#   shell:
-#     f"""
-#     python testing/tsne_embeddings.py \\
-#     --embeddings {{input}} \\
-#     --output {{output}}
-#     """
-
+rule VisualizeJaccardBySample:
+  """
+  Sample level view of the Jaccard similarity results
+  """
+  input:
+    expand(rules.ComputeJaccardSimilarity.output, segment=segments)
+  output:
+    f"{config.outdir}/jaccard_similarities/jaccard.by_sample.pdf",
+  threads:
+    1
+  conda:
+    "envs/matplotlib.yaml"
+  shell:
+    f"""
+    python testing/visualize_jaccard_by_sample.py \\
+    --input {{input}} \\
+    --output {{output}}
+    """
+  

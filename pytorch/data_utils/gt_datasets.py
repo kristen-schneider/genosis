@@ -99,6 +99,50 @@ class GTInferenceWriter(BasePredictionWriter):
                 )
 
 
+class GTRandomAugmentDataset(Dataset):
+    def __init__(self, pos_file: str):
+        self.P = RaggedMmap(pos_file)
+        self.n_data = len(self.P)
+
+    def __getitem__(self, idx):
+        return self.P[idx]
+
+    def __len__(self):
+        return self.n_data
+
+
+def random_augment_pairs(batch, p=0.1):
+    """
+    - data: list of tensors of positional encodings.
+    - p: probability of omitting a position
+
+    Takes a batch of positional encodings and returns a batch of
+    pairs: (P1, P2), where P1 and P2 are randomly augmented versions
+    of the same positional encoding.
+
+    The random augmentation will be created by randomly ommitting
+    a certain number of positions with probability p.
+
+    Additionally, all P1/P2 tensors will be padded to the same length
+    of their respective batches.
+    """
+    # copy over batch to arrays
+    P = [np.array(x) for x in batch]
+    P_noise1 = [x + np.random.normal(0, 0.001, size=x.shape) for x in P]
+    P_noise2 = [x + np.random.normal(0, 0.001, size=x.shape) for x in P]
+
+    # randomly omit positions of P with probability p
+    P1_aug = [torch.Tensor(x[np.random.rand(len(x)) > p]) for x in P_noise1]
+    P2_aug = [torch.Tensor(x[np.random.rand(len(x)) > p]) for x in P_noise2]
+
+
+    # Pad all P1/P2 tensors to the same length (separately).
+    # Randomly choose which tensor is the augmented one.
+    P1 = pad_sequence(P1_aug, batch_first=True).unsqueeze(1)
+    P2 = pad_sequence(P2_aug, batch_first=True).unsqueeze(1)
+    return {"P1": P1, "P2": P2}
+
+
 class GTDataset(Dataset):
     """
     Load the gentoypes and cM positions and create batches of tensors
@@ -109,9 +153,7 @@ class GTDataset(Dataset):
         *,
         pos_files: Sequence[str],
         dist_file: str,
-        model_type: str = "conv1d_siamese",
     ):
-        self.model_type = model_type
         self.dist_file = dist_file
 
         self.P1 = RaggedMmap(pos_files[0])
@@ -129,8 +171,8 @@ class GTDataset(Dataset):
 
 # TODO maybe not the best way to do this
 # could just separate out the functions
-def pad_data(data, model_type="conv1d_siamese"):
-    if model_type == "conv1d_siamese":
+def pad_data(data, model_type="conv1d"):
+    if model_type == "conv1d":
         # variable length tensors
         P1 = [torch.tensor(x["P1"], dtype=torch.float32) for x in data]
         P2 = [torch.tensor(x["P2"], dtype=torch.float32) for x in data]
@@ -177,7 +219,7 @@ def pad_data(data, model_type="conv1d_siamese"):
 
 
 def train_val_split(
-    dataset: GTDataset,
+    dataset: Dataset,
     train_segments: Sequence[int],
     val_segments: Sequence[int],
     nsamples: int = NSAMPLES,
@@ -219,4 +261,3 @@ if __name__ == "__main__":
     )
 
     print(max([len(x["P1"]) for x in dataset]))
-
