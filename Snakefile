@@ -257,9 +257,18 @@ rule search_faiss_index_execute:
 		"	seg_name=${{seg_faiss%.*}};" \
                 "       echo SEGMENT: $seg_name;" \
 		"	encoding_f=$seg_name.gt;" \
-		"       ./{input.bin} $idx_f {input.database_hap_IDs} {input.database_hap_IDs} {config.out_dir}${{encoding_f}} {config.k} {config.out_dir}$seg_name.faiss.out;" \
+		"	search_time_start=`date +%s.%N`;" \
+		"	echo START: $search_time_start;" \
+		"       ./{input.bin} $idx_f {input.database_hap_IDs} {input.query_hap_IDs} {config.out_dir}${{encoding_f}} {config.k} {config.out_dir}$seg_name.faiss.out " \
                	"        >> {output.faiss_search_log};" \
-		"done;"
+		"	search_time_end=`date +%s.%N`;" \
+		"	echo END: $search_time_end;" \
+		#"	single_search_time=$( echo '$search_time_end - $search_time_start' | bc -l );" \
+		#"	echo SINGLE SEARCH: $single_search_time;" \
+		"done;" \
+		#"full_end=`date +%s.%N`;" \
+		#"full_time=$( '$full_start - $full_end' | bc -l );" \
+		#"echo FULL TIME: $full_time;"
 
 
 ## 0.2 create an map file with plink
