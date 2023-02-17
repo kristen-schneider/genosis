@@ -77,7 +77,7 @@ void encode_vectors(string sample_IDs_file,
 		string alt = vcf_record->d.allele[1];				// alt allele
 		double_t qual = vcf_record->qual;				// quality
 		all_bp_positions.push_back(pos+1);				// add pos to vector
-	
+		// cout << pos+1 << endl;	
 		// reading genotypes
 		string s_gt;
 		int *gt = NULL;
@@ -115,14 +115,25 @@ void encode_vectors(string sample_IDs_file,
 			// record the cm position for the current record (variant)
 			// add cm value if variant allele, add 0 if ref allele
 		}
-
+		
 		all_gt_haplotype_encodings.push_back(haplotype_gt_encoding_vector);
 		all_pos_haplotype_encodings.push_back(haplotype_pos_encoding_vector);
 		haplotype_gt_encoding_vector.clear();
 
 	} // end of reading records
-	cout << "...Done reading genotypes." << endl;
 	
+	cout << "...Done reading genotypes." << endl;
+	/*
+	cout << all_bp_positions[122] << endl;
+	cout << all_bp_positions[129] << endl;
+	cout << all_bp_positions[139] << endl;
+	cout << all_bp_positions[170] << endl;
+	cout << all_bp_positions[203] << endl;
+	
+	for (int b = 0; b < all_bp_positions.size(); b++){
+		cout << all_bp_positions[b] << endl;
+	}*/
+
 	// transposing data
 	cout << "...Transposing data." << endl;
 	//cout << "......gt data......" << endl;
@@ -138,6 +149,12 @@ void encode_vectors(string sample_IDs_file,
 			sample_major_format_gt_vec,
 			output_gt_file);
 	cout << "...Writing pos encodings to file: " << output_pos_file << "." << endl;
+	
+	/*
+	for (int b = 0; b < all_bp_positions.size(); b++){
+		cout << all_bp_positions[b] << endl;
+	}*/
+	
 	write_SMF_pos(all_sample_IDs,
 			sample_major_format_gt_vec,
 			all_bp_positions,
@@ -190,6 +207,19 @@ void write_SMF_pos(vector<string> all_sample_IDs,
 		vector<int> all_bp_positions,
 		map<int, float> bp_cm_map,
 		string output_positional_encoding_file){
+	
+	/*
+	for (int b = 0; b < all_bp_positions.size(); b++){
+		cout << all_bp_positions[b] << endl;
+	}
+
+	cout << all_bp_positions[122] << endl;
+	cout << all_bp_positions[129] << endl;
+	cout << all_bp_positions[139] << endl;
+	cout << all_bp_positions[170] << endl;
+	cout << all_bp_positions[203] << endl;
+	*/
+
 	// open output file to write encoding
         ofstream output_stream;
         output_stream.open(output_positional_encoding_file);
@@ -199,7 +229,8 @@ void write_SMF_pos(vector<string> all_sample_IDs,
 	int relative_position = -1;
         int SID_i = 0;
         int binary = -1;
-        for (int i = 0; i < smf_gt.size(); i++) {
+        cout << "bp_num: " << all_bp_positions.size() << endl;
+	for (int i = 0; i < smf_gt.size(); i++) {
                 if (binary == -1){
                         binary = 0;
                 }else if (binary == 0){
@@ -213,9 +244,12 @@ void write_SMF_pos(vector<string> all_sample_IDs,
 		
 		for(int j = 0; j < sample.size(); j++) {
 			if (sample.at(j) > 0){
+				//cout << j << " " << all_bp_positions.at(j) << " " << all_bp_positions[j] << endl;
 				float bp_pos = all_bp_positions.at(j);
 				float cm_pos = bp_cm_map[bp_pos];
-				output_stream << cm_pos << " ";
+				//cout << bp_cm_map[all_bp_positions.at(j)] << " " << bp_cm_map[all_bp_positions[j]] << " " << bp_cm_map[bp_pos] << " " << cm_pos << endl;
+				//cout << cm_pos << endl;
+				output_stream << bp_cm_map[all_bp_positions.at(j)] << " ";
 			}
 
                 }
