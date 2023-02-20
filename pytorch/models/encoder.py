@@ -152,7 +152,7 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.conv_blocks = nn.ModuleList(
             [
-                Conv1DBlock(
+                ResidualBlock(
                     in_channels=32 * i,
                     out_channels=(i + 1) * 32,
                     dropout=dropout,
@@ -273,12 +273,12 @@ class SiameseModule(pl.LightningModule):
         if self.encoder_type == "conv1d":
             self.encoder = Conv1DEncoder(**encoder_params)
             self.enc_dimension = self.encoder.enc_dimension
-            self.projection_head = nn.Sequential(
-                nn.Linear(self.enc_dimension , self.enc_dimension // 2),
-                nn.BatchNorm1d(self.enc_dimension // 2),
-                nn.ReLU(),
-                nn.Linear(self.enc_dimension // 2, self.enc_dimension),
-        )
+            # self.projection_head = nn.Sequential(
+            #     nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+            #     nn.BatchNorm1d(self.enc_dimension // 2),
+            #     nn.ReLU(),
+            #     nn.Linear(self.enc_dimension // 2, self.enc_dimension),
+        # )
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
 
@@ -303,7 +303,7 @@ class SiameseModule(pl.LightningModule):
         u = self.encoder(x1)
         v = self.encoder(x2)
 
-        dpred = F.cosine_similarity(u.detach(), v, dim=1)
+        dpred = F.cosine_similarity(u, v, dim=1)
         return self.loss_fn(dpred, d)
 
     def training_step(self, batch, _):

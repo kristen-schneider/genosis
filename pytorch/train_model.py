@@ -27,25 +27,17 @@ def compute_steps_per_epoch(train_dataset, batch_size):
 
 
 def get_dataloaders(args):
-    if args.train_method == "sim_siam":
-        dataset = GTRandomAugmentDataset(args.P1)
-    else:
-        # make main dataset
-        dataset = GTDataset(
-            pos_files=(args.P1, args.P2),
-            dist_file=args.D,
-        )
-
-    N = len(dataset)
-    train_ds, val_ds = train_val_split(
-        train_segments=range(N - 10),
-        val_segments=range(N - 10, N - 5),
-        dataset=dataset,
+    # make main dataset
+    train_ds = GTDataset(
+        pos_files=(args.P1_train, args.P2_train),
+        dist_file=args.D_train,
     )
-    if args.train_method == "sim_siam":
-        collate_fn = random_augment_pairs
-    else:
-        collate_fn = partial(pad_data, model_type=args.model_type)
+    val_ds = GTDataset(
+        pos_files=(args.P1_val, args.P2_val),
+        dist_file=args.D_val,
+    )
+
+    collate_fn = partial(pad_data, model_type=args.model_type)
 
     train_dataloader = data.DataLoader(
         train_ds,
@@ -124,7 +116,7 @@ def siamese(args):
         # save the last 10 checkpoints
         ModelCheckpoint(
             monitor="val_loss",
-            dirpath=f"{args.prefix}.checkpoints",
+            dirpath=f"{args.outdir}/{args.prefix}.checkpoints",
             filename=f"{args.train_method}-{args.model_type}-{{epoch:02d}}-{{val_loss:.2f}}",
             save_top_k=10,
             save_last=True,
@@ -175,34 +167,52 @@ def main():
         help="run 1 batch train/val to see if things are working",
     )
     parser.add_argument(
+        "--outdir",
+        type=str,
+        required=True,
+        help="directory to save checkpoints to",
+    )
+    parser.add_argument(
         "--prefix",
         type=str,
         default="",
         help="prefix to add to run name and checkpoint directory name",
     )
     parser.add_argument(
-        "--P1",
+        "--P1_train",
         type=str,
         required=True,
-        help="Path to P1 memmap",
+        help="Path to training P1 memmap",
     )
     parser.add_argument(
-        "--P2",
+        "--P2_train",
         type=str,
         required=True,
-        help="Path to P2 memmap",
+        help="Path to training P2 memmap",
     )
     parser.add_argument(
-        "--D",
+        "--P1_val",
         type=str,
         required=True,
-        help="Path to distance file",
+        help="Path to validation P1 memmap",
     )
     parser.add_argument(
-        "--val_segments",
-        type=int,
-        default=5,
-        help="number of validation segments to use",
+        "--P2_val",
+        type=str,
+        required=True,
+        help="Path to validation P2 memmap",
+    )
+    parser.add_argument(
+        "--D_train",
+        type=str,
+        required=True,
+        help="Path to training distance file",
+    )
+    parser.add_argument(
+        "--D_val",
+        type=str,
+        required=True,
+        help="Path to validation distance file",
     )
     parser.add_argument(
         "--train_method",

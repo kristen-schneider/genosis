@@ -1,21 +1,102 @@
 import os
+import random
 import sys
 from glob import glob
 from types import SimpleNamespace
 
-configfile: "conf/eval_config.yaml"
+# ==============================================================================
+# Project Configuration
+# ==============================================================================
+configfile: "conf/exp_config.yaml"
 config = SimpleNamespace(**config)
 
 
-segments = [x.split('.')[-2] for x in glob(f'{config.segments_dir}/*.encoded')][:5]
+segments = [
+  x.split(config.file_segment_delimiter)[config.seg_offset]
+  for x in glob(f'{config.segments_dir}/*.{config.gt_ext}')
+  if x.split(config.file_segment_delimiter)[config.seg_offset] != '168' # lol
+]
+if segments == []:
+  raise ValueError(
+    f"No segments found\n"
+    f"{config.segments_dir=}\n"
+    f"{config.gt_ext=}\n"
+    f"{config.file_segment_delimiter=}\n"
+    f"{config.seg_offset=}"
+  )
 
-# choose N pairings for each sample from each subpopulation
-# TODO put in config
-N = 1
+# ==============================================================================
+# train, val, test split by segment
+# ==============================================================================
+random.seed(config.random_seed)
+shuffled_segments = random.sample(segments, len(segments))
 
+train_ratio = 0.8 # TODO make this a config option
+val_ratio = test_ratio = (1.0 - train_ratio) / 2.0
+
+train_segments = shuffled_segments[
+  : int(train_ratio * len(segments))
+]
+val_segments = shuffled_segments[
+  int(train_ratio * len(segments)) : int((train_ratio + val_ratio) * len(segments))
+]
+test_segments = shuffled_segments[
+  int((train_ratio + val_ratio) * len(segments)) :
+]
+
+# any empty sets?
+if not train_segments or not val_segments or not test_segments:
+  raise ValueError(
+    f"Train, val, test split failed\n"
+    f"{train_ratio=}\n"
+    f"{val_ratio=}\n"
+    f"{test_ratio=}\n"
+    f"{train_segments=}\n"
+    f"{val_segments=}\n"
+    f"{test_segments=}\n"
+  )
+
+# check if the sets are disjoint
+if len(set(train_segments) & set(val_segments) & set(test_segments)) > 0:
+  raise ValueError(
+    f"Train/val/test sets are not disjoint\n"
+    f"{train_segments=}\n"
+    f"{val_segments=}\n"
+    f"{test_segments=}\n"
+  )
+
+
+# ==============================================================================
+# Rules
+# ==============================================================================
 rule All:
   input:
-    expand(f"{config.outdir}/subpops/pairings.{{segment}}.txt", segment=segments)
+    # trained model
+    f"{config.outdir}/{config.model_prefix}",
+
+    # train memmaps
+    f"{config.outdir}/training_set/P1.mmap",
+    f"{config.outdir}/training_set/P2.mmap",
+
+    # val memmaps
+    f"{config.outdir}/validation_set/P1.mmap",
+    f"{config.outdir}/validation_set/P2.mmap",
+
+    # training set
+    # expand(f"{config.outdir}/training_set/P1.txt", segment=train_segments),
+    # expand(f"{config.outdir}/training_set/P2.txt", segment=train_segments),
+    expand(f"{config.outdir}/training_set/D.txt", segment=train_segments),
+    # expand(f"{config.outdir}/train_segments.txt", segment=train_segments),
+
+    # validation set
+    # expand(f"{config.outdir}/validation_set/P1.txt", segment=val_segments),
+    # expand(f"{config.outdir}/validation_set/P2.txt", segment=val_segments),
+    expand(f"{config.outdir}/validation_set/D.txt", segment=val_segments),
+    # expand(f"{config.outdir}/val_segments.txt", segment=val_segments),
+
+    # stats
+    f"{config.outdir}/bin_sampled_distribution.pdf",
+    f"{config.outdir}/distribution.pdf",
 
 rule SampleSubpops:
   input:
@@ -28,12 +109,298 @@ rule SampleSubpops:
       --sample_table {{input}} \
       --samples_list {config.samples_list} \
       --output {{output}} \
-      --N {N}
+      --N {config.num_pairings}
     """
 
+rule MakeGTMemmap:
+  """
+  For each segment, make a numpy memmap of the genotype matrix
+  """
+  input:
+    f"{config.segments_dir}/{config.segment_prefix}.{{segment}}.{config.gt_ext}",
+  output:
+    f"{config.outdir}/gt_mmap/segment.{{segment}}.mmap"
+  shell:
+    f"""
+    python exploration/make_gt_mmap.py \
+      --gts {{input}} \
+      --output {{output}} \
+    """
 
 rule ComputeDistances:
   """
   For each sample, get the distances of all the samples paired with it.
   Since the paired samples don't have haplotype numbers, randomly choose one
   """
+  input:
+    memmap = rules.MakeGTMemmap.output,
+    pairings = rules.SampleSubpops.output,
+  output:
+    f"{config.outdir}/distances/distances.{{segment}}.txt"
+  shell:
+    f"""
+    python exploration/compute_distances.py \
+      --memmap {{input.memmap}} \
+      --pairings {{input.pairings}} \
+      --output {{output}} \
+      --samples_list {config.samples_list}
+    """
+
+rule PlotDistribution:
+  """
+  Plot the distribution of distances
+  """
+  input:
+    rules.ComputeDistances.output
+  output:
+    temp(f"{config.outdir}/plots/distribution.{{segment}}.png")
+  shell:
+    f"""
+    python exploration/plot_distribution.py \
+      --segment {{wildcards.segment}} \
+      --distances {{input}} \
+      --output {{output}}
+    """
+
+rule CatImagesPDF:
+  """
+  Concatenate all the images into a single pdf
+  """
+  input:
+    expand(rules.PlotDistribution.output, segment=segments)
+  output:
+    f"{config.outdir}/distribution.pdf"
+  shell:
+    f"""
+    convert {{input}} {{output}}
+    """
+
+rule BinSampling:
+  """
+  For each segment, divide the space of possible distances into bins and
+  sample from each bin to get a representative sample of distances.
+  """
+  input:
+    memmap = rules.MakeGTMemmap.output,
+    distances = rules.ComputeDistances.output,
+  output:
+    f"{config.outdir}/bin_sampling/segment.{{segment}}.txt"
+  shell:
+    f"""
+    python exploration/bin_sampling.py \
+      --distances {{input.distances}} \
+      --output {{output}} \
+      --num_bins 20 \
+      --max_samples 500
+    """
+
+rule PlotResampledDistribution:
+  """
+  Plot the distribution of distances from the resampled distances
+  """
+  input:
+    rules.BinSampling.output
+  output:
+    temp(f"{config.outdir}/resampled_plots/distribution.{{segment}}.png")
+  shell:
+    f"""
+    python exploration/plot_distribution.py \
+      --segment {{wildcards.segment}} \
+      --distances {{input}} \
+      --output {{output}}
+    """
+
+rule CatResampledImagesPDF:
+  """
+  Concatenate all the images into a single pdf
+  """
+  input:
+    expand(rules.PlotResampledDistribution.output, segment=segments)
+  output:
+    f"{config.outdir}/bin_sampled_distribution.pdf"
+  shell:
+    f"""
+    convert {{input}} {{output}}
+    """
+
+rule MakeTrainingSet:
+  """
+  From the resampled distances, make a training set of pairs
+  of samples, over all segments.
+  """
+  input:
+    pos_files = expand(
+      f"{config.segments_dir}/{config.segment_prefix}.{{segment}}.{config.pos_ext}",
+      segment=train_segments
+    ),
+    distances = expand(rules.BinSampling.output, segment=train_segments),
+  output:
+    P1 = temp(f"{config.outdir}/training_set/P1.txt"),
+    P2 = temp(f"{config.outdir}/training_set/P2.txt"),
+    D = f"{config.outdir}/training_set/D.txt",
+    seg_list = f"{config.outdir}/train_segments.txt"
+
+  shell:
+    f"""
+    echo {train_segments} | tr ' ' '\n' |
+      sed 's/[^0-9]*\([0-9]*\).*/\1/'   |
+      sort -g > {{output.seg_list}} &&
+    python exploration/make_dataset.py \
+      --pos_files {{input.pos_files}} \
+      --distance_files {{input.distances}} \
+      --P1 {{output.P1}} \
+      --P2 {{output.P2}} \
+      --D {{output.D}} \
+    """
+
+rule MakeValidationSet:
+  """
+  From the resampled distances, make a validation set of pairs
+  of samples, over all segments.
+  """
+  input:
+    pos_files = expand(
+      f"{config.segments_dir}/{config.segment_prefix}.{{segment}}.{config.pos_ext}",
+      segment=val_segments
+    ),
+    distances = expand(rules.BinSampling.output, segment=val_segments),
+  output:
+    P1 = temp(f"{config.outdir}/validation_set/P1.txt"),
+    P2 = temp(f"{config.outdir}/validation_set/P2.txt"),
+    D = f"{config.outdir}/validation_set/D.txt",
+    seg_list = f"{config.outdir}/val_segments.txt"
+
+  shell:
+    f"""
+    echo {val_segments} | tr ' ' '\n' |
+      sed 's/[^0-9]*\([0-9]*\).*/\1/' |
+      sort -g > {{output.seg_list}} &&
+    python exploration/make_dataset.py \
+      --pos_files {{input.pos_files}} \
+      --distance_files {{input.distances}} \
+      --P1 {{output.P1}} \
+      --P2 {{output.P2}} \
+      --D {{output.D}} \
+    """
+
+rule MakeTrainMmaps:
+  """
+  Make memmaps for the training set position vectors
+  """
+  input:
+    P1 = rules.MakeTrainingSet.output.P1,
+    P2 = rules.MakeTrainingSet.output.P2,
+  output:
+    P1 = directory(f"{config.outdir}/training_set/P1.mmap"),
+    P2 = directory(f"{config.outdir}/training_set/P2.mmap")
+  shell:
+    f"""
+    python exploration/generate_mmaps.py \
+      --inP1 {{input.P1}} \
+      --inP2 {{input.P2}} \
+      --outP1 {{output.P1}} \
+      --outP2 {{output.P2}}
+    """
+
+rule MakeValMmaps:
+  """
+  Make memmaps for the validation set position vectors
+  """
+  input:
+    P1 = rules.MakeValidationSet.output.P1,
+    P2 = rules.MakeValidationSet.output.P2,
+  output:
+    P1 = directory(f"{config.outdir}/validation_set/P1.mmap"),
+    P2 = directory(f"{config.outdir}/validation_set/P2.mmap")
+  shell:
+    f"""
+    python exploration/generate_mmaps.py \
+      --inP1 {{input.P1}} \
+      --inP2 {{input.P2}} \
+      --outP1 {{output.P1}} \
+      --outP2 {{output.P2}}
+    """
+
+rule TrainModel:
+  """
+  usage: train_model.py [-h] [--fast_dev_run] [--prefix PREFIX] --P1_train P1_TRAIN --P2_train
+                        P2_TRAIN --P1_val P1_VAL --P2_val P2_VAL --D_train D_TRAIN --D_val D_VAL
+                        [--train_method {sim_siam,siamese,transformer_paired_lm_pretrain}]
+                        [--model_type {conv1d,transformer}] [--batch_size BATCH_SIZE]
+                        [--grad_accum GRAD_ACCUM] [--n_workers N_WORKERS] [--n_epochs N_EPOCHS]
+                        [--early_stop_patience EARLY_STOP_PATIENCE] [--lr LR]
+                        [--weight_decay WEIGHT_DECAY] [--n_layers N_LAYERS] [--dropout DROPOUT]
+                        [--kernel_size KERNEL_SIZE] [--stride STRIDE] [--padding PADDING]
+
+  options:
+    -h, --help            show this help message and exit
+    --fast_dev_run        run 1 batch train/val to see if things are working
+    --prefix PREFIX       prefix to add to run name and checkpoint directory name
+    --P1_train P1_TRAIN   Path to training P1 memmap
+    --P2_train P2_TRAIN   Path to training P2 memmap
+    --P1_val P1_VAL       Path to validation P1 memmap
+    --P2_val P2_VAL       Path to validation P2 memmap
+    --D_train D_TRAIN     Path to training distance file
+    --D_val D_VAL         Path to validation distance file
+    --train_method {sim_siam,siamese,transformer_paired_lm_pretrain}
+                          training method
+    --model_type {conv1d,transformer}
+                          model type to train
+    --batch_size BATCH_SIZE
+                          Batch size for training
+    --grad_accum GRAD_ACCUM
+                          Number of gradient accumulation steps
+    --n_workers N_WORKERS
+                          Number of workers for dataloader
+    --n_epochs N_EPOCHS   Number of epochs to train for
+    --early_stop_patience EARLY_STOP_PATIENCE
+                          Number of validation checks to wait before early stopping
+    --lr LR               Base learning rate for optimizer
+    --weight_decay WEIGHT_DECAY
+                          Weight decay for optimizer (if applicable)
+    --n_layers N_LAYERS   Number of layers in the encoder
+    --dropout DROPOUT     Dropout rate for encoder (if applicable)
+    --kernel_size KERNEL_SIZE
+                          Kernel size (for CNNs only)
+    --stride STRIDE       Stride (for CNNs only)
+    --padding PADDING     Padding (for CNNs only)
+  """
+  input:
+    P1_train = rules.MakeTrainMmaps.output.P1,
+    P2_train = rules.MakeTrainMmaps.output.P2,
+    P1_val = rules.MakeValMmaps.output.P1,
+    P2_val = rules.MakeValMmaps.output.P2,
+    D_train = rules.MakeTrainingSet.output.D,
+    D_val = rules.MakeValidationSet.output.D
+  output:
+    model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}")
+  threads:
+    config.n_workers
+  shell:
+    f"""
+    python train_model.py \
+      --outdir {config.outdir} \
+      --prefix {config.model_prefix} \
+      --P1_train {{input.P1_train}} \
+      --P2_train {{input.P2_train}} \
+      --P1_val {{input.P1_val}} \
+      --P2_val {{input.P2_val}} \
+      --D_train {{input.D_train}} \
+      --D_val {{input.D_val}} \
+      --train_method {config.train_method} \
+      --model_type {config.model_type} \
+      --batch_size {config.batch_size} \
+      --grad_accum {config.grad_accum} \
+      --n_workers {config.n_workers} \
+      --n_epochs {config.n_epochs} \
+      --early_stop_patience {config.early_stop_patience} \
+      --lr {config.lr} \
+      --weight_decay {config.weight_decay} \
+      --n_layers {config.n_layers} \
+      --dropout {config.dropout} \
+      --kernel_size {config.kernel_size} \
+      --stride {config.stride} \
+      --padding {config.padding} \
+    """
+
+
