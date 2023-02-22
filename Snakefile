@@ -45,7 +45,9 @@ rule get_sample_IDs:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
-		" && touch {output.sample_IDs_done}"
+		" && touch {output.sample_IDs_done};" \
+		"cp {output.sample_IDs} {config.data_dir}database_IDs.txt;" \
+		"cp {output.sample_IDs} {config.data_dir}query_IDs.txt;"
 
 # 0.2 interpolate map
 # one cm for every bp in 1kg
