@@ -88,7 +88,7 @@ rule MakeGoldStandardIndex:
 
   input:
     # TODO put this in config
-    f"/data/segments/segment.{{segment}}.gt"
+    f"{conf.segments_dir}/segment.{{segment}}.gt"
   output:
     index = f"{config.outdir}/faiss_gold/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_gold/ids.{{segment}}.txt",
