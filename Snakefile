@@ -117,7 +117,7 @@ rule slice_VCF:
 	message:
 		"Slicing VCF into segments..."
 	shell:
-		"echo 2. ---SLICING VCF INTO SEGMENTS---;" \
+		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r segment start_bp end_bp; do" \
 		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
 		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
