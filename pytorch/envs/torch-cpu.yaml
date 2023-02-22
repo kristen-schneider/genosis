@@ -1,4 +1,4 @@
-name: torch-gpu
+name: torch-cpu
 channels:
   - pytorch
   - nvidia
@@ -7,10 +7,12 @@ dependencies:
   - pytorch
   - torchvision
   - torchaudio
-  - pytorch-cuda=11.7
+  - cpuonly
   - pytorch-lightning
   - numpy
   - pip
+  - pip:
     - transformers
     - wandb
+    - mmap-ninja
 

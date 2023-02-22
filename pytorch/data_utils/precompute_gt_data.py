@@ -15,7 +15,12 @@ def load_gts(file):
     x = []
     with open(file, "r") as f:
         for line in f:
-            x.append(np.array(list(map(int, line.strip().split()[1:]))))  # skip sample
+            x.append(
+                np.array(
+                    list(map(int, line.strip().split()[1:])), # skip sample
+                    dtype=np.float32,
+                )
+            )  
         return x
 
 
@@ -49,6 +54,15 @@ def jaccard(g1, g2):
     return np.double(np.logical_and(a, b).sum()) / np.double(np.logical_or(a, b).sum())
 
 
+def cosine_similarity(g1, g2):
+    """
+    Compute distance between two genotype vectors using cosine similarity.
+    """
+    a = np.array(g1)
+    b = np.array(g2)
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--indir", type=str, required=True)
@@ -77,8 +91,8 @@ def main(args):
 
     with ExitStack() as stack:
         # output files
-        # G1_out = stack.enter_context(open(f"{outdir}/G1.txt", "w"))
-        # G2_out = stack.enter_context(open(f"{outdir}/G2.txt", "w"))
+        G1_out = stack.enter_context(open(f"{outdir}/G1.txt", "w"))
+        G2_out = stack.enter_context(open(f"{outdir}/G2.txt", "w"))
         P1_out = stack.enter_context(open(f"{outdir}/P1.txt", "w"))
         P2_out = stack.enter_context(open(f"{outdir}/P2.txt", "w"))
         D_out = stack.enter_context(open(f"{outdir}/D.txt", "w"))
@@ -97,10 +111,13 @@ def main(args):
             P1 = [P[i] for i in r1]
             P2 = [P[i] for i in r2]
 
-            D = [jaccard(g1, g2) for g1, g2 in zip(G1, G2)]
+            D = [cosine_similarity(g1, g2) for g1, g2 in zip(G1, G2)]
 
             # write to files
-            for p1, p2, d in zip(P1, P2, D):
+            for g1, g2, p1, p2, d in zip(G1, G2, P1, P2, D):
+                # TODO G1, G2
+                G1_out.write(" ".join(map(str, g1)) + "\n")
+                G2_out.write(" ".join(map(str, g2)) + "\n")
                 P1_out.write(p1 + "\n")
                 P2_out.write(p2 + "\n")
                 D_out.write(str(d) + "\n")

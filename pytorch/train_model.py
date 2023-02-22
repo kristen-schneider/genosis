@@ -2,12 +2,15 @@ import argparse
 import os
 import random
 from datetime import datetime
+from functools import partial
 from glob import glob
 
 import numpy as np
 import pytorch_lightning as pl
-from data_utils.gt_datasets import GTDataset, pad_data, train_val_split
-from models.encoder import Conv1DEncoder, SiameseModule
+from data_utils.gt_datasets import (GTDataset, GTRandomAugmentDataset,
+                                    pad_data, random_augment_pairs,
+                                    train_val_split)
+from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
@@ -25,23 +28,21 @@ def compute_steps_per_epoch(train_dataset, batch_size):
 
 def get_dataloaders(args):
     # make main dataset
-    dataset = GTDataset(
-        pos_files=(args.P1, args.P2),
-        dist_file=args.D,
-        model_type=args.model_type,
+    train_ds = GTDataset(
+        pos_files=(args.P1_train, args.P2_train),
+        dist_file=args.D_train,
+    )
+    val_ds = GTDataset(
+        pos_files=(args.P1_val, args.P2_val),
+        dist_file=args.D_val,
     )
 
-    N = len(dataset)
-    train_ds, val_ds = train_val_split(
-        train_segments=range(N - 10),
-        val_segments=range(N - 10, N - 5),
-        dataset=dataset,
-    )
+    collate_fn = partial(pad_data, model_type=args.model_type)
 
     train_dataloader = data.DataLoader(
         train_ds,
         batch_size=args.batch_size,
-        collate_fn=pad_data,
+        collate_fn=collate_fn,
         shuffle=True,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -51,7 +52,7 @@ def get_dataloaders(args):
     val_dataloader = data.DataLoader(
         val_ds,
         batch_size=args.batch_size,
-        collate_fn=pad_data,
+        collate_fn=collate_fn,
         shuffle=False,
         num_workers=args.n_workers,
         pin_memory=True,
@@ -65,18 +66,24 @@ def get_dataloaders(args):
     }
 
 
-def conv1d_siamese(args):
+def siamese(args):
 
     data = get_dataloaders(args)
 
-    siamese_model = SiameseModule(
+    if args.train_method == "sim_siam":
+        cls = SimSiamModule
+    else:
+        cls = SiameseModule
+
+    siamese_model = cls(
         encoder_type=args.model_type,
-        encoder_params={
+        encoder_params={  # TODO add more for transformer if needed
             "n_layers": args.n_layers,
             "dropout": args.dropout,
             "kernel_size": args.kernel_size,
             "stride": args.stride,
             "padding": args.padding,
+            # "enc_dimension": args.enc_dimension,
         },
         lr=args.lr,
         optimizer=optim.AdamW,
@@ -84,13 +91,6 @@ def conv1d_siamese(args):
             # "lr": args.lr,
             "weight_decay": args.weight_decay,
         },
-        # scheduler=optim.lr_scheduler.ReduceLROnPlateau,
-        # scheduler_params={
-        #     "mode": "min",
-        #     "factor": 0.1,
-        #     "patience": 2,
-        #     "verbose": True,
-        # },
         scheduler=optim.lr_scheduler.CosineAnnealingWarmRestarts,
         scheduler_params={
             "T_0": 2
@@ -113,11 +113,13 @@ def conv1d_siamese(args):
             verbose=True,
             mode="min",
         ),
+        # save the last 10 checkpoints
         ModelCheckpoint(
             monitor="val_loss",
-            dirpath=f"{args.prefix}.checkpoints",
-            filename="siamese-{epoch:02d}-{val_loss:.2f}",
-            save_top_k=3,
+            dirpath=f"{args.outdir}/{args.prefix}.checkpoints",
+            filename=f"{args.train_method}-{args.model_type}-{{epoch:03d}}-{{val_loss:.5f}}",
+            save_top_k=10,
+            save_last=True,
             mode="min",
         ),
     ]
@@ -133,7 +135,7 @@ def conv1d_siamese(args):
         gradient_clip_val=0.5,
         gradient_clip_algorithm="norm",
         max_epochs=args.n_epochs,
-        val_check_interval=0.25,
+        val_check_interval=0.5,
         callbacks=callbacks,
         logger=logger,
         accelerator="gpu",
@@ -148,13 +150,6 @@ def conv1d_siamese(args):
         train_dataloaders=data["train_dataloader"],
         val_dataloaders=data["val_dataloader"],
     )
-
-
-def transformer_siamese(args):
-    """
-    Use a transformer as the encoder in a siamese network.
-    """
-    raise NotImplementedError
 
 
 def transformer_paired_lm_pretrain(args):
@@ -172,34 +167,63 @@ def main():
         help="run 1 batch train/val to see if things are working",
     )
     parser.add_argument(
+        "--outdir",
+        type=str,
+        required=True,
+        help="directory to save checkpoints to",
+    )
+    parser.add_argument(
         "--prefix",
         type=str,
         default="",
         help="prefix to add to run name and checkpoint directory name",
     )
     parser.add_argument(
-        "--P1",
+        "--P1_train",
         type=str,
         required=True,
-        help="Path to P1 memmap",
+        help="Path to training P1 memmap",
     )
     parser.add_argument(
-        "--P2",
+        "--P2_train",
         type=str,
         required=True,
-        help="Path to P2 memmap",
+        help="Path to training P2 memmap",
     )
     parser.add_argument(
-        "--D",
+        "--P1_val",
         type=str,
         required=True,
-        help="Path to distance file",
+        help="Path to validation P1 memmap",
     )
     parser.add_argument(
-        "--val_segments",
-        type=int,
-        default=5,
-        help="number of validation segments to use",
+        "--P2_val",
+        type=str,
+        required=True,
+        help="Path to validation P2 memmap",
+    )
+    parser.add_argument(
+        "--D_train",
+        type=str,
+        required=True,
+        help="Path to training distance file",
+    )
+    parser.add_argument(
+        "--D_val",
+        type=str,
+        required=True,
+        help="Path to validation distance file",
+    )
+    parser.add_argument(
+        "--train_method",
+        type=str,
+        default="sim_siam",
+        help="training method",
+        choices=[
+            "sim_siam",
+            "siamese",
+            "transformer_paired_lm_pretrain",
+        ],
     )
     parser.add_argument(
         "--model_type",
@@ -207,9 +231,8 @@ def main():
         default="conv1d_siamese",
         help="model type to train",
         choices=[
-            "conv1d_siamese",
-            "transformer_siamese",
-            "transformer_paired_lm_pretrain",
+            "conv1d",
+            "transformer",
         ],
     )
     parser.add_argument(
@@ -286,10 +309,8 @@ def main():
     )
     args = parser.parse_args()
 
-    if args.model_type == "conv1d_siamese":
-        conv1d_siamese(args)
-    elif args.model_type == "transformer_siamese":
-        transformer_siamese(args)
+    if args.model_type == "conv1d" or args.model_type == "transformer_siamese":
+        siamese(args)
     elif args.model_type == "transformer_paired_lm_pretrain":
         transformer_paired_lm_pretrain(args)
     else:

@@ -2,8 +2,17 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from torch import nn, optim
-from torch.utils import data
+from torch import nn
+from transformers.models.longformer.configuration_longformer import \
+    LongformerConfig
+from transformers.models.longformer.modeling_longformer import LongformerModel
+
+
+def cos_sim_loss(x, y):
+    """
+    Loss function for sim_siam style training.
+    """
+    return -F.cosine_similarity(x, y, dim=1).mean()
 
 
 class ResidualBlock(nn.Module):
@@ -44,14 +53,15 @@ class ResidualBlock(nn.Module):
                 kernel_size=1,
                 stride=stride,
             ),
-            # nn.BatchNorm1d(out_channels),
-            nn.GroupNorm(1, out_channels),
+            nn.BatchNorm1d(out_channels),
+            # nn.GroupNorm(1, out_channels),
         )
         self.dropout = nn.Dropout(dropout)
-        self.norm = nn.GroupNorm(1, out_channels)
+        # self.norm = nn.GroupNorm(1, out_channels)
+        self.norm = nn.BatchNorm1d(out_channels)
         self.act1 = nn.GELU()
         self.act2 = nn.GELU()
-        self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
+        # self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
 
     def forward(self, x):
         identity = x
@@ -66,7 +76,7 @@ class ResidualBlock(nn.Module):
             identity = self.downsample(identity)
         out += identity
         out = self.act2(out)
-        out = self.pool(out)
+        # out = self.pool(out)
         return out
 
 
@@ -142,7 +152,7 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.conv_blocks = nn.ModuleList(
             [
-                ResidualBlock(
+                Conv1DBlock(
                     in_channels=32 * i,
                     out_channels=(i + 1) * 32,
                     dropout=dropout,
@@ -160,7 +170,6 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.fc = nn.Linear(n_layers * 32, enc_dimension)
         self.fc_dropout = nn.Dropout(dropout)
-        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.conv_in(x)
@@ -170,9 +179,77 @@ class Conv1DEncoder(pl.LightningModule):
         x = self.fc(x)
         x = self.fc_dropout(x)
         return x
+        # return F.normalize(x, dim=1)
 
     def predict_step(self, batch, _):
         return self.forward(batch["P"])
+
+
+class SimSiamModule(pl.LightningModule):
+    def __init__(
+        self,
+        *,
+        encoder_type,
+        encoder_params,
+        lr,
+        optimizer,
+        optimizer_params,
+        scheduler,
+        scheduler_params,
+        loss_fn=None,  # not used
+    ):
+        super().__init__()
+
+        self.encoder_type = encoder_type
+        self.encoder = Conv1DEncoder(**encoder_params)
+        self.enc_dimension = self.encoder.enc_dimension
+        self.projection_head = nn.Sequential(
+            nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+            nn.BatchNorm1d(self.enc_dimension // 2),
+            nn.ReLU(),
+            nn.Linear(self.enc_dimension // 2, self.enc_dimension),
+        )
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.optimizer_params = optimizer_params
+        self.scheduler_params = scheduler_params
+
+        # 2-layer projection head
+        # TODO todo make the input and output satisfy the encoder params in general
+
+        if lr:
+            # precedence to lr passed in
+            self.optimizer_params["lr"] = lr
+            self.learning_rate = lr
+        self.save_hyperparameters()
+
+    def forward(self, x):
+        p1 = self.encoder(x["P1"])
+        z1 = self.projection_head(p1)
+
+        p2 = self.encoder(x["P2"])
+        z2 = self.projection_head(p2)
+        return cos_sim_loss(p1.detach(), z2)  # + cos_sim_loss(p2.detach(), z1))
+
+    def training_step(self, batch, _):
+        loss = self.forward(batch)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        return loss
+
+    def validation_step(self, batch, _):
+        loss = self.forward(batch)
+        self.log("val_loss", loss, prog_bar=True)
+        return loss
+
+    def configure_optimizers(self):
+        optimizer = self.optimizer(self.parameters(), **self.optimizer_params)
+        scheduler = self.scheduler(optimizer, **self.scheduler_params)
+        # return [optimizer], [scheduler]
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": scheduler,
+            "monitor": "val_loss",
+        }
 
 
 # TODO change the args so that we can load from checkpoint without specifying it
@@ -193,10 +270,19 @@ class SiameseModule(pl.LightningModule):
 
         self.encoder_type = encoder_type
 
-        if self.encoder_type == "conv1d_siamese":
+        if self.encoder_type == "conv1d":
             self.encoder = Conv1DEncoder(**encoder_params)
+            self.enc_dimension = self.encoder.enc_dimension
+            # self.projection_head = nn.Sequential(
+            #     nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+            #     nn.BatchNorm1d(self.enc_dimension // 2),
+            #     nn.ReLU(),
+            #     nn.Linear(self.enc_dimension // 2, self.enc_dimension),
+        # )
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
+
+
 
         self.optimizer = optimizer
         self.scheduler = scheduler
@@ -213,6 +299,7 @@ class SiameseModule(pl.LightningModule):
         x1 = batch["P1"]
         x2 = batch["P2"]
         d = batch["D"]
+        # TODO clean this up
         u = self.encoder(x1)
         with torch.no_grad():
             v = self.encoder(x2)

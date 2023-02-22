@@ -1,0 +1,8 @@
+name: faiss-cpu
+channels:
+  - conda-forge
+dependencies:
+  - pytorch
+  - numpy
+  - faiss-cpu
+

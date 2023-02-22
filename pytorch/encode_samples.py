@@ -7,11 +7,12 @@ import pytorch_lightning as pl
 import torch
 from data_utils.gt_datasets import (GTInferenceDataset, GTInferenceWriter,
                                     pad_data)
-from models.encoder import Conv1DEncoder, SiameseModule
+from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from torch.utils.data import DataLoader
 
 
 def load_siamese_encoder(path: str) -> pl.LightningModule:
+    # model = SiameseModule.load_from_checkpoint(path)
     model = SiameseModule.load_from_checkpoint(path)
     encoder = model.encoder
     return encoder
@@ -21,7 +22,7 @@ def encode_samples(
     *,
     encoder: pl.LightningModule,
     batch_size: int,
-    outdir: str,
+    output: str,
     files: list[str],
     gpu: bool = False,
     num_workers: int = 0,
@@ -29,12 +30,13 @@ def encode_samples(
     """
     Encode a dataset of samples using the provided encoder.
     :param encoder: The encoder model for inference
+    :param batch_size: The batch size for inference
+    :param output: The output file to write the encoded samples to
+    :param files: The files to encode
     :param gpu: Whether to use the GPU
     :param num_workers: The number of workers to use for data loading
     """
     pprint(files)
-
-    os.makedirs(outdir, exist_ok=True)
 
     dataset = GTInferenceDataset(files=files)
     dataloader = DataLoader(
@@ -46,8 +48,7 @@ def encode_samples(
         collate_fn=partial(pad_data, model_type="conv1d_inference"),
     )
     writer = GTInferenceWriter(
-        output_dir=outdir,
-        filename="encoded_samples.txt",
+        output=output,
         write_interval="batch",
     )
     trainer = pl.Trainer(
@@ -68,10 +69,10 @@ if __name__ == "__main__":
         help="Path to the encoder checkpoint",
     )
     parser.add_argument(
-        "--outdir",
+        "--output",
         type=str,
         required=True,
-        help="Output directory (made if non-existent)",
+        help="output file",
     )
     parser.add_argument(
         "--files",
@@ -103,7 +104,7 @@ if __name__ == "__main__":
     encode_samples(
         encoder=encoder,
         batch_size=args.batch_size,
-        outdir=args.outdir,
+        output=args.output,
         files=args.files,
         gpu=args.gpu,
         num_workers=args.num_workers,

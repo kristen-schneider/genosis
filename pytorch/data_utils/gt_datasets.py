@@ -70,12 +70,11 @@ class GTInferenceWriter(BasePredictionWriter):
     $SAMPLE $SEGMENT $EMBEDDING (tab separated, newline terminated)
     """
 
-    def __init__(self, *, output_dir, filename, write_interval):
+    def __init__(self, *, output, write_interval):
         super().__init__(write_interval)
-        self.output_dir = output_dir
-        self.filename = filename
+        self.output = output
         # if the file already exists, delete it
-        with open(f"{self.output_dir}/{self.filename}", "w") as f:
+        with open(f"{self.output}", "w") as f:
             f.write("")
 
     def write_on_batch_end(
@@ -91,11 +90,57 @@ class GTInferenceWriter(BasePredictionWriter):
         if trainer.num_devices > 0:
             outputs = outputs.cpu()
 
-        with open(f"{self.output_dir}/{self.filename}", "a") as f:
+        with open(f"{self.output}", "a") as f:
             for sample, segment, embedding in zip(
                 batch["sample"], batch["segment"], outputs
             ):
-                f.write(f"{sample}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n")
+                f.write(
+                    f"{sample}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n"
+                )
+
+
+class GTRandomAugmentDataset(Dataset):
+    def __init__(self, pos_file: str):
+        self.P = RaggedMmap(pos_file)
+        self.n_data = len(self.P)
+
+    def __getitem__(self, idx):
+        return self.P[idx]
+
+    def __len__(self):
+        return self.n_data
+
+
+def random_augment_pairs(batch, p=0.1):
+    """
+    - data: list of tensors of positional encodings.
+    - p: probability of omitting a position
+
+    Takes a batch of positional encodings and returns a batch of
+    pairs: (P1, P2), where P1 and P2 are randomly augmented versions
+    of the same positional encoding.
+
+    The random augmentation will be created by randomly ommitting
+    a certain number of positions with probability p.
+
+    Additionally, all P1/P2 tensors will be padded to the same length
+    of their respective batches.
+    """
+    # copy over batch to arrays
+    P = [np.array(x) for x in batch]
+    P_noise1 = [x + np.random.normal(0, 0.001, size=x.shape) for x in P]
+    P_noise2 = [x + np.random.normal(0, 0.001, size=x.shape) for x in P]
+
+    # randomly omit positions of P with probability p
+    P1_aug = [torch.Tensor(x[np.random.rand(len(x)) > p]) for x in P_noise1]
+    P2_aug = [torch.Tensor(x[np.random.rand(len(x)) > p]) for x in P_noise2]
+
+
+    # Pad all P1/P2 tensors to the same length (separately).
+    # Randomly choose which tensor is the augmented one.
+    P1 = pad_sequence(P1_aug, batch_first=True).unsqueeze(1)
+    P2 = pad_sequence(P2_aug, batch_first=True).unsqueeze(1)
+    return {"P1": P1, "P2": P2}
 
 
 class GTDataset(Dataset):
@@ -106,11 +151,9 @@ class GTDataset(Dataset):
     def __init__(
         self,
         *,
-        pos_files: tuple[str, str],
+        pos_files: Sequence[str],
         dist_file: str,
-        model_type: str = "conv1d_siamese",
     ):
-        self.model_type = model_type
         self.dist_file = dist_file
 
         self.P1 = RaggedMmap(pos_files[0])
@@ -126,8 +169,10 @@ class GTDataset(Dataset):
         return self.n_data
 
 
-def pad_data(data, model_type="conv1d_siamese"):
-    if model_type == "conv1d_siamese":
+# TODO maybe not the best way to do this
+# could just separate out the functions
+def pad_data(data, model_type="conv1d"):
+    if model_type == "conv1d":
         # variable length tensors
         P1 = [torch.tensor(x["P1"], dtype=torch.float32) for x in data]
         P2 = [torch.tensor(x["P2"], dtype=torch.float32) for x in data]
@@ -148,12 +193,33 @@ def pad_data(data, model_type="conv1d_siamese"):
 
         return {"P": P, "sample": samples, "segment": segments}
 
+    elif model_type == "transformer_siamese":
+        # variable length tensors
+        P1 = [torch.tensor(x["P1"], dtype=torch.float32) for x in data]
+        P2 = [torch.tensor(x["P2"], dtype=torch.float32) for x in data]
+
+        # scalars
+        dists = torch.tensor([x["D"] for x in data], dtype=torch.float32)
+
+        P1 = pad_sequence(P1, batch_first=True).unsqueeze(1)
+        P2 = pad_sequence(P2, batch_first=True).unsqueeze(1)
+
+        attention_mask1 = torch.where(P1 == 0, 0, 1).squeeze(2)
+        attention_mask2 = torch.where(P2 == 0, 0, 1).squeeze(2)
+        return {
+            "P1": P1,
+            "P2": P2,
+            "attention_mask1": attention_mask1,
+            "attention_mask2": attention_mask2,
+            "D": dists,
+        }
+
     else:
         raise ValueError(f"Unknown model type: {model_type}")
 
 
 def train_val_split(
-    dataset: GTDataset,
+    dataset: Dataset,
     train_segments: Sequence[int],
     val_segments: Sequence[int],
     nsamples: int = NSAMPLES,
@@ -173,28 +239,25 @@ def train_val_split(
 if __name__ == "__main__":
     # files = glob("/data/segments/*.pos_encoded")[:10]
 
-    files = [
-        "/data/segments/1KG.data.seg.90.pos_encoded",
-        "/data/segments/1KG.data.seg.91.pos_encoded",
-        "/data/segments/1KG.data.seg.92.pos_encoded",
-        "/data/segments/1KG.data.seg.93.pos_encoded",
-        "/data/segments/1KG.data.seg.94.pos_encoded",
-        "/data/segments/1KG.data.seg.95.pos_encoded",
-        "/data/segments/1KG.data.seg.96.pos_encoded",
-        "/data/segments/1KG.data.seg.97.pos_encoded",
-        "/data/segments/1KG.data.seg.98.pos_encoded",
-        "/data/segments/1KG.data.seg.99.pos_encoded",
-        "/data/segments/1KG.data.seg.9.pos_encoded",
-    ]
-    infer_dataset = GTInferenceDataset(files=files)
+    # files = [
+    #     "/data/segments/1KG.data.seg.90.pos_encoded",
+    #     "/data/segments/1KG.data.seg.91.pos_encoded",
+    #     "/data/segments/1KG.data.seg.92.pos_encoded",
+    #     "/data/segments/1KG.data.seg.93.pos_encoded",
+    #     "/data/segments/1KG.data.seg.94.pos_encoded",
+    #     "/data/segments/1KG.data.seg.95.pos_encoded",
+    #     "/data/segments/1KG.data.seg.96.pos_encoded",
+    #     "/data/segments/1KG.data.seg.97.pos_encoded",
+    #     "/data/segments/1KG.data.seg.98.pos_encoded",
+    #     "/data/segments/1KG.data.seg.99.pos_encoded",
+    #     "/data/segments/1KG.data.seg.9.pos_encoded",
+    # ]
+    # infer_dataset = GTInferenceDataset(files=files)
 
-    print("data loader")
-    infer_loader = DataLoader(
-        infer_dataset,
-        batch_size=64,
-        num_workers=4,
-        collate_fn=partial(pad_data, model_type="conv1d_inference"),
+    dataset = GTDataset(
+        pos_files=("/data/P1", "/data/P2"),
+        dist_file="/data/precomputed_distances/D.txt",
+        model_type="transformer_siamese",
     )
 
-    for data in infer_loader:
-        print(data["segment"], data["sample"], data["P"].shape)
+    print(max([len(x["P1"]) for x in dataset]))

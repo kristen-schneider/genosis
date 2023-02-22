@@ -14,7 +14,13 @@ def np_generator(file: str):
             )
 
 
-def make_mmap(*, P1_file: str, P2_file: str, outP1: str, outP2: str):
+def make_mmap(
+    *,
+    P1_file: str,
+    P2_file: str,
+    outP1: str,
+    outP2: str
+):
     os.mkdir(outP1)
     os.mkdir(outP2)
     RaggedMmap.from_generator(

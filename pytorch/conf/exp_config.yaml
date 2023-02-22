@@ -1,0 +1,44 @@
+
+# data prep config ------------------------------------------------------------
+random_seed: 42
+segment_prefix: "segment"
+gt_ext: "gt" # no dots
+pos_ext: "pos"
+file_segment_delimiter: "."
+seg_offset: -2 # position in filename after splitting by delimiter
+num_pairings: 5 # n pairings for each sample from each subpopulation
+samples_list: "/data/sample_list.txt"
+sample_table: "/data/1kg_sample_table.tsv"
+segments_dir: "/data/segments"
+outdir: "/data/exploration"
+
+# model training config -------------------------------------------------------
+model_prefix: resampled_data
+
+# P1_train: "/data/exploration/training_set/P1.mmap/"
+# P2_train: "/data/exploration/training_set/P2.mmap/"
+# D_train: "/data/exploration/training_set/D.txt"
+
+# P1_val: "/data/exploration/validation_set/P1.mmap/"
+# P2_val: "/data/exploration/validation/P2.mmap/"
+# D_val: "/data/exploration/validation_set/D.txt"
+
+
+train_method: "siamese"
+model_type: "conv1d"
+
+batch_size: 32
+grad_accum: 16 # N gradient accumulation steps (use for larger effective batch size)
+n_workers: 4 # processes for dataloader prefetching
+n_epochs: 100
+early_stop_patience: 25
+lr: 0.001
+weight_decay: 0.0001
+n_layers: 6
+dropout: 0.0
+stride: 1
+kernel_size: 6
+padding: "valid"
+
+
+
