@@ -88,7 +88,7 @@ rule MakeGoldStandardIndex:
 
   input:
     # TODO put this in config
-    f"/data/segments/1KG.data.seg.{{segment}}.encoded"
+    f"/data/segments/segment.{{segment}}.gt"
   output:
     index = f"{config.outdir}/faiss_gold/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_gold/ids.{{segment}}.txt",
@@ -135,7 +135,7 @@ rule QueryGoldStandardIndex:
     index = rules.MakeGoldStandardIndex.output.index,
     ids = rules.MakeGoldStandardIndex.output.ids
   params:
-    query_file = '/data/segments/1KG.data.seg.{segment}.encoded'
+    query_file = '/data/segments/segment.{segment}.gt'
   output: 
     f"{config.outdir}/gold_queries/queries.{{segment}}.txt"
   threads:

@@ -61,7 +61,7 @@ class ResidualBlock(nn.Module):
         self.norm = nn.BatchNorm1d(out_channels)
         self.act1 = nn.GELU()
         self.act2 = nn.GELU()
-        self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
+        # self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
 
     def forward(self, x):
         identity = x
@@ -76,7 +76,7 @@ class ResidualBlock(nn.Module):
             identity = self.downsample(identity)
         out += identity
         out = self.act2(out)
-        out = self.pool(out)
+        # out = self.pool(out)
         return out
 
 
@@ -152,7 +152,7 @@ class Conv1DEncoder(pl.LightningModule):
 
         self.conv_blocks = nn.ModuleList(
             [
-                ResidualBlock(
+                Conv1DBlock(
                     in_channels=32 * i,
                     out_channels=(i + 1) * 32,
                     dropout=dropout,
@@ -301,7 +301,8 @@ class SiameseModule(pl.LightningModule):
         d = batch["D"]
         # TODO clean this up
         u = self.encoder(x1)
-        v = self.encoder(x2)
+        with torch.no_grad():
+            v = self.encoder(x2)
 
         dpred = F.cosine_similarity(u, v, dim=1)
         return self.loss_fn(dpred, d)

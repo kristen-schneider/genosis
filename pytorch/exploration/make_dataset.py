@@ -53,16 +53,17 @@ def load_distances(distance_file: str) -> list[tuple[str, str, str]]:
     return distances
 
 
-def load_positions(pos_file: str) -> dict[str, list[str]]:
+def load_positions(pos_file: str) -> dict[str, list[float]]:
     """
     For a given segment, load the list of position vectors with format
     sample p1 p2 ... pn
     """
     positions = {}
+    segment = int(pos_file.split(".")[-2])
     with open(pos_file, "r") as f:
         for line in f:
             seg, *pos = line.rstrip().split()
-            positions[seg] = pos
+            positions[seg] = [float(p) - segment for p in pos]
     return positions
 
 
@@ -98,8 +99,8 @@ def main(
             for s1, s2, d in distances:
                 p1 = positions[s1]
                 p2 = positions[s2]
-                fP1.write(" ".join(p1) + "\n")
-                fP2.write(" ".join(p2) + "\n")
+                fP1.write(" ".join(map(str,p1)) + "\n")
+                fP2.write(" ".join(map(str,p2)) + "\n")
                 fD.write(d + "\n")
 
 

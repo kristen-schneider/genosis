@@ -82,6 +82,11 @@ rule All:
     f"{config.outdir}/validation_set/P1.mmap",
     f"{config.outdir}/validation_set/P2.mmap",
 
+    # train/test/split segement numbers
+    f"{config.outdir}/train.segments",
+    f"{config.outdir}/val.segments",
+    f"{config.outdir}/test.segments",
+
     # training set
     # expand(f"{config.outdir}/training_set/P1.txt", segment=train_segments),
     # expand(f"{config.outdir}/training_set/P2.txt", segment=train_segments),
@@ -223,6 +228,25 @@ rule CatResampledImagesPDF:
     convert {{input}} {{output}}
     """
 
+rule WriteTrainTestSplit:
+  """
+  Write the train and test segment numbers to a file
+  """
+  output:
+    train = f"{config.outdir}/train.segments",
+    val   = f"{config.outdir}/val.segments",
+    test  = f"{config.outdir}/test.segments"
+  run:
+    with open(output.train, 'w') as f:
+      for segment in sorted(map(int, train_segments)):
+        f.write(f"{segment}\n")
+    with open(output.val, 'w') as f:
+      for segment in sorted(map(int, val_segments)):
+        f.write(f"{segment}\n")
+    with open(output.test, 'w') as f:
+      for segment in sorted(map(int, test_segments)):
+        f.write(f"{segment}\n")
+
 rule MakeTrainingSet:
   """
   From the resampled distances, make a training set of pairs
@@ -242,9 +266,6 @@ rule MakeTrainingSet:
 
   shell:
     f"""
-    echo {train_segments} | tr ' ' '\n' |
-      sed 's/[^0-9]*\([0-9]*\).*/\1/'   |
-      sort -g > {{output.seg_list}} &&
     python exploration/make_dataset.py \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
@@ -272,9 +293,6 @@ rule MakeValidationSet:
 
   shell:
     f"""
-    echo {val_segments} | tr ' ' '\n' |
-      sed 's/[^0-9]*\([0-9]*\).*/\1/' |
-      sort -g > {{output.seg_list}} &&
     python exploration/make_dataset.py \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
@@ -322,50 +340,10 @@ rule MakeValMmaps:
     """
 
 rule TrainModel:
-  """
-  usage: train_model.py [-h] [--fast_dev_run] [--prefix PREFIX] --P1_train P1_TRAIN --P2_train
-                        P2_TRAIN --P1_val P1_VAL --P2_val P2_VAL --D_train D_TRAIN --D_val D_VAL
-                        [--train_method {sim_siam,siamese,transformer_paired_lm_pretrain}]
-                        [--model_type {conv1d,transformer}] [--batch_size BATCH_SIZE]
-                        [--grad_accum GRAD_ACCUM] [--n_workers N_WORKERS] [--n_epochs N_EPOCHS]
-                        [--early_stop_patience EARLY_STOP_PATIENCE] [--lr LR]
-                        [--weight_decay WEIGHT_DECAY] [--n_layers N_LAYERS] [--dropout DROPOUT]
-                        [--kernel_size KERNEL_SIZE] [--stride STRIDE] [--padding PADDING]
-
-  options:
-    -h, --help            show this help message and exit
-    --fast_dev_run        run 1 batch train/val to see if things are working
-    --prefix PREFIX       prefix to add to run name and checkpoint directory name
-    --P1_train P1_TRAIN   Path to training P1 memmap
-    --P2_train P2_TRAIN   Path to training P2 memmap
-    --P1_val P1_VAL       Path to validation P1 memmap
-    --P2_val P2_VAL       Path to validation P2 memmap
-    --D_train D_TRAIN     Path to training distance file
-    --D_val D_VAL         Path to validation distance file
-    --train_method {sim_siam,siamese,transformer_paired_lm_pretrain}
-                          training method
-    --model_type {conv1d,transformer}
-                          model type to train
-    --batch_size BATCH_SIZE
-                          Batch size for training
-    --grad_accum GRAD_ACCUM
-                          Number of gradient accumulation steps
-    --n_workers N_WORKERS
-                          Number of workers for dataloader
-    --n_epochs N_EPOCHS   Number of epochs to train for
-    --early_stop_patience EARLY_STOP_PATIENCE
-                          Number of validation checks to wait before early stopping
-    --lr LR               Base learning rate for optimizer
-    --weight_decay WEIGHT_DECAY
-                          Weight decay for optimizer (if applicable)
-    --n_layers N_LAYERS   Number of layers in the encoder
-    --dropout DROPOUT     Dropout rate for encoder (if applicable)
-    --kernel_size KERNEL_SIZE
-                          Kernel size (for CNNs only)
-    --stride STRIDE       Stride (for CNNs only)
-    --padding PADDING     Padding (for CNNs only)
-  """
   input:
+    train_segments = f"{config.outdir}/train.segments",
+    val_segments = f"{config.outdir}/val.segments",
+    test_segments = f"{config.outdir}/test.segments",
     P1_train = rules.MakeTrainMmaps.output.P1,
     P2_train = rules.MakeTrainMmaps.output.P2,
     P1_val = rules.MakeValMmaps.output.P1,

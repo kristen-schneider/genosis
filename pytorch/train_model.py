@@ -117,7 +117,7 @@ def siamese(args):
         ModelCheckpoint(
             monitor="val_loss",
             dirpath=f"{args.outdir}/{args.prefix}.checkpoints",
-            filename=f"{args.train_method}-{args.model_type}-{{epoch:02d}}-{{val_loss:.2f}}",
+            filename=f"{args.train_method}-{args.model_type}-{{epoch:03d}}-{{val_loss:.5f}}",
             save_top_k=10,
             save_last=True,
             mode="min",
@@ -135,7 +135,7 @@ def siamese(args):
         gradient_clip_val=0.5,
         gradient_clip_algorithm="norm",
         max_epochs=args.n_epochs,
-        val_check_interval=0.25,
+        val_check_interval=0.5,
         callbacks=callbacks,
         logger=logger,
         accelerator="gpu",
