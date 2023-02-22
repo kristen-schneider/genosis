@@ -135,7 +135,7 @@ rule QueryGoldStandardIndex:
     index = rules.MakeGoldStandardIndex.output.index,
     ids = rules.MakeGoldStandardIndex.output.ids
   params:
-    query_file = '{config.segments_dir}/segment.{segment}.gt'
+    query_file = f'{config.segments_dir}/segment.{{segment}}.gt'
   output: 
     f"{config.outdir}/gold_queries/queries.{{segment}}.txt"
   threads:
