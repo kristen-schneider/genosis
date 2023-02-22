@@ -90,24 +90,36 @@ void encode_vectors(string sample_IDs_file,
 		vector<int> haplotype_gt_encoding_vector;
 		vector<float> haplotype_pos_encoding_vector;
 		
+		/*
+		for (int x = 0; x < number_total_alleles; x++){
+			cout << gt[x] << " ";
+		}*/
 		// for each sample in the record, convert gt to encoding
 		for (int i = 0; i < num_samples; i++){
-
+			
 			// separate two alleles for each gt
 			int allele1 = bcf_gt_allele(gt[i*alleles_per_gt+0]);
 			int allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
-			
 			// replace unknowns and concatinate genotypes to " | " format
 			if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
-				s_gt = ".|" + to_string(allele2);
+				if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
+					s_gt = ".|.";
+				}
+				else{
+					s_gt = ".|" + to_string(allele2);
+				}
 			}
 			if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
-				s_gt = to_string(allele1) + "|.";
+				if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
+					s_gt = ".|.";
+				}
+				else{
+					s_gt = to_string(allele1) + "|.";
+				}
                         }
 			else{
 				s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
-
 			// mapping genotype to encoding vector and add to the hapltype vector
 			vector<int> biallelic_encoding = encoding_map[s_gt];
 			haplotype_gt_encoding_vector.push_back(biallelic_encoding[0]);
