@@ -1,8 +1,8 @@
 from types import SimpleNamespace
-configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
+#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
 #configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/config_snakemake.yaml"
+configfile: "/scratch/alpine/krsc0813/data/simulated/config_snakemake.yaml"
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -28,6 +28,8 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.out_dir}encode.log",
 		f"{config.data_dir}samples_hap_IDs.txt",
+		f"{config.data_dir}database_hap_IDs.txt",
+		f"{config.data_dir}query_hap_IDs.txt",
 		f"{config.cpp_bin_dir}faiss-l2-build",
 		f"{config.out_dir}faiss_idx.log",
 		f"{config.cpp_bin_dir}faiss-l2-search",
@@ -176,7 +178,9 @@ rule hap_IDs:
 	input:
 		encode_log=f"{config.out_dir}encode.log"
 	output:
-		hap_ids=f"{config.data_dir}samples_hap_IDs.txt"
+		samp_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
+		database_hap_ids=f"{config.data_dir}database_hap_IDs.txt",
+		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
 	message:
 		"Getting haplotype IDs from encoding file..."
 	shell:
@@ -184,6 +188,9 @@ rule hap_IDs:
 		"	awk '{{print $1}}' $enc_f > {output.hap_ids};" \
 		"	break;" \
 		"done;" \
+		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
+		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
+
 
 # 3.1 build faiss index for encoding segments (compile)
 rule build_faiss_index_compile:
