@@ -11,7 +11,9 @@ dependencies:
   - pytorch-lightning
   - numpy
   - pip
+  - pip:
     - transformers
     - wandb
     - mmap-ninja
+
 
