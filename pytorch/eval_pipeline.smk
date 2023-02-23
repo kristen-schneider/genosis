@@ -70,7 +70,7 @@ else:
     input:
       "{input_file}"
     output:
-      temp(f"{config.outdir}/embeddings.{{segment}}.txt")
+      temp(f"{config.outdir}/embeddings.{{input_file}}.txt")
     threads:
       config.num_workers
     conda:
@@ -90,7 +90,7 @@ else:
     Merge the segment encodings into one file
     """
     input:
-      expand(rules.EncodeSegment.output, segment=segments)
+      expand(rules.EncodeSegment.output, input_file=config.input_files)
     output:
       f"{config.outdir}/embeddings.txt"
     threads:
