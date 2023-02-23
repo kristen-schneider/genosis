@@ -178,14 +178,18 @@ rule hap_IDs:
 	input:
 		encode_log=f"{config.out_dir}encode.log"
 	output:
-		hap_ids=f"{config.data_dir}samples_hap_IDs.txt"
+		sample_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
+		database_hap_ids=f"{config.data_dir}database_hap_IDs.txt",
+		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
 	message:
 		"Getting haplotype IDs from encoding file..."
 	shell:
 		"for enc_f in {config.out_dir}*.gt; do" \
-		"	awk '{{print $1}}' $enc_f > {output.hap_ids};" \
+		"	awk '{{print $1}}' $enc_f > {output.sample_hap_ids};" \
 		"	break;" \
 		"done;" \
+		"cp {input.sample_hap_ids} {input.databse_hap_ids};" \
+		"cp {input.sample_hap_ids} {input.query_hap_ids};"
 
 # 3.1 build faiss index for encoding segments (compile)
 rule build_faiss_index_compile:
