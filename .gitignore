@@ -1,6 +1,8 @@
 bin/
 build/
+compare/
 data/
+example/
 lib/faiss/
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/

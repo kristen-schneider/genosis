@@ -30,9 +30,20 @@ python python/scripts/utils/interploate_map.py --map /path/to/map --ref_map /pat
 ```
 plink2 --vcf /path/to/vcf.vcf.gz --make-king-table`
 ```
+
+# CREATE VCF SUBSET FOR TESTING
+```
+# write header to smaller file
+bcftools view -h full_vcf.vcf > small_vcf.vcf 
+# write first set of variants to file
+tabix small_vcf.vcf chr1:0-2000000
+# bgzip and tabix vcf file
+bgzip small_vcf.vcf
+tabix -p vcf small_vcf.vcf
+```
 # CONDA/MAMBA 
 ```
-mamba create -n pmed -c bioconda -c conda-forge -c defaults bcftools boost bzip2 faiss gxx htslib make numpy plink plink2 pysam python snakemake vcftools
+mamba create -n pmed -c bioconda -c conda-forge -c pytorch -c defaults bcftools boost bzip2 faiss-cpu gxx htslib make numpy plink plink2 pysam python snakemake vcftools
 ```
 ### CHANNELS
 - bioconda

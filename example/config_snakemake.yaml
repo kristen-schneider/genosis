@@ -1,0 +1,42 @@
+home_dir:
+  ./
+conda_dir:
+  /home/sdp/miniconda3/envs/pmed/
+
+data_dir:
+  /home/sdp/precision-medicine/example/
+vcf_file:
+  /home/sdp/precision-medicine/example/example.vcf.gz
+database_IDs:
+  /home/sdp/precision-medicine/example/database_IDs.txt
+query_IDs:
+  /home/sdp/precision-medicine/example/query_IDs.txt
+ref_map:
+  /home/sdp/precision-medicine/example/plink.chr8.GRCh38.map
+interpolated_map:
+  /home/sdp/precision-medicine/example/interpolated.map
+out_dir:
+  /home/sdp/precision-medicine/example/segments/
+config_file:
+  /home/sdp/precision-medicine/example/config.yaml
+k:
+  10
+delim:
+  space
+
+cpp_bin_dir:
+  cpp/bin/
+cpp_src_dir:
+  cpp/src/
+cpp_include_dir:
+  cpp/include/
+cpp_configs_dir:
+  notes/ancestry_configs
+
+python_dir:
+  python/scripts/
+
+htslib_dir:
+  lib/htslib/
+faisslib_dir:
+  lib/faiss/

@@ -11,6 +11,10 @@ database_file:
   ../pmed-local/data/1KG/all_hap_IDs.txt
 query_file:
   ../pmed-local/data/1KG/test_query.txt
+ref_map:
+  /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
+interpolated_map:
+  /home/scp/pmed-local/data/1KG/interpolated.map
 out_dir:
   ../pmed-local/data/1KG/segments/
 config_file:
@@ -34,3 +38,5 @@ python_dir:
 
 htslib_dir:
   lib/htslib/
+faisslib_dir:
+  lib/faiss/

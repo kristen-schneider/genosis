@@ -31,7 +31,7 @@ map<string,vector<int>> make_biallelic_encoding_map(string encodingFile){
 
         eFile.open(encodingFile);
         if ( !eFile.is_open() ) {
-            cout << "Failed to open: " << encodingFile << endl;
+            cout << "Failed to open encodings map file: " << encodingFile << endl;
         }
 
 	// read file
