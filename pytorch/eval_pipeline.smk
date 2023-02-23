@@ -151,7 +151,8 @@ rule QueryEmbeddingIndex:
   Query the embedding index for the nearest neighbors
   """
   input:
-    embeddings = rules.EncodeSequences.output,
+    embeddings = rules.EncodeSegments.output \
+      if config.gpu else rules.MergeSegmentEncodings.output,
     index = rules.MakeEmbeddingIndex.output.index,
     ids = rules.MakeEmbeddingIndex.output.ids
   output: 
