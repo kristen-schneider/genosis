@@ -38,7 +38,7 @@ rule all:
 # =============================================================================
 # When on GPU do all the segments in one shot.
 # =============================================================================
-if gpu:
+if config.gpu:
   rule EncodeSegments:
     """
     Use model to encode seuqences into embedding vectors
@@ -107,7 +107,7 @@ rule MakeEmbeddingIndex:
   Put embedding vectors into faiss IP index
   """
   input:
-    rules.EncodeSequences.output if gpu else rules.MergeSegmentEncodings.output
+    rules.EncodeSequences.output if config.gpu else rules.MergeSegmentEncodings.output
   output:
     index = f"{config.outdir}/faiss_encoded/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_encoded/ids.{{segment}}.txt",
