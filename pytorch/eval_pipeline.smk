@@ -35,36 +35,79 @@ rule all:
     f"{config.outdir}/jaccard_similarities/jaccard.similarities.png",
 
 
-rule EncodeSequences:
-  """
-  Use model to encode seuqences into embedding vectors
-  """
-  input:
-    expand("{input_file}", input_file=config.input_files)
-  params:
-    gpu = "--gpu" if config.gpu else ""
-  output:
-    f"{config.outdir}/embeddings.txt"
-  threads:
-    config.num_workers
-  shell:
-    f"""
-    echo {config.outdir}
-    python encode_samples.py \\
-    --encoder {config.model} \\
-    --output {{output}} \\
-    --files {{input}} \\
-    --batch-size {config.batch_size} \\
-    {{params.gpu}} \\
-    --num-workers {config.num_workers}
+# =============================================================================
+# When on GPU do all the segments in one shot.
+# =============================================================================
+if gpu:
+  rule EncodeSegments:
     """
+    Use model to encode seuqences into embedding vectors
+    """
+    input:
+      expand("{input_file}", input_file=config.input_files)
+    output:
+      f"{config.outdir}/embeddings.txt"
+    threads:
+      config.num_workers
+    conda:
+      "envs/torch-gpu.yaml"
+    shell:
+      f"""
+      echo {config.outdir}
+      python encode_samples.py \\
+      --encoder {config.model} \\
+      --output {{output}} \\
+      --files {{input}} \\
+      --batch-size {config.batch_size} \\
+      --gpu \\
+      --num-workers {config.num_workers}
+      """
+else:
+  # =============================================================================
+  # When on CPU, do each segment separately
+  # =============================================================================
+  rule EncodeSegment:
+    input:
+      "{input_file}"
+    output:
+      temp(f"{config.outdir}/embeddings.{{segment}}.txt")
+    threads:
+      config.num_workers
+    conda:
+      "envs/torch-cpu.yaml"
+    shell:
+      f"""
+      echo {config.outdir}
+      python encode_samples.py \\
+      --encoder {config.model} \\
+      --output {{output}} \\
+      --files {{input}} \\
+      --batch-size {config.batch_size} \\
+      --num-workers {config.num_workers}
+      """
+  rule MergeSegmentEncodings:
+    """
+    Merge the segment encodings into one file
+    """
+    input:
+      expand(rules.EncodeSegment.output, segment=segments)
+    output:
+      f"{config.outdir}/embeddings.txt"
+    threads:
+      1
+    conda:
+      "envs/torch-cpu.yaml"
+    shell:
+      f"""
+      cat {{input}} | sort > {{output}}
+      """
 
 rule MakeEmbeddingIndex:
   """
   Put embedding vectors into faiss IP index
   """
   input:
-    rules.EncodeSequences.output
+    rules.EncodeSequences.output if gpu else rules.MergeSegmentEncodings.output
   output:
     index = f"{config.outdir}/faiss_encoded/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_encoded/ids.{{segment}}.txt",
