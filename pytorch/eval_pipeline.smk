@@ -107,7 +107,7 @@ rule MakeEmbeddingIndex:
   Put embedding vectors into faiss IP index
   """
   input:
-    rules.EncodeSequences.output if config.gpu else rules.MergeSegmentEncodings.output
+    rules.EncodeSegments.output if config.gpu else rules.MergeSegmentEncodings.output
   output:
     index = f"{config.outdir}/faiss_encoded/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_encoded/ids.{{segment}}.txt",
