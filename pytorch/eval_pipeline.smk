@@ -31,6 +31,7 @@ samples = [line.rstrip() for line in open(config.samples_list)]
 
 rule all:
   input:
+    f"{config.outdir}/precision_recall/precision_recall.png",
     f"{config.outdir}/jaccard_similarities/jaccard.by_sample.pdf",
     f"{config.outdir}/jaccard_similarities/jaccard.similarities.png",
 
@@ -196,6 +197,26 @@ rule QueryGoldStandardIndex:
     --k {config.num_neighbors}
     """
 
+rule ComputePrecisionRecall:
+  """
+  Compute the precision and recall between the embedding query results and the gold standard query results
+  """
+  input:
+    embedding_queries = rules.QueryEmbeddingIndex.output,
+    gold_queries = rules.QueryGoldStandardIndex.output
+  output:
+    f"{config.outdir}/precision_recall/precision_recall.{{segment}}.txt"
+  threads:
+    1
+  shell:
+    f"""
+    python testing/compute_precision_recall.py \\
+    --embedding-queries {{input.embedding_queries}} \\
+    --gold-queries {{input.gold_queries}} \\
+    --output {{output}}
+    """
+
+
 rule ComputeJaccardSimilarity:
   """
   Compute the Jaccard similarity between the embedding query results and the gold standard query results
@@ -253,3 +274,21 @@ rule VisualizeJaccardBySample:
     --output {{output}}
     """
   
+rule VisualizePrecisionRecall:
+  """
+  Visualize the precision and recall results
+  """
+  input:
+    expand(rules.ComputePrecisionRecall.output, segment=segments)
+  output:
+    f"{config.outdir}/precision_recall/precision_recall.png",
+  threads:
+    1
+  conda:
+    "envs/matplotlib.yaml"
+  shell:
+    f"""
+    python testing/visualize_precision_recall.py \\
+    --input {{input}} \\
+    --output {{output}}
+    """

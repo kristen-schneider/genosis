@@ -7,6 +7,7 @@ dependencies:
   - pytorch
   - torchvision
   - torchaudio
+  - torchmetrics
   - pytorch-cuda=11.7
   - pytorch-lightning
   - numpy

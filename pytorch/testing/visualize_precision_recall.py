@@ -6,6 +6,7 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 
 
@@ -30,28 +31,36 @@ def parse_args():
 def load_data(files):
     """
     data format:
-        <sample>\t<similarity>
+        <sample>\t<precision>\t<recall>
     """
     data = {}
     print(type(files[0]))
     for file in files:
         with open(file, "r") as f:
-            x = []
+            precisions = defaultdict(list)
+            recalls = defaultdict(list)
             segment = int(file.split(".")[-2])
             for line in f:
-                _, similarity = line.strip().split("\t")
-                x.append(float(similarity))
-            data[segment] = np.mean(x)
+                _, precision, recall = line.strip().split("\t")
+                precisions[segment].append(float(precision))
+                recalls[segment].append(float(recall))
+            data[segment] = (np.mean(precisions[segment]), np.mean(recalls[segment]))
     return data
 
 
 def plot(files: list[str], output: str):
     """
-    data: dict keyed by sample name, values are lists of jaccard similarities
-    make a violin plot where x axis is sample name and y axis is jaccard similarity
+    data: dict keyed by segment; values are tuples of precision and recall.
+    Make a bar plot of precision and recall by segment
     """
     data = load_data(files)
-    sns.barplot(x=list(data.keys()), y=list(data.values()))
+    data = pd.DataFrame.from_dict(
+        data,
+        orient="index",
+        columns=["Precision", "Recall"],
+    )
+
+    sns.barplot(data=data)
     plt.xlabel("Segment")
     plt.ylabel("Jaccard Similarity")
     plt.title("Jaccard Similarity by Segment")

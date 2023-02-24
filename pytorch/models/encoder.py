@@ -8,13 +8,6 @@ from transformers.models.longformer.configuration_longformer import \
 from transformers.models.longformer.modeling_longformer import LongformerModel
 
 
-def cos_sim_loss(x, y):
-    """
-    Loss function for sim_siam style training.
-    """
-    return -F.cosine_similarity(x, y, dim=1).mean()
-
-
 class ResidualBlock(nn.Module):
     """conv1d block with residual connection"""
 
@@ -273,12 +266,6 @@ class SiameseModule(pl.LightningModule):
         if self.encoder_type == "conv1d":
             self.encoder = Conv1DEncoder(**encoder_params)
             self.enc_dimension = self.encoder.enc_dimension
-            # self.projection_head = nn.Sequential(
-            #     nn.Linear(self.enc_dimension , self.enc_dimension // 2),
-            #     nn.BatchNorm1d(self.enc_dimension // 2),
-            #     nn.ReLU(),
-            #     nn.Linear(self.enc_dimension // 2, self.enc_dimension),
-        # )
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
 
@@ -304,7 +291,7 @@ class SiameseModule(pl.LightningModule):
         with torch.no_grad():
             v = self.encoder(x2)
 
-        dpred = F.cosine_similarity(u, v, dim=1)
+        dpred = F.cosine_similarity(u, v, dim=1, eps=1e-9)
         return self.loss_fn(dpred, d)
 
     def training_step(self, batch, _):
@@ -313,7 +300,14 @@ class SiameseModule(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, _):
-        loss = self.forward(batch)
+        x1 = batch["P1"]
+        x2 = batch["P2"]
+        d = batch["D"]
+        with torch.no_grad():
+            u = self.encoder(x1)
+            v = self.encoder(x2)
+            dpred = F.cosine_similarity(u, v, dim=1, eps=1e-9)
+            loss = F.mse_loss(dpred, d)
         self.log("val_loss", loss, prog_bar=True)
         return loss
 

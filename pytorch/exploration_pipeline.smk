@@ -72,7 +72,7 @@ if len(set(train_segments) & set(val_segments) & set(test_segments)) > 0:
 rule All:
   input:
     # trained model
-    f"{config.outdir}/{config.model_prefix}",
+    directory(f"{config.outdir}/{config.model_prefix}"),
 
     # train memmaps
     f"{config.outdir}/training_set/P1.mmap",
@@ -367,6 +367,7 @@ rule TrainModel:
       --D_val {{input.D_val}} \
       --train_method {config.train_method} \
       --model_type {config.model_type} \
+      --loss_fn {config.loss_fn} \
       --batch_size {config.batch_size} \
       --grad_accum {config.grad_accum} \
       --n_workers {config.n_workers} \
