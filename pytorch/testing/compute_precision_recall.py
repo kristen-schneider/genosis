@@ -36,6 +36,7 @@ def precision_recall(gold_standard: set, predictions: set):
     TP = len(gold_standard.intersection(predictions))
     FP = len(predictions.difference(gold_standard))
     FN = len(gold_standard.difference(predictions))
+    print(f"{TP=}, {FP=}, {FN=}")
     return TP / (TP + FP), TP / (TP + FN)
 
 
