@@ -14,6 +14,7 @@ from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
+from torchmetrics import MeanSquaredLogError
 from torch import nn, optim
 from torchvision import ops
 from torch.utils import data
@@ -71,10 +72,12 @@ def siamese(args):
 
     if args.loss_fn == "mse":
         loss_fn = nn.MSELoss
+    elif args.loss_fn == "msle":
+        loss_fn = MeanSquaredLogError
     elif args.loss_fn == "huber":
         loss_fn = nn.SmoothL1Loss
     else:
-        raise ValueError(f"Loss function {args.loss_fn} not implemented.")
+        raise ValueError(f"Loss function {args.loss_fn} not supported.")
 
 
     data = get_dataloaders(args)
@@ -248,7 +251,6 @@ def main():
         "--loss_fn",
         type=str,
         default="mse",
-        choices=["mse", "huber"],
         help="loss function to use",
     )
     parser.add_argument(

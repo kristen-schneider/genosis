@@ -196,6 +196,33 @@ rule QueryGoldStandardIndex:
     --k {config.num_neighbors}
     """
 
+# rule GetGoldStandardDistances:
+#   """
+#   Query the gold standard index.
+#   Report samples, subpopulations, and their distances to the query
+#   """
+#   input:
+#     index = rules.MakeGoldStandardIndex.output.index,
+#     ids = rules.MakeGoldStandardIndex.output.ids,
+#     sample_table = config.sample_table,
+#   output:
+#     f"{config.outdir}/gold_standard_distances/distances.{{segment}}.txt"
+#   params:
+#     query_file = f'{config.segments_dir}/segment.{{segment}}.gt'
+#   threads:
+#     1
+#   conda:
+#     "envs/faiss.yaml"
+#   shell:
+#     f"""
+#     python testing/get_gold_standard_distances.py \\
+#     --queries {{params.query_file}} \\
+#     --index {{input.index}} \\
+#     --ids {{input.ids}} \\
+#     --output {{output}} \\
+#     --sample-table {{input.sample_table}}
+#     """
+
 
 
 rule ComputeJaccardSimilarity:

@@ -1,4 +1,83 @@
 
+# Running with snakemake
+
+## Generating training data and training a model
+**TODO** need to modify this to work with slurm.
+
+The pipeline started out as data exploration, but ended up becoming
+an all in one training set generation/model training pipeline. Located in
+`exploration_pipeline.smk`, with configuration at `conf/exp_config.yaml`.
+
+#### Config parameters
+##### Data prep config
+- `random_seed`: fixes the random number generator for better reproducibility during.
+  I've set it to 42.
+- `segment_prefix`, `gt_ext`, `pos_ext`, `file_segment_delimiter`, `seg_offset`: These are
+  here to allow parseing of filenames that have a more arbitrary format just incase they change
+  from the current `segment.$N.{pos|gt}`.
+- `num_pairings`: n pairings for each sample from each subpopulation during sampling
+- `samples_list`: This is the list of all samples (`${sample_name}_${haplotype}`).
+   One way to do it is to take one of the `.gt` files and do `cut -d' ' -f1 $gt_file > list.txt`
+- `sample_table`: This is the 1kg super/sub populations table. (not currently in use,
+   but maybe someday)
+- `segments_dir`: Directory containing the `.gt` files
+- `outdir`: output directory of all the results
+
+##### Model training config
+- **TODO** add options for half precision training, etc.
+- `model_prefix`: used to name runs in `wandb` and also dictates the name of the directory
+   containing model checkpoints (`$model_prefix.checkpoints`).
+- `train_method`: How to train model.  Currently just implemented siamese.
+- `model_type`: Model architecture for backbone.  Currently just conv1d.
+- `loss_fn`: loss function for training. `mse` seems best for now.
+- `batch_size`: My workstation gpu (12GB VRAM) dictates that we use at most 32 for now,
+   higher mem GPUs might allow for more.
+- `grad_accum`: To achieve a higher effective batch size without running out of memory,
+  we can run multiple batches and accumulate the gradients before making the backprop update.
+  This trades memory for time.  For example when `batch_size` is 32 and `grad_accum` is 16,
+  the effective batch size is 512.
+- `n_workers`: number of processes for the training data loader.  Set this as high as possible
+  so that the gpu never has to wait for a batch to be served up.
+- `n_epochs`: maximum number of epochs to train for.  I set it at 100.
+- `early_stop_patience`: number of validation checks without improvement to wait for before
+  stopping training before it has reached the max number of epochs.
+- `lr`: base learning rate of the optimizer. Currently set to 1e-3, but can experiment
+  with marginally higher or lower values.
+- `weight_decay`: weight decay regularization factor.  Higher will be stronger regularization.
+  Use if the model seems to overfit quickly.  Doesn't seem to be the case for our current small
+  model, but could happen if we increase the number of parameters of the model.
+- `n_layers`: number of layers deep the model is.
+- `dropout`: dropout probability for dropout layers in the model.  Haven't made use of this
+  yet due to the fact we aren't overfitting yet, but use sparingly since it doesn't play
+  well with batch norm layers.
+- `stride`: *Convnets only* - stride of convolution operation.  Haven't messed with this yet.
+- `kernel_size`: *Convnets only* - size of convolutional kernels.  A way to increase the model's receptive field.
+- `padding`: *Convnets only* - wether or not to pad vectors with zeros or not to make the
+  output the same size as the input.  For padding use `same`.  Otherwise use `valid`.
+
+## Model evaluation
+The eval pipeline is located in `eval_pipeline.smk` with coniguration at
+`conf/eval_config.yaml`.
+
+#### Config parameters
+- `model`: path to a trained model checkpoint (`.ckpt`)
+- `gpu`: Set this to true if you want to run inference on GPU.  It takes only a few
+  seconds to encode the test set with gpu, but the pipeline also supports cpu parallelization
+  so it won't be super slow without it.  Just use more cores in the snakemake call.
+- `samples_list`: This is the list of all samples (`${sample_name}_${haplotype}`).
+   One way to do it is to take one of the `.gt` files and do `cut -d' ' -f1 $gt_file > list.txt`
+- `sample_table`: This is the 1kg super/sub populations table. (not currently in use,
+   but maybe someday)
+- `segments_dir`: Directory containing the `.gt` files
+- `input_files`: a yaml list of the `.pos` files we are useing for the test set.
+- `outdir`: output directory of all the results
+- `batch_size`: batch size for model during inference.  128 is a good default.
+- `num_workers`: number of processes that the model's dataloader uses during inference.
+   4 is probably a good default.
+- `num_neighbors`: the number of neighbors to use for k-nn queries.  I've been using 10, but
+  you can experiment with other values for different analyses.
+
+# Running without snakemake
 ## Setup Environment
 In this directory there are two environment yaml files, depending on your hardware
 setup: `torch-cpu.yaml` and `torch-gpu.yaml`.  We can create an environment by running
