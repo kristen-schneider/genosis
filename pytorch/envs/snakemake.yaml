@@ -1,0 +1,10 @@
+name: snakemake
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - snakemake
+  - pip
+  - pip:
+    - wandb
+
