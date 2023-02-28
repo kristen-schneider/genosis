@@ -14,7 +14,9 @@ from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
+from torchmetrics import MeanSquaredLogError
 from torch import nn, optim
+from torchvision import ops
 from torch.utils import data
 
 
@@ -68,6 +70,16 @@ def get_dataloaders(args):
 
 def siamese(args):
 
+    if args.loss_fn == "mse":
+        loss_fn = nn.MSELoss
+    elif args.loss_fn == "msle":
+        loss_fn = MeanSquaredLogError
+    elif args.loss_fn == "huber":
+        loss_fn = nn.SmoothL1Loss
+    else:
+        raise ValueError(f"Loss function {args.loss_fn} not supported.")
+
+
     data = get_dataloaders(args)
 
     if args.train_method == "sim_siam":
@@ -102,7 +114,7 @@ def siamese(args):
             "eta_min": 1e-6,
             "verbose": True,
         },
-        loss_fn=nn.MSELoss,
+        loss_fn=loss_fn,
     )
 
     callbacks = [
@@ -234,6 +246,12 @@ def main():
             "conv1d",
             "transformer",
         ],
+    )
+    parser.add_argument(
+        "--loss_fn",
+        type=str,
+        default="mse",
+        help="loss function to use",
     )
     parser.add_argument(
         "--batch_size",

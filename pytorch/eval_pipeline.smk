@@ -35,36 +35,79 @@ rule all:
     f"{config.outdir}/jaccard_similarities/jaccard.similarities.png",
 
 
-rule EncodeSequences:
-  """
-  Use model to encode seuqences into embedding vectors
-  """
-  input:
-    expand("{input_file}", input_file=config.input_files)
-  params:
-    gpu = "--gpu" if config.gpu else ""
-  output:
-    f"{config.outdir}/embeddings.txt"
-  threads:
-    config.num_workers
-  shell:
-    f"""
-    echo {config.outdir}
-    python encode_samples.py \\
-    --encoder {config.model} \\
-    --output {{output}} \\
-    --files {{input}} \\
-    --batch-size {config.batch_size} \\
-    {{params.gpu}} \\
-    --num-workers {config.num_workers}
+# =============================================================================
+# When on GPU do all the segments in one shot.
+# =============================================================================
+if config.gpu:
+  rule EncodeSegments:
     """
+    Use model to encode seuqences into embedding vectors
+    """
+    input:
+      expand("{input_file}", input_file=config.input_files)
+    output:
+      f"{config.outdir}/embeddings.txt"
+    threads:
+      config.num_workers
+    conda:
+      "envs/torch-gpu.yaml"
+    shell:
+      f"""
+      echo {config.outdir}
+      python encode_samples.py \\
+      --encoder {config.model} \\
+      --output {{output}} \\
+      --files {{input}} \\
+      --batch-size {config.batch_size} \\
+      --gpu \\
+      --num-workers {config.num_workers}
+      """
+else:
+  # =============================================================================
+  # When on CPU, do each segment separately
+  # =============================================================================
+  rule EncodeSegment:
+    input:
+      "{input_file}"
+    output:
+      temp(f"{config.outdir}/embeddings.{{input_file}}.txt")
+    threads:
+      config.num_workers
+    conda:
+      "envs/torch-cpu.yaml"
+    shell:
+      f"""
+      echo {config.outdir}
+      python encode_samples.py \\
+      --encoder {config.model} \\
+      --output {{output}} \\
+      --files {{input}} \\
+      --batch-size {config.batch_size} \\
+      --num-workers {config.num_workers}
+      """
+  rule MergeSegmentEncodings:
+    """
+    Merge the segment encodings into one file
+    """
+    input:
+      expand(rules.EncodeSegment.output, input_file=config.input_files)
+    output:
+      f"{config.outdir}/embeddings.txt"
+    threads:
+      1
+    conda:
+      "envs/torch-cpu.yaml"
+    shell:
+      f"""
+      cat {{input}} | sort > {{output}}
+      """
 
 rule MakeEmbeddingIndex:
   """
   Put embedding vectors into faiss IP index
   """
   input:
-    rules.EncodeSequences.output
+    rules.EncodeSegments.output if config.gpu else rules.MergeSegmentEncodings.output
   output:
     index = f"{config.outdir}/faiss_encoded/index.{{segment}}.faiss",
     ids = f"{config.outdir}/faiss_encoded/ids.{{segment}}.txt",
@@ -108,7 +151,8 @@ rule QueryEmbeddingIndex:
   Query the embedding index for the nearest neighbors
   """
   input:
-    embeddings = rules.EncodeSequences.output,
+    embeddings = rules.EncodeSegments.output \
+      if config.gpu else rules.MergeSegmentEncodings.output,
     index = rules.MakeEmbeddingIndex.output.index,
     ids = rules.MakeEmbeddingIndex.output.ids
   output: 
@@ -151,6 +195,35 @@ rule QueryGoldStandardIndex:
     --output {{output}} \\
     --k {config.num_neighbors}
     """
+
+# rule GetGoldStandardDistances:
+#   """
+#   Query the gold standard index.
+#   Report samples, subpopulations, and their distances to the query
+#   """
+#   input:
+#     index = rules.MakeGoldStandardIndex.output.index,
+#     ids = rules.MakeGoldStandardIndex.output.ids,
+#     sample_table = config.sample_table,
+#   output:
+#     f"{config.outdir}/gold_standard_distances/distances.{{segment}}.txt"
+#   params:
+#     query_file = f'{config.segments_dir}/segment.{{segment}}.gt'
+#   threads:
+#     1
+#   conda:
+#     "envs/faiss.yaml"
+#   shell:
+#     f"""
+#     python testing/get_gold_standard_distances.py \\
+#     --queries {{params.query_file}} \\
+#     --index {{input.index}} \\
+#     --ids {{input.ids}} \\
+#     --output {{output}} \\
+#     --sample-table {{input.sample_table}}
+#     """
+
+
 
 rule ComputeJaccardSimilarity:
   """
@@ -208,4 +281,3 @@ rule VisualizeJaccardBySample:
     --input {{input}} \\
     --output {{output}}
     """
-  

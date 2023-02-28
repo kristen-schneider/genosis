@@ -9,24 +9,6 @@ import numpy as np
 import seaborn as sns
 
 
-# rule VisualizeJaccardSimilarity:
-#   """
-#   Visualize the Jaccard similarity results
-#   """
-#   input:
-#     expand(rules.ComputeJaccardSimilarity.output, segment=segments)
-#   output:
-#     f"{config.outdir}/jaccard_similarities/jaccard.similarities.png",
-#   threads:
-#     1
-#   conda:
-#     "envs/matplotlib.yaml"
-#   shell:
-#     f"""
-#     python testing/visualize_jaccard_similarity.py \\
-#     --input {{input}} \\
-#     --output {{output}}
-#     """
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -74,7 +56,6 @@ def plot(files: list[str], output: str):
     plt.ylabel("Jaccard Similarity")
     plt.title("Jaccard Similarity by Segment")
     plt.savefig(output)
-
 
 
 if __name__ == "__main__":

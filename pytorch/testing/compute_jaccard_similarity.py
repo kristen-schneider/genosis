@@ -1,21 +1,3 @@
-# rule ComputeJaccardSimilarity:
-#   """
-#   Compute the Jaccard similarity between the embedding query results and the gold standard query results
-#   """
-#   input:
-#     embedding_queries = rules.QueryEmbeddingIndex.output,
-#     gold_queries = rules.QueryGoldStandardIndex.output
-#   output:
-#     f"{config.outdir}/jaccard_similarity.txt"
-#   threads:
-#     1
-#   shell:
-#     f"""
-#     python testing/compute_jaccard_similarity.py \\
-#     --embedding-queries {{input.embedding_queries}} \\
-#     --gold-queries {{input.gold_queries}} \\
-#     --output {{output}}
-#     """
 import argparse
 import os
 
@@ -93,7 +75,6 @@ def main(embedding_queries, gold_queries, output):
             jaccard_similarity(gold_results[i], embedding_results[i]),
         )
 
-
     os.makedirs(os.path.dirname(output), exist_ok=True)
     with open(output, "w") as f:
         for sample_id, similarity in zip(gold_samples, similarities):
@@ -103,7 +84,3 @@ def main(embedding_queries, gold_queries, output):
 if __name__ == "__main__":
     args = parse_args()
     main(**vars(args))
-
-
-
-
