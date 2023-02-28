@@ -1,8 +1,8 @@
 from types import SimpleNamespace
-configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
+#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
 #configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/config_snakemake.yaml"
+configfile: "/scratch/alpine/krsc0813/data/simulated/config_snakemake.yaml"
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -28,6 +28,8 @@ rule all:
 		f"{config.out_dir}slice.log",
 		f"{config.out_dir}encode.log",
 		f"{config.data_dir}samples_hap_IDs.txt",
+		f"{config.data_dir}database_hap_IDs.txt",
+		f"{config.data_dir}query_hap_IDs.txt",
 		f"{config.cpp_bin_dir}faiss-l2-build",
 		f"{config.out_dir}faiss_idx.log",
 		f"{config.cpp_bin_dir}faiss-l2-search",
@@ -45,7 +47,9 @@ rule get_sample_IDs:
 		"Creating a list of all sample IDs from VCF file..."
 	shell:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
-		" && touch {output.sample_IDs_done}"
+		" && touch {output.sample_IDs_done};" \
+		"cp {output.sample_IDs} {config.data_dir}database_IDs.txt;" \
+		"cp {output.sample_IDs} {config.data_dir}query_IDs.txt;"
 
 # 0.2 interpolate map
 # one cm for every bp in 1kg
@@ -117,7 +121,7 @@ rule slice_VCF:
 	message:
 		"Slicing VCF into segments..."
 	shell:
-		"echo 2. ---SLICING VCF INTO SEGMENTS---;" \
+		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r segment start_bp end_bp; do" \
 		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
 		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
@@ -176,14 +180,28 @@ rule hap_IDs:
 	input:
 		encode_log=f"{config.out_dir}encode.log"
 	output:
-		hap_ids=f"{config.data_dir}samples_hap_IDs.txt"
+<<<<<<< HEAD
+		samp_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
+=======
+		sample_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
+>>>>>>> 48b794673e6d81ef454f7e841c4502ad94a657f8
+		database_hap_ids=f"{config.data_dir}database_hap_IDs.txt",
+		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
 	message:
 		"Getting haplotype IDs from encoding file..."
 	shell:
 		"for enc_f in {config.out_dir}*.gt; do" \
-		"	awk '{{print $1}}' $enc_f > {output.hap_ids};" \
+		"	awk '{{print $1}}' $enc_f > {output.sample_hap_ids};" \
 		"	break;" \
 		"done;" \
+<<<<<<< HEAD
+		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
+		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
+
+=======
+		"cp {input.sample_hap_ids} {input.databse_hap_ids};" \
+		"cp {input.sample_hap_ids} {input.query_hap_ids};"
+>>>>>>> 48b794673e6d81ef454f7e841c4502ad94a657f8
 
 # 3.1 build faiss index for encoding segments (compile)
 rule build_faiss_index_compile:
