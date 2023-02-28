@@ -21,6 +21,7 @@ int main(int argc, char* argv[]){
 	string vcf_slice_file = argv[2];	// input vcf (slice) file
 	string output_gt_file = argv[3];	// output encoding (slice) file
 	string output_pos_file = argv[4];	// output positional encoding (slice) file
+	string output_af_file = argv[5];	// output allele frequency encoding (slice) file
 	map<string, string> config_options;
 	config_options = get_config_options(configFile);		
 	
@@ -47,7 +48,8 @@ int main(int argc, char* argv[]){
 			encoding_map,
 			bp_cm_map,
 			output_gt_file,
-			output_pos_file);	
+			output_pos_file,
+			output_af_file);	
 	
 	
 	return 0;

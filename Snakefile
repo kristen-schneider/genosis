@@ -1,8 +1,8 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
+configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-configfile: "/scratch/alpine/krsc0813/data/simulated/config_snakemake.yaml"
+#configfile: "/scratch/alpine/krsc0813/data/simulated/config_snakemake.yaml"
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -170,7 +170,7 @@ rule encode_execute:
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	echo SEGMENT: $seg_name;" \
-		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos" \
+		"	./{input.bin} {input.config_file} $vcf_f {config.out_dir}${{seg_name}}.gt {config.out_dir}${{seg_name}}.pos {config.out_dir}${{seg_name}}.af" \
 		"	 >> {output.encode_log};" \
 		"done;" \
 		#"touch output.encode_log;"
@@ -180,11 +180,7 @@ rule hap_IDs:
 	input:
 		encode_log=f"{config.out_dir}encode.log"
 	output:
-<<<<<<< HEAD
-		samp_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
-=======
 		sample_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
->>>>>>> 48b794673e6d81ef454f7e841c4502ad94a657f8
 		database_hap_ids=f"{config.data_dir}database_hap_IDs.txt",
 		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
 	message:
@@ -194,14 +190,8 @@ rule hap_IDs:
 		"	awk '{{print $1}}' $enc_f > {output.sample_hap_ids};" \
 		"	break;" \
 		"done;" \
-<<<<<<< HEAD
-		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
-		"cp {config.data_dir}samples_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
-
-=======
-		"cp {input.sample_hap_ids} {input.databse_hap_ids};" \
-		"cp {input.sample_hap_ids} {input.query_hap_ids};"
->>>>>>> 48b794673e6d81ef454f7e841c4502ad94a657f8
+		"cp {output.sample_hap_ids} {output.database_hap_ids};" \
+		"cp {output.sample_hap_ids} {output.query_hap_ids};"
 
 # 3.1 build faiss index for encoding segments (compile)
 rule build_faiss_index_compile:

@@ -5,15 +5,18 @@ base_dir="/home/sdp/precision-medicine/"
 src_dir="/home/sdp/precision-medicine/cpp/src/"
 include_dir="/home/sdp/precision-medicine/cpp/include/"
 bin_dir="/home/sdp/precision-medicine/cpp/bin/"
-data_dir="/home/sdp/pmed-local/data/1KG/segments/"
+data_dir="/home/sdp/precision-medicine/example/segments/"
+#data_dir="/home/sdp/pmed-local/data/1KG/segments/"
 htslib_dir="/home/sdp/precision-medicine/lib/htslib/"
 
 # path to vcf and encoded file
-config="/home/sdp/pmed-local/data/1KG/config.yaml"
+config="/home/sdp/precision-medicine/example/config.yaml"
+#config="/home/sdp/pmed-local/data/1KG/config.yaml"
 sample_IDs=$data_dir"/"
-vcf_file=$data_dir"segment.100.vcf"
+vcf_file=$data_dir/"segment.0.vcf"
 
 bin=$bin_dir"encode"
+rm $bin
 
 g++ $src_dir"main_encode.cpp" \
 	$src_dir"encode_segment.cpp" \
@@ -26,7 +29,7 @@ g++ $src_dir"main_encode.cpp" \
 	-lhts \
 	-o $bin
 
-$bin $config $vcf_file $base_dir"out.gt" $base_dir"out.pos"
+$bin $config $vcf_file $base_dir"out.gt" $base_dir"out.pos" $base_dir"out.af"
 
 #for vcf_f in $data_dir*.vcf; do
 #	filename=$(basename -- $vcf_f)
