@@ -2,10 +2,10 @@ data_dir="/home/sdp/pmed-local/data/"
 ped_sim_dir="/home/sdp/pmed-local/ped-sim/"
 
 $ped_sim_dir"ped-sim" \
-	-d $data_dir"EAS_sim/EAS_small.def" \
-	-i $data_dir"EAS/EAS.vcf.gz" \
+	-d $data_dir"SAS/SAS_sim/SAS.def" \
+	-i $data_dir"SAS/SAS.vcf.gz" \
 	-m $data_dir"chr8.map" \
-   	-o $data_dir"EAS_sim/EAS_pois" \
+   	-o $data_dir"SAS/SAS_sim/SAS_pois" \
 	--pois \
 	--founder_ids \
 	--keep_phase \
