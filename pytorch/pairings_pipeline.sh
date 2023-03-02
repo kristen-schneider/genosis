@@ -1,6 +1,6 @@
 #!/bin/env bash
-#SBATCH -j gt_similarity_search
-#SBATCH -p amilan
+#SBATCH --partition=amilan
+#SBATCH --job-name=gt_similarity_search
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH --mem=64G
