@@ -1,41 +1,54 @@
 #!/bin/bash
 # submits snakemake jobs as individual slurm jobs
 # -----------------------------------------------
-#SBATCH -p short
+#SBATCH --partition ami100
+##SBATCH --gres=gpu
 #SBATCH --job-name=pmed-snakemake
-#SBATCH --mail-type=None (NONE, BEGIN, END, FAIL, ALL)
-#SBATCH --mail-user=krsc0813@colorado.edu
 #SBATCH --nodes=1
 #SBATCH --ntasks=4
-#SBATCH --mem=1gb
-#SBATCH --time=168:00:00 # Time limit hrs:min:sec
-#SBATCH --output=/Users/much8161/Repositories/seq-similarity-search/log/bwa-snakemake.out
-#SBATCH --error=/Users/much8161/Repositories/seq-similarity-search/log/bwa-snakemake.err
+#SBATCH --time=0-0:30:00
+#SBATCH --qos=normal
+#SBATCH --output=/scratch/alpine/krsc0813/slurm_files/out/pmed.out
+#SBATCH --error=/scratch/alpine/krsc0813/slurm_files/err/pmed.err
+#SBATCH --mail-type=None
+#SBATCH --mail-user=krsc0813@colorado.edu
 # -----------------------------------------------
 
 
 
-# activate conda env
-conda_source='/home/sdp/miniconda3/etc/profile.d/conda.sh'
-source $conda_source
+# activate conda env (slurm)
+echo "Preparing conda env."
+echo "...loading anaconda module."
+module load anaconda
+echo "...activating conda environment."
 conda activate pmed
+# activate conda env (bash)
+#conda_source='/home/sdp/miniconda3/etc/profile.d/conda.sh'
+#source $conda_source
+#conda activate pmed
 
 
 # environment variables
-project_dir='/home/sdp/precision-medicine/'
-sm_config=$project_dir'example/config_snakemake.yaml'
+project_dir='/scratch/alpine/krsc0813/precision-medicine/'
+#project_dir='/home/sdp/precision-medicine/'
+sm_config=$project_dir'example/config_cluster.yaml'
+
+# update packages
+echo "Configuring libraries."
+cd /scratch/alpine/krsc0813/precision-medicine/
+git submodule init
+git submodule update
 
 
 # run snakemake
-snakemake -c \
-	--use-conda --conda-frontend mamba \
-	--cluster-config $sm_config \
-	--latency-wait 5 \
-	--cluster "sbatch -J {cluster.job-name} \\
-			  -t {cluster.tme} \\
-			  -N {cluster.nodes} \\
-			  -n {cluster.ntasks} \\
-			  --mem={cluster.mem} \\
-			  --mem={cluster.mem} \\
-			  --error {cluster.error}" \
-	--jobs 4 --cores 64
+echo "Running snakemake."
+snakemake -s Snakefile \
+        --use-conda --conda-frontend mamba \
+        --cluster-config $sm_config \
+        --latency-wait 5 \
+        --cluster "sbatch -J {cluster.job-name} \\
+                          -t {cluster.time} \\
+                          -N {cluster.nodes} \\
+                          -n {cluster.ntasks} \\
+                          --error {cluster.error}" \
+        --jobs 4 --cores 1
