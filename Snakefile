@@ -10,8 +10,6 @@ shell.prefix("""
 set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
-#export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
-#""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH+FAISS_LIBRARY_PATH))
 
 
 
@@ -45,6 +43,8 @@ rule get_sample_IDs:
 		sample_IDs_done=f"{config.data_dir}samples.log"
 	message:
 		"Creating a list of all sample IDs from VCF file..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"bcftools query -l {input.vcf} > {output.sample_IDs}"
 		" && touch {output.sample_IDs_done};" \
@@ -65,6 +65,8 @@ rule interpolate_map:
 		interpolated_log=f"{config.data_dir}interpolated.log",
 	message:
 		"Interpolating map file..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"python {input.vcf_bp_py} {input.vcf_file} {output.vcf_bps};"
 		"python {input.interpolate_py} {output.vcf_bps} {input.ref_map} {output.interpolated_map};"
@@ -85,6 +87,8 @@ rule segment_boundary_file_compile:
 		bin=f"{config.cpp_bin_dir}segment-boundary"
 	message:
 		"Compiling--write segment boundary file..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"g++" \
 		" {input.main_segment_cpp}" \
@@ -107,6 +111,8 @@ rule segment_boundary_file_execute:
 		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
 	message:
 		"Executing--write segment boundary file..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"{input.bin} {input.config_file} > {output.segment_boundary_log}"
 
@@ -120,6 +126,8 @@ rule slice_VCF:
 		slice_log=f"{config.out_dir}slice.log"
 	message:
 		"Slicing VCF into segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r segment start_bp end_bp; do" \
@@ -142,6 +150,8 @@ rule encode_compile:
 		bin=f"{config.cpp_bin_dir}encode"
 	message:
 		"Compiling--encoding segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"g++" \
 		" {input.main_encode_cpp}" \
@@ -164,6 +174,8 @@ rule encode_execute:
 		encode_log=f"{config.out_dir}encode.log"
 	message:
                 "Compiling--encoding segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
 		"for vcf_f in {config.out_dir}*.vcf; do" \
@@ -185,6 +197,8 @@ rule hap_IDs:
 		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
 	message:
 		"Getting haplotype IDs from encoding file..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"for enc_f in {config.out_dir}*.gt; do" \
 		"	awk '{{print $1}}' $enc_f > {output.sample_hap_ids};" \
@@ -203,6 +217,8 @@ rule build_faiss_index_compile:
 		bin=f"{config.cpp_bin_dir}faiss-l2-build"
 	message:
 		"Compiling--building faiss indices for all segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"g++" \
 		" {input.faiss_l2_build_cpp}" \
@@ -221,6 +237,8 @@ rule build_faiss_index_execute:
                 faiss_idx_log=f"{config.out_dir}faiss_idx.log"
         message:
                 "Executing--building faiss indices for all segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"for enc_f in {config.out_dir}*.gt; do" \
                 "       filename=$(basename $enc_f);" \
@@ -240,6 +258,8 @@ rule search_faiss_index_compile:
 		bin=f"{config.cpp_bin_dir}faiss-l2-search"
 	message:
 		"Compiling--searching faiss indices for all segments..."
+	conda:
+		"{config.conda_dir}"	
 	shell:
 		"g++" \
 		" {input.faiss_l2_search_cpp}" \
@@ -259,7 +279,9 @@ rule search_faiss_index_execute:
                 faiss_search_log=f"{config.out_dir}faiss_search.log"
         message:
                 "Executing--searching faiss indices for all segments..."
-        shell:
+	conda:
+		"{config.conda_dir}"
+	shell:
                 "for idx_f in {config.out_dir}*.idx; do" \
                 "       filename=$(basename $idx_f);" \
                 "       seg_faiss=${{filename%.*}};" \
