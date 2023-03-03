@@ -72,7 +72,7 @@ if len(set(train_segments) & set(val_segments) & set(test_segments)) > 0:
 rule All:
   input:
     # trained model
-    directory(f"{config.outdir}/{config.model_prefix}"),
+    directory(f"{config.outdir}/{config.model_prefix}.checkpoints"),
 
     # train memmaps
     f"{config.outdir}/training_set/P1.mmap",
@@ -88,16 +88,10 @@ rule All:
     f"{config.outdir}/test.segments",
 
     # training set
-    # expand(f"{config.outdir}/training_set/P1.txt", segment=train_segments),
-    # expand(f"{config.outdir}/training_set/P2.txt", segment=train_segments),
     expand(f"{config.outdir}/training_set/D.txt", segment=train_segments),
-    # expand(f"{config.outdir}/train_segments.txt", segment=train_segments),
 
     # validation set
-    # expand(f"{config.outdir}/validation_set/P1.txt", segment=val_segments),
-    # expand(f"{config.outdir}/validation_set/P2.txt", segment=val_segments),
     expand(f"{config.outdir}/validation_set/D.txt", segment=val_segments),
-    # expand(f"{config.outdir}/val_segments.txt", segment=val_segments),
 
     # stats
     f"{config.outdir}/bin_sampled_distribution.pdf",
@@ -125,6 +119,8 @@ rule MakeGTMemmap:
     f"{config.segments_dir}/{config.segment_prefix}.{{segment}}.{config.gt_ext}",
   output:
     f"{config.outdir}/gt_mmap/segment.{{segment}}.mmap"
+  conda:
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/make_gt_mmap.py \
@@ -262,7 +258,6 @@ rule MakeTrainingSet:
     P1 = temp(f"{config.outdir}/training_set/P1.txt"),
     P2 = temp(f"{config.outdir}/training_set/P2.txt"),
     D = f"{config.outdir}/training_set/D.txt",
-    seg_list = f"{config.outdir}/train_segments.txt"
 
   shell:
     f"""
@@ -289,7 +284,6 @@ rule MakeValidationSet:
     P1 = temp(f"{config.outdir}/validation_set/P1.txt"),
     P2 = temp(f"{config.outdir}/validation_set/P2.txt"),
     D = f"{config.outdir}/validation_set/D.txt",
-    seg_list = f"{config.outdir}/val_segments.txt"
 
   shell:
     f"""
@@ -311,6 +305,8 @@ rule MakeTrainMmaps:
   output:
     P1 = directory(f"{config.outdir}/training_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/training_set/P2.mmap")
+  conda:
+    "mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
@@ -330,6 +326,8 @@ rule MakeValMmaps:
   output:
     P1 = directory(f"{config.outdir}/validation_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/validation_set/P2.mmap")
+  conda:
+    "mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
