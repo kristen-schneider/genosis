@@ -352,6 +352,8 @@ rule TrainModel:
     model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}.checkpoints")
   threads:
     config.n_workers
+  conda:
+    'envs/torch-gpu.yaml'
   shell:
     f"""
     python train_model.py \
