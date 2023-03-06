@@ -306,7 +306,7 @@ rule MakeTrainMmaps:
     P1 = directory(f"{config.outdir}/training_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/training_set/P2.mmap")
   conda:
-    "mmap_ninja.yaml"
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
@@ -327,7 +327,7 @@ rule MakeValMmaps:
     P1 = directory(f"{config.outdir}/validation_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/validation_set/P2.mmap")
   conda:
-    "mmap_ninja.yaml"
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
