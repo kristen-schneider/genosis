@@ -7,6 +7,7 @@ from glob import glob
 
 import numpy as np
 import pytorch_lightning as pl
+import torch
 from data_utils.gt_datasets import (GTDataset, GTRandomAugmentDataset,
                                     pad_data, random_augment_pairs,
                                     train_val_split)
@@ -14,10 +15,10 @@ from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
-from torchmetrics import MeanSquaredLogError
 from torch import nn, optim
-from torchvision import ops
 from torch.utils import data
+from torchmetrics import MeanSquaredLogError
+from torchvision import ops
 
 
 def compute_steps_per_epoch(train_dataset, batch_size):
@@ -78,7 +79,6 @@ def siamese(args):
         loss_fn = nn.SmoothL1Loss
     else:
         raise ValueError(f"Loss function {args.loss_fn} not supported.")
-
 
     data = get_dataloaders(args)
 
@@ -143,6 +143,7 @@ def siamese(args):
     )
 
     trainer = pl.Trainer(
+        precision=16, # TODO add to config
         accumulate_grad_batches=args.grad_accum,
         gradient_clip_val=0.5,
         gradient_clip_algorithm="norm",
@@ -157,6 +158,7 @@ def siamese(args):
 
     logger.watch(siamese_model)
 
+    torch.set_float32_matmul_precision("medium") # TODO add to config
     trainer.fit(
         model=siamese_model,
         train_dataloaders=data["train_dataloader"],
