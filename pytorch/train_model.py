@@ -154,6 +154,7 @@ def siamese(args):
         accelerator="gpu",
         devices=1,
         fast_dev_run=args.fast_dev_run,  # run 1 batch train/val to see if things are working
+        enable_progress_bar=False,
     )
 
     logger.watch(siamese_model)
