@@ -349,7 +349,7 @@ rule TrainModel:
     D_train = rules.MakeTrainingSet.output.D,
     D_val = rules.MakeValidationSet.output.D
   output:
-    model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}")
+    model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}.checkpoints")
   threads:
     config.n_workers
   shell:
