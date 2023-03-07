@@ -1,11 +1,12 @@
 #!/bin/env bash
-#SBATCH --partition=amilan
+#SBATCH --partition=aa100
+#SBATCH --gres=gpu:1
 #SBATCH --job-name=gt_similarity_search
 #SBATCH --nodes=1
-#SBATCH --ntasks=32
-#SBATCH --mem=64G
-#SBATCH --time=2:00:00 # hrs:min:sec
-#SBATCH --output=/dev/null
-#SBATCH --error=log/pairings_pipeline_%j.err
+#SBATCH --ntasks-per-node=32
+#SBATCH --mem=100GB
+#SBATCH --time=24:00:00 # hrs:min:sec
+#SBATCH --output=log/pairings_pipeline-%j.log
+#SBATCH --error=log/pairings_pipeline-%j.err
 
-snakemake -s exploration_pipeline.smk -j 4 --use-conda --conda-frontend mamba
+snakemake -s exploration_pipeline.smk -j 4 -c 32 --use-conda --conda-frontend mamba
