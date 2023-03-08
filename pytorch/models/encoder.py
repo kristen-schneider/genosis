@@ -3,74 +3,152 @@ import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 from torch import nn
-from transformers.models.longformer.configuration_longformer import \
-    LongformerConfig
-from transformers.models.longformer.modeling_longformer import LongformerModel
 
 
-class ResidualBlock(nn.Module):
-    """conv1d block with residual connection"""
+class GlobalResponseNormalization(nn.Module):
+    """
+    Adapted from https://github.com/facebookresearch/ConvNeXt-V2
 
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        dropout=0.1,
-        kernel_size=3,
-        stride=1,
-    ):
-        super(ResidualBlock, self).__init__()
+    Inputs are expected to be of shape (batch_size, channels, spatial_dim),
+    just as with conv1d layers.
+    """
 
-        self.in_channels = in_channels
-        self.out_channels = out_channels
+    def __init__(self, dim):
+        super(GlobalResponseNormalization, self).__init__()
+        self.gamma = nn.Parameter(torch.zeros(1, 1, dim))
+        self.beta = nn.Parameter(torch.zeros(1, 1, dim))
 
-        self.conv1 = nn.Conv1d(
+    def forward(self, x):
+        # norm along spatial dimension
+        Gx = torch.norm(x, p=2, dim=2, keepdim=True)
+
+        # divide that by mean along the channel dimension
+        Nx = Gx / (Gx.mean(dim=1, keepdim=True) + 1e-6)
+
+        return self.gamma * x * Nx + self.beta + x
+
+
+class DepthWiseConv1D(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0):
+        super(DepthWiseConv1D, self).__init__()
+        self.depthwise = nn.Conv1d(
             in_channels=in_channels,
             out_channels=out_channels,
             kernel_size=kernel_size,
             stride=stride,
-            padding=1,
+            padding=padding,
+            groups=in_channels,
         )
-        self.conv2 = nn.Conv1d(
-            in_channels=out_channels,
+
+    def forward(self, x):
+        return self.depthwise(x)
+
+
+class PointWiseConv1D(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(PointWiseConv1D, self).__init__()
+        self.pointwise = nn.Conv1d(
+            in_channels=in_channels,
             out_channels=out_channels,
-            kernel_size=kernel_size,
-            stride=stride,
-            padding=1,
+            kernel_size=1,
         )
-        # allows residual connection to be applied when in_channels != out_channels
-        self.downsample = nn.Sequential(
+
+    def forward(self, x):
+        return self.pointwise(x)
+
+
+class DownsampleConv1D(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size=2):
+        super(DownsampleConv1D, self).__init__()
+
+        self.block = nn.Sequential(
+            nn.GroupNorm(1, in_channels),
             nn.Conv1d(
                 in_channels=in_channels,
                 out_channels=out_channels,
-                kernel_size=1,
-                stride=stride,
+                kernel_size=kernel_size,
+                stride=kernel_size,
             ),
-            nn.BatchNorm1d(out_channels),
-            # nn.GroupNorm(1, out_channels),
         )
-        self.dropout = nn.Dropout(dropout)
-        # self.norm = nn.GroupNorm(1, out_channels)
-        self.norm = nn.BatchNorm1d(out_channels)
-        self.act1 = nn.GELU()
-        self.act2 = nn.GELU()
-        # self.pool = nn.MaxPool1d(kernel_size=3, stride=1)
 
     def forward(self, x):
-        identity = x
-        out = self.conv1(x)
-        out = self.dropout(out)
-        out = self.norm(out)
-        out = self.act1(out)
-        out = self.conv2(out)
-        out = self.dropout(out)
-        out = self.norm(out)
-        if self.in_channels != self.out_channels:
-            identity = self.downsample(identity)
-        out += identity
-        out = self.act2(out)
-        # out = self.pool(out)
-        return out
+        return self.block(x)
+
+
+class ConvNext1DStem(nn.Module):
+    """
+    Input stage of cnn that applies a downsample convolution followed by normalization.
+    """
+
+    def __init__(self, in_channels=1, out_channels=32, kernel_size=4):
+        super(ConvNext1DStem, self).__init__()
+        self.stem = nn.Sequential(
+            nn.Conv1d(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=kernel_size,
+                stride=kernel_size,
+            ),
+            nn.GroupNorm(1, out_channels),
+        )
+
+    def forward(self, x):
+        return self.stem(x)
+
+
+class ConvNext1DBlock(nn.Module):
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size=7,
+        bottleneck_factor=2,
+        stride=1,
+        stochastic_depth=0.1,
+    ):
+        super(ConvNext1DBlock, self).__init__()
+        self.stochastic_depth = stochastic_depth
+
+        self.block = nn.Sequential(
+            DepthWiseConv1D(
+                in_channels=in_channels,
+                out_channels=in_channels,
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=0,
+            ),
+            nn.GroupNorm(1, in_channels),
+            PointWiseConv1D(
+                in_channels=in_channels,
+                out_channels=in_channels * bottleneck_factor,
+            ),
+            nn.GELU(),
+            GlobalResponseNormalization(out_channels),
+            PointWiseConv1D(
+                in_channels=self.bottleneck_channels,
+                out_channels=out_channels,
+            ),
+        )
+
+    def forward(self, x):
+        """
+        Forward pass of ConvNext1D with skip connection and stochastic depth
+        (when training). Use the block path with probability {stochastic_depth}
+        otherwise use just the identity path.
+        """
+        if self.training:
+            if np.random.rand() < self.stochastic_depth:
+                return x
+            else:
+                return self.block(x) + x
+        else:
+            return self.block(x) + x
+
+
+class ConvNext1DStage(nn.Module):
+    """
+    Stage of ConvNext1D that applies a downsample followed by the ConvNext1DBlock
+    """
 
 
 class Conv1DBlock(nn.Module):
@@ -197,7 +275,7 @@ class SimSiamModule(pl.LightningModule):
         self.encoder = Conv1DEncoder(**encoder_params)
         self.enc_dimension = self.encoder.enc_dimension
         self.projection_head = nn.Sequential(
-            nn.Linear(self.enc_dimension , self.enc_dimension // 2),
+            nn.Linear(self.enc_dimension, self.enc_dimension // 2),
             nn.BatchNorm1d(self.enc_dimension // 2),
             nn.ReLU(),
             nn.Linear(self.enc_dimension // 2, self.enc_dimension),
@@ -268,8 +346,6 @@ class SiameseModule(pl.LightningModule):
             self.enc_dimension = self.encoder.enc_dimension
         else:
             raise ValueError(f"Model type {self.encoder_type} not supported.")
-
-
 
         self.optimizer = optimizer
         self.scheduler = scheduler
