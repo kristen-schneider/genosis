@@ -160,7 +160,7 @@ def siamese(args):
 
     logger.watch(siamese_model)
 
-    torch.set_float32_matmul_precision("medium") # TODO add to config
+    torch.set_float32_matmul_precision("high") # I think medium|high|very_high are the options
     trainer.fit(
         model=siamese_model,
         train_dataloaders=data["train_dataloader"],
