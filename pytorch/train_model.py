@@ -144,7 +144,7 @@ def siamese(args):
     )
 
     trainer = pl.Trainer(
-        precision=16, # TODO add to config
+        # precision=16, # TODO add to config
         accumulate_grad_batches=args.grad_accum,
         gradient_clip_val=0.5,
         gradient_clip_algorithm="norm",
