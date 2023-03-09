@@ -102,7 +102,7 @@ def siamese(args):
         optimizer_params={
             # "lr": args.lr,
             "weight_decay": args.weight_decay,
-            "eps": 1e-6, # TODO see if we need to lower this even further
+            "eps": 1e-4, # TODO see if we need to lower this even further
         },
         scheduler=optim.lr_scheduler.CosineAnnealingWarmRestarts,
         scheduler_params={
