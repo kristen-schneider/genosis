@@ -19,10 +19,9 @@ class GlobalResponseNormalization(nn.Module):
         self.beta = nn.Parameter(torch.zeros(1, 1, dim))
 
     def forward(self, x):
-        # norm along spatial dimension
+        # norm along spatial dimension then divide
+        # that by mean along channel dimension
         Gx = torch.norm(x, p=2, dim=2, keepdim=True)
-
-        # divide that by mean along the channel dimension
         Nx = Gx / (Gx.mean(dim=1, keepdim=True) + 1e-6)
 
         return self.gamma * x * Nx + self.beta + x
@@ -149,6 +148,7 @@ class ConvNext1DStage(nn.Module):
     """
     Stage of ConvNext1D that applies a downsample followed by the ConvNext1DBlock
     """
+    pass
 
 
 class Conv1DBlock(nn.Module):
@@ -242,6 +242,8 @@ class Conv1DEncoder(pl.LightningModule):
         self.fc = nn.Linear(n_layers * 32, enc_dimension)
         self.fc_dropout = nn.Dropout(dropout)
 
+        self.apply(self._init_weights)
+
     def forward(self, x):
         x = self.conv_in(x)
         for block in self.conv_blocks:
@@ -254,6 +256,11 @@ class Conv1DEncoder(pl.LightningModule):
 
     def predict_step(self, batch, _):
         return self.forward(batch["P"])
+
+    def _init_weights(self, m):
+        if isinstance(m, nn.Conv1d):
+            nn.init.trunc_normal_(m.weight)
+            nn.init.constant_(m.bias, 0)
 
 
 class SimSiamModule(pl.LightningModule):
