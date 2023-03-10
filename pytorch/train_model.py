@@ -144,7 +144,7 @@ def siamese(args):
     )
 
     trainer = pl.Trainer(
-        # precision=16, # TODO add to config
+        precision=16, # TODO add to config
         accumulate_grad_batches=args.grad_accum,
         gradient_clip_val=0.5,
         gradient_clip_algorithm="norm",
@@ -160,7 +160,8 @@ def siamese(args):
 
     logger.watch(siamese_model)
 
-    torch.set_float32_matmul_precision("high") # I think medium|high|very_high are the options
+    # set this to high or medium is you want fp32 to go to tensorcores
+    # torch.set_float32_matmul_precision("high") # I think medium|high|very_high are the options
     trainer.fit(
         model=siamese_model,
         train_dataloaders=data["train_dataloader"],
