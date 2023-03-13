@@ -1,0 +1,32 @@
+
+model_type: "conv1d"
+
+# basic training config -------------------------------------------------------
+loss_fn: 'mse'
+batch_size: 32
+grad_accum: 32 # N gradient accumulation steps (use for larger effective batch size)
+n_workers: 4 # processes for dataloader prefetching
+n_epochs: 200
+early_stop_patience: 200
+
+
+# TODO trainer params?
+# TODO dataloader params?
+# TODO scheduler params
+
+optimizer_params: # assuming we are using AdamW
+  lr: 0.001
+  weight_decay: 0.0001
+
+# model params ----------------------------------------------------------------
+# TODO eventually we will setup some sort of grid search
+# to accomplish this, we could just use these params as lists or ranges
+encoder_params:
+in_channels: 1 # this will probably be the norm for most iterations of this
+kernel_size: 6
+stride: 1
+n_layers: 6
+dropout: 0.0
+enc_dimension: 512
+
+
