@@ -14,23 +14,3 @@ outdir: "/data/exploration"
 
 model_config: "/home/murad/Repositories/precision-medicine/pytorch/conf/convnext_config.yaml"
 model_prefix: 'test' # TODO this is annoying but i need it here
-
-loss_fn: 'mse' # {mse, msle}
-batch_size: 32
-grad_accum: 32 # N gradient accumulation steps (use for larger effective batch size)
-n_workers: 4 # processes for dataloader prefetching
-n_epochs: 100
-early_stop_patience: 25
-lr: 0.001
-weight_decay: 0.0001
-
-
-
-# for regular convnet
-# TODO move this
-n_layers: 6 # for ConvNext, this will be interpreted as the number of stages
-dropout: 0.0
-stride: 1
-kernel_size: 6
-padding: "valid"
-
