@@ -10,3 +10,4 @@ for vcf_seg in $seg_dir*.vcf; do
 	echo $seg_name
 	$bin $config $vcf_seg $seg_dir$seg_name.gt $seg_dir$seg_name.pos $seg_dir$seg_name.af &
 done
+touch $seg_dir"encode.log"
