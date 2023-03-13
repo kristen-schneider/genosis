@@ -358,28 +358,14 @@ rule TrainModel:
     f"""
     python train_model.py \
       --outdir {config.outdir} \
-      --prefix {config.model_prefix} \
+      --model_prefix {config.model_prefix} \
       --P1_train {{input.P1_train}} \
       --P2_train {{input.P2_train}} \
       --P1_val {{input.P1_val}} \
       --P2_val {{input.P2_val}} \
       --D_train {{input.D_train}} \
       --D_val {{input.D_val}} \
-      --train_method {config.train_method} \
-      --model_type {config.model_type} \
-      --loss_fn {config.loss_fn} \
-      --batch_size {config.batch_size} \
-      --grad_accum {config.grad_accum} \
-      --n_workers {config.n_workers} \
-      --n_epochs {config.n_epochs} \
-      --early_stop_patience {config.early_stop_patience} \
-      --lr {config.lr} \
-      --weight_decay {config.weight_decay} \
-      --n_layers {config.n_layers} \
-      --dropout {config.dropout} \
-      --kernel_size {config.kernel_size} \
-      --stride {config.stride} \
-      --padding {config.padding} \
+      --model_config {config.model_config}
     """
 
 

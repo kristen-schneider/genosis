@@ -4,14 +4,16 @@ import random
 from datetime import datetime
 from functools import partial
 from glob import glob
+from types import SimpleNamespace
 
 import numpy as np
 import pytorch_lightning as pl
 import torch
+import yaml
 from data_utils.gt_datasets import (GTDataset, GTRandomAugmentDataset,
                                     pad_data, random_augment_pairs,
                                     train_val_split)
-from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
+from models.encoder import Conv1DEncoder, SiameseModule
 from pytorch_lightning.callbacks import (EarlyStopping, ModelCheckpoint,
                                          StochasticWeightAveraging)
 from pytorch_lightning.loggers.wandb import WandbLogger
@@ -21,43 +23,62 @@ from torchmetrics import MeanSquaredLogError
 from torchvision import ops
 
 
+def NestedNamespace(x: dict):
+    """Convert a nested dict to a nested namespace"""
+    return SimpleNamespace(
+        **{k: NestedNamespace(v) if isinstance(v, dict) else v for k, v in x.items()}
+    )
+
+
 def compute_steps_per_epoch(train_dataset, batch_size):
     """
     Compute the total number of optimizer steps for the learning rate scheduler.
     """
+    # TODO this is wrong
     n_batches = int(np.ceil(len(train_dataset) / batch_size))
     return n_batches
 
 
-def get_dataloaders(args):
+def get_dataloaders(
+    *,
+    P1_train,
+    P2_train,
+    D_train,
+    P1_val,
+    P2_val,
+    D_val,
+    model_type,
+    batch_size,
+    n_workers,
+):
     # make main dataset
     train_ds = GTDataset(
-        pos_files=(args.P1_train, args.P2_train),
-        dist_file=args.D_train,
+        pos_files=(P1_train, P2_train),
+        dist_file=D_train,
     )
     val_ds = GTDataset(
-        pos_files=(args.P1_val, args.P2_val),
-        dist_file=args.D_val,
+        pos_files=(P1_val, P2_val),
+        dist_file=D_val,
     )
 
-    collate_fn = partial(pad_data, model_type=args.model_type)
+    collate_fn = partial(pad_data, model_type=model_type)
 
     train_dataloader = data.DataLoader(
         train_ds,
-        batch_size=args.batch_size,
+        batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=True,
-        num_workers=args.n_workers,
+        num_workers=n_workers,
         pin_memory=True,
         drop_last=False,
         prefetch_factor=2,
     )
     val_dataloader = data.DataLoader(
         val_ds,
-        batch_size=args.batch_size,
+        batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=False,
-        num_workers=args.n_workers,
+        num_workers=n_workers,
         pin_memory=True,
         drop_last=False,
         prefetch_factor=2,
@@ -69,47 +90,50 @@ def get_dataloaders(args):
     }
 
 
-def siamese(args):
+def train_model(args):
+    # TODO load model config from yaml
+    model_config = NestedNamespace(
+        yaml.load(
+            open(args.model_config, "r"),
+            Loader=yaml.FullLoader,
+        )
+    )
+    dataloader_params = model_config.dataloader_params
+    training_params = model_config.training_params
+    optimizer_params = model_config.optimizer_params
+    encoder_params = model_config.encoder_params
 
-    if args.loss_fn == "mse":
-        loss_fn = nn.MSELoss
-    elif args.loss_fn == "msle":
-        loss_fn = MeanSquaredLogError
-    elif args.loss_fn == "huber":
-        loss_fn = nn.SmoothL1Loss
-    else:
-        raise ValueError(f"Loss function {args.loss_fn} not supported.")
+    loss_functions = {
+        "mse": nn.MSELoss,
+        "msle": MeanSquaredLogError,
+        "huber": nn.SmoothL1Loss,
+    }
 
-    data = get_dataloaders(args)
+    loss_fn = loss_functions[training_params.loss_fn]()
 
-    if args.train_method == "sim_siam":
-        cls = SimSiamModule
-    else:
-        cls = SiameseModule
+    data = get_dataloaders(
+        P1_train=args.P1_train,
+        P2_train=args.P2_train,
+        D_train=args.D_train,
+        P1_val=args.P1_val,
+        P2_val=args.P2_val,
+        D_val=args.D_val,
+        model_type=model_config.model_type,
+        batch_size=dataloader_params.batch_size,
+        n_workers=dataloader_params.n_workers,
+    )
 
-    siamese_model = cls(
-        encoder_type=args.model_type,
-        encoder_params={  # TODO add more for transformer if needed
-            "n_layers": args.n_layers,
-            "dropout": args.dropout,
-            "kernel_size": args.kernel_size,
-            "stride": args.stride,
-            "padding": args.padding,
-            # "enc_dimension": args.enc_dimension,
-        },
-        lr=args.lr,
+    siamese_model = SiameseModule(
+        encoder_type=model_config.model_type,
+        encoder_params=vars(encoder_params),
         optimizer=optim.AdamW,
-        optimizer_params={
-            # "lr": args.lr,
-            "weight_decay": args.weight_decay,
-            "eps": 1e-4, # TODO see if we need to lower this even further
-        },
+        optimizer_params=vars(optimizer_params),
         scheduler=optim.lr_scheduler.CosineAnnealingWarmRestarts,
         scheduler_params={
             "T_0": 2
             * compute_steps_per_epoch(
                 train_dataset=data["train_dataloader"].dataset,
-                batch_size=args.batch_size,
+                batch_size=dataloader_params.batch_size,
             ),
             "T_mult": 1,
             "eta_min": 1e-6,
@@ -119,19 +143,19 @@ def siamese(args):
     )
 
     callbacks = [
-        StochasticWeightAveraging(swa_lrs=args.lr),
+        StochasticWeightAveraging(swa_lrs=optimizer_params.lr),
         EarlyStopping(
             monitor="val_loss",
-            patience=args.early_stop_patience,
+            patience=training_params.early_stop_patience,
             verbose=True,
             mode="min",
         ),
         # save the last 10 checkpoints
         ModelCheckpoint(
             monitor="val_loss",
-            dirpath=f"{args.outdir}/{args.prefix}.checkpoints",
-            filename=f"{args.train_method}-{args.model_type}-{{epoch:03d}}-{{val_loss:.5f}}",
-            save_top_k=10,
+            dirpath=f"{args.outdir}/{model_config.model_type}-{args.model_prefix}.checkpoints",
+            filename=f"{model_config.model_type}-{args.model_prefix}-{{epoch:03d}}-{{val_loss:.5f}}",
+            save_top_k=5,
             save_last=True,
             mode="min",
         ),
@@ -139,23 +163,22 @@ def siamese(args):
 
     logger = WandbLogger(
         project="gt-similarity-search",
-        name=f"conv1d-siamese-{args.prefix}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
+        name=f"{model_config.model_type}-{args.model_prefix}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",
         log_model="all",
     )
 
     trainer = pl.Trainer(
-        precision=16, # TODO add to config
-        accumulate_grad_batches=args.grad_accum,
-        gradient_clip_val=0.5,
-        gradient_clip_algorithm="norm",
-        max_epochs=args.n_epochs,
-        val_check_interval=0.5,
         callbacks=callbacks,
         logger=logger,
-        accelerator="gpu",
-        devices=1,
-        fast_dev_run=args.fast_dev_run,  # run 1 batch train/val to see if things are working
-        enable_progress_bar=False,
+        accumulate_grad_batches=training_params.accumulate_grad_batches,
+        precision=training_params.precision,
+        gradient_clip_val=training_params.gradient_clip_val,
+        gradient_clip_algorithm=training_params.gradient_clip_algorithm,
+        max_epochs=training_params.max_epochs,
+        accelerator=training_params.accelerator,
+        devices=training_params.devices,
+        fast_dev_run=training_params.fast_dev_run,
+        enable_progress_bar=training_params.enable_progress_bar,
     )
 
     logger.watch(siamese_model)
@@ -169,20 +192,8 @@ def siamese(args):
     )
 
 
-def transformer_paired_lm_pretrain(args):
-    """
-    Transformer with paired example input and language model objective
-    """
-    raise NotImplementedError
-
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--fast_dev_run",
-        action="store_true",
-        help="run 1 batch train/val to see if things are working",
-    )
     parser.add_argument(
         "--outdir",
         type=str,
@@ -232,112 +243,20 @@ def main():
         help="Path to validation distance file",
     )
     parser.add_argument(
-        "--train_method",
+        "--model_config",
         type=str,
-        default="sim_siam",
-        help="training method",
-        choices=[
-            "sim_siam",
-            "siamese",
-            "transformer_paired_lm_pretrain",
-        ],
+        required=True,
+        help="path to model config file",
     )
     parser.add_argument(
-        "--model_type",
+        "--model_prefix",
         type=str,
-        default="conv1d_siamese",
-        help="model type to train",
-        choices=[
-            "conv1d",
-            "transformer",
-        ],
-    )
-    parser.add_argument(
-        "--loss_fn",
-        type=str,
-        default="mse",
-        help="loss function to use",
-    )
-    parser.add_argument(
-        "--batch_size",
-        type=int,
-        default=32,
-        help="Batch size for training",
-    )
-    parser.add_argument(
-        "--grad_accum",
-        type=int,
-        default=1,
-        help="Number of gradient accumulation steps",
-    )
-    parser.add_argument(
-        "--n_workers",
-        type=int,
-        default=4,
-        help="Number of workers for dataloader",
-    )
-    parser.add_argument(
-        "--n_epochs",
-        type=int,
-        default=10,
-        help="Number of epochs to train for",
-    )
-    parser.add_argument(
-        "--early_stop_patience",
-        type=int,
-        default=5,
-        help="Number of validation checks to wait before early stopping",
-    )
-    parser.add_argument(
-        "--lr",
-        type=float,
-        default=1e-3,
-        help="Base learning rate for optimizer",
-    )
-    parser.add_argument(
-        "--weight_decay",
-        type=float,
-        default=1e-3,
-        help="Weight decay for optimizer (if applicable)",
-    )
-    parser.add_argument(
-        "--n_layers",
-        type=int,
-        default=4,
-        help="Number of layers in the encoder",
-    )
-    parser.add_argument(
-        "--dropout",
-        type=float,
-        default=0.1,
-        help="Dropout rate for encoder (if applicable)",
-    )
-    parser.add_argument(
-        "--kernel_size",
-        type=int,
-        default=3,
-        help="Kernel size (for CNNs only)",
-    )
-    parser.add_argument(
-        "--stride",
-        type=int,
-        default=1,
-        help="Stride (for CNNs only)",
-    )
-    parser.add_argument(
-        "--padding",
-        type=str,
-        default="valid",
-        help="Padding (for CNNs only)",
+        required=True,
+        help="name of model training run",
     )
     args = parser.parse_args()
 
-    if args.model_type == "conv1d" or args.model_type == "transformer_siamese":
-        siamese(args)
-    elif args.model_type == "transformer_paired_lm_pretrain":
-        transformer_paired_lm_pretrain(args)
-    else:
-        raise ValueError("Invalid model type")
+    train_model(args)
 
 
 if __name__ == "__main__":

@@ -12,11 +12,8 @@ sample_table: "/data/1kg_sample_table.tsv"
 segments_dir: "/data/segments"
 outdir: "/data/exploration"
 
-# model training config -------------------------------------------------------
-model_prefix: 'batch_1024_layers_6'
-
-train_method: "siamese"
-model_type: "conv1d"
+model_config: "/home/murad/Repositories/precision-medicine/pytorch/conf/convnext_config.yaml"
+model_prefix: 'test' # TODO this is annoying but i need it here
 
 loss_fn: 'mse' # {mse, msle}
 batch_size: 32
@@ -26,7 +23,12 @@ n_epochs: 100
 early_stop_patience: 25
 lr: 0.001
 weight_decay: 0.0001
-n_layers: 6
+
+
+
+# for regular convnet
+# TODO move this
+n_layers: 6 # for ConvNext, this will be interpreted as the number of stages
 dropout: 0.0
 stride: 1
 kernel_size: 6
