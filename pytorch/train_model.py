@@ -109,7 +109,7 @@ def train_model(args):
         "huber": nn.SmoothL1Loss,
     }
 
-    loss_fn = loss_functions[training_params.loss_fn]()
+    loss_fn = loss_functions[training_params.loss_fn]
 
     data = get_dataloaders(
         P1_train=args.P1_train,

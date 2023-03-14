@@ -453,7 +453,7 @@ class SiameseModule(pl.LightningModule):
         self.scheduler = scheduler
         self.optimizer_params = optimizer_params
         self.scheduler_params = scheduler_params
-        self.loss_fn = loss_fn
+        self.loss_fn = loss_fn()
         self.save_hyperparameters()
 
     def forward(self, batch):
