@@ -9,4 +9,4 @@
 #SBATCH --output=log/pairings_pipeline-%j.log
 #SBATCH --error=log/pairings_pipeline-%j.err
 
-snakemake -s training_pipeline.smk -j 4 -c 32 --use-conda --conda-frontend mamba
+snakemake -s training_pipeline.smk -j 32 -c 32 --use-conda --conda-frontend mamba
