@@ -7,7 +7,7 @@ import pytorch_lightning as pl
 import torch
 from data_utils.gt_datasets import (GTInferenceDataset, GTInferenceWriter,
                                     pad_data)
-from models.encoder import Conv1DEncoder, SiameseModule, SimSiamModule
+from models.encoder import SiameseModule
 from torch.utils.data import DataLoader
 
 
