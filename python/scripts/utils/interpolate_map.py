@@ -29,7 +29,8 @@ print('reading map file...')
 # make list of all bp and cm in map file
 for line in map_file:
 	line = line.strip().split()
-	bp_pos = int(line[3])
+	chrm_pos = int(line[1])
+    bp_pos = int(line[3])
 	cm_pos = float(line[2])
     #pos = int(line[1]) #uncomment for hapmap input
 	#gpos = float(line[2])
@@ -39,6 +40,7 @@ for line in map_file:
 
 vcf_idx = 0
 map_idx = 0
+
 # iterator over all bp pos in vcf
 while vcf_idx < len(vcf_pos):
     
