@@ -12,9 +12,11 @@
 
 using namespace std;
 
-map<int, vector<int>> generate_segment_boundary_map(string map_file,
+map<int, map<int, vector<int>>> generate_segment_boundary_map(
+		string map_file,
                 int segment_size);
-void write_segment_boundary_map(map<int, vector<int>> segment_boundary_map,
+void write_segment_boundary_map(
+		map<int, map<int, vector<int>>> segment_boundary_map,
                 string segment_boundary_file);
 
 //int slice_main(string map_file, int segment_size, string vcf_file, string out_base_name, string out_dir);
