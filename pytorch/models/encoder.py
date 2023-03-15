@@ -157,13 +157,14 @@ class ConvNext1DBlock(nn.Module):
         (when training). Use the block path with probability {stochastic_depth}
         otherwise use just the identity path.
         """
-        if self.training:
-            if np.random.rand() <= self.stochastic_depth:
-                return x
-            else:
-                return self.block(x) + x
-        else:
-            return self.block(x) + x
+        # if self.training:
+        #     if np.random.rand() <= self.stochastic_depth:
+        #         return x
+        #     else:
+        #         return self.block(x) + x
+        # else:
+        #     return self.block(x) + x
+        return self.block(x) + x
 
 
 class ConvNext1DStage(nn.Module):
