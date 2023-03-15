@@ -16,8 +16,7 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 rule all:
 	input:
 		f"{config.data_dir}sample_IDs.txt",
-	        f"{config.data_dir}vcf_bp.txt"
-		#f"{config.data_dir}interpolated.map",
+		f"{config.data_dir}interpolated.map",
                 #f"{config.data_dir}segment_boundary.map",
 		#f"{config.out_dir}slice.log",
 		#f"{config.out_dir}encode.log",
@@ -55,10 +54,11 @@ rule interpolate_map:
 	input:
 		vcf_file=f"{config.vcf_file}",
 		ref_map=f"{config.ref_map}",
-		interpolate_py=f"{config.python_dir}utils/interpolate_map.py"
+		interpolate_map_cpp=f"{config.cpp_src_dir}interpolate_map.cpp",
 	output:
 		vcf_bp=f"{config.data_dir}vcf_bp.txt",
-		#interpolated_map=f"{config.data_dir}interpolated.map"
+		bin=f"{config.cpp_bin_dir}interpolate-map",
+		interpolated_map=f"{config.data_dir}interpolated.map"
 	log:		
 		interpolated_log=f"{config.log_dir}interpolated.log"
 	message:
@@ -67,6 +67,15 @@ rule interpolate_map:
 		"{config.conda_dir}"	
 	shell:
 		"bcftools query -f '%CHROM %POS\n' {input.vcf_file} > {output.vcf_bp};"
+		"g++" \
+                " {input.interpolate_map_cpp}" \
+                " -I {config.cpp_include_dir}" \
+                " -I {config.htslib_dir}" \
+                " -o {output.bin};"
+		" {output.bin} {output.vcf_bp} {input.ref_map} {output.interpolated_map} > {log.interpolated_log}"
+		"touch {output.interpolated_map}"
+		
+	
 		#"python {input.interpolate_py} {output.vcf_bps} {input.ref_map} {output.interpolated_map};"
 
 #0.3-A write segment boundary file (compile)
