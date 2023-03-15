@@ -464,8 +464,7 @@ class SiameseModule(pl.LightningModule):
         x2 = batch["P2"]
         d = batch["D"]
         u = self.encoder(x1)
-        with torch.no_grad():
-            v = self.encoder(x2)
+        v = self.encoder(x2)
 
         # see if eps affects numeric instability in mixed precision settings
         # dpred = F.cosine_similarity(u, v, dim=1, eps=1e-9)
