@@ -27,7 +27,7 @@ class GlobalResponseNormalization(nn.Module):
         # norm along spatial dimension then divide
         # that by mean along channel dimension
         Gx = torch.norm(x, p=2, dim=2, keepdim=True)
-        Nx = Gx / (Gx.mean(dim=1, keepdim=True) + 1e-6)
+        Nx = Gx / (Gx.mean(dim=1, keepdim=True) + 1e-5)
 
         return self.gamma * x * Nx + self.beta + x
 
@@ -216,7 +216,7 @@ class ConvNext1DStage(nn.Module):
         return self.blocks(x)
 
 
-class ConvNext1DEncoder(nn.Module):
+class ConvNext1DEncoder(pl.LightningModule):
     def __init__(
         self,
         stem_kernel: int = 4,
@@ -292,6 +292,8 @@ class ConvNext1DEncoder(nn.Module):
 
     def forward(self, x):
         return self.blocks(x)
+    def predict_step(self, batch, _):
+        return self.forward(batch["P"])
 
     def _init_weights(self, m, w_init=nn.init.trunc_normal_, b_init=nn.init.zeros_):
         """
