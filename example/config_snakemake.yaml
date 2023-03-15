@@ -7,8 +7,8 @@ bash_dir:
   /home/sdp/precision-medicine/bash/snakemake_helpers/
 data_dir:
   /home/sdp/precision-medicine/example/
-vcf_file:
-  /home/sdp/precision-medicine/example/example.vcf.gz
+vcf_dir:
+  /home/sdp/precision-medicine/example/vcfs/
 database_IDs:
   /home/sdp/precision-medicine/example/database_IDs.txt
 query_IDs:
