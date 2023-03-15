@@ -14,13 +14,14 @@ using namespace std;
 
 /*
  * creating segment boundary map with format
- * segment index: <bp_start, bp_end>
+ * chr: <segment index: <bp_start, bp_end>>
  */	
-map<int, vector<int>> generate_segment_boundary_map(string map_file,
+map<int, map<int, vector<int>>> generate_segment_boundary_map(
+		string map_file,
 		int segment_size){
 	
 	// map segment index to bp start, bp end
-	map<int, vector<int>> segment_boundary_map;
+	map<int, map<int, vector<int>>> segment_boundary_map;
 	segment_boundary_map = make_segment_boundary_map(map_file,
 			segment_size);
 	/*
@@ -38,7 +39,8 @@ map<int, vector<int>> generate_segment_boundary_map(string map_file,
  * write segment boundary map to file 
  * segment index, bp_start, bp_end 
  */
-void write_segment_boundary_map(map<int, vector<int>> segment_boundary_map, 
+void write_segment_boundary_map(
+		map<int, map<int, vector<int>>> segment_boundary_map, 
 		string segment_boundary_file){
 	// open out file
 	ofstream segment_boundary_file_stream;

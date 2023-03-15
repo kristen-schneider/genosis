@@ -15,7 +15,7 @@ python/scripts/
 data_dir:
 /home/sdp/precision-medicine/example/
 vcf_file:
-/home/sdp/precision-medicine/example/example.vcf.gz
+/home/sdp/precision-medicine/example/example.8-9.vcf.gz
 interpolated_map:
 /home/sdp/precision-medicine/example/interpolated.map
 encoding_file:

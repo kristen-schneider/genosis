@@ -12,18 +12,20 @@ using namespace std;
 /*
  * Open a map file and real each SNP record
  * return a map of bp start and end bp positions
- * cm_idx: <start_bp, end_bp>
+ * chrm: cm_idx: <start_bp, end_bp>
 */
-map<int,vector<int>> make_segment_boundary_map(string map_file,
+map<int, map<int, vector<int>>> make_segment_boundary_map(
+		string map_file,
 		int slice_size){
 
-	map<int, vector<int>> segment_boundary_map; 	// cm_index: <start_bp, end_bp>
-	vector<int> bp_start_end; 			// <start_bp, end_bp>
+	map<int, map<int, vector<int>>> segment_boundary_map; 	// chr: cm_index: <start_bp, end_bp>
+	vector<int> bp_start_end; 				// <start_bp, end_bp>
 	
 	int seg_index = 0;
 	int bp_start = 0;
 	int bp_end = -1;
 	
+	int curr_chrm;
 	float curr_cm;
 	int curr_bp;
 	float curr_slice_size;
@@ -38,10 +40,13 @@ map<int,vector<int>> make_segment_boundary_map(string map_file,
 	
 	// read map file
         cout << "...Reading map file." << endl;
-        cout << "......Creating segment boundary map (segment index: start_bp, end_bp)" << endl;
-        string line;
+        cout << "......Creating segment boundary map." << endl;
+        
+	bool start = true;						// at start of file
+	string line;
         while (getline (map_file_stream, line)){
 		// column with cm and bp data
+		int chrm_col = 1;
 		float cm_col = 2;
 		int bp_col = 3;
 
@@ -50,10 +55,29 @@ map<int,vector<int>> make_segment_boundary_map(string map_file,
                 split_line(line, '\t', map_line);
                 
 		// read values from line
+		curr_chrm = stoi(map_line[chrm_col]);		// current chromosome
+		if (start){
+			int on_chromosome = curr_chrm;
+		}
 		curr_cm = stof(map_line[cm_col]);		// current cm data
 		curr_bp = stoi(map_line[bp_col]);		// current bp data
 		curr_slice_size = curr_cm - seg_index;		// current slice size size
                 
+		// only keep counting slices for one chromosome at a time
+		if (curr_chrm == on_chromosome){
+			
+		}
+		else{
+			// at a new chromosome, refresh all segment counts
+			on_chromosome = curr_chrm;
+			seg_index = 0;
+			int bp_start = 0;
+        		int bp_end = -1;
+			
+			// process normally
+
+		}
+	
 		// when a full slice is found...
 		if (curr_slice_size >= slice_size){
 			// populate start and end vector
