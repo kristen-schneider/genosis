@@ -6,14 +6,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <iterator>
 
 using namespace std;
 
-map<int, vector<tuple<int, float>>> map_bp_cm(
-		string interpolated_map_file);
-
+map<int,vector<int>> make_segment_boundary_map(string map_file, int slice_size);
+map<int, float> make_bp_cm_map(string map_file);

@@ -3,131 +3,49 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <vector>
+#include <sstream>
+#include <iterator>
 
 #include "read_map.h"
-#include "utils.h"
 
 using namespace std;
 
-/*
- * Open a map file and real each SNP record
- * return a map of bp start and end bp positions
- * chrm: cm_idx: <start_bp, end_bp>
-*/
-map<int, map<int, vector<int>>> make_segment_boundary_map(
-		string map_file,
-		int slice_size){
+map<int, vector<tuple<int, float>>> map_bp_cm(
+		string interpolated_map_file){
+    ifstream file(interpolated_map_file);
+    if (!file.is_open()){
+        cout << "Error opening file: " << interpolated_map_file << endl;
+        exit(1);
+    }
 
-	map<int, map<int, vector<int>>> segment_boundary_map; 	// chr: cm_index: <start_bp, end_bp>
-	vector<int> bp_start_end; 				// <start_bp, end_bp>
-	
-	int seg_index = 0;
-	int bp_start = 0;
-	int bp_end = -1;
-	
-	int curr_chrm;
-	float curr_cm;
-	int curr_bp;
-	float curr_slice_size;
+    int curr_chrm = 0;
 
-	// open map file
-	ifstream map_file_stream;
-        map_file_stream.open(map_file);
-        if (!map_file_stream.is_open()){
-                cout << "FAILED TO OPEN MAP FILE: " << map_file << endl;
-                exit(1);
+    string line;
+    map<int, vector<tuple<int, float>>> bp_cm_map;
+    vector<tuple<int, float>> single_chrm_bp_cm;
+
+    while (getline(file, line)){
+        istringstream iss(line);
+        vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
+
+        int chrm = stoi(tokens[0]);
+        int bp = stoi(tokens[2]);
+        float cm = stof(tokens[1]);
+
+        single_chrm_bp_cm.emplace_back(bp, cm);
+
+        if (curr_chrm == 0){
+            curr_chrm = chrm;
         }
-	
-	// read map file
-        cout << "...Reading map file." << endl;
-        cout << "......Creating segment boundary map." << endl;
-        
-	bool start = true;						// at start of file
-	string line;
-        while (getline (map_file_stream, line)){
-		// column with cm and bp data
-		int chrm_col = 1;
-		float cm_col = 2;
-		int bp_col = 3;
-
-		// read and split line
-               	vector<string> map_line;
-                split_line(line, '\t', map_line);
-                
-		// read values from line
-		curr_chrm = stoi(map_line[chrm_col]);		// current chromosome
-		if (start){
-			int on_chromosome = curr_chrm;
-		}
-		curr_cm = stof(map_line[cm_col]);		// current cm data
-		curr_bp = stoi(map_line[bp_col]);		// current bp data
-		curr_slice_size = curr_cm - seg_index;		// current slice size size
-                
-		// only keep counting slices for one chromosome at a time
-		if (curr_chrm == on_chromosome){
-			
-		}
-		else{
-			// at a new chromosome, refresh all segment counts
-			on_chromosome = curr_chrm;
-			seg_index = 0;
-			int bp_start = 0;
-        		int bp_end = -1;
-			
-			// process normally
-
-		}
-	
-		// when a full slice is found...
-		if (curr_slice_size >= slice_size){
-			// populate start and end vector
-			bp_start_end.push_back(bp_start);
-			bp_end = curr_bp;
-			bp_start = bp_end;
-			bp_start_end.push_back(bp_end);
-			// fill out the map 
-			segment_boundary_map[seg_index] = bp_start_end;
-			bp_start_end.clear();
-			seg_index += 1;
-                }
+        if (chrm != curr_chrm){
+            bp_cm_map[curr_chrm] = single_chrm_bp_cm;
+            curr_chrm = chrm;
+            single_chrm_bp_cm.clear();
+            single_chrm_bp_cm.emplace_back(bp, cm);
         }
-	// last segment
-	// populate start and end vector
-        bp_start_end.push_back(bp_start);
-        bp_end = curr_bp;
-        bp_start = bp_end;
-        bp_start_end.push_back(bp_end);
 
-        // fill out the map 
-        segment_boundary_map[seg_index] = bp_start_end;
-        seg_index += 1;
-	cout << "......counted " << segment_boundary_map.size() << " slices." << endl;
-	cout << "...Done reading map file." << endl;
-        return segment_boundary_map;
-}
-/*
- * read map file, map bp pos to cm pos
- */
-map<int, float> make_bp_cm_map(string map_file){
-	map<int, float> bp_cm_map;
-	ifstream map_file_stream(map_file);
-	string line;
-        while (getline (map_file_stream, line)){
-
-                // column with cm and bp data
-                float cm_col = 2;
-                int bp_col = 3;
-
-                // read and split line
-                vector<string> map_line;
-                split_line(line, '\t', map_line);
-		// extract bp and cm values
-		int bp_value = stoi(map_line[bp_col]);
-		float cm_value = stof(map_line[cm_col]);
-		// add pair to map
-        	bp_cm_map[bp_value] = cm_value;
-	}
-
-
+    }
+    bp_cm_map[curr_chrm] = single_chrm_bp_cm;
     return bp_cm_map;
 }
