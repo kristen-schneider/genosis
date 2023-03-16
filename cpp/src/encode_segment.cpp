@@ -23,10 +23,10 @@ using namespace std;
  * takes one sliced vcf file and encoding instructions
  * and writes output encoiding file
  */
-void encode_vectors(string sample_IDs_file, 
-		string vcf_slice_file, 
+void encode_vectors(string vcf_slice_file,
+		string sample_IDs_file, 
 		map<string, vector<int>> encoding_map, 
-		map<int, float> bp_cm_map,
+		map<int, vector<tuple<int, float>>> bp_cm_map,
 		string output_gt_file,
 		string output_pos_file, 
 		string output_af_file){
@@ -75,7 +75,8 @@ void encode_vectors(string sample_IDs_file,
 		bcf_unpack(vcf_record, BCF_UN_INFO);
 
 		// storing data for each column
-		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);	// chrom
+		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);	// chrom (string)
+		int chrm_int = stoi(chrm.substr(3, chrm.length()));		// chrom (int)
 		int pos = (unsigned long)vcf_record->pos;			// pos
 		string id = vcf_record->d.id;					// sample id
 		string ref = vcf_record->d.allele[0];				// ref allele
@@ -85,7 +86,6 @@ void encode_vectors(string sample_IDs_file,
 		int count = 0;
 		int ret = bcf_get_info_float(vcf_header, vcf_record, "AF", &afs, &count);
 		float af = afs[0];						// allele frequency
-	
 	
 		all_bp_positions.push_back(pos+1);				// add pos to vector
 		all_af.push_back(af);						// add af to vector
@@ -102,10 +102,6 @@ void encode_vectors(string sample_IDs_file,
 		vector<int> haplotype_gt_encoding_vector;
 		vector<float> haplotype_pos_encoding_vector;
 		
-		/*
-		for (int x = 0; x < number_total_alleles; x++){
-			cout << gt[x] << " ";
-		}*/
 		// for each sample in the record, convert gt to encoding
 		for (int i = 0; i < num_samples; i++){
 			
@@ -147,16 +143,6 @@ void encode_vectors(string sample_IDs_file,
 	} // end of reading records
 	
 	cout << "...Done reading genotypes." << endl;
-	/*
-	cout << all_bp_positions[122] << endl;
-	cout << all_bp_positions[129] << endl;
-	cout << all_bp_positions[139] << endl;
-	cout << all_bp_positions[170] << endl;
-	cout << all_bp_positions[203] << endl;
-	
-	for (int b = 0; b < all_bp_positions.size(); b++){
-		cout << all_bp_positions[b] << endl;
-	}*/
 
 	// transposing data
 	cout << "...Transposing data." << endl;
@@ -172,6 +158,7 @@ void encode_vectors(string sample_IDs_file,
 	write_SMF_gt(all_sample_IDs,
 			sample_major_format_gt_vec,
 			output_gt_file);
+	/*
 	cout << "...Writing pos encodings to file: " << output_pos_file << "." << endl;
 	write_SMF_pos(all_sample_IDs,
 			sample_major_format_gt_vec,
@@ -183,14 +170,8 @@ void encode_vectors(string sample_IDs_file,
 			sample_major_format_gt_vec,
 			all_af,
 			output_af_file);
-
+	*/
 	cout << "...Done writing sample major format." << endl;
-
-	
-	/*
-	for (int b = 0; b < all_bp_positions.size(); b++){
-		cout << all_bp_positions[b] << endl;
-	}*/
 
 	// writing positinal encoding
 	//cout << "...writing positional encodings to file..." << endl;

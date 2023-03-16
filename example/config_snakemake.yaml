@@ -1,33 +1,24 @@
-home_dir:
-  ./
 conda_dir:
   /home/sdp/miniconda3/envs/pmed/
 log_dir:
-  /home/sdp/precision-medicine/example/log/
+  example/log/
 
-bash_dir:
-  /home/sdp/precision-medicine/bash/snakemake_helpers/
 data_dir:
-  /home/sdp/precision-medicine/example/
+  example/
 vcf_file:
-  /home/sdp/precision-medicine/example/example.8-9.vcf.gz
+  example/example.8-9.vcf.gz
 database_IDs:
-  /home/sdp/precision-medicine/example/database_IDs.txt
+  example/database_IDs.txt
 query_IDs:
-  /home/sdp/precision-medicine/example/query_IDs.txt
+  example/query_IDs.txt
 ref_map:
-  /home/sdp/precision-medicine/example/example.8-9.map
-interpolated_map:
-  /home/sdp/precision-medicine/example/interpolated.map
+  example/example.8-9.map
 out_dir:
-  /home/sdp/precision-medicine/example/segments/
-config_file:
-  /home/sdp/precision-medicine/example/config.yaml
-
-k:
-  10
-delim:
-  space
+  example/segments/
+encoding_file:
+  example/example_encoding.txt
+sample_IDs_file:
+  example/sample_IDs.txt
 
 cpp_bin_dir:
   cpp/bin/
@@ -35,11 +26,14 @@ cpp_src_dir:
   cpp/src/
 cpp_include_dir:
   cpp/include/
-cpp_configs_dir:
-  notes/ancestry_configs
 
 python_dir:
   python/scripts/
+
+k:
+  20
+delim:
+  space
 
 htslib_dir:
   lib/htslib/

@@ -1,7 +1,7 @@
-#ifndef MAP_ENCODINGS_H
-#define MAP_ENCODINGS_H
+#ifndef READ_MAP_H
+#define READ_MAP_H
 
-#endif //MAP_ENCODINGS_H
+#endif //READ_MAP_H
 
 #include <cstdlib>
 #include <iostream>
@@ -14,6 +14,6 @@
 
 using namespace std;
 
-map<string, vector<int>> map_gt_encoding(
-		string encoding_file);
+map<int, vector<tuple<int, float>>> map_bp_cm(
+		string interpolated_map_file);
 
