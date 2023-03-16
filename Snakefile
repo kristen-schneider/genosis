@@ -72,7 +72,6 @@ rule interpolate_map:
                 " -I {config.cpp_include_dir}" \
                 " -o {output.bin};"
 		" {output.bin} {output.vcf_bp} {input.ref_map} {output.interpolated_map} > {log.interpolated_log};"
-		" rm {output.vcf_bp};"
 
 #0.3-A write segment boundary file (compile)
 rule segment_boundary_file_compile:
