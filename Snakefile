@@ -17,7 +17,7 @@ rule all:
 	input:
 		f"{config.data_dir}sample_IDs.txt",
 		f"{config.data_dir}interpolated.map",
-                #f"{config.data_dir}segment_boundary.map",
+                f"{config.data_dir}segment_boundary.map",
 		#f"{config.out_dir}slice.log",
 		#f"{config.out_dir}encode.log",
 		#f"{config.data_dir}samples_hap_IDs.txt",
@@ -73,36 +73,23 @@ rule interpolate_map:
                 " -I {config.htslib_dir}" \
                 " -o {output.bin};"
 		" {output.bin} {output.vcf_bp} {input.ref_map} {output.interpolated_map} > {log.interpolated_log}"
-		"touch {output.interpolated_map}"
-		
-	
-		#"python {input.interpolate_py} {output.vcf_bps} {input.ref_map} {output.interpolated_map};"
 
 #0.3-A write segment boundary file (compile)
 rule segment_boundary_file_compile:
 	input:
 		interpolated_map=f"{config.data_dir}interpolated.map",
-		vcf_file=f"{config.vcf_file}",
-		main_segment_cpp=f"{config.cpp_src_dir}main_segment.cpp",
 		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
-		read_config_cpp=f"{config.cpp_src_dir}read_config.cpp",
-		read_map_cpp=f"{config.cpp_src_dir}read_map.cpp",
-		utils_cpp=f"{config.cpp_src_dir}utils.cpp"
 	output:
 		bin=f"{config.cpp_bin_dir}segment-boundary"
 	log:
-		segment_boundary_ex_log=f"{config.log_dir}config_boundary_ex.log"
+		segment_boundary_cp_log=f"{config.log_dir}config_boundary_cp.log"
 	message:
 		"Compiling--write segment boundary file..."
 	conda:
 		"{config.conda_dir}"	
 	shell:
 		"g++" \
-		" {input.main_segment_cpp}" \
 		" {input.segment_boundary_map_cpp}" \
-		" {input.read_config_cpp}" \
-		" {input.read_map_cpp}" \
-		" {input.utils_cpp}" \
 		" -I {config.cpp_include_dir}" \
 		" -I {config.htslib_dir}" \
 		" -lhts" \
@@ -111,8 +98,8 @@ rule segment_boundary_file_compile:
 # 0.3-B write segment boundary file (execute)
 rule segment_boundary_file_execute:
 	input:
-		bin=f"{config.cpp_bin_dir}segment-boundary",
-		config_file=f"{config.config_file}"
+		interpolated_map=f"{config.data_dir}interpolated.map",
+		bin=f"{config.cpp_bin_dir}segment-boundary"
 	output:
 		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
 	log:
@@ -122,7 +109,7 @@ rule segment_boundary_file_execute:
 	conda:
 		"{config.conda_dir}"	
 	shell:
-		"{input.bin} {input.config_file} > {log.segment_boundary_ex_log}"
+		"{input.bin} {input.interpolated_map} {output.segment_boundary_file} > {log.segment_boundary_ex_log}"
 
 # 1.3 slice VCF into segments
 rule slice_VCF:

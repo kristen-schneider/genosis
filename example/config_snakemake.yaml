@@ -23,6 +23,7 @@ out_dir:
   /home/sdp/precision-medicine/example/segments/
 config_file:
   /home/sdp/precision-medicine/example/config.yaml
+
 k:
   10
 delim:
