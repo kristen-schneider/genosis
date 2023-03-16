@@ -6,9 +6,9 @@ log_dir:
 data_dir:
   example/
 vcf_file:
-  example/vcfs/example.vcf.gz
+  example/vcfs/example.8-10.vcf.gz
 ref_map:
-  /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
+  example/maps/example.8-10.map  
 database_IDs:
   example/database_IDs.txt
 query_IDs:
