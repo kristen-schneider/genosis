@@ -18,7 +18,7 @@ rule all:
 		f"{config.data_dir}sample_IDs.txt",
 		f"{config.data_dir}interpolated.map",
                 f"{config.data_dir}segment_boundary.map",
-		#f"{config.out_dir}slice.log",
+		f"{config.log_dir}slice.log",
 		#f"{config.out_dir}encode.log",
 		#f"{config.data_dir}samples_hap_IDs.txt",
 		#f"{config.data_dir}database_hap_IDs.txt",
@@ -115,7 +115,6 @@ rule slice_VCF:
 	input:
 		vcf_file=f"{config.vcf_file}",
 		segment_boundary_file=f"{config.data_dir}segment_boundary.map",
-		segment_boundary_log=f"{config.data_dir}segment_boundary.log",
 	log:
 		slice_log=f"{config.log_dir}slice.log"
 	message:
@@ -124,10 +123,10 @@ rule slice_VCF:
 		"{config.conda_dir}"	
 	shell:
 		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
-		"while IFs= read -r segment start_bp end_bp; do" \
-		"	echo slicing segment ${{segment}} >> {output.slice_log};" \
-		"	bcftools view -h {input.vcf_file} > {config.out_dir}segment.${{segment}}.vcf;" \
-		"	tabix {input.vcf_file} chr8:${{start_bp}}-${{end_bp}} >> {config.out_dir}segment.${{segment}}.vcf;" \
+		"while IFs= read -r chrm segment start_bp end_bp; do" \
+		"	echo slicing segment ${{segment}} >> {log.slice_log};" \
+		"	bcftools view -h {input.vcf_file} > {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
+		"	tabix {input.vcf_file} chr${{chrm}}:${{start_bp}}-${{end_bp}} >> {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
 		" done < {input.segment_boundary_file};" \
 
 # 2.1 encode genoypes for VCF segments (compile)
