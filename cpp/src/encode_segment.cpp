@@ -64,7 +64,7 @@ void encode_vectors(int chrm_idx,
 	// vector of nomical haplotype encoding vectors
 	vector<vector<int>> all_gt_haplotype_encodings;
 	// vector of positional haplotype encoding vectors
-	vector<vector<float>> all_pos_haplotype_encodings;
+	vector<vector<int>> all_pos_haplotype_encodings;
 	
 	// vector of all bp in the VCF
 	vector<int> all_bp_positions;
@@ -222,7 +222,7 @@ void write_SMF_pos(int chrm_idx,
 		vector<string> all_sample_IDs, 
 		vector<vector<int>> smf_gt, 
 		vector<int> all_bp_positions,
-		map<int, map<float, float>> bp_cm_map,
+		map<int, map<int, float>> bp_cm_map,
 		string output_positional_encoding_file){
 	
 	// open output file to write encoding
@@ -236,7 +236,7 @@ void write_SMF_pos(int chrm_idx,
         int SID_i = 0;
         int binary = -1;
 
-	map<float, float> chromosome_bp_cm_map[chrm_idx];
+	map<int, float> chromosome_bp_cm_map = bp_cm_map[chrm_idx];
 
         //cout << "bp_num: " << all_bp_positions.size() << endl;
 	for (int i = 0; i < smf_gt.size(); i++) {
@@ -253,17 +253,16 @@ void write_SMF_pos(int chrm_idx,
 		
 		for(int j = 0; j < sample.size(); j++) {
 			if (sample.at(j) > 0){
-				float bp_pos = all_bp_positions.at(j);
+				int bp_pos = all_bp_positions.at(j);	
 				float cm_pos = chromosome_bp_cm_map[bp_pos];
+				output_stream << cm_pos << " ";
 				//float cm_pos = bp_cm_map[bp_pos];
-				output_stream << bp_cm_map[all_bp_positions.at(j)] << " ";
+				//output_stream << bp_cm_map[all_bp_positions.at(j)] << " ";
 			}
 
                 }
                 output_stream << endl;
         }
-	
-
 }
 
 void write_SMF_af(vector<string> all_sample_IDs,

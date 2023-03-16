@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
 	
 	// make af encoding map
 	
-	/*
+	
 	// encode single vcf
 	encode_vectors(chrm_idx,
 			vcf_segment_file,
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 			output_gt_file,
 			output_pos_file,
 			output_af_file);	
-	*/
+	
 	
 	return 0;
 }

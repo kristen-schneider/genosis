@@ -22,7 +22,7 @@ void encode_vectors(int chrm_idx,
 		string vcf_slice_file,
                 string sample_IDs_file,
                 map<string, vector<int>> encoding_map,
-                map<int, map<float, float>> bp_cm_map,
+                map<int, map<int, float>> bp_cm_map,
                 string output_gt_file,
                 string output_pos_file,
                 string output_af_file);
@@ -30,12 +30,14 @@ void encode_vectors(int chrm_idx,
 void write_SMF_gt(vector<string> all_sample_IDs, 
 		vector<vector<int>> smf, 
 		string output_gt_file);
+
 void write_SMF_pos(int chrm_idx,
 		vector<string> all_sample_IDs,
                 vector<vector<int>> smf,
 		vector<int> all_bp_positions,
-		map<int, map<float, float>> bp_cm_map,
+		map<int, map<int, float>> bp_cm_map,
                 string output_pos_file);
+
 void write_SMF_af(vector<string> all_sample_IDs,
                 vector<vector<int>> smf,
 		vector<float> all_af_positions,
