@@ -6,19 +6,17 @@ log_dir:
 data_dir:
   example/
 vcf_file:
-  example/example.8-9.vcf.gz
+  example/vcfs/example.vcf.gz
+ref_map:
+  /home/sdp/pmed-local/data/plink_maps/plink.chr8.GRCh38.map
 database_IDs:
   example/database_IDs.txt
 query_IDs:
   example/query_IDs.txt
-ref_map:
-  example/example.8-9.map
 out_dir:
   example/segments/
 encoding_file:
   example/example_encoding.txt
-sample_IDs_file:
-  example/sample_IDs.txt
 
 cpp_bin_dir:
   cpp/bin/

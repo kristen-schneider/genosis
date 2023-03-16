@@ -14,6 +14,4 @@
 
 using namespace std;
 
-map<int, vector<tuple<int, float>>> map_bp_cm(
-		string interpolated_map_file);
-
+map<int, map<int, float>> map_bp_cm(string interpolated_map_file);

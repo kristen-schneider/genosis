@@ -15,14 +15,13 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
-		f"{config.data_dir}sample_IDs.txt",
-		f"{config.data_dir}interpolated.map",
-                f"{config.data_dir}segment_boundary.map",
+		f"{config.log_dir}sample_IDs.log",
+		f"{config.log_dir}interpolated.log",
+                f"{config.log_dir}segment_boundary.log",
 		f"{config.log_dir}slice.log",
 		f"{config.log_dir}encode.log",
-		#f"{config.data_dir}samples_hap_IDs.txt",
-		#f"{config.data_dir}database_hap_IDs.txt",
-		#f"{config.data_dir}query_hap_IDs.txt",
+		f"{config.log_dir}clean.log",
+		f"{config.log_dir}hap_IDs.log",
 		#f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss_l2_idx.log",
 		##f"{config.cpp_bin_dir}faiss-ivfpqr-build",
@@ -172,11 +171,14 @@ rule encode_execute:
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
 		"for vcf_f in {config.out_dir}*.vcf.gz; do" \
 		"	filename=$(basename $vcf_f);" \
-		"	seg_name=${{filename%.*}};" \
-		"	echo SEGMENT: $seg_name;" \
+		"	seg_name=${{filename%.vcf.*}};" \
+		"	echo ... $seg_name;" \
+		"	chrm_idx=${{seg_name#*chrm}};" \
+		"	chrm_idx=${{chrm_idx%%.*}};" \
 		"	./{input.bin} " \
+		"		$chrm_idx " \
 		"		$vcf_f " \
-		"		{config.sample_IDs_file} " \
+		"		{config.data_dir}sample_IDs.txt " \
 		"		{config.encoding_file} " \
 		"		{config.data_dir}interpolated.map " \
 		"		{config.out_dir}${{seg_name}}.gt " \
@@ -184,29 +186,43 @@ rule encode_execute:
 		"		{config.out_dir}${{seg_name}}.af" \
 		"	 >> {output.encode_log};" \
 		"done;" \
-		#"touch output.encode_log;"
 
-## 3.0 get hap_IDs for database samples
-#rule hap_IDs:
-#	input:
-#		encode_log=f"{config.out_dir}encode.log"
-#	output:
-#		sample_hap_ids=f"{config.data_dir}samples_hap_IDs.txt",
-#		database_hap_ids=f"{config.data_dir}database_hap_IDs.txt",
-#		query_hap_ids=f"{config.data_dir}query_hap_IDs.txt"
-#	message:
-#		"Getting haplotype IDs from encoding file..."
-#	conda:
-#		"{config.conda_dir}"	
-#	shell:
-#		"for enc_f in {config.out_dir}*.gt; do" \
-#		"	awk '{{print $1}}' $enc_f > {output.sample_hap_ids};" \
-#		"	break;" \
-#		"done;" \
-#		"cp {output.sample_hap_ids} {output.database_hap_ids};" \
-#		"cp {output.sample_hap_ids} {output.query_hap_ids};"
-#
-## 3.1 build faiss index (l2) for encoding segments (compile)
+# 3.0 remove intermediate files
+rule remove_intermediate_files:
+	input:
+		slice_log=f"{config.log_dir}slice.log",
+		encode_log=f"{config.log_dir}encode.log"
+	log:
+		clean_log=f"{config.log_dir}clean.log"
+	message:
+		"Removing intermediate files after encoding."
+	conda:
+		"{config.conda_dir}"
+	shell:
+		"rm {config.data_dir}vcf_bp.txt;" \
+		"rm -r {config.out_dir}*.vcf.*;" \
+
+
+# 3.1 get hap_IDs for database samples
+rule hap_IDs:
+	input:
+		encode_log=f"{config.log_dir}encode.log",
+		clean_log=f"{config.log_dir}clean.log"
+	log:
+		hap_IDs_log=f"{config.log_dir}hap_IDs.log"
+	message:
+		"Getting haplotype IDs from encoding file..."
+	conda:
+		"{config.conda_dir}"	
+	shell:
+		"for enc_f in {config.out_dir}*.gt; do" \
+		"	awk '{{print $1}}' $enc_f > {config.data_dir}sample_hap_IDs.txt;" \
+		"	break;" \
+		"done;" \
+		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
+		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
+
+## 4.1 build faiss index (l2) for encoding segments (compile)
 #rule build_l2_faiss_index_compile:
 #	input:
 #		encode_log=f"{config.out_dir}encode.log",
@@ -227,7 +243,7 @@ rule encode_execute:
 #		" -L {config.conda_dir}/lib/" \
 #		" -lfaiss" \
 #		" -o {output.bin}"
-## 3.2 build faiss index (l2) for encoding segments (execute)
+## 4.2 build faiss index (l2) for encoding segments (execute)
 #rule build_l2_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-l2-build",
@@ -246,7 +262,7 @@ rule encode_execute:
 #                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faissl2.idx" \
 #                "        >> {output.faiss_idx_log};" \
 #		"done;"
-## 3.3 build faiss index (hnsw) for encoding segments (compile)
+## 4.3 build faiss index (hnsw) for encoding segments (compile)
 #rule build_hnsw_faiss_index_compile:
 #        input:
 #                encode_log=f"{config.out_dir}encode.log",
@@ -267,7 +283,7 @@ rule encode_execute:
 #                " -L {config.conda_dir}/lib/" \
 #                " -lfaiss" \
 #                " -o {output.bin}"
-## 3.4 build faiss index (hnsw) for encoding segments (execute)
+## 4.4 build faiss index (hnsw) for encoding segments (execute)
 #rule build_hnsw_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-hnsw-build",
@@ -286,7 +302,7 @@ rule encode_execute:
 #                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faisshnsw.idx" \
 #                "        >> {output.faiss_idx_log};" \
 #                "done;"
-## 3.5 build faiss index (ivfpqr) for encoding segments (compile)
+## 4.5 build faiss index (ivfpqr) for encoding segments (compile)
 #rule build_ivfpqr_faiss_index_compile:
 #        input:
 #                encode_log=f"{config.out_dir}encode.log",
@@ -307,7 +323,7 @@ rule encode_execute:
 #                " -L {config.conda_dir}/lib/" \
 #                " -lfaiss" \
 #                " -o {output.bin}"
-## 3.6 build faiss index (ivfpqr) for encoding segments (execute)
+## 4.6 build faiss index (ivfpqr) for encoding segments (execute)
 #rule build_ivfpqr_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-ivfpqr-build",
@@ -330,7 +346,7 @@ rule encode_execute:
 #
 #
 #
-## 4.1 search faiss index for encodig segments (compile)
+## 5.1 search faiss index for encodig segments (compile)
 #rule search_l2_faiss_index_compile:
 #	input:
 #		faiss_idx_log=f"{config.out_dir}faiss_l2_idx.log",
@@ -351,7 +367,7 @@ rule encode_execute:
 #		" -L {config.conda_dir}/lib/" \
 #		" -lfaiss" \
 #		" -o {output.bin}"
-## 4.2 search faiss index for encoding segments (execute)
+## 5.2 search faiss index for encoding segments (execute)
 #rule search_l2_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-search",

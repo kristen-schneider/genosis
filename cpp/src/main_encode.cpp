@@ -13,13 +13,14 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 	// get input options
-	string vcf_segment_file = argv[1];	// input vcf (segment) file to encode
-	string sample_IDs_file = argv[2];	// sample IDs to pair with encodings
-	string encoding_file = argv[3];		// encodings to use
-	string interpolated_map= argv[4];	// where interpolated map file should exist
-	string output_gt_file = argv[5];	// output gt encoded (segment) file
-	string output_pos_file = argv[6];	// output pos encoded (segment) file
-	string output_af_file = argv[7];	// output allele frequency encoding (segment) file
+	int chrm_idx = stoi(argv[1]);
+	string vcf_segment_file = argv[2];	// input vcf (segment) file to encode
+	string sample_IDs_file = argv[3];	// sample IDs to pair with encodings
+	string encoding_file = argv[4];		// encodings to use
+	string interpolated_map= argv[5];	// where interpolated map file should exist
+	string output_gt_file = argv[6];	// output gt encoded (segment) file
+	string output_pos_file = argv[7];	// output pos encoded (segment) file
+	string output_af_file = argv[8];	// output allele frequency encoding (segment) file
 	
 	// make gt encoding map (gt (string): encoding <int, int>)
 	cout << "...Loading gt encoding map." << endl;
@@ -28,14 +29,15 @@ int main(int argc, char* argv[]){
 	
 	// make cm positional encoding map
 	cout << "...Loading pos encoding map." << endl;
-	map<int, vector<tuple<int, float>>> bp_cm_map = map_bp_cm(interpolated_map);
+	map<int, map<int, float>> bp_cm_map = map_bp_cm(interpolated_map);
 	cout << "...Done loading pos encoding map." << endl;
 	
 	// make af encoding map
 	
 	
 	// encode single vcf
-	encode_vectors(vcf_segment_file,
+	encode_vectors(chrm_idx,
+			vcf_segment_file,
 			sample_IDs_file,
 			encoding_map,
 			bp_cm_map,
