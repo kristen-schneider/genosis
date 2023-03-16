@@ -23,14 +23,16 @@ using namespace std;
  * takes one sliced vcf file and encoding instructions
  * and writes output encoiding file
  */
-void encode_vectors(string vcf_slice_file,
+void encode_vectors(int chrm_idx,
+		string vcf_slice_file,
 		string sample_IDs_file, 
 		map<string, vector<int>> encoding_map, 
-		map<int, vector<tuple<int, float>>> bp_cm_map,
+		map<int, map<int, float>> bp_cm_map,
 		string output_gt_file,
 		string output_pos_file, 
 		string output_af_file){
 	
+
 	// converts vcfFile name to const char for htslib
 	const char *vcf_slice = vcf_slice_file.c_str();
 	
@@ -77,7 +79,8 @@ void encode_vectors(string vcf_slice_file,
 		// storing data for each column
 		string chrm = bcf_hdr_id2name(vcf_header, vcf_record->rid);	// chrom (string)
 		int chrm_int = stoi(chrm.substr(3, chrm.length()));		// chrom (int)
-		int pos = (unsigned long)vcf_record->pos;			// pos
+		int pos = vcf_record->pos;
+		//int pos = (unsigned long)vcf_record->pos;			// pos
 		string id = vcf_record->d.id;					// sample id
 		string ref = vcf_record->d.allele[0];				// ref allele
 		string alt = vcf_record->d.allele[1];				// alt allele
@@ -100,7 +103,7 @@ void encode_vectors(string vcf_slice_file,
 
 		// single variant vector
 		vector<int> haplotype_gt_encoding_vector;
-		vector<float> haplotype_pos_encoding_vector;
+		vector<int> haplotype_pos_encoding_vector;
 		
 		// for each sample in the record, convert gt to encoding
 		for (int i = 0; i < num_samples; i++){
@@ -158,13 +161,15 @@ void encode_vectors(string vcf_slice_file,
 	write_SMF_gt(all_sample_IDs,
 			sample_major_format_gt_vec,
 			output_gt_file);
-	/*
+
 	cout << "...Writing pos encodings to file: " << output_pos_file << "." << endl;
-	write_SMF_pos(all_sample_IDs,
+	write_SMF_pos(chrm_idx,
+			all_sample_IDs,
 			sample_major_format_gt_vec,
 			all_bp_positions,
 			bp_cm_map,
 			output_pos_file);
+	/*
 	cout << "...Writing af encodings to file: " << output_af_file << "." << endl;
 	write_SMF_af(all_sample_IDs,
 			sample_major_format_gt_vec,
@@ -213,27 +218,26 @@ void write_SMF_gt(vector<string> all_sample_IDs,
 	}
 }
 
-void write_SMF_pos(vector<string> all_sample_IDs, 
+void write_SMF_pos(int chrm_idx,
+		vector<string> all_sample_IDs, 
 		vector<vector<int>> smf_gt, 
 		vector<int> all_bp_positions,
-		map<int, float> bp_cm_map,
+		map<int, map<float, float>> bp_cm_map,
 		string output_positional_encoding_file){
 	
-	/*
-	for (int b = 0; b < all_bp_positions.size(); b++){
-		cout << all_bp_positions[b] << endl;
-	}
-	*/
-
 	// open output file to write encoding
         ofstream output_stream;
         output_stream.open(output_positional_encoding_file);
 
+	
         // format sample ID float float float...
         // space delim
 	int relative_position = -1;
         int SID_i = 0;
         int binary = -1;
+
+	map<float, float> chromosome_bp_cm_map[chrm_idx];
+
         //cout << "bp_num: " << all_bp_positions.size() << endl;
 	for (int i = 0; i < smf_gt.size(); i++) {
                 if (binary == -1){
@@ -250,13 +254,15 @@ void write_SMF_pos(vector<string> all_sample_IDs,
 		for(int j = 0; j < sample.size(); j++) {
 			if (sample.at(j) > 0){
 				float bp_pos = all_bp_positions.at(j);
-				float cm_pos = bp_cm_map[bp_pos];
+				float cm_pos = chromosome_bp_cm_map[bp_pos];
+				//float cm_pos = bp_cm_map[bp_pos];
 				output_stream << bp_cm_map[all_bp_positions.at(j)] << " ";
 			}
 
                 }
                 output_stream << endl;
         }
+	
 
 }
 

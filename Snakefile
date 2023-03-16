@@ -174,7 +174,10 @@ rule encode_execute:
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.*}};" \
 		"	echo SEGMENT: $seg_name;" \
+		"	chrm_idx=${{seg_name#*chrm}};" \
+		"	chrm_idx=${{chrm_idx%%.*}};" \
 		"	./{input.bin} " \
+		"		$chrm_idx " \
 		"		$vcf_f " \
 		"		{config.sample_IDs_file} " \
 		"		{config.encoding_file} " \
