@@ -89,6 +89,8 @@ def get_dataloaders(
         "val_dataloader": val_dataloader,
     }
 
+# def get_lr_scheduler(scheduler, optimizer, scheduler_params):
+
 
 def train_model(args):
     # TODO load model config from yaml
@@ -141,6 +143,8 @@ def train_model(args):
         },
         loss_fn=loss_fn,
     )
+    if training_params.compile:
+        siamese_model = torch.compile(siamese_model)
 
     callbacks = [
         StochasticWeightAveraging(swa_lrs=optimizer_params.lr),
