@@ -16,7 +16,7 @@ query_IDs:
 out_dir:
   example/segments/
 encoding_file:
-  example/example_encoding.txt
+  encoding.txt
 
 cpp_bin_dir:
   cpp/bin/
