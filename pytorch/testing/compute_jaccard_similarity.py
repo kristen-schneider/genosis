@@ -26,7 +26,7 @@ def parse_query_line(line):
     A = line.strip().split("\t")
     sample_id = A[0]
     query_results = set()
-    for query_result in A[1:]:
+    for query_result in A[2:]: # skip query id and the nearest neighbor (itself)
         query_sample_id, score = query_result.split(":")
         query_results.add(query_sample_id)
     return sample_id, query_results
