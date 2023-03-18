@@ -1,3 +1,0 @@
-Reading in vcf basepair file: example/vcf_bp.txt
-Reading in plink map file: example/example_merge.map
-Writing output file: example/interpolated.map
