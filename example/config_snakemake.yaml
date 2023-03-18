@@ -6,9 +6,9 @@ log_dir:
 data_dir:
   example/
 vcf_file:
-  example/vcfs/example.8-10.vcf.gz
+  example/example_merge.vcf.gz
 ref_map:
-  example/maps/example.8-10.map  
+  example/example_merge.map  
 database_IDs:
   example/database_IDs.txt
 query_IDs:

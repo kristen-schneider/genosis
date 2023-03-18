@@ -6,8 +6,8 @@
 ...Done reading genotypes.
 ...Transposing data.
 ...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm10.segment.0.gt.
-...Writing pos encodings to file: example/segments/chrm10.segment.0.pos.
+...Writing gt encodings to file: example/segments/chrm1.segment.0.gt.
+...Writing pos encodings to file: example/segments/chrm1.segment.0.pos.
 ...Done writing sample major format.
 ...Loading gt encoding map.
 ...Done loading gt encoding map.
@@ -17,8 +17,8 @@
 ...Done reading genotypes.
 ...Transposing data.
 ...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm10.segment.1.gt.
-...Writing pos encodings to file: example/segments/chrm10.segment.1.pos.
+...Writing gt encodings to file: example/segments/chrm2.segment.0.gt.
+...Writing pos encodings to file: example/segments/chrm2.segment.0.pos.
 ...Done writing sample major format.
 ...Loading gt encoding map.
 ...Done loading gt encoding map.
@@ -28,8 +28,8 @@
 ...Done reading genotypes.
 ...Transposing data.
 ...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm10.segment.2.gt.
-...Writing pos encodings to file: example/segments/chrm10.segment.2.pos.
+...Writing gt encodings to file: example/segments/chrm3.segment.0.gt.
+...Writing pos encodings to file: example/segments/chrm3.segment.0.pos.
 ...Done writing sample major format.
 ...Loading gt encoding map.
 ...Done loading gt encoding map.
@@ -39,105 +39,6 @@
 ...Done reading genotypes.
 ...Transposing data.
 ...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm8.segment.0.gt.
-...Writing pos encodings to file: example/segments/chrm8.segment.0.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm8.segment.1.gt.
-...Writing pos encodings to file: example/segments/chrm8.segment.1.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm8.segment.2.gt.
-...Writing pos encodings to file: example/segments/chrm8.segment.2.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm8.segment.3.gt.
-...Writing pos encodings to file: example/segments/chrm8.segment.3.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.0.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.0.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.1.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.1.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.2.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.2.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.3.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.3.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.4.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.4.pos.
-...Done writing sample major format.
-...Loading gt encoding map.
-...Done loading gt encoding map.
-...Loading pos encoding map.
-...Done loading pos encoding map.
-...Reading genotypes.
-...Done reading genotypes.
-...Transposing data.
-...Done transposing data.
-...Writing gt encodings to file: example/segments/chrm9.segment.5.gt.
-...Writing pos encodings to file: example/segments/chrm9.segment.5.pos.
+...Writing gt encodings to file: example/segments/chrm4.segment.0.gt.
+...Writing pos encodings to file: example/segments/chrm4.segment.0.pos.
 ...Done writing sample major format.
