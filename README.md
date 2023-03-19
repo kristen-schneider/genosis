@@ -44,11 +44,15 @@ my_dir/
 	↳config_snakemake.yaml
 ```
 **Prepare input VCF file.** `./my_dir/my_vcf.vcf.gz`:
-- A single VCF file for all samples and chromosomes (can be less than full genome, if smaller regions are necessary). See [`example/example.vcf`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.vcf.gz) for reference.<br.
-**Prepare input MAP file.** `./my_dir/my_map.txt`:
-. `./my_dir/data.map`: map file (format: `chromosome` `variant identifier` `position in centimorgans` `base-pair coordinate`). This file will serve as reference to the interpolate map script; which will create a new map (`interpolated.map`) that is used for down stream work.
+- A single VCF file for all samples and chromosomes (can be less than full genome, if smaller regions are necessary). See [`example/example.vcf`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example_merge.vcf.gz) for reference.<br>
+
+**Prepare input MAP file.** `./my_dir/my_map.map`:
+- map file format: `chromosome` `variant identifier` `position in centimorgans` `base-pair coordinate`.
+- This file will serve as reference to the interpolate map script; which will create a new map (`interpolated.map`) that is used for down stream work.
 - see [`helper_scripts/reorder_map.sh`](https://github.com/kristen-schneider/precision-medicine/blob/main/helper_scripts/reorder_map.sh) to fix formatting errors with your map file.
-- see [`example/example.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [this resource](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/) for ready-to-download map files for GRCh36, 37, and 38.
+- see [`example/example_merge.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [this resource](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/) for ready-to-download map files for GRCh36, 37, and 38.
+
+
 4. **TODO** (later development for list of query and database individuals)
 
 #### 1. Edit yaml file to include correct file and directory paths.
