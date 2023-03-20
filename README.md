@@ -1,7 +1,7 @@
 ## Test on [example data](https://github.com/kristen-schneider/precision-medicine/blob/main/example/)
-### Clone the latest version of the repository and update submodules OR pull the latest changes.
+### Download the latest release and update submodules.
 ```
-git clone https://github.com/kristen-schneider/precision-medicine.git
+[git clone https://github.com/kristen-schneider/precision-medicine.git](https://github.com/kristen-schneider/precision-medicine/releases/tag/v1.3)
 cd precision-medicine
 git submodule init
 git submodule update
