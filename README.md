@@ -6,10 +6,6 @@ cd precision-medicine
 git submodule init
 git submodule update
 ```
-```
-cd precision-medicine
-git pull
-``` 
 ### Create and activate the mamba environment.
 ```
 mamba env create -f environment.yml
