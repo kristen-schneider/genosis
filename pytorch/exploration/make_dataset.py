@@ -79,6 +79,7 @@ def load_positions(pos_file: str, subtract_segment_from_pos: bool) -> dict[str, 
 
 def main(
     *,
+    subtract_segment_from_pos: bool,
     pos_files: list[str],
     distance_files: list[str],
     P1: str,
@@ -103,7 +104,7 @@ def main(
 
     with open(P1, "w") as fP1, open(P2, "w") as fP2, open(D, "w") as fD:
         for pos_file, distance_file in zip(pos_files, distance_files):
-            positions = load_positions(pos_file)
+            positions = load_positions(pos_file, subtract_segment_from_pos)
             distances = load_distances(distance_file)
 
             for s1, s2, d in distances:
