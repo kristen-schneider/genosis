@@ -259,9 +259,13 @@ rule MakeTrainingSet:
     P2 = temp(f"{config.outdir}/training_set/P2.txt"),
     D = f"{config.outdir}/training_set/D.txt",
 
+  params:
+    subtract_segment_from_pos = "--subtract_segment_from_pos" if config.subtract_segment_from_pos else ""
+
   shell:
     f"""
     python exploration/make_dataset.py \
+      {params.subtract_segment_from_pos} \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
       --P1 {{output.P1}} \
@@ -284,10 +288,13 @@ rule MakeValidationSet:
     P1 = temp(f"{config.outdir}/validation_set/P1.txt"),
     P2 = temp(f"{config.outdir}/validation_set/P2.txt"),
     D = f"{config.outdir}/validation_set/D.txt",
+  params:
+    subtract_segment_from_pos = "--subtract_segment_from_pos" if config.subtract_segment_from_pos else ""
 
   shell:
     f"""
     python exploration/make_dataset.py \
+      {{params.subtract_segment_from_pos}} \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
       --P1 {{output.P1}} \
