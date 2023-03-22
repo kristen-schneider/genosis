@@ -265,7 +265,7 @@ rule MakeTrainingSet:
   shell:
     f"""
     python exploration/make_dataset.py \
-      {params.subtract_segment_from_pos} \
+      {{params.subtract_segment_from_pos}} \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
       --P1 {{output.P1}} \
