@@ -99,14 +99,24 @@ class ConvNext1DStem(nn.Module):
     Input stage of cnn that applies a downsample convolution followed by normalization.
     """
 
-    def __init__(self, in_channels=1, out_channels=32, kernel_size=4):
+    def __init__(
+        self, in_channels=1, out_channels=32, in_kernel=7, downsample_kernel=4
+    ):
         super(ConvNext1DStem, self).__init__()
         self.stem = nn.Sequential(
             nn.Conv1d(
                 in_channels=in_channels,
                 out_channels=out_channels,
-                kernel_size=kernel_size,
-                stride=kernel_size,
+                kernel_size=in_kernel,
+                stride=1,
+                padding="valid",
+            ),
+            nn.GroupNorm(1, out_channels),
+            nn.Conv1d(
+                in_channels=out_channels,
+                out_channels=out_channels,
+                kernel_size=downsample_kernel,
+                stride=downsample_kernel,
             ),
             nn.GroupNorm(1, out_channels),
         )
@@ -251,7 +261,8 @@ class ConvNext1DEncoder(pl.LightningModule):
             ConvNext1DStem(
                 in_channels=1,
                 out_channels=block_dims[0],
-                kernel_size=stem_kernel,
+                in_kernel=stem_kernel,
+                downsample_kernel=downsample_kernel,
             ),
         )
         self.blocks.append(
@@ -283,7 +294,7 @@ class ConvNext1DEncoder(pl.LightningModule):
             nn.Sequential(
                 nn.AdaptiveAvgPool1d(1),
                 nn.GroupNorm(1, block_dims[-1]),
-                nn.Flatten(),
+                nn.Flatten(start_dim=1),
                 # TODO test without the linear output layer
                 nn.Linear(block_dims[-1], block_dims[-1]),
             )
@@ -293,6 +304,7 @@ class ConvNext1DEncoder(pl.LightningModule):
 
     def forward(self, x):
         return self.blocks(x)
+
     def predict_step(self, batch, _):
         return self.forward(batch["P"])
 
@@ -466,8 +478,7 @@ class SiameseModule(pl.LightningModule):
         u = self.encoder(x1)
         v = self.encoder(x2)
 
-        # see if eps affects numeric instability in mixed precision settings
-        # dpred = F.cosine_similarity(u, v, dim=1, eps=1e-9)
+        assert len(u.shape) == 2
         dpred = F.cosine_similarity(u, v, dim=1, eps=1e-6)
         return self.loss_fn(dpred, d)
 
