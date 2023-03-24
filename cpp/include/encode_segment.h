@@ -18,21 +18,30 @@
 
 using namespace std;
 
-void encode_vectors(string sample_IDs_file,
-	       	string input_vcf_file, 
-		map<string, vector<int>> encoding_map,
-		map<int, float> bp_cm_map,
-		string output_gt_file,
-		string output_pos_file);
+void encode_vectors(int chrm_idx,
+		string vcf_slice_file,
+                string sample_IDs_file,
+                map<string, vector<int>> encoding_map,
+                map<int, map<int, float>> bp_cm_map,
+                string output_gt_file,
+                string output_pos_file,
+                string output_af_file);
 
 void write_SMF_gt(vector<string> all_sample_IDs, 
 		vector<vector<int>> smf, 
 		string output_gt_file);
-void write_SMF_pos(vector<string> all_sample_IDs,
+
+void write_SMF_pos(int chrm_idx,
+		vector<string> all_sample_IDs,
                 vector<vector<int>> smf,
 		vector<int> all_bp_positions,
-		map<int, float> bp_cm_map,
+		map<int, map<int, float>> bp_cm_map,
                 string output_pos_file);
+
+void write_SMF_af(vector<string> all_sample_IDs,
+                vector<vector<int>> smf,
+		vector<float> all_af_positions,
+                string output_af_file);
 
 //void write_SMF_haplotype(vector<string> all_sample_IDs, vector<vector<int>> smf, string output_encoding_file);
 void write_positional_encoding(vector<int> all_positions,

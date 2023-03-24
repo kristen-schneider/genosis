@@ -7,8 +7,13 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iterator>
 
 using namespace std;
 
-map<string,vector<int>> make_biallelic_encoding_map(string encodingFile);
-map<string,int> make_encoding_map(string encodingFile);
+map<string, vector<int>> map_gt_encoding(
+		string encoding_file);
+

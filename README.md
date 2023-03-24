@@ -1,111 +1,90 @@
-### RUN ON TEST DATA
-
-##### 0. Clone the latest version of the repository and update submodules.
+## Test on [example data](https://github.com/kristen-schneider/precision-medicine/blob/main/example/)
+### Download the latest release and update submodules.
+[download latest release](https://github.com/kristen-schneider/precision-medicine/releases/tag/v1.3)
 ```
-git clone https://github.com/kristen-schneider/precision-medicine.git
 cd precision-medicine
 git submodule init
 git submodule update
-
 ```
-#### 0. or pull the latest changes
-```
-cd precision-medicine
-git pull
-``` 
-
-##### 1. Create and activate the mamba environment.
+### Create and activate the mamba environment.
 ```
 mamba env create -f environment.yml
 mamba activate pmed
 ```
-
-##### 2. Run the provided example script with toy data.
-I have added a very small set of example data in the directory `data/example_data/`.<br>
-This should be an easy way to test that software is working without having to make changes yet.<br>
-The snakemake file should already be fit to use example data.<br>
-test with:<br>
+###  Run the provided example script with toy data.
+I have added a very small set of example data in the directory [`data/example_data/`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_snakemake.yaml).<br>
+This should be an easy way to test that software is working before running on your own dataset.<br>
+Make changs to conda directory (and any other necessary paths) in the config file.<br>
+Mostly, the snakemake file should already be fit to use example data.<br>
 ```
 snakemake -c1
 ```
+____________________________________________
 
-### RUN ON REAL DATA
+## Run on real data
+### Prepare input data.
+**Create a working directory** `my_dir` with the following structure:
+```
+my_dir/
+	↳log/
+	↳segments/
+	↳my_vcf.vcf.gz
+	↳my_vcf.vcf.gz.tbi
+	↳my_map.txt
+	↳config_snakemake.yaml
+```
+**Prepare input VCF file.** `./my_dir/my_vcf.vcf.gz`:
+- A single VCF file for all samples and chromosomes. VCF file should be bgzipped and tabixed. Can be less than full genome (e.g. 1 chromosome), if smaller regions are being searched. See [`example/example_merge.vcf.gz`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example_merge.vcf.gz) for an example VCF.<br>
 
-##### 0. Prepare input data.
-###### Generate encodings (part 1)
-1. create a new directory to house your data `mkdir ./my_dir`
-2. prepare input VCF file. `./my_dir/data.vcf`: single chromosome vcf file for all samples. see [`example/example.vcf`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.vcf).
-3. prepare reference map file. `./my_dir/data.map`: map file (format: chr start cm end). this file will serve as reference to the interpolate map script.
-	- see [`python/scripts/utils/interpolate_map.py`](https://github.com/kristen-schneider/precision-medicine/blob/main/python/scripts/utils/interpolate_map.py)
-	- see [`example/example.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [links at bottom of page](https://github.com/kristen-schneider/precision-medicine/edit/main/README.md#more-information-about-data-included-in-config-files) for more map file resources.
-4. prepare a list of query samples.`./my_dir/samples_query.txt`: list of sample IDs against which to query. see [`example/samples_query.txt`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/samples_query.txt) for a single query; add rows for multiple query.
-5. create a new directory to house your segments `mkdir ./my_dir/segments`
+**Prepare input MAP file.** `./my_dir/my_map.map`:
+- map file format (column ordering): `chromosome` `variant identifier` `position in centimorgans` `base-pair coordinate`.
+- This file will serve as reference to the interpolate map script; which will create a new map (`interpolated.map`) that is used for down stream work.
+- see [`helper_scripts/reorder_map.sh`](https://github.com/kristen-schneider/precision-medicine/blob/main/helper_scripts/reorder_map.sh) to fix formatting errors with your map file.
+- see [`example/example_merge.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [this resource](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/) for ready-to-download map files for GRCh36, 37, and 38.
 
-##### 1. Edit yaml files for snakemake options.
-###### [`config_ex_snakemake.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_ex_snakemake.yaml)
-1. copy `config_ex_snakemake.yaml` into your new directory: `cp example/config_ex_snakemake.yaml ./my_dir/config_my_snakemake.yaml`
-2. Modify the following options to reflect appropriate file paths.
-  ```
-  home_dir:
-    /path/to/project/directory/
-  conda_dir:
-    /path/to/miniconda3/envs/pm/
+### Edit yaml file to include correct file and directory paths.
+- see [`config_snakemake.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_snakemake.yaml) for example.
+- We suggest you only modify the following options to reflect appropriate file paths (all other options should be okay to keep as they are, but double checking never hurts 🧐).
+ ```
+conda_dir:
+  /home/sdp/miniconda3/envs/pmed/
 
-  data_dir:
-    /path/to/my_dir/
-  vcf_file:
-    /path/to/my_dir/file.vcf
-  ref_map:
-    /path/to/my_dir/ref_map.map
-  query_file:
-    /path/to/my_dir/samples_query.txt
-  out_dir:
-    /path/to/my_dir/segments/
-  config_file
-    /path/to/my_dir/config_my.yaml
-  ```
-###### [`config_ex.yaml`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_ex.yaml)
-- copy `config_ex.yaml` into your new directory: `cp example/config_ex.yaml ./my_dir/`
-- Modify the following options to reflect appropriate file paths.
-  ```
-  home_dir:
-  ./
-  conda_dir:
-  ~/miniconda3/envs/pm
-  .
-  .
-  .
-  data_dir:
+data_dir:
   example/
-  vcf_file:
-  example/example.vcf
-  interpolated_map: 
-  example/interpolated.map ## <-- this file name should not change, but the path should.
-  encoding_file:
-  example/example_encoding.txt
-  sample_IDs_file:
-  example/samples_IDs.txt
-  query_file:
-  example/samples_query.txt
-  out_dir:
+vcf_file:
+  example/vcfs/example.8-10.vcf.gz
+ref_map:
+  example/maps/example.8-10.map
+out_dir:
   example/segments/
-  out_base_name:
-  example.data
-  segment_size:
-  1
-  ```
-##### 2. Edit snakemake file to point to new configs.
+
+k:
+  20
+delim:
+  space
 ```
-configfile: "./my_dir/config_new_snakemake.yaml"
+### Edit snakemake file to point to new configs.
+```
+configfile: "./my_dir/config_snakemake.yaml"
 ```
 
-##### 3. Running with snakemake
+### Running with snakemake
 ```
 snakemake -c1
 ```
+<br>
+<br>
 
-### More information about data included in config files.
-`map_file`: a genetic map for the data (contains centimorgan distance information). [HapMap genetic maps in cM units from Beagle](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/plink.GRCh38.map.zip)<br> Can use [ilash_analyzer](https://github.com/roohy/ilash_analyzer/blob/master/interpolate_maps.py) to help create map files.<br>
-`out_dir`: a subdirectory of `data_dir` which will contain all intermediate segment files.<br>
-`out_base_name`: used for naming scheme of all intermediate segment files.
+____________________________________________
+TODO: ADD BEFORE PUBLICATION
+- **About section.** Name of tool. Describtion of tool *is a tool to query over biobank-scale genotype data and report KNN for a query individual (or set of query individuals)*.<br>
+- **Installation section.** <br>
+- **[Helper Scripts](https://github.com/kristen-schneider/precision-medicine/blob/main/helper_scripts/)**.
+... helper scripts which were part of our research process and could be useful to you while using this tool.<br>
+- **Indexing step. Query step**
+- **Images and figures.**
+- **Footnotes/acknowledgments.**
+- **[link to publication]().**
+- **citation for publication.**
+____________________________________________
 

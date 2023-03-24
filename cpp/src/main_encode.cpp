@@ -6,48 +6,44 @@
 
 #include "encode_segment.h"
 #include "map_encodings.h"
-#include "read_config.h"
 #include "read_map.h"
+#include "utils.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]){
-    	/*
-    	/ takes one config file
-    	*/
-		
-	// read config file
-	string configFile = argv[1];   		// configuration file will all options
-	string vcf_slice_file = argv[2];	// input vcf (slice) file
-	string output_gt_file = argv[3];	// output encoding (slice) file
-	string output_pos_file = argv[4];	// output positional encoding (slice) file
-	map<string, string> config_options;
-	config_options = get_config_options(configFile);		
+	// get input options
+	int chrm_idx = stoi(argv[1]);
+	string vcf_segment_file = argv[2];	// input vcf (segment) file to encode
+	string sample_IDs_file = argv[3];	// sample IDs to pair with encodings
+	string encoding_file = argv[4];		// encodings to use
+	string interpolated_map= argv[5];	// where interpolated map file should exist
+	string output_gt_file = argv[6];	// output gt encoded (segment) file
+	string output_pos_file = argv[7];	// output pos encoded (segment) file
+	string output_af_file = argv[8];	// output allele frequency encoding (segment) file
 	
-	// access each option by variable name
-	string map_file = config_options["interpolated_map"];
-	string encoding_file = config_options["encoding_file"];
-	string sample_IDs_file = config_options["sample_IDs_file"];
-	string out_dir = config_options["out_dir"];
-    	string out_base_name = config_options["out_base_name"];
-
-	// make nominal gt encoding map
+	// make gt encoding map (gt (string): encoding <int, int>)
 	cout << "...Loading gt encoding map." << endl;
-	map<string, vector<int>> encoding_map = make_biallelic_encoding_map(encoding_file);
+	map<string, vector<int>> encoding_map = map_gt_encoding(encoding_file);
 	cout << "...Done loading gt encoding map." << endl;
+	
 	// make cm positional encoding map
 	cout << "...Loading pos encoding map." << endl;
-	map<int, float> bp_cm_map;
-	bp_cm_map = make_bp_cm_map(map_file);
+	map<int, map<int, float>> bp_cm_map = map_bp_cm(interpolated_map);
 	cout << "...Done loading pos encoding map." << endl;
 	
+	// make af encoding map
+	
+	
 	// encode single vcf
-	encode_vectors(sample_IDs_file,
-			vcf_slice_file,
+	encode_vectors(chrm_idx,
+			vcf_segment_file,
+			sample_IDs_file,
 			encoding_map,
 			bp_cm_map,
 			output_gt_file,
-			output_pos_file);	
+			output_pos_file,
+			output_af_file);	
 	
 	
 	return 0;

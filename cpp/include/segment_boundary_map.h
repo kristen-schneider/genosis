@@ -1,21 +1,22 @@
-#ifndef SLICE_VCF_H
-#define SLICE_VCF_H
+#ifndef SEGMENT_BOUNDARY_MAP_H
+#define SEGMENT_BOUNDARY_MAP_H
 
-#endif //SLICE_VCF_H
+#endif //SEGMENT_BOUNDARY_MAP_H
 
-#include <cstdlib>
 #include <iostream>
-#include <fstream>
-#include <map>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <iterator>
+#include <map>
+#include <tuple>
 
 using namespace std;
 
-map<int, vector<int>> generate_segment_boundary_map(string map_file,
-                int segment_size);
-void write_segment_boundary_map(map<int, vector<int>> segment_boundary_map,
-                string segment_boundary_file);
-
-//int slice_main(string map_file, int segment_size, string vcf_file, string out_base_name, string out_dir);
-//int slice(string vcf_file, map<int, vector<int>> cm_map, string base_name, string out_dir);
+map<int, vector<tuple<int, int>>> make_slice_boundary_map(
+        string interpolated_map,
+        float slice_size);
+void write_slice_boundary_map(
+        map<int, vector<tuple<int, int>>> slice_boundary_map,
+        string outfile);
