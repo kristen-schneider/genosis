@@ -1,0 +1,8 @@
+name: mmap_ninja
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - pip
+  - pip:
+    - mmap_ninja

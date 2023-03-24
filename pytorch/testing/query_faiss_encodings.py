@@ -111,7 +111,7 @@ def main(
     samples, encodings = get_queries(encodings_path, segment)
 
     index = faiss.read_index(index_path)
-    D, I = index.search(encodings, k)
+    D, I = index.search(encodings, k+1) # +1 to include the query itself
 
     with open(output, "w") as f:
         # NOTE: the nearest neighbor of the query will be the query itself

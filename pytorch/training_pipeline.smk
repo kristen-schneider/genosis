@@ -72,7 +72,7 @@ if len(set(train_segments) & set(val_segments) & set(test_segments)) > 0:
 rule All:
   input:
     # trained model
-    directory(f"{config.outdir}/{config.model_prefix}"),
+    directory(f"{config.outdir}/{config.model_prefix}.checkpoints"),
 
     # train memmaps
     f"{config.outdir}/training_set/P1.mmap",
@@ -88,16 +88,10 @@ rule All:
     f"{config.outdir}/test.segments",
 
     # training set
-    # expand(f"{config.outdir}/training_set/P1.txt", segment=train_segments),
-    # expand(f"{config.outdir}/training_set/P2.txt", segment=train_segments),
     expand(f"{config.outdir}/training_set/D.txt", segment=train_segments),
-    # expand(f"{config.outdir}/train_segments.txt", segment=train_segments),
 
     # validation set
-    # expand(f"{config.outdir}/validation_set/P1.txt", segment=val_segments),
-    # expand(f"{config.outdir}/validation_set/P2.txt", segment=val_segments),
     expand(f"{config.outdir}/validation_set/D.txt", segment=val_segments),
-    # expand(f"{config.outdir}/val_segments.txt", segment=val_segments),
 
     # stats
     f"{config.outdir}/bin_sampled_distribution.pdf",
@@ -125,6 +119,8 @@ rule MakeGTMemmap:
     f"{config.segments_dir}/{config.segment_prefix}.{{segment}}.{config.gt_ext}",
   output:
     f"{config.outdir}/gt_mmap/segment.{{segment}}.mmap"
+  conda:
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/make_gt_mmap.py \
@@ -262,11 +258,14 @@ rule MakeTrainingSet:
     P1 = temp(f"{config.outdir}/training_set/P1.txt"),
     P2 = temp(f"{config.outdir}/training_set/P2.txt"),
     D = f"{config.outdir}/training_set/D.txt",
-    seg_list = f"{config.outdir}/train_segments.txt"
+
+  params:
+    subtract_segment_from_pos = "--subtract_segment_from_pos" if config.subtract_segment_from_pos else ""
 
   shell:
     f"""
     python exploration/make_dataset.py \
+      {{params.subtract_segment_from_pos}} \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
       --P1 {{output.P1}} \
@@ -289,11 +288,13 @@ rule MakeValidationSet:
     P1 = temp(f"{config.outdir}/validation_set/P1.txt"),
     P2 = temp(f"{config.outdir}/validation_set/P2.txt"),
     D = f"{config.outdir}/validation_set/D.txt",
-    seg_list = f"{config.outdir}/val_segments.txt"
+  params:
+    subtract_segment_from_pos = "--subtract_segment_from_pos" if config.subtract_segment_from_pos else ""
 
   shell:
     f"""
     python exploration/make_dataset.py \
+      {{params.subtract_segment_from_pos}} \
       --pos_files {{input.pos_files}} \
       --distance_files {{input.distances}} \
       --P1 {{output.P1}} \
@@ -311,6 +312,8 @@ rule MakeTrainMmaps:
   output:
     P1 = directory(f"{config.outdir}/training_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/training_set/P2.mmap")
+  conda:
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
@@ -330,6 +333,8 @@ rule MakeValMmaps:
   output:
     P1 = directory(f"{config.outdir}/validation_set/P1.mmap"),
     P2 = directory(f"{config.outdir}/validation_set/P2.mmap")
+  conda:
+    "envs/mmap_ninja.yaml"
   shell:
     f"""
     python exploration/generate_mmaps.py \
@@ -351,35 +356,23 @@ rule TrainModel:
     D_train = rules.MakeTrainingSet.output.D,
     D_val = rules.MakeValidationSet.output.D
   output:
-    model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}")
+    model_checkpoints = directory(f"{config.outdir}/{config.model_prefix}.checkpoints")
   threads:
-    config.n_workers
+    workflow.cores
+  conda:
+    'envs/torch-gpu.yaml'
   shell:
     f"""
     python train_model.py \
       --outdir {config.outdir} \
-      --prefix {config.model_prefix} \
+      --model_prefix {config.model_prefix} \
       --P1_train {{input.P1_train}} \
       --P2_train {{input.P2_train}} \
       --P1_val {{input.P1_val}} \
       --P2_val {{input.P2_val}} \
       --D_train {{input.D_train}} \
       --D_val {{input.D_val}} \
-      --train_method {config.train_method} \
-      --model_type {config.model_type} \
-      --loss_fn {config.loss_fn} \
-      --batch_size {config.batch_size} \
-      --grad_accum {config.grad_accum} \
-      --n_workers {config.n_workers} \
-      --n_epochs {config.n_epochs} \
-      --early_stop_patience {config.early_stop_patience} \
-      --lr {config.lr} \
-      --weight_decay {config.weight_decay} \
-      --n_layers {config.n_layers} \
-      --dropout {config.dropout} \
-      --kernel_size {config.kernel_size} \
-      --stride {config.stride} \
-      --padding {config.padding} \
+      --model_config {config.model_config}
     """
 
 

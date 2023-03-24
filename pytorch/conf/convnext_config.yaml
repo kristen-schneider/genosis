@@ -1,0 +1,43 @@
+model_type: 'ConvNext'
+
+# basic training config -------------------------------------------------------
+
+
+# TODO scheduler params
+# - switch to linear warmup to a relatively high learning rate
+# - then use a cosine annealing schedule to the final long term learning rate
+# - take a look at some of the literature to see what a reasonable starting point is.
+
+dataloader_params:
+  batch_size: 32
+  n_workers: 4
+
+training_params:
+  accumulate_grad_batches: 32
+  precision: 16
+  gradient_clip_val: 0.5
+  gradient_clip_algorithm: 'norm'
+  max_epochs: 200
+  accelerator: 'gpu'
+  devices: 1
+  fast_dev_run: False
+  enable_progress_bar: False
+  early_stop_patience: 200
+  loss_fn: 'mse'
+
+optimizer_params:
+  lr: 0.001
+  weight_decay: 0.0001
+  eps: 1.0e-4
+
+
+# model params ----------------------------------------------------------------
+# TODO eventually we will setup some sort of grid search
+# to accomplish this, we could just use these params as lists or ranges
+encoder_params:
+  stem_kernel: 4
+  downsample_kernel: 2
+  block_kernel: 7
+  block_dims: [128, 256, 512] # final is the encoder dimension
+  n_blocks: [1, 2, 1]
+  stochastic_depths: [0.25, 0.5, 0.25]

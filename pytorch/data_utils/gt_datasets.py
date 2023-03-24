@@ -172,7 +172,8 @@ class GTDataset(Dataset):
 # TODO maybe not the best way to do this
 # could just separate out the functions
 def pad_data(data, model_type="conv1d"):
-    if model_type == "conv1d":
+    # TODO this is fragile
+    if model_type == "conv1d" or model_type == "ConvNext":
         # variable length tensors
         P1 = [torch.tensor(x["P1"], dtype=torch.float32) for x in data]
         P2 = [torch.tensor(x["P2"], dtype=torch.float32) for x in data]

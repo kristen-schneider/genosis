@@ -86,7 +86,7 @@ def main(queries_file: str, index_file: str, ids_file: str, output: str, k: int)
     samples, queries = get_queries(queries_file)
 
     index = faiss.read_index(index_file)
-    D, I = index.search(queries, k)
+    D, I = index.search(queries, k+1)  # +1 to include the query itself
 
     # write the results
     with open(output, "w") as f:
