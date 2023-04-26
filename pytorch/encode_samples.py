@@ -55,7 +55,7 @@ def encode_samples(
         inference_mode=True,
         callbacks=[writer],
         accelerator="cuda" if gpu else "cpu",
-        devices=1 if gpu else None,
+        devices=1 if gpu else 1,
     )
     trainer.predict(encoder, dataloader)
 

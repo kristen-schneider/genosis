@@ -1,7 +1,9 @@
 conda_dir:
-  /home/sdp/miniconda3/envs/pmed/
+  /projects/krsc0813/software/anaconda/envs/pmed/
 log_dir:
   example/log/
+benchmark_dir:
+  example/benchmark/
 
 data_dir:
   example/
@@ -27,6 +29,18 @@ cpp_include_dir:
 
 python_dir:
   python/scripts/
+model_conda_dir:
+  /projects/krsc0813/software/anaconda/envs/torch-cpu
+model_dir:
+  pytorch/
+model_checkpoint:
+  /scratch/alpine/krsc0813/conv1d-fiji.checkpoints/last.ckpt
+model_out_dir:
+  example/model_out/all_embeddings.txt
+batch_size:
+  128
+n_workers:
+  32
 
 k:
   20

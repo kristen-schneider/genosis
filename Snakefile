@@ -1,8 +1,9 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
+#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/simulated/config_snakemake.yaml"
+configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
+#configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
@@ -20,8 +21,9 @@ rule all:
                 f"{config.log_dir}segment_boundary.log",
 		f"{config.log_dir}slice.log",
 		f"{config.log_dir}encode.log",
-		f"{config.log_dir}clean.log",
-		f"{config.log_dir}hap_IDs.log",
+		f"{config.log_dir}model.log",
+		#f"{config.log_dir}clean.log",
+		#f"{config.log_dir}hap_IDs.log",
 		#f"{config.cpp_bin_dir}faiss-l2-build",
 		#f"{config.out_dir}faiss_l2_idx.log",
 		##f"{config.cpp_bin_dir}faiss-ivfpqr-build",
@@ -38,6 +40,8 @@ rule get_sample_IDs:
 		sample_IDs=f"{config.data_dir}sample_IDs.txt"
 	log:
 		sample_IDs_log=f"{config.log_dir}sample_IDs.log"
+	benchmark:
+        	f"{config.benchmark_dir}sample_IDs.tsv"
 	message:
 		"Creating a list of all sample IDs..."
 	conda:
@@ -60,6 +64,8 @@ rule interpolate_map:
 		interpolated_map=f"{config.data_dir}interpolated.map"
 	log:		
 		interpolated_log=f"{config.log_dir}interpolated.log"
+	benchmark:
+        	f"{config.benchmark_dir}interpolate.tsv"
 	message:
 		"Interpolating map file..."
 	conda:
@@ -102,6 +108,8 @@ rule segment_boundary_file_execute:
 		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
 	log:
 		segment_boundary_ex_log=f"{config.log_dir}segment_boundary.log"
+	benchmark:
+        	f"{config.benchmark_dir}.bondary.tsv"
 	message:
 		"Executing--write segment boundary file..."
 	conda:
@@ -116,6 +124,8 @@ rule slice_VCF:
 		segment_boundary_file=f"{config.data_dir}segment_boundary.map",
 	log:
 		slice_log=f"{config.log_dir}slice.log"
+	benchmark:
+        	f"{config.benchmark_dir}slice.tsv"
 	message:
 		"Slicing VCF into segments..."
 	conda:
@@ -163,8 +173,10 @@ rule encode_execute:
 		bin=f"{config.cpp_bin_dir}encode",
 	output:
 		encode_log=f"{config.log_dir}encode.log"
+	benchmark:
+        	f"{config.benchmark_dir}encode.tsv"
 	message:
-                "Compiling--encoding segments..."
+                "Executing--encoding segments..."
 	conda:
 		"{config.conda_dir}"	
 	shell:
@@ -175,7 +187,8 @@ rule encode_execute:
 		"	echo ... $seg_name;" \
 		"	chrm_idx=${{seg_name#*chrm}};" \
 		"	chrm_idx=${{chrm_idx%%.*}};" \
-		"	./{input.bin} " \
+		#"	echo $chrm_idx $vcf_f {config.data_dir}sample_IDs.txt {config.encoding_file} {config.data_dir}interpolated.map;" \
+		"	{input.bin} " \
 		"		$chrm_idx " \
 		"		$vcf_f " \
 		"		{config.data_dir}sample_IDs.txt " \
@@ -183,8 +196,8 @@ rule encode_execute:
 		"		{config.data_dir}interpolated.map " \
 		"		{config.out_dir}${{seg_name}}.gt " \
 		"		{config.out_dir}${{seg_name}}.pos " \
-		"		{config.out_dir}${{seg_name}}.af" \
-		"	 >> {output.encode_log};" \
+		"		{config.out_dir}${{seg_name}}.af " \
+		"		 >> {output.encode_log};" \
 		"done;" \
 
 # 3.0 remove intermediate files
@@ -222,6 +235,25 @@ rule hap_IDs:
 		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
 		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
 
+# 4.0 run model 
+rule model:
+	input:
+		encode_log=f"{config.log_dir}encode.log"
+	log:
+		model_log=f"{config.log_dir}model.log"
+	benchmark:
+        	f"{config.benchmark_dir}model.tsv"
+	message:
+		"Running model to create embedding vectors..."
+	conda:
+		"{config.model_conda_dir}"
+	shell:
+		"python {config.model_dir}encode_samples.py" \
+        	"	--encoder {config.model_checkpoint}" \
+        	"	--output {config.model_out_dir}" \
+        	"	--files {config.out_dir}*.gt" \
+        	"	--batch-size {config.batch_size}" \
+        	"	--num-workers {config.n_workers}"
 ## 4.1 build faiss index (l2) for encoding segments (compile)
 #rule build_l2_faiss_index_compile:
 #	input:
