@@ -12,8 +12,8 @@ from torch.utils.data import DataLoader
 
 
 def load_siamese_encoder(path: str) -> pl.LightningModule:
-    # model = SiameseModule.load_from_checkpoint(path)
-    model = SiameseModule.load_from_checkpoint(path)
+    model = SiameseModule.load_from_checkpoint(path, map_location=torch.device('cpu'))
+    #model = SiameseModule.load_from_checkpoint(path)
     encoder = model.encoder
     return encoder
 

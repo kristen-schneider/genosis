@@ -15,11 +15,13 @@ encodings_dir:
   example/encodings/
 embeddings_dir:
   example/embeddings/all_embeddings.txt
+faiss_index_dir:
+  example/faiss_index/
 
 vcf_file:
-  example/example_merge.vcf.gz
+  example/small_example.8.vcf.gz
 ref_map:
-  example/example_merge.map  
+  example/small_example.8.map  
 database_IDs:
   example/database_IDs.txt
 query_IDs:
@@ -39,11 +41,11 @@ python_dir:
 model_dir:
   pytorch/
 model_checkpoint:
-  /scratch/alpine/krsc0813/conv1d-fiji.checkpoints/last.ckpt
+  /home/sdp/precision-medicine/last.ckpt
 batch_size:
   128
 n_workers:
-  32
+  4
 
 k:
   20

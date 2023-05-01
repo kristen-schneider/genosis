@@ -22,15 +22,12 @@ rule all:
 		f"{config.log_dir}slice.log",
 		f"{config.log_dir}encode.log",
 		f"{config.log_dir}model.log",
+		#f"{config.log_dir}embeddings.log",
+		#f"{config.log_dir}faiss_build.log",
 		#f"{config.log_dir}clean.log",
 		#f"{config.log_dir}hap_IDs.log",
-		#f"{config.cpp_bin_dir}faiss-l2-build",
-		#f"{config.out_dir}faiss_l2_idx.log",
-		##f"{config.cpp_bin_dir}faiss-ivfpqr-build",
 		##f"{config.out_dir}faiss_ivfpqr_idx.log",
-		#f"{config.cpp_bin_dir}faiss-search",
 		#f"{config.out_dir}faiss_l2_search.log"
-		#f"{config.out_dir}faiss_ivfpqr_search.log"
 
 # 0.1 create a file with all sample IDs
 rule get_sample_IDs:
@@ -109,7 +106,7 @@ rule segment_boundary_file_execute:
 	log:
 		segment_boundary_ex_log=f"{config.log_dir}segment_boundary.log"
 	benchmark:
-        	f"{config.benchmark_dir}.bondary.tsv"
+        	f"{config.benchmark_dir}segment_bondary.tsv"
 	message:
 		"Executing--write segment boundary file..."
 	conda:
@@ -254,180 +251,38 @@ rule model:
         	"	--files {config.encodings_dir}*.gt" \
         	"	--batch-size {config.batch_size}" \
         	"	--num-workers {config.n_workers}"
-## 4.1 build faiss index (l2) for encoding segments (compile)
-#rule build_l2_faiss_index_compile:
+
+## 5.0 split all_embeddings.txt into segment embeddings
+#rule split_embeddings:
 #	input:
-#		encode_log=f"{config.out_dir}encode.log",
-#		faiss_l2_build_cpp=f"{config.cpp_src_dir}faiss_l2_build.cpp",
-#		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
-#	output:
-#		bin=f"{config.cpp_bin_dir}faiss-l2-build"
+#		slice_log=f"{config.log_dir}slice.log",
+#                encode_log=f"{config.log_dir}encode.log",
+#                model_log=f"{config.log_dir}model.log",
+#	log:
+#		embeddings_log=f"{config.log_dir}embeddings.log"
 #	message:
-#		"Compiling--building faiss l2 indices for all segments..."
+#		"Splitting full embedding file into segments..."
 #	conda:
-#		"{config.conda_pmed}"	
+#		f"{config.conda_pmed}"
 #	shell:
-#		"g++" \
-#		" {input.faiss_l2_build_cpp}" \
-#		" {input.faiss_utils_cpp}" \
-#		" -I {config.conda_pmed}/include/" \
-#		" -I {config.cpp_include_dir}" \
-#		" -L {config.conda_pmed}/lib/" \
-#		" -lfaiss" \
-#		" -o {output.bin}"
-## 4.2 build faiss index (l2) for encoding segments (execute)
-#rule build_l2_faiss_index_execute:
-#        input:
-#                bin=f"{config.cpp_bin_dir}faiss-l2-build",
-#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
-#        output:
-#                faiss_idx_log=f"{config.out_dir}faiss_l2_idx.log"
-#        message:
-#                "Executing--building faiss l2 indices for all segments..."
-#	conda:
-#		"{config.conda_pmed}"	
-#	shell:
-#		"for enc_f in {config.out_dir}*.gt; do" \
-#                "       filename=$(basename $enc_f);" \
-#                "       seg_name=${{filename%.*}};" \
-#                "       echo SEGMENT: $seg_name;" \
-#                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faissl2.idx" \
-#                "        >> {output.faiss_idx_log};" \
-#		"done;"
-## 4.3 build faiss index (hnsw) for encoding segments (compile)
-#rule build_hnsw_faiss_index_compile:
-#        input:
-#                encode_log=f"{config.out_dir}encode.log",
-#                faiss_hnsw_build_cpp=f"{config.cpp_src_dir}faiss_hnsw_build.cpp",
-#                faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
-#        output:
-#                bin=f"{config.cpp_bin_dir}faiss-hnsw-build"
-#        message:
-#                "Compiling--building faiss hnsw indices for all segments..."
-#        conda:
-#                "{config.conda_pmed}"
-#        shell:
-#                "g++" \
-#                " {input.faiss_hnsw_build_cpp}" \
-#                " {input.faiss_utils_cpp}" \
-#                " -I {config.conda_pmed}/include/" \
-#                " -I {config.cpp_include_dir}" \
-#                " -L {config.conda_pmed}/lib/" \
-#                " -lfaiss" \
-#                " -o {output.bin}"
-## 4.4 build faiss index (hnsw) for encoding segments (execute)
-#rule build_hnsw_faiss_index_execute:
-#        input:
-#                bin=f"{config.cpp_bin_dir}faiss-hnsw-build",
-#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
-#        output:
-#                faiss_idx_log=f"{config.out_dir}faiss_hnsw_idx.log"
-#        message:
-#                "Executing--building faiss hnsw indices for all segments..."
-#        conda:
-#                "{config.conda_pmed}"
-#        shell:
-#                "for enc_f in {config.out_dir}*.gt; do" \
-#                "       filename=$(basename $enc_f);" \
-#                "       seg_name=${{filename%.*}};" \
-#                "       echo SEGMENT: $seg_name;" \
-#                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faisshnsw.idx" \
-#                "        >> {output.faiss_idx_log};" \
-#                "done;"
-## 4.5 build faiss index (ivfpqr) for encoding segments (compile)
-#rule build_ivfpqr_faiss_index_compile:
-#        input:
-#                encode_log=f"{config.out_dir}encode.log",
-#                faiss_ivfpqr_build_cpp=f"{config.cpp_src_dir}faiss_ivfpqr_build.cpp",
-#                faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
-#        output:
-#                bin=f"{config.cpp_bin_dir}faiss-ivfpqr-build"
-#        message:
-#                "Compiling--building faiss ivfpqr indices for all segments..."
-#        conda:
-#                "{config.conda_pmed}"
-#        shell:
-#                "g++" \
-#                " {input.faiss_ivfpqr_build_cpp}" \
-#                " {input.faiss_utils_cpp}" \
-#                " -I {config.conda_pmed}/include/" \
-#                " -I {config.cpp_include_dir}" \
-#                " -L {config.conda_pmed}/lib/" \
-#                " -lfaiss" \
-#                " -o {output.bin}"
-## 4.6 build faiss index (ivfpqr) for encoding segments (execute)
-#rule build_ivfpqr_faiss_index_execute:
-#        input:
-#                bin=f"{config.cpp_bin_dir}faiss-ivfpqr-build",
-#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
-#        output:
-#                faiss_idx_log=f"{config.out_dir}faiss_ivfpqr_idx.log"
-#        message:
-#                "Executing--building faiss ivfpqr indices for all segments..."
-#        conda:
-#                "{config.conda_pmed}"
-#        shell:
-#                "for enc_f in {config.out_dir}*.gt; do" \
-#                "       filename=$(basename $enc_f);" \
-#                "       seg_name=${{filename%.*}};" \
-#                "       echo SEGMENT: $seg_name;" \
-#                "       ./{input.bin} {input.database_hap_IDs} $enc_f {config.out_dir}${{seg_name}}.faissivfpqr.idx" \
-#                "        >> {output.faiss_idx_log};" \
-#                "done;"
+#		"python {config.python_dir}faiss/split_embeddings.py" \
+#		"       --emb_dir {config.embeddings_dir}" \
+#		"	--all_emb {config.embeddings_dir}all_embeddings.txt"
 #
-#
-#
-#
-## 5.1 search faiss index for encodig segments (compile)
-#rule search_l2_faiss_index_compile:
-#	input:
-#		faiss_idx_log=f"{config.out_dir}faiss_l2_idx.log",
-#		faiss_l2_search_cpp=f"{config.cpp_src_dir}faiss_l2_search.cpp",
-#		faiss_utils_cpp=f"{config.cpp_src_dir}faiss_utils.cpp"
-#	output:
-#		bin=f"{config.cpp_bin_dir}faiss-search"
+## 5.1 build FAISS indices
+#rule faiss_build:
+#        input:
+#                slice_log=f"{config.log_dir}slice.log",
+#                encode_log=f"{config.log_dir}encode.log",
+#                model_log=f"{config.log_dir}model.log",
+#		split_embeddings=f"{config.log_dir}embeddings.log"
+#	log:
+#		faiss_build_log=f"{config.log_dir}faiss_build.log"
 #	message:
-#		"Compiling--searching faiss indices for all segments..."
-#	conda:
-#		"{config.conda_pmed}"	
-#	shell:
-#		"g++" \
-#		" {input.faiss_l2_search_cpp}" \
-#		" {input.faiss_utils_cpp}" \
-#		" -I {config.conda_pmed}/include/" \
-#		" -I {config.cpp_include_dir}" \
-#		" -L {config.conda_pmed}/lib/" \
-#		" -lfaiss" \
-#		" -o {output.bin}"
-## 5.2 search faiss index for encoding segments (execute)
-#rule search_l2_faiss_index_execute:
-#        input:
-#                bin=f"{config.cpp_bin_dir}faiss-search",
-#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt",
-#		query_hap_IDs=f"{config.root_dir}query_hap_IDs.txt",
-#        output:
-#                faiss_search_log=f"{config.out_dir}faiss_l2_search.log"
-#        message:
-#                "Executing--searching L2 faiss indices for all segments..."
-#	conda:
-#		"{config.conda_pmed}"
-#	shell:
-#                "for idx_f in {config.out_dir}*.faissl2.idx; do" \
-#                "       filename=$(basename $idx_f);" \
-#                "       seg_faiss=${{filename%.*}};" \
-#		"	seg_name=${{seg_faiss%.*}};" \
-#                "       echo SEGMENT: $seg_name;" \
-#		"	encoding_f=$seg_name.gt;" \
-#		"	search_time_start=`date +%s.%N`;" \
-#		"	echo START: $search_time_start;" \
-#		"       ./{input.bin} $idx_f {input.database_hap_IDs} {input.query_hap_IDs} {config.out_dir}${{encoding_f}} {config.k} {config.out_dir}$seg_name.faissl2.out " \
-#               	"        >> {output.faiss_search_log};" \
-#		"	search_time_end=`date +%s.%N`;" \
-#		"	echo END: $search_time_end;" \
-#		#"	single_search_time=$( echo '$search_time_end - $search_time_start' | bc -l );" \
-#		#"	echo SINGLE SEARCH: $single_search_time;" \
-#		"done;" \
-#		#"full_end=`date +%s.%N`;" \
-#		#"full_time=$( '$full_start - $full_end' | bc -l );" \
-#		#"echo FULL TIME: $full_time;"
-#
+#		"FAISS-building indexes..."
+#        conda:
+#		f"{config.conda_pmed}"
+#        shell:
+#		"python {config.python_dir}faiss/build_faiss_index.py" \
+#		"	--emb_dir {config.embeddings_dir}" \
+#		"	--idx_dir {config.faiss_index-dir}"
