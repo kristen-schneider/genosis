@@ -1,12 +1,21 @@
-conda_dir:
-  /projects/krsc0813/software/anaconda/envs/pmed/
+conda_pmed:
+  environment.yml
+conda_model:
+  pytorch/envs/torch-cpu.yaml
+
+root_dir:
+  example/
 log_dir:
   example/log/
 benchmark_dir:
   example/benchmark/
+vcf_segments_dir:
+  example/vcf_segments/
+encodings_dir:
+  example/encodings/
+embeddings_dir:
+  example/embeddings/all_embeddings.txt
 
-data_dir:
-  example/
 vcf_file:
   example/example_merge.vcf.gz
 ref_map:
@@ -15,8 +24,6 @@ database_IDs:
   example/database_IDs.txt
 query_IDs:
   example/query_IDs.txt
-out_dir:
-  example/segments/
 encoding_file:
   encoding.txt
 
@@ -29,14 +36,10 @@ cpp_include_dir:
 
 python_dir:
   python/scripts/
-model_conda_dir:
-  /projects/krsc0813/software/anaconda/envs/torch-cpu
 model_dir:
   pytorch/
 model_checkpoint:
   /scratch/alpine/krsc0813/conv1d-fiji.checkpoints/last.ckpt
-model_out_dir:
-  example/model_out/all_embeddings.txt
 batch_size:
   128
 n_workers:

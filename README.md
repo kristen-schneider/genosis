@@ -26,8 +26,11 @@ ____________________________________________
 **Create a working directory** `my_dir` with the following structure:
 ```
 my_dir/
+	↳benchmark/
 	↳log/
-	↳segments/
+	↳embeddings/
+	↳encodings/
+	↳vcf_segments/
 	↳my_vcf.vcf.gz
 	↳my_vcf.vcf.gz.tbi
 	↳my_map.txt

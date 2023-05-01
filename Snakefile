@@ -6,7 +6,7 @@ configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
 config = SimpleNamespace(**config)
 
-LD_LIBRARY_PATH = f"{config.conda_dir}/lib"
+LD_LIBRARY_PATH = f"{config.conda_pmed}/lib"
 shell.prefix("""
 set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
@@ -37,7 +37,7 @@ rule get_sample_IDs:
 	input:
 		vcf_file=f"{config.vcf_file}"
 	output:
-		sample_IDs=f"{config.data_dir}sample_IDs.txt"
+		sample_IDs=f"{config.root_dir}sample_IDs.txt"
 	log:
 		sample_IDs_log=f"{config.log_dir}sample_IDs.log"
 	benchmark:
@@ -45,11 +45,11 @@ rule get_sample_IDs:
 	message:
 		"Creating a list of all sample IDs..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"bcftools query -l {input.vcf_file} > {output.sample_IDs};"
-		"cp {output.sample_IDs} {config.data_dir}database_IDs.txt;" \
-		"cp {output.sample_IDs} {config.data_dir}query_IDs.txt;"
+		"cp {output.sample_IDs} {config.root_dir}database_IDs.txt;" \
+		"cp {output.sample_IDs} {config.root_dir}query_IDs.txt;"
 
 # 0.2 interpolate map
 # one cm for every bp in 1kg
@@ -59,9 +59,9 @@ rule interpolate_map:
 		ref_map=f"{config.ref_map}",
 		interpolate_map_cpp=f"{config.cpp_src_dir}interpolate_map.cpp",
 	output:
-		vcf_bp=f"{config.data_dir}vcf_bp.txt",
+		vcf_bp=f"{config.root_dir}vcf_bp.txt",
 		bin=f"{config.cpp_bin_dir}interpolate-map",
-		interpolated_map=f"{config.data_dir}interpolated.map"
+		interpolated_map=f"{config.root_dir}interpolated.map"
 	log:		
 		interpolated_log=f"{config.log_dir}interpolated.log"
 	benchmark:
@@ -69,7 +69,7 @@ rule interpolate_map:
 	message:
 		"Interpolating map file..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"bcftools query -f '%CHROM %POS\n' {input.vcf_file} > {output.vcf_bp};"
 		"g++" \
@@ -81,7 +81,7 @@ rule interpolate_map:
 #0.3-A write segment boundary file (compile)
 rule segment_boundary_file_compile:
 	input:
-		interpolated_map=f"{config.data_dir}interpolated.map",
+		interpolated_map=f"{config.root_dir}interpolated.map",
 		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
 	output:
 		bin=f"{config.cpp_bin_dir}segment-boundary"
@@ -90,7 +90,7 @@ rule segment_boundary_file_compile:
 	message:
 		"Compiling--write segment boundary file..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"g++" \
 		" {input.segment_boundary_map_cpp}" \
@@ -102,10 +102,10 @@ rule segment_boundary_file_compile:
 # 0.3-B write segment boundary file (execute)
 rule segment_boundary_file_execute:
 	input:
-		interpolated_map=f"{config.data_dir}interpolated.map",
+		interpolated_map=f"{config.root_dir}interpolated.map",
 		bin=f"{config.cpp_bin_dir}segment-boundary"
 	output:
-		segment_boundary_file=f"{config.data_dir}segment_boundary.map"
+		segment_boundary_file=f"{config.root_dir}segment_boundary.map"
 	log:
 		segment_boundary_ex_log=f"{config.log_dir}segment_boundary.log"
 	benchmark:
@@ -113,7 +113,7 @@ rule segment_boundary_file_execute:
 	message:
 		"Executing--write segment boundary file..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"{input.bin} {input.interpolated_map} {output.segment_boundary_file} > {log.segment_boundary_ex_log}"
 
@@ -121,7 +121,7 @@ rule segment_boundary_file_execute:
 rule slice_VCF:
 	input:
 		vcf_file=f"{config.vcf_file}",
-		segment_boundary_file=f"{config.data_dir}segment_boundary.map",
+		segment_boundary_file=f"{config.root_dir}segment_boundary.map",
 	log:
 		slice_log=f"{config.log_dir}slice.log"
 	benchmark:
@@ -129,15 +129,15 @@ rule slice_VCF:
 	message:
 		"Slicing VCF into segments..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r chrm segment start_bp end_bp; do" \
 		"	echo slicing segment ${{segment}} >> {log.slice_log};" \
-		"	bcftools view -h {input.vcf_file} > {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
-		"	tabix {input.vcf_file} chr${{chrm}}:${{start_bp}}-${{end_bp}} >> {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
-		"	bgzip {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
-		"	tabix -p vcf {config.out_dir}chrm${{chrm}}.segment.${{segment}}.vcf.gz;" \
+		"	bcftools view -h {input.vcf_file} > {config.vcf_segments_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
+		"	tabix {input.vcf_file} chr${{chrm}}:${{start_bp}}-${{end_bp}} >> {config.vcf_segments_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
+		"	bgzip {config.vcf_segments_dir}chrm${{chrm}}.segment.${{segment}}.vcf;" \
+		"	tabix -p vcf {config.vcf_segments_dir}chrm${{chrm}}.segment.${{segment}}.vcf.gz;" \
 		" done < {input.segment_boundary_file};" \
 
 # 2.1 encode genotypes for VCF segments (compile)
@@ -154,7 +154,7 @@ rule encode_compile:
 	message:
 		"Compiling--encoding segments..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"g++" \
 		" {input.main_encode_cpp}" \
@@ -178,25 +178,25 @@ rule encode_execute:
 	message:
                 "Executing--encoding segments..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
-		"for vcf_f in {config.out_dir}*.vcf.gz; do" \
+		"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.vcf.*}};" \
 		"	echo ... $seg_name;" \
 		"	chrm_idx=${{seg_name#*chrm}};" \
 		"	chrm_idx=${{chrm_idx%%.*}};" \
-		#"	echo $chrm_idx $vcf_f {config.data_dir}sample_IDs.txt {config.encoding_file} {config.data_dir}interpolated.map;" \
+		#"	echo $chrm_idx $vcf_f {config.root_dir}sample_IDs.txt {config.encoding_file} {config.root_dir}interpolated.map;" \
 		"	{input.bin} " \
 		"		$chrm_idx " \
 		"		$vcf_f " \
-		"		{config.data_dir}sample_IDs.txt " \
+		"		{config.root_dir}sample_IDs.txt " \
 		"		{config.encoding_file} " \
-		"		{config.data_dir}interpolated.map " \
-		"		{config.out_dir}${{seg_name}}.gt " \
-		"		{config.out_dir}${{seg_name}}.pos " \
-		"		{config.out_dir}${{seg_name}}.af " \
+		"		{config.root_dir}interpolated.map " \
+		"		{config.encodings_dir}${{seg_name}}.gt " \
+		"		{config.encodings_dir}${{seg_name}}.pos " \
+		"		{config.encodings_dir}${{seg_name}}.af " \
 		"		 >> {output.encode_log};" \
 		"done;" \
 
@@ -210,9 +210,9 @@ rule remove_intermediate_files:
 	message:
 		"Removing intermediate files after encoding."
 	conda:
-		"{config.conda_dir}"
+		f"{config.conda_pmed}"
 	shell:
-		"rm {config.data_dir}vcf_bp.txt;" \
+		"rm {config.root_dir}vcf_bp.txt;" \
 		"rm -r {config.out_dir}*.vcf.*;" \
 
 
@@ -226,14 +226,14 @@ rule hap_IDs:
 	message:
 		"Getting haplotype IDs from encoding file..."
 	conda:
-		"{config.conda_dir}"	
+		f"{config.conda_pmed}"	
 	shell:
-		"for enc_f in {config.out_dir}*.gt; do" \
-		"	awk '{{print $1}}' $enc_f > {config.data_dir}sample_hap_IDs.txt;" \
+		"for enc_f in {config.encodings_dir}*.gt; do" \
+		"	awk '{{print $1}}' $enc_f > {config.root_dir}sample_hap_IDs.txt;" \
 		"	break;" \
 		"done;" \
-		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}database_hap_IDs.txt;" \
-		"cp {config.data_dir}sample_hap_IDs.txt {config.data_dir}query_hap_IDs.txt;"
+		"cp {config.root_dir}sample_hap_IDs.txt {config.root_dir}database_hap_IDs.txt;" \
+		"cp {config.root_dir}sample_hap_IDs.txt {config.root_dir}query_hap_IDs.txt;"
 
 # 4.0 run model 
 rule model:
@@ -246,12 +246,12 @@ rule model:
 	message:
 		"Running model to create embedding vectors..."
 	conda:
-		"{config.model_conda_dir}"
+		f"{config.conda_model}"
 	shell:
 		"python {config.model_dir}encode_samples.py" \
         	"	--encoder {config.model_checkpoint}" \
-        	"	--output {config.model_out_dir}" \
-        	"	--files {config.out_dir}*.gt" \
+        	"	--output {config.embeddings_dir}" \
+        	"	--files {config.encodings_dir}*.gt" \
         	"	--batch-size {config.batch_size}" \
         	"	--num-workers {config.n_workers}"
 ## 4.1 build faiss index (l2) for encoding segments (compile)
@@ -265,27 +265,27 @@ rule model:
 #	message:
 #		"Compiling--building faiss l2 indices for all segments..."
 #	conda:
-#		"{config.conda_dir}"	
+#		"{config.conda_pmed}"	
 #	shell:
 #		"g++" \
 #		" {input.faiss_l2_build_cpp}" \
 #		" {input.faiss_utils_cpp}" \
-#		" -I {config.conda_dir}/include/" \
+#		" -I {config.conda_pmed}/include/" \
 #		" -I {config.cpp_include_dir}" \
-#		" -L {config.conda_dir}/lib/" \
+#		" -L {config.conda_pmed}/lib/" \
 #		" -lfaiss" \
 #		" -o {output.bin}"
 ## 4.2 build faiss index (l2) for encoding segments (execute)
 #rule build_l2_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-l2-build",
-#                database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
+#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
 #        output:
 #                faiss_idx_log=f"{config.out_dir}faiss_l2_idx.log"
 #        message:
 #                "Executing--building faiss l2 indices for all segments..."
 #	conda:
-#		"{config.conda_dir}"	
+#		"{config.conda_pmed}"	
 #	shell:
 #		"for enc_f in {config.out_dir}*.gt; do" \
 #                "       filename=$(basename $enc_f);" \
@@ -305,27 +305,27 @@ rule model:
 #        message:
 #                "Compiling--building faiss hnsw indices for all segments..."
 #        conda:
-#                "{config.conda_dir}"
+#                "{config.conda_pmed}"
 #        shell:
 #                "g++" \
 #                " {input.faiss_hnsw_build_cpp}" \
 #                " {input.faiss_utils_cpp}" \
-#                " -I {config.conda_dir}/include/" \
+#                " -I {config.conda_pmed}/include/" \
 #                " -I {config.cpp_include_dir}" \
-#                " -L {config.conda_dir}/lib/" \
+#                " -L {config.conda_pmed}/lib/" \
 #                " -lfaiss" \
 #                " -o {output.bin}"
 ## 4.4 build faiss index (hnsw) for encoding segments (execute)
 #rule build_hnsw_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-hnsw-build",
-#                database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
+#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
 #        output:
 #                faiss_idx_log=f"{config.out_dir}faiss_hnsw_idx.log"
 #        message:
 #                "Executing--building faiss hnsw indices for all segments..."
 #        conda:
-#                "{config.conda_dir}"
+#                "{config.conda_pmed}"
 #        shell:
 #                "for enc_f in {config.out_dir}*.gt; do" \
 #                "       filename=$(basename $enc_f);" \
@@ -345,27 +345,27 @@ rule model:
 #        message:
 #                "Compiling--building faiss ivfpqr indices for all segments..."
 #        conda:
-#                "{config.conda_dir}"
+#                "{config.conda_pmed}"
 #        shell:
 #                "g++" \
 #                " {input.faiss_ivfpqr_build_cpp}" \
 #                " {input.faiss_utils_cpp}" \
-#                " -I {config.conda_dir}/include/" \
+#                " -I {config.conda_pmed}/include/" \
 #                " -I {config.cpp_include_dir}" \
-#                " -L {config.conda_dir}/lib/" \
+#                " -L {config.conda_pmed}/lib/" \
 #                " -lfaiss" \
 #                " -o {output.bin}"
 ## 4.6 build faiss index (ivfpqr) for encoding segments (execute)
 #rule build_ivfpqr_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-ivfpqr-build",
-#                database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt"
+#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt"
 #        output:
 #                faiss_idx_log=f"{config.out_dir}faiss_ivfpqr_idx.log"
 #        message:
 #                "Executing--building faiss ivfpqr indices for all segments..."
 #        conda:
-#                "{config.conda_dir}"
+#                "{config.conda_pmed}"
 #        shell:
 #                "for enc_f in {config.out_dir}*.gt; do" \
 #                "       filename=$(basename $enc_f);" \
@@ -389,28 +389,28 @@ rule model:
 #	message:
 #		"Compiling--searching faiss indices for all segments..."
 #	conda:
-#		"{config.conda_dir}"	
+#		"{config.conda_pmed}"	
 #	shell:
 #		"g++" \
 #		" {input.faiss_l2_search_cpp}" \
 #		" {input.faiss_utils_cpp}" \
-#		" -I {config.conda_dir}/include/" \
+#		" -I {config.conda_pmed}/include/" \
 #		" -I {config.cpp_include_dir}" \
-#		" -L {config.conda_dir}/lib/" \
+#		" -L {config.conda_pmed}/lib/" \
 #		" -lfaiss" \
 #		" -o {output.bin}"
 ## 5.2 search faiss index for encoding segments (execute)
 #rule search_l2_faiss_index_execute:
 #        input:
 #                bin=f"{config.cpp_bin_dir}faiss-search",
-#                database_hap_IDs=f"{config.data_dir}samples_hap_IDs.txt",
-#		query_hap_IDs=f"{config.data_dir}query_hap_IDs.txt",
+#                database_hap_IDs=f"{config.root_dir}samples_hap_IDs.txt",
+#		query_hap_IDs=f"{config.root_dir}query_hap_IDs.txt",
 #        output:
 #                faiss_search_log=f"{config.out_dir}faiss_l2_search.log"
 #        message:
 #                "Executing--searching L2 faiss indices for all segments..."
 #	conda:
-#		"{config.conda_dir}"
+#		"{config.conda_pmed}"
 #	shell:
 #                "for idx_f in {config.out_dir}*.faissl2.idx; do" \
 #                "       filename=$(basename $idx_f);" \
