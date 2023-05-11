@@ -41,7 +41,7 @@ python_dir:
 model_dir:
   pytorch/
 model_checkpoint:
-  /home/sdp/precision-medicine/last.ckpt
+  /scratch/alpine/krsc0813/conv1d-fiji.checkpoints/last.ckpt
 batch_size:
   128
 n_workers:
