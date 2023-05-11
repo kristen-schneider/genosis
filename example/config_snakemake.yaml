@@ -2,6 +2,8 @@ conda_pmed:
   environment.yml
 conda_model:
   pytorch/envs/torch-cpu.yaml
+conda_faiss:
+  faiss_env.yaml
 
 root_dir:
   example/
