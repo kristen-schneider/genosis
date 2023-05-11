@@ -72,6 +72,7 @@ map<int, vector<tuple<int, int>>> make_slice_boundary_map(
         else{
             if (curr_slize_size < slice_size + segment_idx){
                 curr_slize_size = cm;
+		end = bp;
             }
             else{
                 end = bp;

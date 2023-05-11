@@ -14,7 +14,7 @@ vcf_segments_dir:
 encodings_dir:
   example/encodings/
 embeddings_dir:
-  example/embeddings/all_embeddings.txt
+  example/embeddings/embeddings.txt
 faiss_index_dir:
   example/faiss_index/
 
@@ -45,7 +45,7 @@ model_checkpoint:
 batch_size:
   128
 n_workers:
-  4
+  112
 
 k:
   20
