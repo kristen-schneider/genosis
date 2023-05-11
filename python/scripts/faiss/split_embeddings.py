@@ -24,7 +24,7 @@ def read_embedding_file(embeddings_dir, embeddings_all):
             segment = L[1]
             embedding = L[2:]
             # append sample and embedding to segment file
-            segment_file = embeddings_dir + 'segment.' + segment + '.idx'
+            segment_file = embeddings_dir + 'segment.' + segment + '.emb'
             with open(segment_file, 'a') as f:
                 f.write(sample + ' ' + ' '.join(embedding) + '\n')
 

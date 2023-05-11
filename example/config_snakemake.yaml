@@ -14,7 +14,7 @@ vcf_segments_dir:
 encodings_dir:
   example/encodings/
 embeddings_dir:
-  example/embeddings/embeddings.txt
+  example/embeddings/
 faiss_index_dir:
   example/faiss_index/
 
