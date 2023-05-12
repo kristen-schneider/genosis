@@ -8,6 +8,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--idx_dir', type=str)
     parser.add_argument('--emb_dir', type=str)
+    parser.add_argument('--emb_ext', type=str, default='.emb')
     parser.add_argument('--k', type=int, default=20)
     parser.add_argument('--database_samples', type=str)
     parser.add_argument('--query_samples', type=str)
@@ -22,6 +23,7 @@ def main():
     db_samples = args.database_samples
     query_samples = args.query_samples
     out_dir = args.out_dir
+    emb_ext = args.emb_ext
 
     # read query and database samples
     query_samples_list = read_samples(query_samples)
@@ -32,7 +34,7 @@ def main():
         print('Searching index for: {}'.format(seg_idx))
         segment = seg_idx.split('.')[1]
         # get embeddings for segment
-        embedding_file = emb_dir + 'segment.' + segment + '.txt'
+        embedding_file = emb_dir + 'segment.' + segment + emb_ext
         db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
         q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
         # open results file and clear contents

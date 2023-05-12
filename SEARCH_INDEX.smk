@@ -12,11 +12,9 @@ set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
 
-
-
 rule all:
 	input:
-		f"{config.out_dir}faiss_l2_search.log"
+		f"{config.log_dir}faiss_search.log"
 
 # 1.0 search FAISS indices
 rule faiss_build:
