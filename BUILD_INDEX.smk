@@ -82,8 +82,6 @@ rule segment_boundary_file_compile:
 		segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
 	output:
 		bin=f"{config.cpp_bin_dir}segment-boundary"
-	log:
-		segment_boundary_cp_log=f"{config.log_dir}config_boundary_cp.log"
 	message:
 		"Compiling--write segment boundary file..."
 	conda:

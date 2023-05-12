@@ -19,6 +19,8 @@ embeddings_dir:
   example/embeddings/
 faiss_index_dir:
   example/faiss_index/
+faiss_results_dir:
+  example/faiss_results/
 
 vcf_file:
   example/small_example.8.vcf.gz
