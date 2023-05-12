@@ -22,8 +22,8 @@ rule all:
 		f"{config.log_dir}slice.log",
 		f"{config.log_dir}encode.log",
 		f"{config.log_dir}model.log",
-		#f"{config.log_dir}embeddings.log",
-		#f"{config.log_dir}faiss_build.log",
+		f"{config.log_dir}embeddings.log",
+		f"{config.log_dir}faiss_build.log",
 		#f"{config.log_dir}clean.log",
 		#f"{config.log_dir}hap_IDs.log",
 		##f"{config.out_dir}faiss_ivfpqr_idx.log",
@@ -247,42 +247,47 @@ rule model:
 	shell:
 		"python {config.model_dir}encode_samples.py" \
         	"	--encoder {config.model_checkpoint}" \
-        	"	--output {config.embeddings_dir}" \
+        	"	--output {config.embeddings_dir}embeddings.txt" \
         	"	--files {config.encodings_dir}*.gt" \
         	"	--batch-size {config.batch_size}" \
         	"	--num-workers {config.n_workers}"
 
-## 5.0 split all_embeddings.txt into segment embeddings
-#rule split_embeddings:
-#	input:
-#		slice_log=f"{config.log_dir}slice.log",
-#                encode_log=f"{config.log_dir}encode.log",
-#                model_log=f"{config.log_dir}model.log",
-#	log:
-#		embeddings_log=f"{config.log_dir}embeddings.log"
-#	message:
-#		"Splitting full embedding file into segments..."
-#	conda:
-#		f"{config.conda_pmed}"
-#	shell:
-#		"python {config.python_dir}faiss/split_embeddings.py" \
-#		"       --emb_dir {config.embeddings_dir}" \
-#		"	--all_emb {config.embeddings_dir}all_embeddings.txt"
-#
-## 5.1 build FAISS indices
-#rule faiss_build:
-#        input:
-#                slice_log=f"{config.log_dir}slice.log",
-#                encode_log=f"{config.log_dir}encode.log",
-#                model_log=f"{config.log_dir}model.log",
-#		split_embeddings=f"{config.log_dir}embeddings.log"
-#	log:
-#		faiss_build_log=f"{config.log_dir}faiss_build.log"
-#	message:
-#		"FAISS-building indexes..."
-#        conda:
-#		f"{config.conda_pmed}"
-#        shell:
-#		"python {config.python_dir}faiss/build_faiss_index.py" \
-#		"	--emb_dir {config.embeddings_dir}" \
-#		"	--idx_dir {config.faiss_index-dir}"
+# 5.0 split all_embeddings.txt into segment embeddings
+rule split_embeddings:
+	input:
+		slice_log=f"{config.log_dir}slice.log",
+                encode_log=f"{config.log_dir}encode.log",
+                model_log=f"{config.log_dir}model.log",
+	log:
+		embeddings_log=f"{config.log_dir}embeddings.log"
+	benchmark:
+                f"{config.benchmark_dir}split_embeddings.tsv"
+	message:
+		"Splitting full embedding file into segments..."
+	conda:
+		f"{config.conda_pmed}"
+	shell:
+		"python {config.python_dir}faiss/split_embeddings.py" \
+		"       --emb_dir {config.embeddings_dir}" \
+		"	--all_emb {config.embeddings_dir}embeddings.txt"
+
+# 5.1 build FAISS indices
+rule faiss_build:
+        input:
+                slice_log=f"{config.log_dir}slice.log",
+                encode_log=f"{config.log_dir}encode.log",
+                model_log=f"{config.log_dir}model.log",
+		split_embeddings=f"{config.log_dir}embeddings.log"
+	log:
+		faiss_build_log=f"{config.log_dir}faiss_build.log"
+	benchmark:
+		f"{config.benchmark_dir}faiss_index.tsv"
+	message:
+		"FAISS-building indexes..."
+	conda:
+		f"{config.conda_faiss}"
+	shell:
+		"python {config.python_dir}faiss/build_faiss_index.py" \
+		"	--emb_dir {config.embeddings_dir}" \
+		"	--idx_dir {config.faiss_index_dir}" \
+		"	--db_samples {config.database_IDs}"

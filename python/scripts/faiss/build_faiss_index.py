@@ -1,59 +1,80 @@
 import os
+import sys
 import argparse
 import numpy as np
 import faiss
 
 def parse_args():
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--emb_dir', type=str)
-	parser.add_argument('--idx_dir', type=str)
-	return parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--emb_dir', type=str)
+    parser.add_argument('--idx_dir', type=str)
+    parser.add_argument('--db_samples', type=str)
+    parser.add_argument('--emb_ext', type=str, default='.emb')
+    return parser.parse_args()
 
 def main():
-	args = parse_args()
-	emb_dir = args.emb_dir
-	idx_dir = args.idx_dir
-	
-	# for a directory of gt indexes
-	for gt_encoding in os.listdir(emb_dir):
-		if gt_encoding.endswith('.txt'):
-			print('Encoding file: {}'.format(gt_encoding))
-			
-			# read data from file
-			embeddings_numpy = read_embeddings(emb_dir + gt_encoding)
-			
-			# build faiss index for l2 distance and write to file
-			l2_index = build_l2_index(embeddings_numpy)
-			base_name = '.'.join(gt_encoding.split('.')[0:2])
-			l2_index_file = idx_dir + base_name + '.index.l2'
-			faiss.write_index(l2_index, l2_index_file)
-		break
+    args = parse_args()
+    emb_dir = args.emb_dir
+    idx_dir = args.idx_dir
+    db_samples = args.db_samples
+    emb_ext = args.emb_ext
 
-def read_embeddings(emb_file):
-	# return array of embeddings
-	embeddings = []
-	
-	# open embedding file
-	for line in open(emb_file, 'r'):
-		# split line
-		line = line.split(' ')
-		# get segment name
-		sample_hap = line[0]
-		# get segment embedding
-		segment_embedding = np.array([float(i) for i in line[1:]])
-		# append to embeddings
-		embeddings.append((sample_hap, segment_embedding))
+    # read database samples
+    db_samples_list = read_database_samples(db_samples)
 
-	# convert data to numpy array and reshape
-	data_array = np.array([i[1] for i in embeddings])
-	data_array = data_array.reshape(data_array.shape[0], data_array.shape[1])
-	return data_array
+    # for a directory of genotype encodings, build faiss index for l2 distance
+    # only build index for database samples
+    for gt_embedding in os.listdir(emb_dir):
+        # check if file is a genotype encoding (not positional encoding)
+        if gt_embedding.endswith(emb_ext):
+            print('Building index for: {}'.format(gt_embedding))
+            # read data from file
+            gt_embedding_file = emb_dir + gt_embedding
+            embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
+
+            # build faiss index for l2 distance and write to file
+            l2_index = build_l2_index(embeddings_numpy)
+            base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
+            l2_index_file = idx_dir + base_name + '.index.l2'
+            faiss.write_index(l2_index, l2_index_file)
+        # break
+
+def read_database_samples(db_samples):
+    # return list of database samples
+    db_samples_list = []
+    for line in open(db_samples, 'r'):
+        db_samples_list.append(line.strip())
+    return db_samples_list
+
+def read_embeddings(gt_embedding_file, db_samples_list):
+    # return array of embeddings
+    embeddings = []
+
+    # open embedding file
+    for line in open(gt_embedding_file, 'r'):
+        # split line
+        line = line.split(' ')
+        # get segment name
+        sample_hap = line[0].split()[0]
+        sample_ID = sample_hap.split('_')[0]
+        # check if segment is in database
+        if sample_ID not in db_samples_list:
+            continue
+        # get segment embedding
+        segment_embedding = np.array([float(i) for i in line[1:]])
+        # append to embeddings
+        embeddings.append((sample_hap, segment_embedding))
+
+    # convert data to numpy array and reshape
+    data_array = np.array([i[1] for i in embeddings])
+    data_array = data_array.reshape(data_array.shape[0], data_array.shape[1])
+    return data_array
 
 def build_l2_index(data_array):
-	# build faiss index for l2 distance
-	index = faiss.IndexFlatL2(data_array.shape[1])
-	index.add(data_array)
-	return index
+    # build faiss index for l2 distance
+    index = faiss.IndexFlatL2(data_array.shape[1])
+    index.add(data_array)
+    return index
 
 if __name__ == '__main__':
-	main()
+    main()

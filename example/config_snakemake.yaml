@@ -2,6 +2,8 @@ conda_pmed:
   environment.yml
 conda_model:
   pytorch/envs/torch-cpu.yaml
+conda_faiss:
+  faiss_env.yaml
 
 root_dir:
   example/
@@ -14,7 +16,7 @@ vcf_segments_dir:
 encodings_dir:
   example/encodings/
 embeddings_dir:
-  example/embeddings/embeddings.txt
+  example/embeddings/
 faiss_index_dir:
   example/faiss_index/
 
