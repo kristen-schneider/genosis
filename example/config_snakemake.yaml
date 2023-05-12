@@ -1,9 +1,9 @@
 conda_pmed:
-  environment.yml
+  conda_environments/pmed.yaml
 conda_model:
-  pytorch/envs/torch-cpu.yaml
+  conda_environments/torch-cpu.yaml
 conda_faiss:
-  faiss_env.yaml
+  conda_environments/faiss-cpu.yaml
 
 root_dir:
   example/
@@ -21,6 +21,8 @@ faiss_index_dir:
   example/faiss_index/
 faiss_results_dir:
   example/faiss_results/
+compare_dir:
+  example/compare/
 
 vcf_file:
   example/small_example.8.vcf.gz
