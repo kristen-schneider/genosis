@@ -48,11 +48,11 @@ def main():
             # search faiss index
             D, I = search_faiss_index(idx_dir + seg_idx, query_sample_embedding_0, k)
             # write results to file
-            write_results(results_file, query_sample, db_embeddings_dict, D, I)
+            write_results(results_file, query_sample+'_0', db_embeddings_dict, D, I)
             # search faiss index
             D, I = search_faiss_index(idx_dir + seg_idx, query_sample_embedding_1, k)
             # write results to file
-            write_results(results_file, query_sample, db_embeddings_dict, D, I)
+            write_results(results_file, query_sample+'_1', db_embeddings_dict, D, I)
 
 def search_faiss_index(index_file, query_sample_embedding, k):
     # read faiss index
