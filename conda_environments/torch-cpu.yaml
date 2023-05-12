@@ -1,0 +1,19 @@
+name: torch-cpu
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - pytorch
+  - torchvision
+  - torchaudio
+  - torchmetrics
+  - cpuonly
+  - pytorch-lightning
+  - numpy
+  - pip
+  - pip:
+    - transformers
+    - wandb
+    - mmap-ninja
+
