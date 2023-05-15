@@ -24,10 +24,6 @@ rule all:
 		f"{config.log_dir}model.log",
 		f"{config.log_dir}embeddings.log",
 		f"{config.log_dir}faiss_build.log",
-		#f"{config.log_dir}clean.log",
-		#f"{config.log_dir}hap_IDs.log",
-		##f"{config.out_dir}faiss_ivfpqr_idx.log",
-		#f"{config.out_dir}faiss_l2_search.log"
 
 # 0.1 create a file with all sample IDs
 rule get_sample_IDs:

@@ -7,7 +7,7 @@ def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--vcf')
     parser.add_argument('--map')
-    parser.add_argumnet('--out')
+    parser.add_argument('--out')
     return parser.parse_args()
 
 def main():
