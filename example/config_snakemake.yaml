@@ -34,6 +34,8 @@ query_IDs:
   example/query_IDs.txt
 encoding_file:
   encoding.txt
+ilash_config:
+  example/iLASH-example.config
 
 cpp_bin_dir:
   cpp/bin/

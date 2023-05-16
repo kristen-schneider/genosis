@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 #from IPython.display import display
 import phasedibd as ibd
@@ -21,7 +22,7 @@ def main():
     haplotypes = ibd.VcfHaplotypeAlignment(args.vcf, args.map)
     tpbwt = ibd.TPBWTAnalysis()
     ibd_results = tpbwt.compute_ibd(haplotypes)
-    display(ibd_results)
+    #display(ibd_results)
     ibd_results.to_csv(args.out, sep='\t')
 
 if __name__ == '__main__':
