@@ -36,6 +36,7 @@ rule slice_VCF:
 	conda:
 		f"{config.conda_pmed}"	
 	shell:
+		"test ! -d {config.vcf_segments_dir} && mkdir {config.vcf_segments_dir};" \
 		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
 		"while IFs= read -r chrm segment start_bp end_bp; do" \
 		"	echo slicing segment ${{segment}} >> {log.slice_log};" \
@@ -85,14 +86,13 @@ rule encode_execute:
 	conda:
 		f"{config.conda_pmed}"	
 	shell:
+		"test ! -d {config.encodings_dir} && mkdir {config.encodings_dir};" \
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
 		"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
 		"	filename=$(basename $vcf_f);" \
 		"	seg_name=${{filename%.vcf.*}};" \
-		"	echo ... $seg_name;" \
 		"	chrm_idx=${{seg_name#*chrm}};" \
 		"	chrm_idx=${{chrm_idx%%.*}};" \
-		#"	echo $chrm_idx $vcf_f {config.root_dir}sample_IDs.txt {config.encoding_file} {config.root_dir}interpolated.map;" \
 		"	{input.bin} " \
 		"		$chrm_idx " \
 		"		$vcf_f " \
@@ -153,6 +153,7 @@ rule model:
 	conda:
 		f"{config.conda_model}"
 	shell:
+		"test ! -d {config.embeddings_dir} && mkdir {config.embeddings_dir};" \
 		"python {config.model_dir}encode_samples.py" \
         	"	--encoder {config.model_checkpoint}" \
         	"	--output {config.embeddings_dir}embeddings.txt" \
@@ -195,6 +196,7 @@ rule faiss_build:
 	conda:
 		f"{config.conda_faiss}"
 	shell:
+		"test ! -d {config.faiss_index_dir} && mkdir {config.faiss_index_dir};" \
 		"python {config.python_dir}faiss/build_faiss_index.py" \
 		"	--emb_dir {config.embeddings_dir}" \
 		"	--idx_dir {config.faiss_index_dir}" \

@@ -33,6 +33,7 @@ rule faiss_build:
 	conda:
 		f"{config.conda_faiss}"
 	shell:
+		"test ! -d {config.faiss_results_dir} && mkdir {config.faiss_results_dir};" \
 		"python {config.python_dir}faiss/search_faiss_index.py" \
 		"	--idx_dir {config.faiss_index_dir}" \
 		"	--emb_dir {config.embeddings_dir}" \
