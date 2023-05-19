@@ -49,7 +49,11 @@ python_dir:
 model_dir:
   pytorch/
 model_checkpoint:
+<<<<<<< HEAD
   /scratch/alpine/krsc0813/conv1d-fiji.checkpoints/last.ckpt
+=======
+  conv1d-fiji.checkpoints/last.ckpt
+>>>>>>> ae3c49eea201c690bddabd320b3783d0ec8215bc
 batch_size:
   128
 n_workers:
