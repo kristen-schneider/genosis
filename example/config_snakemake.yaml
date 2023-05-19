@@ -1,7 +1,7 @@
 conda_pmed:
   conda_environments/pmed.yaml
 conda_model:
-  conda_environments/torch-cpu.yaml
+  conda_environments/torch-gpu.yaml
 conda_faiss:
   conda_environments/faiss-cpu.yaml
 
@@ -53,7 +53,7 @@ model_checkpoint:
 batch_size:
   128
 n_workers:
-  112
+  64
 
 k:
   20
