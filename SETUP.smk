@@ -16,9 +16,22 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 
 rule all:
 	input:
+		f"{config.log_dir}setup.log",
 		f"{config.log_dir}sample_IDs.log",
 		f"{config.log_dir}interpolated.log",
                 f"{config.log_dir}segment_boundary.log",
+
+# 0 setup log and benchmark dir
+rule setup_log_benchmark:
+	log:
+		f"{config.log_dir}setup.log"	
+	conda:
+		f"{config.conda_pmed}"
+	message:
+		"Setting up log and benchmark directories..."
+	shell:
+		"test ! -d {config.log_dir} && mkdir {config.log_dir}" \
+		"test ! -d {config.benchmark_dir} && mkdir {config.benchmark_dir}" \
 
 # 1 create a file with all sample IDs
 rule get_sample_IDs:
