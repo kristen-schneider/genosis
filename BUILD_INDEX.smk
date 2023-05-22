@@ -1,17 +1,11 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
 #configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
-<<<<<<< HEAD
 configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
-=======
-#configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
-configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
 
->>>>>>> ae3c49eea201c690bddabd320b3783d0ec8215bc
 config = SimpleNamespace(**config)
 
 LD_LIBRARY_PATH = f"{config.conda_pmed}/lib"
@@ -154,8 +148,8 @@ rule model:
 		encode_log=f"{config.log_dir}encode.log"
 	log:
 		model_log=f"{config.log_dir}model.log"
-	benchmark:
-        	f"{config.benchmark_dir}model.tsv"
+	#benchmark:
+        #	f"{config.benchmark_dir}model.tsv"
 	message:
 		"Running model to create embedding vectors..."
 	conda:
@@ -166,7 +160,8 @@ rule model:
 		"python {config.model_dir}encode_samples.py" \
         	"	--encoder {config.model_checkpoint}" \
         	"	--output {config.embeddings_dir}embeddings.txt" \
-        	"	--files {config.encodings_dir}*.gt" \
+		#"	--gpu" \
+        	"	--files {config.encodings_dir}*.pos" \
         	"	--batch-size {config.batch_size}" \
         	"	--num-workers {config.n_workers}"
 
