@@ -78,8 +78,10 @@ map<int, vector<tuple<int, float>>> make_chr_cm_map(string map_file){
 
         if (curr_chrom == 0){
             curr_chrom = chrm;
+            cout << "chrom: " << chrm << endl;
         }
         if (chrm != curr_chrom){
+            cout << "chrom: " << chrm << endl;
             // add bp_cm_map to chrm_cm_map
             chrm_cm_map[curr_chrom] = bp_cm_vectors;
             // reset bp_cm_vectors
@@ -115,50 +117,72 @@ void interpolate_map(
         int map_bp_idx = 0;
         int curr_pos = -1;
         int map_file_bp = -1;
+        
         // iterate through each basepair in the chromosome
         // convert chr.first ("chr8") to "8"
-        int curr_chrm_int = stoi(chr.first.substr(3, chr.first.length()));for (auto const &bp: chr.second) {
+        int curr_chrm_int = stoi(chr.first.substr(3, chr.first.length()));
+        // get curr chrm map
+        vector<tuple<int, float>> curr_chrm_map = chrm_cm_map[curr_chrm_int];
+        
+        // debug print
+        cout << chr.first << " -> " << curr_chrm_int << endl;
+        cout << chr_bp_map[chr.first].size() << endl;
+        // debug print
+
+        for (auto const &bp: chr.second) {
             // while we are still in the current chromosome
             while (vcf_bp_idx < chr_bp_map[chr.first].size()) {
                 curr_pos = chr_bp_map[chr.first][vcf_bp_idx];
                 // get cm position from map file
-                // get curr chrm map
-                vector<tuple<int, float>> curr_chrm_map = chrm_cm_map[curr_chrm_int];
+                //// get curr chrm map
+                //vector<tuple<int, float>> curr_chrm_map = chrm_cm_map[curr_chrm_int];
                 // get current bp position from map file at map_bp_idx
                 map_file_bp = get<0>(curr_chrm_map[map_bp_idx]);
+                
+                //cout << "chrm: " << curr_chrm_int << " curr_pos: " << curr_pos << " map file bp: " << map_file_bp << " map_bp_idx: " << map_bp_idx << " vcf_bp_idx: " << vcf_bp_idx << " size map: " << chrm_cm_map[curr_chrm_int].size() << endl;
+                
                 // if there is a bp entry in the map file
                 if (curr_pos == map_file_bp) {
                     // the site has been mapped in reference, write to file
                     // chrm cm bp
                     interpolated_map << curr_chrm_int << " " << get<1>(curr_chrm_map[map_bp_idx]) << " "  << curr_pos << endl;
+                    // move to next bp in vcf
                     vcf_bp_idx++;
-                    map_bp_idx++;
-                // if the current bp is greater than the current map bp
+                    // if this is NOT the last bp entry in the map file
+                    // move to next bp in map
+                    if (map_bp_idx < chrm_cm_map[curr_chrm_int].size() - 1){
+                        map_bp_idx++;
+                    }
                 }
                 // if the current bp is less than the current map bp
                 else if (curr_pos < map_file_bp) {
-                    // the site has not been mapped in reference, write to file
+                    // if the current bp is less than the first bp in the map file
+                    // write the first cm pos that appears in the map file
+                    // write format: chrm cm bp
                     if (map_bp_idx == 0) {
-                        // if the current bp is less than the first bp in the map file
-                        // chrm cm bp
                         interpolated_map << curr_chrm_int << " " << get<1>(curr_chrm_map[map_bp_idx]) << " "  << curr_pos << endl;
-                    } else {
-                        // if the current bp is between two bp in the map file, interpolate
-                        // get the previous bp and cm from the map file
+                    }
+                    // if the current bp is between two bp in the map file, interpolate
+                    // get the previous bp and cm from the map file
+                    else {
                         int prev_map_bp = get<0>(curr_chrm_map[map_bp_idx - 1]);
                         float prev_map_cm = get<1>(curr_chrm_map[map_bp_idx - 1]);
                         // iterpolate
                         float frac = (float) (curr_pos - prev_map_bp) / (float) (map_file_bp - prev_map_bp);
                         float tmp_cm = prev_map_cm + frac * (get<1>(curr_chrm_map[map_bp_idx]) - prev_map_cm);
-                        // chrm cm bp
+                        // write format: chrm cm bp
                         interpolated_map << curr_chrm_int << " " << tmp_cm << " " << curr_pos << endl;
                     }
+                    // move to next bp in vcf
                     vcf_bp_idx++;
-                } else if (curr_pos > map_file_bp) {
-                    // if the current bp is greater than the current map bp
+                }
+                // if current bp is greater than the current map bp   
+                else if (curr_pos > map_file_bp) {
+                    // if the current bp is the last bp in the map file
                     if (map_bp_idx == chrm_cm_map[curr_chrm_int].size() - 1) {
-                        // if the current bp is greater than the last bp in the map file
-                        // chrm cm bp
+                        //cout << chrm_cm_map[curr_chrm_int].size() << endl;
+                        // write the last cm in the map file
+                        // write format: chrm cm bp
                         interpolated_map << curr_chrm_int << " " << get<1>(curr_chrm_map[map_bp_idx]) << " "  << curr_pos << endl;
                         vcf_bp_idx++;
                     } else {
