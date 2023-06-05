@@ -29,8 +29,7 @@ void encode_vectors(int chrm_idx,
 		map<string, vector<int>> encoding_map, 
 		map<int, map<int, float>> bp_cm_map,
 		string output_gt_file,
-		string output_pos_file, 
-		string output_af_file){
+		string output_pos_file){
 	
 
 	// converts vcfFile name to const char for htslib
