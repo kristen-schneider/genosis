@@ -5,10 +5,7 @@ configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-<<<<<<< HEAD
-=======
-configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
->>>>>>> 6ed36291e3eeee1d0105ad74339c4e7aabfb98cf
+#configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
 
 config = SimpleNamespace(**config)
 
@@ -37,12 +34,13 @@ rule setup_log_benchmark:
 	message:
 		"Setting up log and benchmark directories..."
 	shell:
-		"test ! -d {config.log_dir} && mkdir {config.log_dir}" \
-		"test ! -d {config.benchmark_dir} && mkdir {config.benchmark_dir}" \
+		"test ! -d {config.log_dir} && mkdir {config.log_dir};" \
+		"test ! -d {config.benchmark_dir} && mkdir {config.benchmark_dir};"
 
 # 1 create a file with all sample IDs
 rule get_sample_IDs:
 	input:
+		setup_log=f"{config.log_dir}setup.log",
 		vcf_file=f"{config.vcf_file}"
 	output:
 		sample_IDs=f"{config.root_dir}sample_IDs.txt"
@@ -61,23 +59,25 @@ rule get_sample_IDs:
 
 # 2 vcf basepairs
 rule vcf_bp:
-    input:
-        vcf_file=f"{config.vcf_file}"
-    output:
-        vcf_bp=f"{config.root_dir}vcf_bp.txt"
-    log:
-        vcf_bp_log=f"{config.log_dir}vcf_bp.log"
-    benchmark:
-        f"{config.benchmark_dir}vcf_bp.tsv"
-    conda:
-        f"{config.conda_pmed}"
-    shell:
-        "bcftools query -f '%CHROM %POS\n' {input.vcf_file} > {output.vcf_bp};"
+	input:
+		setup_log=f"{config.log_dir}setup.log",
+        	vcf_file=f"{config.vcf_file}"
+	output:
+        	vcf_bp=f"{config.root_dir}vcf_bp.txt"
+	log:
+		vcf_bp_log=f"{config.log_dir}vcf_bp.log"
+	benchmark:
+		f"{config.benchmark_dir}vcf_bp.tsv"
+	conda:
+		f"{config.conda_pmed}"
+	shell:
+		"bcftools query -f '%CHROM %POS\n' {input.vcf_file} > {output.vcf_bp};"
 
 # 3 interpolate map
 # one cm for every bp in 1kg
 rule interpolate_map:
 	input:
+		setup_log=f"{config.log_dir}setup.log",
                 vcf_bp=f"{config.root_dir}vcf_bp.txt",
 		ref_map=f"{config.ref_map}",
 		interpolate_map_cpp=f"{config.cpp_src_dir}interpolate_map.cpp",
@@ -103,6 +103,7 @@ rule interpolate_map:
 rule segment_boundary_file_compile:
 	input:
 		#interpolated_map=f"{config.root_dir}interpolated.map",
+		setup_log=f"{config.log_dir}setup.log",
 		interpolated_log=f"{config.log_dir}interpolated.log",
                 segment_boundary_map_cpp=f"{config.cpp_src_dir}segment_boundary_map.cpp",
 	output:
@@ -123,6 +124,7 @@ rule segment_boundary_file_compile:
 rule segment_boundary_file_execute:
 	input:
 		#interpolated_map=f"{config.root_dir}interpolated.map",
+		f"{config.log_dir}setup.log",
 		bin=f"{config.cpp_bin_dir}segment-boundary"
 	output:
 		segment_boundary_file=f"{config.root_dir}segment_boundary.map"
