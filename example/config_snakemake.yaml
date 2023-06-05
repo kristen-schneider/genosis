@@ -25,9 +25,9 @@ compare_dir:
   example/compare/
 
 vcf_file:
-  example/small_example.8.vcf.gz
+  example/example_merge.vcf.gz
 ref_map:
-  example/small_example.8.map  
+  example/example_merge.map 
 database_IDs:
   example/database_IDs.txt
 query_IDs:

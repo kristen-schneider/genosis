@@ -1,10 +1,10 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
+configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
-configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
 
 config = SimpleNamespace(**config)
 
