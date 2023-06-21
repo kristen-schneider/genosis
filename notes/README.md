@@ -47,6 +47,11 @@ tabix -p vcf small_vcf.vcf
 bcftools concat vcf1.vcf.gz vcf2.vcf.gz vcf3.vcf.gz > out.vcf
 ```
 
+# iLASH MAP
+```
+paste <(awk '{print $1 $2}' 1kG-chrm8.map) <(awk '{print $2}' interpolated.map) <(awk '{print $4}' 1kG-chrm8.map) > ilash-chrm8.map
+```
+
 # CONDA/MAMBA 
 ```
 mamba create -n pmed -c bioconda -c conda-forge -c pytorch -c defaults bcftools boost bzip2 faiss-cpu gxx htslib make numpy plink plink2 pysam python snakemake vcftools
