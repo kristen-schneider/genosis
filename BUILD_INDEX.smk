@@ -15,7 +15,9 @@ set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
 
-vcf_segments_txt = [line.strip() for line in open(config.vcf_segments_txt)]
+#vcf_segments_txt = [line.strip() for line in open(config.vcf_segments_txt)]
+SEGMENTS = glob_wildcards(f"{config.vcf_segments_dir}""{segment}.vcf.gz")
+print("Segments are: ", SEGMENTS)
 
 
 rule all:
@@ -94,8 +96,9 @@ rule encode_compile:
 rule encode_execute:
 	input:
 		slice_log=f"{config.log_dir}slice.log",
-		bin=f"{config.cpp_bin_dir}encode",
-		vcf_segments_list=expand("{vcf_segments_txt}", vcf_segments_txt=config.vcf_segments_txt)
+		bin=f"{config.cpp_bin_dir}encode"
+		#vcf_segments=f"{config.vcf_segments_dir}{segment}.vcf.gz"
+		#vcf_segments_list=expand("{vcf_segments_txt}", vcf_segments_txt=config.vcf_segments_txt)
 		#vcf_segments=expand("{input_vcf_segments}/*.gz", input_vcf_segments=config.vcf_segments_dir)
 	output:
 		encode_log=f"{config.log_dir}encode.log"
@@ -108,7 +111,12 @@ rule encode_execute:
 	shell:
 		"test ! -d {config.encodings_dir} && mkdir {config.encodings_dir};" \
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
-		"{input.bin} {input.vcf_segments_list} {config.root_dir}sample_IDs.txt {config.encoding_file} {config.root_dir}interpolated.map {config.encodings_dir} >> {output.encode_log};"
+		"{input.bin}" \
+		"	{SEGMENTS}" \
+		"	{config.root_dir}sample_IDs.txt" \
+		"	{config.encoding_file}" \
+		"	{config.root_dir}interpolated.map" \
+		"	{config.encodings_dir} >> {output.encode_log};"
 		#"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
 		#"	{input.bin} " \
 		#"		$vcf_f " \
