@@ -111,21 +111,21 @@ rule encode_execute:
 	shell:
 		"test ! -d {config.encodings_dir} && mkdir {config.encodings_dir};" \
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
-		"{input.bin}" \
-		"	{SEGMENTS}" \
-		"	{config.root_dir}sample_IDs.txt" \
-		"	{config.encoding_file}" \
-		"	{config.root_dir}interpolated.map" \
-		"	{config.encodings_dir} >> {output.encode_log};"
-		#"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
-		#"	{input.bin} " \
-		#"		$vcf_f " \
-		#"		{config.root_dir}sample_IDs.txt " \
-		#"		{config.encoding_file} " \
-		#"		{config.root_dir}interpolated.map " \
-		#"		{config.encodings_dir} " \
-		#"		 >> {output.encode_log};" \
-		#"done;" \
+		#"{input.bin}" \
+		#"	{SEGMENTS}" \
+		#"	{config.root_dir}sample_IDs.txt" \
+		#"	{config.encoding_file}" \
+		#"	{config.root_dir}interpolated.map" \
+		#"	{config.encodings_dir} >> {output.encode_log};"
+		"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
+		"	{input.bin} " \
+		"		$vcf_f " \
+		"		{config.root_dir}sample_IDs.txt " \
+		"		{config.encoding_file} " \
+		"		{config.root_dir}interpolated.map " \
+		"		{config.encodings_dir} " \
+		"		 >> {output.encode_log};" \
+		"done;" \
 
 # 3.0 remove intermediate files
 rule remove_intermediate_files:
