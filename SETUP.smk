@@ -4,8 +4,8 @@ from types import SimpleNamespace
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
-configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
+configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
 
 config = SimpleNamespace(**config)
 
@@ -155,10 +155,13 @@ rule slice_VCF:
     shell:
         "test ! -d {config.vcf_segments_dir} && mkdir {config.vcf_segments_dir};" \
         "echo 1. ---SLICING VCF INTO SEGMENTS---;" \
+        "while IFs= read -r chrm segment start_bp end_bp; do" \
+        " echo segment ${{segment}} >> {log.slice_log};" \
+        " bcftools view -h {input.vcf_file} > {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
+        " tabix {input.vcf_file} chr${{chrm}}:${{start_bp}}-${{end_bp}} >> {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
+        " bgzip {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
+        " tabix -p vcf {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf.gz;" \
+        " done < {input.segment_boundary_file};"
         #"while IFs= read -r chrm segment start_bp end_bp; do" \
-        #"       echo slicing segment ${{segment}} >> {log.slice_log};" \
-        #"       bcftools view -h {input.vcf_file} > {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
-        #"       tabix {input.vcf_file} chr${{chrm}}:${{start_bp}}-${{end_bp}} >> {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
-        #"       bgzip {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf;" \
-        #"       tabix -p vcf {config.vcf_segments_dir}chrm${{chrm}}.segment${{segment}}.vcf.gz;" \
+        #"   echo slicing segment ${{segment}} >> {log.slice_log};" \
         #" done < {input.segment_boundary_file};" \
