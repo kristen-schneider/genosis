@@ -1,10 +1,10 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
+#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
-#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
+configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
 
 config = SimpleNamespace(**config)
@@ -16,32 +16,48 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
 
 #vcf_segments_txt = [line.strip() for line in open(config.vcf_segments_txt)]
-SEGMENTS = glob_wildcards(f"{config.vcf_segments_dir}""{segment}.vcf.gz")
-print("Segments are: ", SEGMENTS)
+#SEGMENTS = glob_wildcards(f"{config.vcf_segments_dir}""{segment}.vcf.gz")
+#print("Segments are: ", SEGMENTS)
+
+import glob
+from os.path import basename
+
+vcf_dir=f"{config.vcf_segments_dir}"
+vcf_segments=glob.glob(vcf_dir + "*.vcf.gz")
+vcf_segments=list(map(basename, vcf_segments))
+vcf_segments=[".".join(v.split('.')[:-2]) for v in vcf_segments]
+assert len(vcf_segments) > 0, "no vcf segments.."
+print(list(vcf_segments))
+
+
 
 
 rule all:
 	input:
 		f"{config.log_dir}slice.log",
 		f"{config.vcf_segments_dir}vcf_segments.txt",
-		f"{config.log_dir}encode.log",
+		#f"{config.log_dir}encode.log",
+                expand(f"{config.encodings_dir}{{segment}}.gt", segment=vcf_segments),
+                expand(f"{config.encodings_dir}{{segment}}.pos", segment=vcf_segments),
 		#f"{config.log_dir}model.log",
 		#f"{config.log_dir}embeddings.log",
 		#f"{config.log_dir}faiss_build.log",
 
 # 1 slice VCF into segments
 rule slice_VCF:
-	input:
-		vcf_file=f"{config.vcf_file}",
-		segment_boundary_file=f"{config.root_dir}segment_boundary.map",
-	log:
-		slice_log=f"{config.log_dir}slice.log"
-	benchmark:
-		f"{config.benchmark_dir}slice.tsv"
-	message:
-		"Slicing VCF into segments..."
+        input:
+                vcf_file=f"{config.vcf_file}",
+                segment_boundary_file=f"{config.root_dir}segment_boundary.map"
+        output:
+                vcf_segments=expand(f"{config.vcf_segments_dir}{{segment}}.vcf.gz", segment=vcf_segments)
+        log:
+                slice_log=f"{config.log_dir}slice.log"
+        benchmark:
+                f"{config.benchmark_dir}slice.tsv"
+        message:
+                "Slicing VCF into segments..."
 	conda:
-		f"{config.conda_pmed}"	
+                f"{config.conda_pmed}"	
 	shell:
 		"test ! -d {config.vcf_segments_dir} && mkdir {config.vcf_segments_dir};" \
 		"echo 1. ---SLICING VCF INTO SEGMENTS---;" \
@@ -96,12 +112,14 @@ rule encode_compile:
 rule encode_execute:
 	input:
 		slice_log=f"{config.log_dir}slice.log",
-		bin=f"{config.cpp_bin_dir}encode"
-		#vcf_segments=f"{config.vcf_segments_dir}{segment}.vcf.gz"
+		bin=f"{config.cpp_bin_dir}encode",
+		vcf_segments=f"{config.vcf_segments_dir}{{segment}}.vcf.gz"
 		#vcf_segments_list=expand("{vcf_segments_txt}", vcf_segments_txt=config.vcf_segments_txt)
 		#vcf_segments=expand("{input_vcf_segments}/*.gz", input_vcf_segments=config.vcf_segments_dir)
 	output:
-		encode_log=f"{config.log_dir}encode.log"
+                encoding_gt=f"{config.encodings_dir}{{segment}}.gt",
+                encoding_pos=f"{config.encodings_dir}{{segment}}.pos",
+		#encode_log=f"{config.log_dir}encode.log"
 	benchmark:
         	f"{config.benchmark_dir}encode.tsv"
 	message:
@@ -111,21 +129,21 @@ rule encode_execute:
 	shell:
 		"test ! -d {config.encodings_dir} && mkdir {config.encodings_dir};" \
 		"echo 2. ---ENCODING VCF SEGMENTS---;" \
-		#"{input.bin}" \
-		#"	{SEGMENTS}" \
-		#"	{config.root_dir}sample_IDs.txt" \
-		#"	{config.encoding_file}" \
-		#"	{config.root_dir}interpolated.map" \
-		#"	{config.encodings_dir} >> {output.encode_log};"
-		"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
-		"	{input.bin} " \
-		"		$vcf_f " \
-		"		{config.root_dir}sample_IDs.txt " \
-		"		{config.encoding_file} " \
-		"		{config.root_dir}interpolated.map " \
-		"		{config.encodings_dir} " \
-		"		 >> {output.encode_log};" \
-		"done;" \
+		"{input.bin}" \
+		"	{input.vcf_segments}" \
+		"	{config.root_dir}sample_IDs.txt" \
+		"	{config.encoding_file}" \
+		"	{config.root_dir}interpolated.map" \
+		"	{config.encodings_dir};"
+		#"for vcf_f in {config.vcf_segments_dir}*.vcf.gz; do" \
+		#"	{input.bin} " \
+		#"		$vcf_f " \
+		#"		{config.root_dir}sample_IDs.txt " \
+		#"		{config.encoding_file} " \
+		#"		{config.root_dir}interpolated.map " \
+		#"		{config.encodings_dir} "
+		#"		 >> {output.encode_log};" \
+		#"done;" \
 
 # 3.0 remove intermediate files
 rule remove_intermediate_files:
