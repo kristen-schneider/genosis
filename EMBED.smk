@@ -30,7 +30,7 @@ rule all:
         f"{config.log_dir}zeros.log",
         f"{config.root_dir}sample_hap_IDs.txt",
         f"{config.log_dir}model.log",
-	#f"{config.log_dir}faiss_build.log",
+        f"{config.log_dir}embeddings.log"
 
 # 0.0 remove encodings with empty entries
 rule remove_empty_encodings:
@@ -41,7 +41,7 @@ rule remove_empty_encodings:
     conda:
         f"{config.conda_pmed}"
     shell:
-        "python {config.python_dir} check_pos_encodigs.py" \
+        "python {config.python_dir}check_pos_encodigs.py" \
         " --pos_dir {config.encodings_dir}" \
         " --pos_ext pos;" \
         "touch {config.log_dir}zeros.log;"
@@ -74,13 +74,14 @@ rule hap_IDs:
 
 # 4 run model 
 rule model:
-    #input:
+    input:
+        f"{config.log_dir}zeros.log"
     #    encoding_pos=f"{config.encodings_dir}{{segment}}.pos"	
     #    #encode_log=f"{config.log_dir}encode.log"
-    output:
-        embedding_log=f"{config.log_dir}model.log"
-    #log:
-    #    model_log=f"{config.log_dir}model.log"
+    #output:
+    #    embedding_log=f"{config.log_dir}model.log"
+    log:
+        model_log=f"{config.log_dir}model.log"
     #benchmark:
     #	f"{config.benchmark_dir}model.tsv"
     message:
@@ -92,28 +93,26 @@ rule model:
         "test ! -d {config.embeddings_dir} && mkdir {config.embeddings_dir};" \
 	"python {config.model_dir}encode_samples.py" \
     	"	--encoder {config.model_checkpoint}" \
-    	"	--output {config.embeddings_dir}embeddings.txt" \
+    	"	--output {config.embeddings_dir}chrm10.embeddings.txt" \
 	"	--gpu" \
         "	--files {config.encodings_dir}*.pos" \
         "	--batch-size {config.batch_size}" \
         "	--num-workers {config.n_workers}"
 
-## 5.0 split all_embeddings.txt into segment embeddings
-#rule split_embeddings:
-#	input:
-#		slice_log=f"{config.log_dir}slice.log",
-#                encode_log=f"{config.log_dir}encode.log",
-#                model_log=f"{config.log_dir}model.log",
-#	log:
-#		embeddings_log=f"{config.log_dir}embeddings.log"
-#	benchmark:
-#                f"{config.benchmark_dir}split_embeddings.tsv"
-#	message:
-#		"Splitting full embedding file into segments..."
-#	conda:
-#		f"{config.conda_pmed}"
-#	shell:
-#		"python {config.python_dir}split_embeddings.py" \
-#		"       --emb_dir {config.embeddings_dir}" \
-#		"	--all_emb {config.embeddings_dir}embeddings.txt"
-#
+# 5.0 split all_embeddings.txt into segment embeddings
+rule split_embeddings:
+	input:
+                model_log=f"{config.log_dir}model.log",
+	log:
+		embeddings_log=f"{config.log_dir}embeddings.log"
+	benchmark:
+                f"{config.benchmark_dir}split_embeddings.tsv"
+	message:
+		"Splitting full embedding file into segments..."
+	conda:
+		f"{config.conda_pmed}"
+	shell:
+		"python {config.python_dir}split_embeddings.py" \
+		"       --emb_dir {config.embeddings_dir}" \
+		"	--all_emb {config.embeddings_dir}chrm10.embeddings.txt"
+
