@@ -15,29 +15,34 @@ set -euo pipefail;
 export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 """.format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
 
+import glob
+from os.path import basename
+
+emb_dir=f"{config.embeddings_dir}"
+emb_segments=glob.glob(emb_dir + "*.emb")
+emb_segments=list(map(basename, emb_segments))
+emb_segments=[".".join(e.split('.')[:-1]) for e in emb_segments]
+assert len(emb_segments) > 0, "no embeddings.."
+
 rule all:
     input:
-	f"{config.log_dir}faiss_build.log",
+        expand(f"{config.faiss_index_dir}{{segment}}.idx", segment=emb_segments),
+	#f"{config.log_dir}faiss_build.log",
 
-## 5.1 build FAISS indices
-#rule faiss_build:
-#        input:
-#                slice_log=f"{config.log_dir}slice.log",
-#                encode_log=f"{config.log_dir}encode.log",
-#                model_log=f"{config.log_dir}model.log",
-#		split_embeddings=f"{config.log_dir}embeddings.log"
-#	log:
-#		faiss_build_log=f"{config.log_dir}faiss_build.log"
-#	benchmark:
-#		f"{config.benchmark_dir}faiss_index.tsv"
-#	message:
-#		"FAISS-building indexes..."
-#	conda:
-#		f"{config.conda_faiss}"
-#	shell:
-#		"echo 4. ---CREATING FAISS INDEX---;" \
-#		"test ! -d {config.faiss_index_dir} && mkdir {config.faiss_index_dir};" \
-#		"python {config.python_dir}faiss/build_faiss_index.py" \
-#		"	--emb_dir {config.embeddings_dir}" \
-#		"	--idx_dir {config.faiss_index_dir}" \
-#		"	--db_samples {config.database_IDs}"
+# 5.1 build FAISS indices
+rule faiss_build:
+    input:
+        emb_segments=f"{config.embeddings_dir}{{segment}}.emb"
+    output:
+        idx_segments=f"{config.faiss_index_dir}{{segment}}.idx"
+    message:
+        "FAISS-building indexes..."
+    conda:
+        f"{config.conda_faiss}"
+    shell:
+        "echo 4. ---CREATING FAISS INDEX---;" \
+        "test ! -d {config.faiss_index_dir} && mkdir {config.faiss_index_dir};" \
+        "python {config.python_dir}faiss/build_faiss_index.py" \
+        " --emb {input.emb_segments}" \
+        " --idx_dir {config.faiss_index_dir}" \
+        " --db_samples {config.database_IDs}"
