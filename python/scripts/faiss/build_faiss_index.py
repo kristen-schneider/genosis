@@ -1,4 +1,5 @@
 import os
+from os.path import basename
 import sys
 import argparse
 import numpy as np
@@ -24,13 +25,14 @@ def main():
 
     print('Building index for: {}'.format(emb))
     # read data from file
-    gt_embedding_file = emb_dir + emb
+    gt_embedding_file = emb
     embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
 
     # build faiss index for l2 distance and write to file
     l2_index = build_l2_index(embeddings_numpy)
-    base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
-    l2_index_file = idx_dir + base_name + '.index.l2'
+    #base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
+    base_name = '.'.join(basename(emb).split('.')[0:2])
+    l2_index_file = idx_dir + base_name + '.idx'
     faiss.write_index(l2_index, l2_index_file)
 
 def read_database_samples(db_samples):
