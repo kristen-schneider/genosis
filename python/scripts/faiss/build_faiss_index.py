@@ -6,38 +6,32 @@ import faiss
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--emb_dir', type=str)
+    parser.add_argument('--emb', type=str)
     parser.add_argument('--idx_dir', type=str)
     parser.add_argument('--db_samples', type=str)
-    parser.add_argument('--emb_ext', type=str, default='.emb')
+    #parser.add_argument('--emb_ext', type=str, default='.emb')
     return parser.parse_args()
 
 def main():
     args = parse_args()
-    emb_dir = args.emb_dir
+    emb = args.emb
     idx_dir = args.idx_dir
     db_samples = args.db_samples
-    emb_ext = args.emb_ext
+    #emb_ext = args.emb_ext
 
     # read database samples
     db_samples_list = read_database_samples(db_samples)
 
-    # for a directory of genotype encodings, build faiss index for l2 distance
-    # only build index for database samples
-    for gt_embedding in os.listdir(emb_dir):
-        # check if file is a genotype encoding (not positional encoding)
-        if gt_embedding.endswith(emb_ext):
-            print('Building index for: {}'.format(gt_embedding))
-            # read data from file
-            gt_embedding_file = emb_dir + gt_embedding
-            embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
+    print('Building index for: {}'.format(emb))
+    # read data from file
+    gt_embedding_file = emb_dir + emb
+    embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
 
-            # build faiss index for l2 distance and write to file
-            l2_index = build_l2_index(embeddings_numpy)
-            base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
-            l2_index_file = idx_dir + base_name + '.index.l2'
-            faiss.write_index(l2_index, l2_index_file)
-        # break
+    # build faiss index for l2 distance and write to file
+    l2_index = build_l2_index(embeddings_numpy)
+    base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
+    l2_index_file = idx_dir + base_name + '.index.l2'
+    faiss.write_index(l2_index, l2_index_file)
 
 def read_database_samples(db_samples):
     # return list of database samples
