@@ -7,76 +7,81 @@ import numpy as np
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--emb_dir', type=str)
     parser.add_argument('--idx_dir', type=str)
-    parser.add_argument('--db_samples', type=str)
+    parser.add_argument('--emb_dir', type=str)
     parser.add_argument('--emb_ext', type=str, default='.emb')
+    parser.add_argument('--db_samples', type=str)
+    parser.add_argument('--q_samples', type=str)
+    parser.add_argument('--k', type=int, default=20)
+    parser.add_argument('--out_dir', type=str)
     return parser.parse_args()
 
 def main():
     args = parse_args()
-    emb_dir = args.emb_dir
     idx_dir = args.idx_dir
+    emb_dir = args.emb_dir
+    k = args.k
     db_samples = args.db_samples
+    query_samples = args.q_samples
+    out_dir = args.out_dir
     emb_ext = args.emb_ext
 
-    # read database samples
-    db_samples_list = read_database_samples(db_samples)
+    # read query and database samples
+    query_samples_list = read_samples(query_samples)
+    database_samples_list = read_samples(db_samples)
 
-    # read query samples
-    q_samples_list = read_database_samples('./precision-medicine/example/query_IDs.txt')
+    for seg_idx in os.listdir(idx_dir):
+        if seg_idx.endswith('_config'):
+            print('Searching index for: {}'.format(seg_idx))
+            base = seg_idx.split('_')[0]
+            chrm = base.split('.')[0]
+            segment = base.split('.')[1]
+    
+    
+            # get embeddings for segment
+            embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
+            print('embedding file: ', embedding_file)
+            db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
+            q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
+            #print(q_embeddings_dict)
 
-    parameters = pysvs.VamanaBuildParameters(
-        graph_max_degree = 64,
-        window_size = 128,
-        num_threads = 4,
-    )
-
-    # for a directory of positional encodings, build faiss index for l2 distance
-    # only build index for database samples
-    for pos_embedding in os.listdir(emb_dir):
-        # check if file is a positional encoding (not positional encoding)
-        if pos_embedding.endswith(emb_ext):
-            print('Building index for: {}'.format(pos_embedding))
-            
-
-            # read data from file
-            pos_embedding_file = emb_dir + pos_embedding
-            # tuple (id, numpy array for embeddings)
-            embeddings_numpy = read_embeddings(pos_embedding_file, db_samples_list)
-            queries_numpy = read_embeddings(pos_embedding_file, q_samples_list)
-
-            index = pysvs.Vamana.build(
-                    parameters, 
-                    embeddings_numpy, 
+            # open results file and clear contents
+            results_file = out_dir + chrm + '.' + segment + '.knn'
+            open(results_file, 'w').close()
+            index = pysvs.Vamana(
+                    os.path.join(idx_dir, base+'_config'),
+                    pysvs.GraphLoader(os.path.join(idx_dir, base+'_graph')),
+                    pysvs.VectorDataLoader(
+                        os.path.join(idx_dir, base+'_data'), pysvs.DataType.float32
+                        ),
                     pysvs.DistanceType.L2,
-            )
-            print('done building index')
+                    num_threads = 4,
+                    )
+            query_embeddings = []
+            for q in query_samples_list:
+                #print(q)
+                query_sample_embedding_0 = q_embeddings_dict[q+'_0']
+                query_sample_embedding_1 = q_embeddings_dict[q+'_1']
+                query_embeddings.append(query_sample_embedding_0)
+                query_embeddings.append(query_sample_embedding_1)
+            queries = [np.array(e, dtype=np.float32) for e in query_embeddings]
+            #I, D = index.search(query_sample_embedding_0, 10)
+            #print(I, D)
+            ## search faiss index for each query sample
+            #for query_sample in query_samples_list:
 
-            index.search_window_size = 30
-            I,D = index.search(queries_numpy, 10)
-
-            print('-----------')
-            print (I, D)
-
-            
-            ## build faiss index for l2 distance and write to file
-            #l2_index = build_l2_index(embeddings_numpy)
-            #base_name = '_'.join(pos_embedding.split('_')[0:2]).replace('.txt', '')
-            #l2_index_file = idx_dir + base_name + '.index.l2'
-            #faiss.write_index(l2_index, l2_index_file)
-        # break
-
-def read_database_samples(db_samples):
-    # return list of database samples
-    db_samples_list = []
-    for line in open(db_samples, 'r'):
-        db_samples_list.append(line.strip())
-    return db_samples_list
+def read_samples(samples):
+    # return list of samples
+    samples_list = []
+    for line in open(samples, 'r'):
+        samples_list.append(line.strip())
+    return samples_list
 
 def read_embeddings(gt_embedding_file, db_samples_list):
     # return array of embeddings
     embeddings = []
+    embedding_dict = dict()
+    np_dict = dict()
 
     # open embedding file
     for line in open(gt_embedding_file, 'r'):
@@ -92,14 +97,17 @@ def read_embeddings(gt_embedding_file, db_samples_list):
             # get segment embedding
             segment_embedding = [float(i) for i in line[1:]]
             # append to embeddings
-            embeddings.append((sample_hap, segment_embedding))
-            
+            #embeddings.append((sample_hap, segment_embedding))
+            embedding_dict[sample_hap] = segment_embedding      
     # convert data to numpy array and reshape
+    for sample in embedding_dict:
+        np_dict[sample] = np.array(embedding_dict[sample], dtype=np.float32)
+    return np_dict
     #np.vstack([data_array, embeddings[i][1]])
-    data_array = [np.array(i[1], dtype=np.float32) for i in embeddings]
+    #data_array = [np.array(i[1], dtype=np.float32) for i in embeddings]
     #data_array = np.array([i[1] for i in embeddings])
     #data_array = data_array.reshape(data_array.shape[0], data_array.shape[1])
-    return data_array
+    #return data_array
 
 if __name__ == '__main__':
     main()
