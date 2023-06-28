@@ -1,4 +1,5 @@
 import os
+from os.path import basename
 import sys
 import argparse
 import numpy as np
@@ -6,7 +7,7 @@ import faiss
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--idx_dir', type=str)
+    parser.add_argument('--idx', type=str)
     parser.add_argument('--emb_dir', type=str)
     parser.add_argument('--emb_ext', type=str, default='.emb')
     parser.add_argument('--k', type=int, default=20)
@@ -17,7 +18,7 @@ def parse_args():
     return parser.parse_args()
 def main():
     args = parse_args()
-    idx_dir = args.idx_dir
+    idx = args.idx
     emb_dir = args.emb_dir
     k = args.k
     db_samples = args.database_samples
@@ -29,30 +30,33 @@ def main():
     query_samples_list = read_samples(query_samples)
     database_samples_list = read_samples(db_samples)
 
-    # search all segments for each query sample
-    for seg_idx in os.listdir(idx_dir):
-        print('Searching index for: {}'.format(seg_idx))
-        segment = seg_idx.split('.')[1]
-        # get embeddings for segment
-        embedding_file = emb_dir + 'segment.' + segment + emb_ext
-        db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
-        q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
-        # open results file and clear contents
-        results_file = out_dir + 'segment.' + segment + '.results.txt'
-        open(results_file, 'w').close()
-        # search faiss index for each query sample
-        for query_sample in query_samples_list:
-            # get haplotype names for query sample
-            query_sample_embedding_0 = q_embeddings_dict[query_sample+'_0']
-            query_sample_embedding_1 = q_embeddings_dict[query_sample+'_1']
-            # search faiss index
-            D, I = search_faiss_index(idx_dir + seg_idx, query_sample_embedding_0, k)
-            # write results to file
-            write_results(results_file, query_sample+'_0', db_embeddings_dict, D, I)
-            # search faiss index
-            D, I = search_faiss_index(idx_dir + seg_idx, query_sample_embedding_1, k)
-            # write results to file
-            write_results(results_file, query_sample+'_1', db_embeddings_dict, D, I)
+    print('Searching index for: {}'.format(idx))
+    base = basename(idx)
+    chrm = base.split('.')[0]
+    segment = base.split('.')[1]
+
+    # get embeddings for segment
+    embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
+    db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
+    q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
+    
+    # open results file and clear contents
+    results_file = out_dir + chrm + '.' + segment + '.knn'
+    open(results_file, 'w').close()
+
+    # search faiss index for each query sample
+    for query_sample in query_samples_list:
+        # get haplotype names for query sample
+        query_sample_embedding_0 = q_embeddings_dict[query_sample+'_0']
+        query_sample_embedding_1 = q_embeddings_dict[query_sample+'_1']
+        # search faiss index
+        D, I = search_faiss_index(idx, query_sample_embedding_0, k)
+        # write results to file
+        write_results(results_file, query_sample+'_0', db_embeddings_dict, D, I)
+        # search faiss index
+        D, I = search_faiss_index(idx, query_sample_embedding_1, k)
+        # write results to file
+        write_results(results_file, query_sample+'_1', db_embeddings_dict, D, I)
 
 def search_faiss_index(index_file, query_sample_embedding, k):
     # read faiss index
