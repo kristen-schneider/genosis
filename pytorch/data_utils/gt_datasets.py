@@ -35,7 +35,8 @@ class GTInferenceDataset(IterableDataset):
         with open(self.files[idx], "r") as f:
             # filename format 1KG.data.seg.NNN.pos_encoded
             # TODO later need to make this more general
-            segment = self.files[idx].split(".")[-2]
+            #segment = self.files[idx].split(".")[-2]
+            segment = self.files[idx].split('.')[-2].replace('segment','')
             for line in f:
                 # sample name, then 1D array of positional encodings
                 A = line.rstrip().split()
