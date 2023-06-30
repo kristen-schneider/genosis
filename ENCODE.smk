@@ -22,6 +22,7 @@ vcf_dir=f"{config.vcf_segments_dir}"
 vcf_segments=glob.glob(vcf_dir + "*.vcf.gz")
 vcf_segments=list(map(basename, vcf_segments))
 vcf_segments=[".".join(v.split('.')[:-2]) for v in vcf_segments]
+print(vcf_segments)
 assert len(vcf_segments) > 0, "no vcf segments.."
 
 
@@ -60,7 +61,6 @@ rule encode_compile:
 # 1.2 encode genotypes for VCF segments (execute)
 rule encode_execute:
     input:
-        slice_log=f"{config.log_dir}slice.log",
         bin=f"{config.cpp_bin_dir}encode",
         vcf_segments=f"{config.vcf_segments_dir}{{segment}}.vcf.gz"
     output:

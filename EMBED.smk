@@ -76,14 +76,8 @@ rule hap_IDs:
 rule model:
     input:
         f"{config.log_dir}zeros.log"
-    #    encoding_pos=f"{config.encodings_dir}{{segment}}.pos"	
-    #    #encode_log=f"{config.log_dir}encode.log"
-    #output:
-    #    embedding_log=f"{config.log_dir}model.log"
     log:
         model_log=f"{config.log_dir}model.log"
-    #benchmark:
-    #	f"{config.benchmark_dir}model.tsv"
     message:
         "Running model to create embedding vectors..."
     conda:
