@@ -13,8 +13,6 @@ benchmark_dir:
   example/benchmark/
 vcf_segments_dir:
   example/vcf_segments/
-vcf_segments_txt:
-  example/vcf_segments/vcf_segments.txt
 encodings_dir:
   example/encodings/
 embeddings_dir:
@@ -51,7 +49,7 @@ python_dir:
 model_dir:
   pytorch/
 model_checkpoint:
-  /home/sdp/precision-medicine/last.ckpt
+  /Users/krsc0813/precision-medicine/last.ckpt
 batch_size:
   128
 n_workers:
