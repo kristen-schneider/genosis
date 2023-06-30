@@ -1,0 +1,25 @@
+__default__:
+    job-name: "{rule}"
+    partition: short
+    time: 60
+    nodes: 1
+    ntasks: 4
+    mem: 32gb
+    output: "slurm_scripts/out/{rule}.out"
+    error: "slurm_scripts/err/{rule}.err"
+
+remove_empty_encoding:
+    time: 10
+
+remove_intermediate_files:
+    time: 10
+
+hap_IDs:
+    time: 10
+
+model:
+    partition: nvidia-a100-80G
+    time: 360
+
+split_embeddings:
+    time: 70
