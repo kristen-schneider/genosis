@@ -1,0 +1,4 @@
+Checking the headers and starting positions of 3 files
+Concatenating 1kGP_high_coverage_Illumina.chr10.filtered.SNV_INDEL_SV_phased_panel.vcf.gz	199.255498 seconds
+Concatenating 1kGP_high_coverage_Illumina.chr11.filtered.SNV_INDEL_SV_phased_panel.vcf.gz	194.191800 seconds
+Concatenating 1kGP_high_coverage_Illumina.chr12.filtered.SNV_INDEL_SV_phased_panel.vcf.gz	192.588976 seconds

@@ -1,0 +1,16 @@
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Using shell: /usr/bin/bash
+Provided cores: 64
+Rules claiming more threads will be scaled down.
+Provided resources: mem_mb=1000, mem_mib=954, disk_mb=1000, disk_mib=954
+Select jobs to execute...
+
+[Mon Jul  3 09:51:17 2023]
+Job 0: Getting haplotype IDs from encoding file...
+Reason: Missing output files: /Users/krsc0813/chr10/sample_hap_IDs.txt
+
+Activating conda environment: .snakemake/conda/8c5db1c4a6ca5be10c86be202591fdad_
+[Mon Jul  3 09:51:19 2023]
+Finished job 0.
+1 of 1 steps (100%) done
