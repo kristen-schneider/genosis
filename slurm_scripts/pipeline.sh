@@ -14,8 +14,8 @@
 set -e pipefail
 
 pmed_dir="/Users/krsc0813/precision-medicine/"
-data_dir="/Users/krsc0813/chr10/"
-#data_dir=$pmed_dir"example/"
+#data_dir="/Users/krsc0813/chr10/"
+data_dir=$pmed_dir"example/"
 
 log=$data_dir"pipeline.log"
 

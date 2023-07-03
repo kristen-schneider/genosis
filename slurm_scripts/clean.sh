@@ -11,13 +11,14 @@
 #SBATCH --output=/Users/krsc0813/precision-medicine/slurm_scripts/out/clean.out
 #SBATCH --error=/Users/krsc0813/precision-medicine/slurm_scripts/err/clean.err
 
-data_dir='/Users/krsc0813/chr10/'
-#data_dir='/Users/krsc0813/precision-medicine/example/'
+#data_dir='/Users/krsc0813/chr10/'
+data_dir='/Users/krsc0813/precision-medicine/example/'
 
 # go to data directory 
 cd $data_dir
 
 rm *.txt
+rm segment_boundary.map
 rm interpolated.map
 
 rm -r log/

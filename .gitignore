@@ -3,7 +3,10 @@ build/
 compare/
 data/
 example/
+slurm_scripts/err/
+slurm_scripts/out/
 lib/faiss/
+lib/
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
 python/scripts/distance/dist_data/
@@ -22,4 +25,6 @@ python/scripts/pysam/__pycache__/
 python/scripts/utils/__pycache__/
 python/scripts/cnn/
 python/training_loop/__pycache__/
+pytorch/models/__pycache__/
+pytorch/data_utils/__pycache__/
 .snakemake/

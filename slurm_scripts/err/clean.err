@@ -1,7 +1,1 @@
-rm: cannot remove ‘*.txt’: No such file or directory
-rm: cannot remove ‘*.map’: No such file or directory
-rm: cannot remove ‘vcf_segments/’: No such file or directory
-rm: cannot remove ‘encodings/’: No such file or directory
-rm: cannot remove ‘embeddings/’: No such file or directory
-rm: cannot remove ‘faiss_index/’: No such file or directory
 rm: cannot remove ‘faiss_results’: No such file or directory
