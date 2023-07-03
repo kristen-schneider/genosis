@@ -33,6 +33,7 @@ def main():
     #base_name = '_'.join(gt_embedding.split('_')[0:2]).replace('.txt', '')
     base_name = '.'.join(basename(emb).split('.')[0:2])
     l2_index_file = idx_dir + base_name + '.idx'
+    print(base_name, l2_index_file)
     faiss.write_index(l2_index, l2_index_file)
 
 def read_database_samples(db_samples):

@@ -10,6 +10,7 @@ from typing import Sequence
 import numpy as np
 import torch
 import torch.utils.data as data
+from os.path import basename
 from mmap_ninja.ragged import RaggedMmap
 from pytorch_lightning.callbacks import BasePredictionWriter
 from torch.nn.utils.rnn import pad_sequence
@@ -34,13 +35,20 @@ class GTInferenceDataset(IterableDataset):
         """
         with open(self.files[idx], "r") as f:
             # filename format 1KG.data.seg.NNN.pos_encoded
+            # filename format chrmx.segmentx.pos
             # TODO later need to make this more general
             #segment = self.files[idx].split(".")[-2]
-            segment = self.files[idx].split('.')[-2].replace('segment','')
+            base_file_name = basename(self.files[idx])      
+            chrm = base_file_name.split('.')[-3].replace('chrm', '')
+            segment = base_file_name.split('.')[-2].replace('segment', '')
+
+            #chrm = self.files[idx].split('.')[-3].replace('chrm', '')
+            #segment = self.files[idx].split('.')[-2].replace('segment', '')
             for line in f:
                 # sample name, then 1D array of positional encodings
                 A = line.rstrip().split()
                 yield {
+                    "chrm": chrm,
                     "segment": segment,
                     "sample": A[0],
                     "P": np.array(A[1:], dtype=np.float32) - float(segment),
@@ -92,11 +100,11 @@ class GTInferenceWriter(BasePredictionWriter):
             outputs = outputs.cpu()
 
         with open(f"{self.output}", "a") as f:
-            for sample, segment, embedding in zip(
-                batch["sample"], batch["segment"], outputs
+            for sample, chrm, segment, embedding in zip(
+                batch["sample"], batch["chrm"], batch["segment"], outputs
             ):
                 f.write(
-                    f"{sample}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n"
+                    f"{sample}\t{chrm}\t{segment}\t{' '.join(map(str, embedding.numpy()))}\n"
                 )
 
 
@@ -191,9 +199,10 @@ def pad_data(data, model_type="conv1d"):
             [torch.tensor(x["P"], dtype=torch.float32) for x in data], batch_first=True
         ).unsqueeze(1)
         samples = [x["sample"] for x in data]
+        chrms = [x["chrm"] for x in data]
         segments = [x["segment"] for x in data]
 
-        return {"P": P, "sample": samples, "segment": segments}
+        return {"P": P, "sample": samples, "chrm": chrms, "segment": segments}
 
     elif model_type == "transformer_siamese":
         # variable length tensors
