@@ -18,7 +18,7 @@ data_dir='/Users/krsc0813/chr10/'
 cd $data_dir
 
 rm *.txt
-rm *.map
+rm interpolated.map
 
 rm -r log/
 rm -r benchmark/
