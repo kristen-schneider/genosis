@@ -1,0 +1,64 @@
+#include <algorithm>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
+
+#include "write_query_results.h"
+
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+    string sim_search_results_dir = argv[1];
+    string sim_search_results_filelist = argv[2];
+    string query_results_dir = argv[3];
+
+    // get list of chromosomes
+    int num_chromosomes = 22;
+    vector<int> chromosomes;
+    for (int i = 1; i <= num_chromosomes; i++) {
+        chromosomes.push_back(i);
+    }
+
+    // chromosome: list of segments for each chromosome
+    map<int, vector<int>> chromosome_segments;
+
+    // queryID: chromosome: matchID: [segments]
+    map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments;
+
+    // read faiss results file to get all files needed
+    vector<string> sim_search_results_files;
+    sim_search_results_files = read_ss_results_files(sim_search_results_filelist);
+    
+    // iterate through all files in the sim search results directory
+    for (auto file_i : sim_search_results_files) {
+        string filename = sim_search_results_dir + file_i;
+        string line;
+        ifstream file(filename);
+        string query_ID_line;
+
+        // get chromosome and segment from file name
+        // file name format: chrmX.segmentY.txt
+        string chromosome_segment = filename.substr(filename.find_last_of("/\\") + 1);
+        chromosome_segment = chromosome_segment.substr(4, chromosome_segment.find_last_of(".") - 4);
+        int chromosome = stoi(chromosome_segment.substr(0, chromosome_segment.find("segment") - 1));
+        int segment = stoi(chromosome_segment.substr(chromosome_segment.find("segment") + 7));
+        
+        cout << "chrm: " << chromosome << ", segment: " << segment << endl;    
+    
+        // add segment to list of segments for chromosome
+        chromosome_segments[chromosome].push_back(segment);
+    }
+    
+    // for all chromosomes in chromosome_segments, put segments in order
+    map<int, vector<int>> sorted_chromosome_segments;
+    for (auto chromosome : chromosome_segments) {
+        // sort segments
+        sort(chromosome.second.begin(), chromosome.second.end());
+        sorted_chromosome_segments[chromosome.first] = chromosome.second;
+    }
+}
