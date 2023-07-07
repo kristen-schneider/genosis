@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -36,6 +35,7 @@ int main(int argc, char* argv[]) {
     
     // iterate through all files in the sim search results directory
     for (auto file_i : sim_search_results_files) {
+        cout << file_i << endl;
         string filename = sim_search_results_dir + file_i;
         string line;
         ifstream file(filename);
@@ -48,12 +48,16 @@ int main(int argc, char* argv[]) {
         int chromosome = stoi(chromosome_segment.substr(0, chromosome_segment.find("segment") - 1));
         int segment = stoi(chromosome_segment.substr(chromosome_segment.find("segment") + 7));
         
-        cout << "chrm: " << chromosome << ", segment: " << segment << endl;    
-    
         // add segment to list of segments for chromosome
         chromosome_segments[chromosome].push_back(segment);
+
+        // read file and build datastructure
+        read_QCMS(filename,
+                    chromosome,
+                    segment,
+                    query_chromosome_match_ID_segments);
     }
-    
+  
     // for all chromosomes in chromosome_segments, put segments in order
     map<int, vector<int>> sorted_chromosome_segments;
     for (auto chromosome : chromosome_segments) {
@@ -61,4 +65,11 @@ int main(int argc, char* argv[]) {
         sort(chromosome.second.begin(), chromosome.second.end());
         sorted_chromosome_segments[chromosome.first] = chromosome.second;
     }
+
+    
+    // for each query, write out file
+    write_query_output(sorted_chromosome_segments,
+                        query_chromosome_match_ID_segments,
+                        query_results_dir);
+    
 }

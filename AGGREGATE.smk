@@ -20,11 +20,12 @@ export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
 import glob
 from os.path import basename
 
-
 rule all:
     input:
+        f"{config.faiss_results_dir}faiss_results_file.txt",
         f"{config.faiss_results_dir}",
-        f"{config.cpp_bin_dir}aggregate"
+        f"{config.cpp_bin_dir}aggregate",
+        f"{config.query_results_dir}query_results.done"
 
 # 0.0 make a list of all files in sim search results dir
 rule make_results_list:
@@ -41,6 +42,7 @@ rule make_results_list:
 # 1.1 aggregate results segments (compile)
 rule aggregate_compile:
     input:
+        file_list=f"{config.faiss_results_dir}faiss_results_file.txt",
         main_aggregate_cpp=f"{config.cpp_src_dir}main_aggregate.cpp",
         write_query_results_cpp=f"{config.cpp_src_dir}write_query_results.cpp",
     output:
@@ -54,28 +56,23 @@ rule aggregate_compile:
 	" {input.main_aggregate_cpp}" \
 	" {input.write_query_results_cpp}" \
 	" -I {config.cpp_include_dir}" \
-        " -I {config.htslib_dir}" \
-        " -lstdc++fs" \
         " -o {output.bin}"
 		
-## 1.2 encode genotypes for VCF segments (execute)
-#rule encode_execute:
-#    input:
-#        bin=f"{config.cpp_bin_dir}encode",
-#        vcf_segments=f"{config.vcf_segments_dir}{{segment}}.vcf.gz"
-#    output:
-#        encoding_gt=f"{config.encodings_dir}{{segment}}.gt",
-#        encoding_pos=f"{config.encodings_dir}{{segment}}.pos",
-#    message:
-#        "Executing--encoding segments..."
-#    conda:
-#        f"{config.conda_pmed}"
-#    shell:
-#        "test ! -d {config.encodings_dir} && mkdir {config.encodings_dir};" \
-#        "echo 2. ---ENCODING VCF SEGMENTS---;" \
-#        "{input.bin}" \
-#        " {input.vcf_segments}" \
-#        " {config.root_dir}sample_IDs.txt" \
-#        " {config.encoding_file}" \
-#        " {config.root_dir}interpolated.map" \
-#        " {config.encodings_dir};"
+# 1.2 aggregate results segments (execute)
+rule aggregate_execute:
+    input:
+        bin=f"{config.cpp_bin_dir}aggregate"
+    output:
+        done=f"{config.query_results_dir}query_results.done"
+    message:
+        "Executing--aggregating segments..."
+    conda:
+        f"{config.conda_pmed}"
+    shell:
+        "test ! -d {config.query_results_dir} && mkdir {config.query_results_dir};" \
+        "echo 6. ---AGGREGATING SEGMENTS---;" \
+        "{input.bin}" \
+        " {config.faiss_results_dir}" \
+        " {config.faiss_results_dir}faiss_results_file.txt" \
+        " {config.query_results_dir};" \
+        "touch {config.query_results_dir}query_results.done"

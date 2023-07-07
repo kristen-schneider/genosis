@@ -1,5 +1,5 @@
+#include <algorithm>
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -22,6 +22,10 @@ vector<string> read_ss_results_files(
     string line;
     if (file.is_open()) {
         while (getline(file, line)) {
+            // if this is not a results file, dont add it to the list
+            if (line.find("knn") == string::npos){
+                continue;
+            }
             ss_results_files.push_back(line);
         }
         file.close();
@@ -52,16 +56,17 @@ void read_QCMS(
 
     // if file is open, read file line by line
     if (file.is_open()) {
-    // read file line by line.
-    // format:
-    // Query: queryID
-    // matchID distance
-    // matchID distance
-    //
-    // Query: queryID
-    // matchID distance
-    // matchID distance
-    // ...
+    
+        // read file line by line.
+        // format:
+        // Query: queryID
+        // matchID distance
+        // matchID distance
+        //
+        // Query: queryID
+        // matchID distance
+        // matchID distance
+        // ...
     
         while (getline(file, line)) {
         // if "Query: " is found, get query ID
@@ -98,6 +103,55 @@ void read_QCMS(
 }
 
 
+void write_query_output(
+        map<int, vector<int>> chromosome_segments,
+        map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments,
+        string query_results_dir
+        ){
+    // for each query make a directory for output
+    for (auto const& query : query_chromosome_match_ID_segments) {
+        string query_ID = query.first;
+        // make directory for this query if it doesn't exist
+        
+        string query_dir = query_results_dir + query_ID;
+        string mkdir_command = "mkdir " + query_dir;
+        system(mkdir_command.c_str());
 
+        // for each chromosome write out file
+        // format:
+        // segment, 0, 1, 2, 3, ...
+        // matchID1, 1, 0, 0, 1, ...
+        // matchID2, 0, 1, 1, 0, ...
+        // ...
 
+        for (auto const& chromosome : query.second) {
+            int chromosome_num = chromosome.first;
+            string query_chrm_file = query_dir + "/chrm" + to_string(chromosome_num) + ".csv";
+            ofstream file(query_chrm_file);
+            // write header
+            file << "segment,";
+            int num_segments = chromosome_segments[chromosome_num].size();
+            for (int i = 0; i < num_segments; i++) {
+                file << i << ",";
+            }
+            file << endl;
+            // write match IDs
+            for (auto const& match_ID : chromosome.second) {
+                file << match_ID.first << ",";
+                // for each segment in chromosome,
+                // write 1 if match ID is in segment,
+                // 0 otherwise
+                for (int segment : chromosome_segments[chromosome_num]) {
+                    if (find(match_ID.second.begin(), match_ID.second.end(), segment) != match_ID.second.end()) {
+                        file << "1,";
+                    }
+                    else {
+                        file << "0,";
+                    }
+                }
+                file << endl;
+            }
+        }
+    }
+}
 
