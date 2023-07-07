@@ -15,11 +15,11 @@ remove_intermediate_files:
     time: 10
 
 hap_IDs:
-    time: 10
+    time: 1
 
 model:
     partition: nvidia-a100-80G
     time: 360
 
 split_embeddings:
-    time: 70
+    time: 360
