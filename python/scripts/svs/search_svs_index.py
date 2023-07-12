@@ -29,7 +29,7 @@ def main():
     # read query and database samples
     query_samples_list = read_samples(query_samples)
     database_samples_list = read_samples(db_samples)
-
+    
     for seg_idx in os.listdir(idx_dir):
         if seg_idx.endswith('_config'):
             print('Searching index for: {}'.format(seg_idx))
@@ -41,13 +41,12 @@ def main():
             # get embeddings for segment
             embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
             print('embedding file: ', embedding_file)
-            db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
-            q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
-            #print(q_embeddings_dict)
+            db_embeddings = read_embeddings(embedding_file, database_samples_list)
+            q_embeddings = read_embeddings(embedding_file, query_samples_list)
 
             # open results file and clear contents
             results_file = out_dir + chrm + '.' + segment + '.knn'
-            open(results_file, 'w').close()
+            rf = open(results_file, 'w')
             index = pysvs.Vamana(
                     os.path.join(idx_dir, base+'_config'),
                     pysvs.GraphLoader(os.path.join(idx_dir, base+'_graph')),
@@ -57,16 +56,24 @@ def main():
                     pysvs.DistanceType.L2,
                     num_threads = 4,
                     )
-            query_embeddings = []
-            for q in query_samples_list:
-                #print(q)
-                query_sample_embedding_0 = q_embeddings_dict[q+'_0']
-                query_sample_embedding_1 = q_embeddings_dict[q+'_1']
-                query_embeddings.append(query_sample_embedding_0)
-                query_embeddings.append(query_sample_embedding_1)
-            queries = [np.array(e, dtype=np.float32) for e in query_embeddings]
-            #I, D = index.search(query_sample_embedding_0, 10)
-            #print(I, D)
+            
+            I, D = index.search(q_embeddings, k)
+            
+            for query_idx in range(len(I)):
+                q = I[query_idx]
+
+                #query_idx = query_samples_list[query_result]
+                #query_idx = q[0]
+                query_line = 'Query: ' + query_samples_list[query_idx] + '\n'
+                rf.write(query_line)
+                
+                #print("Query: ", query_samples_list[query_idx])
+                for match_idx in range(len(q)):
+                    m = q[match_idx]
+                    match_line = query_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
+                    rf.write(match_line)
+                rf.write('\n')      
+            rf.close()
             ## search faiss index for each query sample
             #for query_sample in query_samples_list:
 
@@ -91,23 +98,20 @@ def read_embeddings(gt_embedding_file, db_samples_list):
         sample_hap = line[0].split()[0]
         sample_ID = sample_hap.split('_')[0]
         # check if segment is in database
-        if sample_ID not in db_samples_list:
+        if sample_hap not in db_samples_list:
             continue
         else:
             # get segment embedding
             segment_embedding = [float(i) for i in line[1:]]
             # append to embeddings
-            #embeddings.append((sample_hap, segment_embedding))
-            embedding_dict[sample_hap] = segment_embedding      
+            embeddings.append((sample_hap, segment_embedding))
+            #embedding_dict[sample_hap] = segment_embedding      
     # convert data to numpy array and reshape
-    for sample in embedding_dict:
-        np_dict[sample] = np.array(embedding_dict[sample], dtype=np.float32)
-    return np_dict
     #np.vstack([data_array, embeddings[i][1]])
-    #data_array = [np.array(i[1], dtype=np.float32) for i in embeddings]
+    data_array = [np.array(i[1], dtype=np.float32) for i in embeddings]
     #data_array = np.array([i[1] for i in embeddings])
     #data_array = data_array.reshape(data_array.shape[0], data_array.shape[1])
-    #return data_array
+    return data_array
 
 if __name__ == '__main__':
     main()
