@@ -80,10 +80,10 @@ def read_embeddings(gt_embedding_file, db_samples_list):
         # split line
         line = line.strip().split(' ')
         # get segment name
-        sample_hap = line[0].split()[0]
+        sample_hap = line[0].strip()
         sample_ID = sample_hap.split('_')[0]
         # check if segment is in database
-        if sample_ID not in db_samples_list:
+        if sample_hap not in db_samples_list:
             continue
         else:
             # get segment embedding

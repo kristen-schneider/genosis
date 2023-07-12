@@ -56,28 +56,23 @@ def main():
                     pysvs.DistanceType.L2,
                     num_threads = 4,
                     )
-            #query_embeddings = []
-            #for q in query_samples_list:
-            #    #print(q)
-            #    query_sample_embedding_0 = q_embeddings_dict[q+'_0']
-            #    query_sample_embedding_1 = q_embeddings_dict[q+'_1']
-            #    query_embeddings.append(query_sample_embedding_0)
-            #    query_embeddings.append(query_sample_embedding_1)
-            #queries = [np.array(e, dtype=np.float32) for e in query_embeddings]
-            #print(base, chrm)
+            
             I, D = index.search(q_embeddings, k)
-           
-            for query_result in range(len(I)):
-                q = I[query_result]
-                query_idx = q[0]
+            
+            for query_idx in range(len(I)):
+                q = I[query_idx]
+
+                #query_idx = query_samples_list[query_result]
+                #query_idx = q[0]
                 query_line = 'Query: ' + query_samples_list[query_idx] + '\n'
                 rf.write(query_line)
-
+                
                 #print("Query: ", query_samples_list[query_idx])
                 for match_idx in range(len(q)):
-                    match_line = query_samples_list[match_idx] + '\t' + str(D[query_idx][match_idx]) + '\n'
+                    m = q[match_idx]
+                    match_line = query_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
                     rf.write(match_line)
-                rf.write('\n')        
+                rf.write('\n')      
             rf.close()
             ## search faiss index for each query sample
             #for query_sample in query_samples_list:
