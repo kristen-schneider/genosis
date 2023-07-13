@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-#include "write_query_results.h"
+#include "aggregate_helpers.h"
 
 
 using namespace std;
