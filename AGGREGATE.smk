@@ -40,30 +40,30 @@ rule make_results_list:
         
 
 # 1.1 aggregate results segments (compile)
-rule aggregate_compile:
+rule aggregate_segment_compile:
     input:
         file_list=f"{config.faiss_results_dir}faiss_results_file.txt",
-        main_aggregate_cpp=f"{config.cpp_src_dir}main_aggregate.cpp",
-        aggregate_helpers_cpp=f"{config.cpp_src_dir}aggregat_helpers.cpp",
+        aggregate_segments_cpp=f"{config.cpp_src_dir}aggregate_segments.cpp",
+        aggregate_helpers_cpp=f"{config.cpp_src_dir}aggregate_helpers.cpp",
     output:
-        bin=f"{config.cpp_bin_dir}aggregate"
+        bin=f"{config.cpp_bin_dir}aggregate-segments"
     message:
         "Compiling--aggregating segments..."
     conda:
         f"{config.conda_pmed}"
     shell:
         "g++" \
-	" {input.main_aggregate_cpp}" \
+	" {input.aggregate_segments_cpp}" \
 	" {input.aggregate_helpers_cpp}" \
 	" -I {config.cpp_include_dir}" \
         " -o {output.bin}"
 		
 # 1.2 aggregate results segments (execute)
-rule aggregate_execute:
+rule aggregate_segment_execute:
     input:
-        bin=f"{config.cpp_bin_dir}aggregate"
+        bin=f"{config.cpp_bin_dir}aggregate-segments"
     output:
-        done=f"{config.query_results_dir}query_results.done"
+        done=f"{config.query_results_dir}segment_results.done"
     message:
         "Executing--aggregating segments..."
     conda:
@@ -75,6 +75,40 @@ rule aggregate_execute:
         " {config.faiss_results_dir}" \
         " {config.faiss_results_dir}faiss_results_file.txt" \
         " {config.query_results_dir};" \
-        "touch {config.query_results_dir}query_results.done"
+        "touch {output.done}"
 
-# 
+# 2.1 aggregate results chromosomes
+rule aggregate_chromosome_compile:
+    input:
+        query_results_done=f"{config.query_results_dir}segment_results.done",
+        aggregate_chromosomes_cpp=f"{config.cpp_src_dir}aggregate_chromosomes.cpp",
+        aggregate_helpers_cpp=f"{config.cpp_src_dir}aggregate_helpers.cpp",
+    output:
+        bin=f"{config.cpp_bin_dir}aggregate-chromosomes"
+    message:
+        "Compiling--aggregating chromosomes..."
+    conda:
+        f"{config.conda_pmed}"
+    shell:
+        "g++" \
+        " {input.aggregate_chromosomes_cpp}" \
+        " {input.aggregate_helpers_cpp}" \
+        " -I {config.cpp_include_dir}" \
+        " -o {output.bin}"
+
+# 2.2 aggregate results chromosomes (execute)
+rule aggregate_chromosomes_execute:
+    input:
+        bin=f"{config.cpp_bin_dir}aggregate-chromosomes"
+    output:
+        done=f"{config.query_results_dir}chromosome_results.done"
+    message:
+        "Executing--aggregating chromosomes..."
+    conda:
+        f"{config.conda_pmed}"
+    shell:
+        "echo 7. ---AGGREGATING CHROMOSOMES---;" \
+        "{input.bin}" \
+        " {config.query_results_dir}" \
+        " {config.query_IDs};" \
+        "touch {output.done}"
