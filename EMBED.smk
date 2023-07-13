@@ -5,9 +5,9 @@ from types import SimpleNamespace
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
+configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
 #configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
-configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
+#configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
 
 config = SimpleNamespace(**config)
 
@@ -88,12 +88,12 @@ rule model:
         "echo 3. ---RUNNING MODEL---;" \
         "test ! -d {config.embeddings_dir} && mkdir {config.embeddings_dir};" \
 	"python {config.model_dir}encode_samples.py" \
-    	"	--encoder {config.model_checkpoint}" \
-    	"	--output {config.embeddings_dir}chrm10.embeddings.txt" \
-	"	--gpu" \
-        "	--files {config.encodings_dir}*.pos" \
-        "	--batch-size {config.batch_size}" \
-        "	--num-workers {config.n_workers}"
+    	" --encoder {config.model_checkpoint}" \
+    	" --output {config.embeddings_dir}chrm10.embeddings.txt" \
+        " --gpu" \
+        " --files {config.encodings_dir}*.pos" \
+        " --batch-size {config.batch_size}" \
+        " --num-workers {config.n_workers}"
 
 # 5.0 split all_embeddings.txt into segment embeddings
 rule split_embeddings:
@@ -109,6 +109,6 @@ rule split_embeddings:
 		f"{config.conda_pmed}"
 	shell:
 		"python {config.python_dir}split_embeddings.py" \
-		"       --emb_dir {config.embeddings_dir}" \
-		"	--all_emb {config.embeddings_dir}chrm10.embeddings.txt"
+		" --emb_dir {config.embeddings_dir}" \
+		" --all_emb {config.embeddings_dir}chrm10.embeddings.txt"
 

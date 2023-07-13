@@ -5,9 +5,9 @@ from types import SimpleNamespace
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
+configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
 #configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
-configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
+#configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
 
 config = SimpleNamespace(**config)
 
@@ -44,7 +44,7 @@ rule aggregate_compile:
     input:
         file_list=f"{config.faiss_results_dir}faiss_results_file.txt",
         main_aggregate_cpp=f"{config.cpp_src_dir}main_aggregate.cpp",
-        write_query_results_cpp=f"{config.cpp_src_dir}write_query_results.cpp",
+        aggregate_helpers_cpp=f"{config.cpp_src_dir}aggregat_helpers.cpp",
     output:
         bin=f"{config.cpp_bin_dir}aggregate"
     message:
@@ -54,7 +54,7 @@ rule aggregate_compile:
     shell:
         "g++" \
 	" {input.main_aggregate_cpp}" \
-	" {input.write_query_results_cpp}" \
+	" {input.aggregate_helpers_cpp}" \
 	" -I {config.cpp_include_dir}" \
         " -o {output.bin}"
 		
@@ -76,3 +76,5 @@ rule aggregate_execute:
         " {config.faiss_results_dir}faiss_results_file.txt" \
         " {config.query_results_dir};" \
         "touch {config.query_results_dir}query_results.done"
+
+# 
