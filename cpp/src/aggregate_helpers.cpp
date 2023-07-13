@@ -1,19 +1,140 @@
 #include <algorithm>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <map>
 #include <vector>
 
-#include "write_query_results.h"
+#include "aggregate_helpers.h"
 
 using namespace std;
 
 /*
+ * Sort match samples by their score
+ * @param match_scores: match_ID: score
+ * @return sorted matches: match_IDs sorted by score
+ */
+vector<pair<string, int>> sort_matches(
+        vector<pair<string, int>> match_scores) {
+    vector<pair<string, int>> sorted_matches;
+    // copy map to vector
+    for (auto match : match_scores){
+        sorted_matches.push_back(match);
+    }
+    // sort vector
+    sort(sorted_matches.begin(), sorted_matches.end(),
+        [](const pair<string, int> &a, const pair<string, int> &b){
+        return a.second > b.second;
+    });
+    return sorted_matches;
+}
+
+/*
+ * read in a list of sample IDs from file
+ * @param query_samples_list: file of samples
+ * @return query_samples: list of samples 
+ */
+vector<string> get_query_samples_list(
+        string query_samples_list) {
+    vector<string> query_samples;
+    string line;
+    ifstream file(query_samples_list);
+    while (getline(file, line)) {
+        query_samples.push_back(line);
+    }
+    return query_samples;
+}
+
+
+/*
+ * read in match file
+ * @param query_hap_chrom: file to read
+ * @return match_scores: scores fo each chromosome
+ */
+vector<pair<string, in>> read_match_file(
+    string query_hap_chrom){
+    vector<pair<string, int>> match_scores;
+    string line;
+    ifstream file(query_hap_chrom);
+    string header;
+
+    // format
+    // MatchID,1,0,1,1,0,0,0,1,0...
+    while (getline(file, line)) {
+        vector<string> line_vector;
+        string matchID;
+        vector<int> segment_vector;
+
+        // skip header
+        if (header.empty()) {
+            header = line;
+            continue;
+        }
+
+        // split line on ',' and fill line_vector
+        stringstream ss(line);
+        while (ss.good()) {
+            string substr;
+            // add each substring to the line-vector
+            getline(ss, substr, ',');
+            line_vector.push_back(substr);
+        }
+        
+        // get matchID
+        matchID = line_vector[0];
+        // get segment vector
+        for (int i = 1; i < line_vector.size(); i++){
+            // try stoi
+            try{
+                segment_vector.push_back(stoi(line_vector[i]));
+            } catch (invalid_argument){
+                // if stoi fail, skip
+                continue;
+            }
+        }
+        // match ID score = sum of segment vector
+        int matchID_score = 0;
+        for (auto segment : segment_vector){
+            matchID_score += segment;
+        }
+        match_scores.push_back(make_pair(matchID, matchID_score));
+    }
+    // sort matches by score
+    vector<pair<string, int>> sorted_matches = sort_matches(match_scores);
+    return sorted_matches;
+}
+
+/*
+ * write file for all chromosomes
+ * @param out_file: file to write to
+ * @param query_ID: query_ID for current file
+ * @param chromosome_match_ID_scores: scores for chromosome and match
+ */
+void write_all_chromosomes(string out_file,
+                            string query_ID,
+                            map<int, vector<pair<string, int>>> chromosome_match_ID_scores){
+    ofstream file(out_file);
+    // write header
+    file << query_ID << endl;
+    file << "Chromosome,MatchID,Score" << endl;
+    // for each chromosome
+    for (auto const& chromosome : chromosome_match_ID_scores) {
+        int chromosome_num = chromosome.first;
+        // for each match ID
+        for (auto const& match_ID_score : chromosome.second) {
+            string match_ID = match_ID_score.first;
+            int score = match_ID_score.second;
+            file << chromosome_num << "," << match_ID << "," << score << endl;
+        }
+    }
+}
+
+
+/*
  * Read a file which lists all files in a directory
- * @param faiss_results_txt: file will all faiss results in it
- * @return faiss_results_files: vector of all files with faiss results
+ * @param sim_search_results_txt: file will all sim_search results in it
+ * @return sim_search_results_files: vector of all files with sim_search results
  */
 vector<string> read_ss_results_files(
         string ss_results_txt){
@@ -102,7 +223,9 @@ void read_QCMS(
     }
 }
 
-
+/*
+ * write output for one chromosome
+ */
 void write_query_output(
         map<int, vector<int>> chromosome_segments,
         map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments,

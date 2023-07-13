@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,6 +11,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+    
     string sim_search_results_dir = argv[1];
     string sim_search_results_filelist = argv[2];
     string query_results_dir = argv[3];
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     // chromosome: list of segments for each chromosome
     map<int, vector<int>> chromosome_segments;
 
-    // queryID: chromosome: matchID: [segments]
+    // queryID: chromosome: matchID: [segment binary string]
     map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments;
 
     // read faiss results file to get all files needed
@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
     // iterate through all files in the sim search results directory
     for (auto file_i : sim_search_results_files) {
         cout << file_i << endl;
+        
         string filename = sim_search_results_dir + file_i;
         string line;
         ifstream file(filename);
