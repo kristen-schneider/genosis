@@ -5,8 +5,8 @@ from types import SimpleNamespace
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
-#configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
+configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
 #configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
 
 config = SimpleNamespace(**config)
@@ -24,8 +24,10 @@ rule all:
     input:
         f"{config.faiss_results_dir}faiss_results_file.txt",
         f"{config.faiss_results_dir}",
-        f"{config.cpp_bin_dir}aggregate",
-        f"{config.query_results_dir}query_results.done"
+        f"{config.cpp_bin_dir}aggregate-segments",
+        f"{config.query_results_dir}segment_results.done",
+        f"{config.cpp_bin_dir}aggregate-chromosomes",
+        f"{config.query_results_dir}chromosome_results.done"
 
 # 0.0 make a list of all files in sim search results dir
 rule make_results_list:

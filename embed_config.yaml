@@ -18,7 +18,7 @@ hap_IDs:
     time: 1
 
 model:
-    partition: nvidia-a100-80G
+    partition: nvidia-a100-10G
     time: 360
 
 split_embeddings:

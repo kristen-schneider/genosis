@@ -52,7 +52,7 @@ vector<string> get_query_samples_list(
  * @param query_hap_chrom: file to read
  * @return match_scores: scores fo each chromosome
  */
-vector<pair<string, in>> read_match_file(
+vector<pair<string, int>> read_match_file(
     string query_hap_chrom){
     vector<pair<string, int>> match_scores;
     string line;
