@@ -2,6 +2,7 @@ __default__:
     job-name: "{rule}"
     partition: short
     time: 60
+    gpu: gpu:0
     nodes: 1
     ntasks: 4
     mem: 32gb
@@ -18,7 +19,8 @@ hap_IDs:
     time: 1
 
 model:
-    partition: nvidia-a100-10G
+    partition: nvidia-a100-80G
+    gpu: gpu:1
     time: 360
 
 split_embeddings:

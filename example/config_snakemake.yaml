@@ -21,6 +21,8 @@ faiss_index_dir:
   example/faiss_index/
 faiss_results_dir:
   example/faiss_results/
+query_results_dir:
+  example/faiss_sample_results/
 compare_dir:
   example/compare/
 

@@ -73,6 +73,7 @@ snakemake \
                       -N {cluster.nodes} \\
                       -n {cluster.ntasks} \\
                       -p {cluster.partition} \\
+                      --gres={cluster.gpu} \\
                       --mem={cluster.mem} \\
                       --output {cluster.output} \\
                       --error {cluster.error}" \
