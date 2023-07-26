@@ -13,7 +13,6 @@ int main(int argc, char* argv[]) {
 
     string query_results_dir = argv[1];
     string query_samples_list = argv[2];
-    // string output_file = argv[3];
 
     // get list of chromosomes
     int num_chromosomes = 22;
@@ -47,11 +46,19 @@ int main(int argc, char* argv[]) {
 
             // if file exists, open it and read in all lines and store in map
             if (ifstream(query_hap0_chrom)) {
-                chrm_scores = read_match_file(query_hap0_chrom);
+                chrm_scores = score_samples(query_hap0_chrom);
             }else {continue;}
 
-            // add to map
-            chromosome_match_ID_scores[chromosome] = chrm_scores;
+            // for each match ID, add popcount and longest shared segment scores to map
+            for (auto match : chrm_scores) {
+            // get match_ID
+            string match_ID = match.first;
+            // get scores
+            vector<int> scores = match.second;
+            // add scores to map
+            chromosome_match_ID_scores[chromosome].push_back(make_pair(match_ID,
+                                                vector<int>{scores}));
+            }
         }
         
         // all top matches have been collected for this query
@@ -60,6 +67,10 @@ int main(int argc, char* argv[]) {
         write_all_chromosomes(out_file_0,
                               query_0,
                               chromosome_match_ID_scores);
+        // clear chrm_scores
+        chrm_scores.clear();
+        // clear map
+        chromosome_match_ID_scores.clear();
 
         // open directory for hap 1
         string query_hap1_dir = query_results_dir + query + "_1/";
@@ -70,17 +81,26 @@ int main(int argc, char* argv[]) {
             string query_hap1_chrom = query_hap1_dir + "chrm" + to_string(chromosome) + ".csv";
             // if file exists, open it and read in all lines and store in map
             if (ifstream(query_hap1_chrom)) {
-
-                chrm_scores = read_match_file(query_hap1_chrom);
+                chrm_scores = score_samples(query_hap1_chrom);
             }else {continue;}
-
-            // add to map
-            chromosome_match_ID_scores[chromosome] = chrm_scores;
+            
+            // for each match ID, add popcount and longest shared segment scores to map
+            for (auto match : chrm_scores) {
+            // get match_ID
+            string match_ID = match.first;
+            // get scores
+            vector<int> scores = match.second;
+            // add scores to map
+            chromosome_match_ID_scores[chromosome].push_back(make_pair(match_ID,
         }
 
         string out_file_1 = query_hap1_dir + query_1 + "_all_chromosomes.csv";
         write_all_chromosomes(out_file_1,
                               query_1,
                               chromosome_match_ID_scores);
+        // clear chrm_scores
+        chrm_scores.clear();
+        // clear map
+        chromosome_match_ID_scores.clear();
     }
 }

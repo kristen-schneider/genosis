@@ -10,17 +10,14 @@
 
 using namespace std;
 
-vector<pair<string, int>> read_match_file(
+map<string, vector<int>> score_samples(
         string query_hap_chrom);
-
-vector<pair<string, int>> sort_matches(
-        vector<pair<string, int>> match_scores);
 
 vector<string> get_query_samples_list(
         string query_samples_list);
 
 vector<string> read_ss_results_files(
-        string ss_results_txt);
+        string faiss_results_txt);
 
 void read_QCMS(
         string filename,
@@ -37,4 +34,4 @@ void write_query_output(
 
 void write_all_chromosomes(string out_file,
                           string query_ID,
-                          map<int, vector<pair<string, int>>> chromosome_match_ID_scores);
+                          map<int, vector<pair<string, vector<int>>>> chromosome_match_ID_scores);

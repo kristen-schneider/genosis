@@ -11,26 +11,6 @@
 using namespace std;
 
 /*
- * Sort match samples by their score
- * @param match_scores: match_ID: score
- * @return sorted matches: match_IDs sorted by score
- */
-vector<pair<string, int>> sort_matches(
-        vector<pair<string, int>> match_scores) {
-    vector<pair<string, int>> sorted_matches;
-    // copy map to vector
-    for (auto match : match_scores){
-        sorted_matches.push_back(match);
-    }
-    // sort vector
-    sort(sorted_matches.begin(), sorted_matches.end(),
-        [](const pair<string, int> &a, const pair<string, int> &b){
-        return a.second > b.second;
-    });
-    return sorted_matches;
-}
-
-/*
  * read in a list of sample IDs from file
  * @param query_samples_list: file of samples
  * @return query_samples: list of samples 
@@ -52,9 +32,9 @@ vector<string> get_query_samples_list(
  * @param query_hap_chrom: file to read
  * @return match_scores: scores fo each chromosome
  */
-vector<pair<string, int>> read_match_file(
+map<string, vector<int>> score_samples(
     string query_hap_chrom){
-    vector<pair<string, int>> match_scores;
+    map<string, vector<int>> match_scores;
     string line;
     ifstream file(query_hap_chrom);
     string header;
@@ -93,16 +73,57 @@ vector<pair<string, int>> read_match_file(
                 continue;
             }
         }
-        // match ID score = sum of segment vector
-        int matchID_score = 0;
+
+        // popcount score = sum of segment vector
+        int matchID_popcount_score = 0;
         for (auto segment : segment_vector){
-            matchID_score += segment;
+            matchID_popcount_score += segment;
         }
-        match_scores.push_back(make_pair(matchID, matchID_score));
+
+        // longest shared segment score = length of longest shared segment
+        int matchID_lss = 0;
+        int current_lss = 0;
+        for (auto segment : segment_vector) {
+            if (segment == 1) {
+                current_lss++;
+                matchID_lss = current_lss;
+            }
+            else {
+                if (current_lss > matchID_lss) {
+                    matchID_lss = current_lss;
+                }
+                current_lss = 0;
+            }
+        }
+        matchID_lss = max(matchID_lss, current_lss);
+
+        // cumulative shared segment = identify sum of all shared segments
+        vector<int> shared_segments;
+        int current_segment = 0;
+        for (auto segment : segment_vector) {
+            if (segment == 1) {
+                current_segment++;
+            }
+            else {
+                if (current_segment > 5) {
+                    shared_segments.push_back(current_segment);
+                }
+                current_segment = 0;
+            }
+        }
+        if (current_segment > 0) {
+            shared_segments.push_back(current_segment);
+        }
+        int matchID_sss = 0;
+        for (auto segment : shared_segments) {
+            matchID_sss += segment;
+        }
+
+        // add match ID and scores to map
+        match_scores[matchID] = {matchID_popcount_score, matchID_lss, matchID_sss};
     }
-    // sort matches by score
-    vector<pair<string, int>> sorted_matches = sort_matches(match_scores);
-    return sorted_matches;
+    file.close();
+    return match_scores;
 }
 
 /*
@@ -113,19 +134,21 @@ vector<pair<string, int>> read_match_file(
  */
 void write_all_chromosomes(string out_file,
                             string query_ID,
-                            map<int, vector<pair<string, int>>> chromosome_match_ID_scores){
+                            map<int, vector<pair<string, vector<int>>>> chromosome_match_ID_scores){
     ofstream file(out_file);
     // write header
     file << query_ID << endl;
-    file << "Chromosome,MatchID,Score" << endl;
+    file << "Chromosome,MatchID,popcount,longest_shared_segment,sum_shared_segment" << endl;
     // for each chromosome
     for (auto const& chromosome : chromosome_match_ID_scores) {
         int chromosome_num = chromosome.first;
         // for each match ID
         for (auto const& match_ID_score : chromosome.second) {
             string match_ID = match_ID_score.first;
-            int score = match_ID_score.second;
-            file << chromosome_num << "," << match_ID << "," << score << endl;
+            int popcount_score = match_ID_score.second[0];
+            int lss_score = match_ID_score.second[1];
+            int sss_score = match_ID_score.second[2];
+            file << chromosome_num << "," << match_ID << "," << popcount_score << "," << lss_score << "," << sss_score << endl;
         }
     }
 }
