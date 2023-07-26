@@ -3,11 +3,11 @@ from types import SimpleNamespace
 #configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/SAS/SAS_config.yaml"
-#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
+#configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
+configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
 #configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/AFR_pedigree/AFR_config.yaml"
+#configfile: "/Users/krsc0813/AFR_pedigree/config_AFR.yaml"
 
 config = SimpleNamespace(**config)
 
@@ -50,4 +50,5 @@ rule faiss_search:
         " --database_samples {config.database_IDs}" \
         " --query_samples {config.query_IDs}" \
         " --out_dir {config.faiss_results_dir}" \
+        " --pedigree {config.pedigree}"
 
