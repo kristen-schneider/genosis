@@ -27,13 +27,13 @@ int main(int argc, char* argv[]) {
 
     // full data structure
     // chromosome matchid: score
-    map<int, vector<pair<string, int>>> chromosome_match_ID_scores;
+    map<int, vector<pair<string, vector<int>>>> chromosome_match_ID_scores;
 
     // for each query
     for (auto query : query_samples) {
         cout << "reading query: " << query << "\n";
 
-        vector<pair<string, int>> chrm_scores;
+        map<string, vector<int>> chrm_scores;
         string query_0 = query + "_0";
         string query_1 = query + "_1";
 
@@ -77,8 +77,9 @@ int main(int argc, char* argv[]) {
         cout << "--hap: " << query_hap1_dir << "\n";
         // open file for each chromosome
         for (auto chromosome : chromosomes){
-            vector<pair<string, int>> chrm_scores;
+            
             string query_hap1_chrom = query_hap1_dir + "chrm" + to_string(chromosome) + ".csv";
+            
             // if file exists, open it and read in all lines and store in map
             if (ifstream(query_hap1_chrom)) {
                 chrm_scores = score_samples(query_hap1_chrom);
@@ -92,6 +93,8 @@ int main(int argc, char* argv[]) {
             vector<int> scores = match.second;
             // add scores to map
             chromosome_match_ID_scores[chromosome].push_back(make_pair(match_ID,
+                                                vector<int>{scores}));
+            }
         }
 
         string out_file_1 = query_hap1_dir + query_1 + "_all_chromosomes.csv";
