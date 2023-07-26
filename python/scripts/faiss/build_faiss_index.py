@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument('--emb', type=str)
     parser.add_argument('--idx_dir', type=str)
     parser.add_argument('--db_samples', type=str)
+    parser.add_argument('--pedigree', type=int, default=0)
     #parser.add_argument('--emb_ext', type=str, default='.emb')
     return parser.parse_args()
 
@@ -18,6 +19,7 @@ def main():
     emb = args.emb
     idx_dir = args.idx_dir
     db_samples = args.db_samples
+    pedigree = args.pedigree
     #emb_ext = args.emb_ext
 
     # read database samples
@@ -26,7 +28,7 @@ def main():
     print('Building index for: {}'.format(emb))
     # read data from file
     gt_embedding_file = emb
-    embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
+    embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list, pedigree)
 
     # build faiss index for l2 distance and write to file
     l2_index = build_l2_index(embeddings_numpy)
@@ -43,7 +45,9 @@ def read_database_samples(db_samples):
         db_samples_list.append(line.strip())
     return db_samples_list
 
-def read_embeddings(gt_embedding_file, db_samples_list):
+def read_embeddings(gt_embedding_file,
+                    db_samples_list,
+                    pedigree):
     # return array of embeddings
     embeddings = []
 
@@ -51,9 +55,17 @@ def read_embeddings(gt_embedding_file, db_samples_list):
     for line in open(gt_embedding_file, 'r'):
         # split line
         line = line.split(' ')
-        # get segment name
+    
+        print(pedigree)        
+
         sample_hap = line[0].split()[0]
-        sample_ID = sample_hap.split('_')[0]
+        
+        if pedigree == 1:
+            sample_ID = '_'.join(sample_hap.split('_')[0:2])
+        else:
+            # get segment name
+            sample_ID = sample_hap.split('_')[0]
+
         # check if segment is in database
         if sample_ID not in db_samples_list:
             continue

@@ -24,7 +24,7 @@ def check_for_empty_entries(pos_encoding):
     p = open(pos_encoding, 'r')
     for line in p:
         L = line.strip().split()
-        if len(L) < 2:
+        if len(L) < 5:
             empty = True
             print(line)
             break

@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument('--database_samples', type=str)
     parser.add_argument('--query_samples', type=str)
     parser.add_argument('--out_dir', type=str)
+    parser.add_argument('--pedigree', type=int, default=0)
 
     return parser.parse_args()
 def main():
@@ -25,6 +26,7 @@ def main():
     query_samples = args.query_samples
     out_dir = args.out_dir
     emb_ext = args.emb_ext
+    pedigree = args.pedigree    
 
     # read query and database samples
     query_samples_list = read_samples(query_samples)
@@ -37,8 +39,8 @@ def main():
 
     # get embeddings for segment
     embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
-    db_embeddings_dict = read_embeddings(embedding_file, database_samples_list)
-    q_embeddings_dict = read_embeddings(embedding_file, query_samples_list)
+    db_embeddings_dict = read_embeddings(embedding_file, database_samples_list, pedigree)
+    q_embeddings_dict = read_embeddings(embedding_file, query_samples_list, pedigree)
     
     # open results file and clear contents
     results_file = out_dir + chrm + '.' + segment + '.knn'
@@ -79,7 +81,9 @@ def write_results(results_file, query_sample, segment_embeddings_dict, D, I):
     o.write('\n')
     o.close()
 
-def read_embeddings(emb_file, query_samples_list):
+def read_embeddings(emb_file,
+                    query_samples_list, 
+                    pedigree):
     # return array of embeddings
     embeddings = {}
 
@@ -89,7 +93,13 @@ def read_embeddings(emb_file, query_samples_list):
         line = line.split(' ')
         # get segment name
         sample_hap = line[0].split()[0]
-        sample_ID = sample_hap.split('_')[0]
+    
+        if pedigree == 1:
+            sample_ID = '_'.join(sample_hap.split('_')[0:2])
+        else:
+            # get segment name
+            sample_ID = sample_hap.split('_')[0]        
+
         # check if segment is in database
         if sample_ID not in query_samples_list:
             continue
