@@ -4,6 +4,7 @@ __default__:
     time: 60
     gpu: gpu:0
     nodes: 1
+    nodelist: fijinode-36
     ntasks: 4
     mem: 32gb
     output: "slurm_scripts/out/{rule}.out"
@@ -19,7 +20,8 @@ hap_IDs:
     time: 1
 
 model:
-    partition: nvidia-a100-80G
+    partition: nvidia-a100
+    nodelist: fijigpu-05
     gpu: gpu:1
     time: 360
 
