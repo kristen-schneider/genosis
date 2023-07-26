@@ -23,8 +23,6 @@ faiss_results_dir:
   example/faiss_results/
 query_results_dir:
   example/faiss_sample_results/
-compare_dir:
-  example/compare/
 
 vcf_file:
   example/example_merge.vcf.gz
@@ -61,6 +59,8 @@ k:
   20
 delim:
   space
+pedigree:
+  0
 
 htslib_dir:
   lib/htslib/
