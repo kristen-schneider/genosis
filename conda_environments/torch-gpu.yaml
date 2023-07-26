@@ -8,7 +8,7 @@ dependencies:
   - torchvision
   - torchaudio
   - torchmetrics
-  - pytorch-cuda=11.7
+  - pytorch-cuda=11.8
   - pytorch-lightning
   - numpy
   - pip
