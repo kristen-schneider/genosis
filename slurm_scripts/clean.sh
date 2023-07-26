@@ -16,8 +16,8 @@
 #data_dir='/Users/krsc0813/AFR_pedigree/'
 data_dir='/Users/krsc0813/precision-medicine/example/'
 
-rm /Users/krsc0813/precision-medicine/slurm_scripts/err/ex.err
-rm /Users/krsc0813/precision-medicine/slurm_scripts/out/ex.out
+rm /Users/krsc0813/precision-medicine/slurm_scripts/err/chr10-12.err
+rm /Users/krsc0813/precision-medicine/slurm_scripts/out/chr10-12.out
 
 # go to data directory 
 cd $data_dir
@@ -33,4 +33,4 @@ rm -r encodings/
 rm -r embeddings/
 rm -r faiss_index/
 rm -r faiss_results/
-rm -r query_results/
+rm -r faiss_sample_results/
