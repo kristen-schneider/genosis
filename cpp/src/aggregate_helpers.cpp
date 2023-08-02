@@ -133,10 +133,10 @@ void write_query_output(
     }
 }
 
-vector<string> read_faiss_results_files(
-        string faiss_results_txt){
-    vector<string> faiss_results_files;
-    ifstream file(faiss_results_txt);
+vector<string> read_ss_results_files(
+        string ss_results_txt){
+    vector<string> ss_results_files;
+    ifstream file(ss_results_txt);
     string line;
     if (file.is_open()) {
         while (getline(file, line)) {
@@ -144,14 +144,14 @@ vector<string> read_faiss_results_files(
             if (line.find("segment") == string::npos) {
                 continue;
             }
-            faiss_results_files.push_back(line);
+            ss_results_files.push_back(line);
         }
         file.close();
     }
     else {
-        cout << "Unable to open file " << faiss_results_txt << endl;
+        cout << "Unable to open file " << ss_results_txt << endl;
     }
-    return faiss_results_files;
+    return ss_results_files;
 }
 
 map<string, vector<int>> score_samples(

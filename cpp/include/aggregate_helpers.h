@@ -1,4 +1,4 @@
-i//
+//
 // Created by Kristen Schneider on 7/5/23.
 //
 
@@ -19,8 +19,8 @@ map<string, vector<int>> score_samples(
 vector<string> get_query_samples_list(
         string query_samples_list);
 
-vector<string> read_faiss_results_files(
-        string faiss_results_txt);
+vector<string> read_ss_results_files(
+        string ss_results_txt);
 
 void read_QCMS(
         string filename,
