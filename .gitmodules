@@ -4,3 +4,6 @@
 [submodule "lib/phasedibd"]
 	path = lib/phasedibd
 	url = https://github.com/23andMe/phasedibd.git
+[submodule "ScalableVectorSearch"]
+	path = ScalableVectorSearch
+	url = https://github.com/IntelLabs/ScalableVectorSearch.git
