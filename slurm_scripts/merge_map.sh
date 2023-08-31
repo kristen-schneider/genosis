@@ -13,10 +13,13 @@
 
 
 # concat vcf files from 1000 genomes
-merged_file="/Users/krsc0813/chr10_12/chrm_10-12.map"
+merged_file="/Users/krsc0813/chr15_20/chrm_15-20.map"
 
 cd /Users/krsc0813/plink_maps/
 
-cat plink.chr10.GRCh38.map > $merged_file
-cat plink.chr11.GRCh38.map >> $merged_file
-cat plink.chr12.GRCh38.map >> $merged_file
+cat plink.chr15.GRCh38.map > $merged_file
+cat plink.chr16.GRCh38.map >> $merged_file
+cat plink.chr17.GRCh38.map >> $merged_file
+cat plink.chr18.GRCh38.map >> $merged_file
+cat plink.chr19.GRCh38.map >> $merged_file
+cat plink.chr20.GRCh38.map >> $merged_file
