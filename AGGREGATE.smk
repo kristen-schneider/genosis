@@ -6,7 +6,7 @@ from types import SimpleNamespace
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
-#configfile: "/Users/krsc0813/chr10_12/config_snakemake.yaml"
+#configfile: "/Users/krsc0813/chr15_20/config_snakemake.yaml"
 #configfile: "/Users/krsc0813/AFR_pedigree/config_AFR.yaml"
 
 config = SimpleNamespace(**config)
@@ -22,8 +22,10 @@ from os.path import basename
 
 rule all:
     input:
-        f"{config.faiss_results_dir}faiss_results_file.txt",
-        f"{config.faiss_results_dir}",
+        #f"{config.svs_results_dir}svs_results_file.txt",
+        #f"{config.svs_results_dir}",
+        f"{config.svs_results_dir}svs_results_file.txt",
+        f"{config.svs_results_dir}",
         f"{config.cpp_bin_dir}aggregate-segments",
         f"{config.query_results_dir}segment_results.done",
         f"{config.cpp_bin_dir}aggregate-chromosomes",
@@ -32,19 +34,19 @@ rule all:
 # 0.0 make a list of all files in sim search results dir
 rule make_results_list:
     input:
-        faiss_results_dir=f"{config.faiss_results_dir}"
+        svs_results_dir=f"{config.svs_results_dir}"
     output:
-        faiss_results_txt=f"{config.faiss_results_dir}faiss_results_file.txt"
+        svs_results_txt=f"{config.svs_results_dir}svs_results_file.txt"
     message:
         "Writing all results file to a text file to read in..."
     shell:
-        "ls {config.faiss_results_dir} > {output.faiss_results_txt}"
+        "ls {config.svs_results_dir} > {output.svs_results_txt}"
         
 
 # 1.1 aggregate results segments (compile)
 rule aggregate_segment_compile:
     input:
-        file_list=f"{config.faiss_results_dir}faiss_results_file.txt",
+        file_list=f"{config.svs_results_dir}svs_results_file.txt",
         aggregate_segments_cpp=f"{config.cpp_src_dir}aggregate_segments.cpp",
         aggregate_helpers_cpp=f"{config.cpp_src_dir}aggregate_helpers.cpp",
     output:
@@ -74,8 +76,8 @@ rule aggregate_segment_execute:
         "test ! -d {config.query_results_dir} && mkdir {config.query_results_dir};" \
         "echo 6. ---AGGREGATING SEGMENTS---;" \
         "{input.bin}" \
-        " {config.faiss_results_dir}" \
-        " {config.faiss_results_dir}faiss_results_file.txt" \
+        " {config.svs_results_dir}" \
+        " {config.svs_results_dir}svs_results_file.txt" \
         " {config.query_results_dir};" \
         "touch {output.done}"
 
