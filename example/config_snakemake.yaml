@@ -4,6 +4,8 @@ conda_model:
   conda_environments/torch-gpu.yaml
 conda_faiss:
   conda_environments/faiss-cpu.yaml
+conda_svs:
+  conda_environments/svs.yaml
 
 root_dir:
   example/
@@ -21,8 +23,12 @@ faiss_index_dir:
   example/faiss_index/
 faiss_results_dir:
   example/faiss_results/
+svs_index_dir:
+  example/svs_index/
+svs_results_dir:
+  example/svs_results/
 query_results_dir:
-  example/faiss_sample_results/
+  example/svs_sample_results/
 
 vcf_file:
   example/example_merge.vcf.gz
@@ -30,8 +36,12 @@ ref_map:
   example/example_merge.map 
 database_IDs:
   example/database_IDs.txt
+database_hap_IDs:
+  example/database_hap_IDs.txt
 query_IDs:
   example/query_IDs.txt
+query_hap_IDs:
+  example/query_hap_IDs.txt
 encoding_file:
   encoding.txt
 ilash_config:

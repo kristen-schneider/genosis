@@ -21,7 +21,7 @@ hap_IDs:
 
 model:
     partition: nvidia-a100
-    nodelist: fijigpu-05
+    nodelist: fijigpu-04
     gpu: gpu:1
     time: 360
 
