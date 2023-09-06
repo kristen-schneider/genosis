@@ -23,6 +23,7 @@ rm /Users/krsc0813/precision-medicine/slurm_scripts/out/example.out
 cd $data_dir
 
 rm *.txt
+rm pipeline.log
 rm segment_boundary.map
 rm interpolated.map
 
@@ -34,3 +35,6 @@ rm -r embeddings/
 rm -r faiss_index/
 rm -r faiss_results/
 rm -r faiss_sample_results/
+rm -r svs_index/
+rm -r svs_results/
+rm -r svs_sample_results/
