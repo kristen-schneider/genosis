@@ -7,6 +7,8 @@ slurm_scripts/err/
 slurm_scripts/out/
 lib/faiss/
 lib/
+*/out/*
+*/err/*
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
 python/scripts/distance/dist_data/
