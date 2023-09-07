@@ -1,61 +1,63 @@
+conda_base:
+  /home/sdp/precision-medicine/conda_environments/base.yml
 conda_pmed:
-  /Users/krsc0813/precision-medicine/conda_environments/pmed.yml
+  /home/sdp/precision-medicine/conda_environments/pmed.yml
 conda_model:
-  /Users/krsc0813/precision-medicine/conda_environments/torch-gpu.yml
+  /home/sdp/precision-medicine/conda_environments/torch-cpu.yml
 conda_faiss:
-  /Users/krsc0813/precision-medicine/conda_environments/faiss-cpu.yml
+  /home/sdp/precision-medicine/conda_environments/faiss-cpu.yml
 
 root_dir:
-  /Users/krsc0813/precision-medicine/example/
+  /home/sdp/precision-medicine/example/
 log_dir:
-  /Users/krsc0813/precision-medicine/example/log/
+  /home/sdp/precision-medicine/example/log/
 benchmark_dir:
-  /Users/krsc0813/precision-medicine/example/benchmark/
+  /home/sdp/precision-medicine/example/benchmark/
 vcf_segments_dir:
-  /Users/krsc0813/precision-medicine/example/vcf_segments/
+  /home/sdp/precision-medicine/example/vcf_segments/
 encodings_dir:
-  /Users/krsc0813/precision-medicine/example/encodings/
+  /home/sdp/precision-medicine/example/encodings/
 embeddings_dir:
-  /Users/krsc0813/precision-medicine/example/embeddings/
+  /home/sdp/precision-medicine/example/embeddings/
 faiss_index_dir:
-  /Users/krsc0813/precision-medicine/example/faiss_index/
+  /home/sdp/precision-medicine/example/faiss_index/
 faiss_results_dir:
-  /Users/krsc0813/precision-medicine/example/faiss_results/
+  /home/sdp/precision-medicine/example/faiss_results/
 svs_index_dir:
-  /Users/krsc0813/precision-medicine/example/svs_index/
+  /home/sdp/precision-medicine/example/svs_index/
 svs_results_dir:
-  /Users/krsc0813/precision-medicine/example/svs_results/
+  /home/sdp/precision-medicine/example/svs_results/
 query_results_dir:
-  /Users/krsc0813/precision-medicine/example/svs_sample_results/
+  /home/sdp/precision-medicine/example/svs_sample_results/
 
 vcf_file:
-  /Users/krsc0813/precision-medicine/example/example_merge.vcf.gz
+  /home/sdp/precision-medicine/example/example_merge.vcf.gz
 ref_map:
-  /Users/krsc0813/precision-medicine/example/example_merge.map 
+  /home/sdp/precision-medicine/example/example_merge.map 
 database_IDs:
-  /Users/krsc0813/precision-medicine/example/database_IDs.txt
+  /home/sdp/precision-medicine/example/database_IDs.txt
 database_hap_IDs:
-  /Users/krsc0813/precision-medicine/example/database_hap_IDs.txt
+  /home/sdp/precision-medicine/example/database_hap_IDs.txt
 query_IDs:
-  /Users/krsc0813/precision-medicine/example/query_IDs.txt
+  /home/sdp/precision-medicine/example/query_IDs.txt
 query_hap_IDs:
-  /Users/krsc0813/precision-medicine/example/query_hap_IDs.txt
+  /home/sdp/precision-medicine/example/query_hap_IDs.txt
 encoding_file:
-  /Users/krsc0813/precision-medicine/encoding.txt
+  /home/sdp/precision-medicine/encoding.txt
 
 cpp_bin_dir:
-  /Users/krsc0813/precision-medicine/cpp/bin/
+  /home/sdp/precision-medicine/cpp/bin/
 cpp_src_dir:
-  /Users/krsc0813/precision-medicine/cpp/src/
+  /home/sdp/precision-medicine/cpp/src/
 cpp_include_dir:
-  /Users/krsc0813/precision-medicine/cpp/include/
+  /home/sdp/precision-medicine/cpp/include/
 
 python_dir:
-  /Users/krsc0813/precision-medicine/python/scripts/
+  /home/sdp/precision-medicine/python/scripts/
 model_dir:
-  /Users/krsc0813/precision-medicine/pytorch/
+  /home/sdp/precision-medicine/pytorch/
 model_checkpoint:
-  /Users/krsc0813/precision-medicine/last.ckpt
+  /home/sdp/precision-medicine/last.ckpt
 batch_size:
   128
 n_workers:
@@ -67,4 +69,4 @@ pedigree:
   0
 
 htslib_dir:
-  /Users/krsc0813/precision-medicine/lib/htslib/
+  /home/sdp/precision-medicine/lib/htslib/
