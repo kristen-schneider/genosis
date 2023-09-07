@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
 
-#SBATCH -p short
-#SBATCH --job-name=test
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=16
-#SBATCH --mem=64gb
-#SBATCH --time=23:00:00
-#SBATCH --mail-type=NONE
-#SBATCH --mail-user=krsc0813@colorado.edu
-#SBATCH --output=/Users/krsc0813/precision-medicine/run_singularity/out/test.out
-#SBATCH --error=/Users/krsc0813/precision-medicine/run_singularity/err/test.err
-
 set -e pipefail
 
-pmed_dir="/Users/krsc0813/precision-medicine/"
+pmed_dir="/home/sdp/precision-medicine/"
 
 data_dir=$pmed_dir"example/"
 #data_dir="/Users/krsc0813/chr10/"
@@ -27,13 +16,14 @@ cd $pmed_dir
 git submodule init
 git submodule update
 
-eval "$(conda shell.bash hook)"
+#eval "$(conda shell.bash hook)"
+#conda info --envs
 
 # run pipeline
 # 1. slice vcf
 echo "1. slicing VCF..." > $log
 start_slice=$(date +%s.%3N)
-conda activate snakemake
+#conda activate snakemake
 snakemake \
     -s "./run_singularity/"SLICE.smk \
     -c 16 \
@@ -42,8 +32,8 @@ snakemake \
     --conda-frontend mamba \
     --rerun-incomplete
 end_slice=$(date +%s.%3N)
-slice_time=$(echo "scale=3; $end_slice - $start_slice" | bc)
-echo "--SLICE: $slice_time seconds" >> $log
+#slice_time=$(echo "scale=3; $end_slice - $start_slice" | bc)
+#echo "--SLICE: $slice_time seconds" >> $log
 
 # 2. encode slices
 echo "2. encode VCF slices..." >> $log
@@ -56,48 +46,48 @@ snakemake \
     --conda-frontend mamba \
     --rerun-incomplete
 end_encode=$(date +%s.%3N)
-encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
-echo "--ENCODE: $encode_time seconds" >> $log
+#encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
+#echo "--ENCODE: $encode_time seconds" >> $log
 
-## 3. embed slices
-#echo "3. embed slice encodings..." >> $log
-#start_embed=$(date +%s.%3N)
-#echo $start_embed
-#snakemake \
-#    -s EMBED.smk \
-#    -c 16 \
-#    -j 10 \
-#    --use-conda \
-#    --conda-frontend mamba \
-#    --cluster-config embed_config.yaml \
-#    --cluster "sbatch -J {cluster.job-name} \\
-#                      -t {cluster.time} \\
-#                      -N {cluster.nodes} \\
-#                      -n {cluster.ntasks} \\
-#                      -p {cluster.partition} \\
-#                      --nodelist={cluster.nodelist} \\
-#                      --gres={cluster.gpu} \\
-#                      --mem={cluster.mem} \\
-#                      --output {cluster.output} \\
-#                      --error {cluster.error}" \
-#    --latency-wait 70 \
-#    --rerun-incomplete
-#end_embed=$(date +%s.%3N)
-#echo $end_embed
+# 3. embed slices
+echo "3. embed slice encodings..." >> $log
+start_embed=$(date +%s.%3N)
+echo $start_embed
+snakemake \
+    -s "./run_singularity/"EMBED.smk \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --rerun-incomplete
+    #--cluster-config embed_config.yaml \
+    #--cluster "sbatch -J {cluster.job-name} \\
+    #                  -t {cluster.time} \\
+    #                  -N {cluster.nodes} \\
+    #                  -n {cluster.ntasks} \\
+    #                  -p {cluster.partition} \\
+    #                  --nodelist={cluster.nodelist} \\
+    #                  --gres={cluster.gpu} \\
+    #                  --mem={cluster.mem} \\
+    #                  --output {cluster.output} \\
+    #                  --error {cluster.error}" \
+    #--latency-wait 70 \
+end_embed=$(date +%s.%3N)
+echo $end_embed
 #embed_time=$(echo "scale=3; $end_embed - $start_embed" | bc)
 #echo "--EMBED: $embed_time seconds" >> $log
-#
-## 4. index slices
-#echo "4. index slice embeddings..." >> $log
-#start_index=$(date +%s.%3N)
-#snakemake \
-#    -s INDEX.smk \
-#    -c 16 \
-#    -j 10 \
-#    --use-conda \
-#    --conda-frontend mamba \
-#    --rerun-incomplete
-#end_index=$(date +%s.%3N)
+
+# 4. index slices
+echo "4. index slice embeddings..." >> $log
+start_index=$(date +%s.%3N)
+snakemake \
+    -s "./run_singularity/"INDEX.smk \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --rerun-incomplete
+end_index=$(date +%s.%3N)
 #index_time=$(echo "scale=3; $end_index - $start_index" | bc)
 #echo "--INDEX: $index_time seconds" >> $log
 #
