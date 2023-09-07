@@ -63,8 +63,8 @@ rule svs_build:
         #idx_segments=f"{config.svs_index_dir}{{segment}}.emb_config/"
     message:
         "SVS-building indexes..."
-    conda:
-        f"{config.conda_base}"
+    #conda:
+    #    f"{config.conda_base}"
     shell:
         "echo 4. ---CREATING SVS INDEX--;" \
         "test ! -d {config.svs_index_dir} && mkdir {config.svs_index_dir};" \

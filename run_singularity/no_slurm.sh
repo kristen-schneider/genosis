@@ -16,7 +16,7 @@ cd $pmed_dir
 git submodule init
 git submodule update
 
-#eval "$(conda shell.bash hook)"
+eval "$(conda shell.bash hook)"
 #conda info --envs
 
 # run pipeline
@@ -51,15 +51,16 @@ end_encode=$(date +%s.%3N)
 
 # 3. embed slices
 echo "3. embed slice encodings..." >> $log
+conda activate base
 start_embed=$(date +%s.%3N)
 echo $start_embed
 snakemake \
     -s "./run_singularity/"EMBED.smk \
     -c 16 \
     -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
     --rerun-incomplete
+    #--use-conda \
+    #--conda-frontend mamba \
     #--cluster-config embed_config.yaml \
     #--cluster "sbatch -J {cluster.job-name} \\
     #                  -t {cluster.time} \\
