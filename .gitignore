@@ -7,6 +7,7 @@ slurm_scripts/err/
 slurm_scripts/out/
 lib/faiss/
 lib/
+lightning_logs/
 */out/*
 */err/*
 python/scripts/__pycache__/
