@@ -28,7 +28,6 @@ git submodule init
 git submodule update
 
 eval "$(conda shell.bash hook)"
-conda info --envs
 
 # run pipeline
 # 1. slice vcf
