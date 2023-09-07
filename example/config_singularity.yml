@@ -1,0 +1,70 @@
+conda_pmed:
+  /Users/krsc0813/precision-medicine/conda_environments/pmed.yml
+conda_model:
+  /Users/krsc0813/precision-medicine/conda_environments/torch-gpu.yml
+conda_faiss:
+  /Users/krsc0813/precision-medicine/conda_environments/faiss-cpu.yml
+
+root_dir:
+  /Users/krsc0813/precision-medicine/example/
+log_dir:
+  /Users/krsc0813/precision-medicine/example/log/
+benchmark_dir:
+  /Users/krsc0813/precision-medicine/example/benchmark/
+vcf_segments_dir:
+  /Users/krsc0813/precision-medicine/example/vcf_segments/
+encodings_dir:
+  /Users/krsc0813/precision-medicine/example/encodings/
+embeddings_dir:
+  /Users/krsc0813/precision-medicine/example/embeddings/
+faiss_index_dir:
+  /Users/krsc0813/precision-medicine/example/faiss_index/
+faiss_results_dir:
+  /Users/krsc0813/precision-medicine/example/faiss_results/
+svs_index_dir:
+  /Users/krsc0813/precision-medicine/example/svs_index/
+svs_results_dir:
+  /Users/krsc0813/precision-medicine/example/svs_results/
+query_results_dir:
+  /Users/krsc0813/precision-medicine/example/svs_sample_results/
+
+vcf_file:
+  /Users/krsc0813/precision-medicine/example/example_merge.vcf.gz
+ref_map:
+  /Users/krsc0813/precision-medicine/example/example_merge.map 
+database_IDs:
+  /Users/krsc0813/precision-medicine/example/database_IDs.txt
+database_hap_IDs:
+  /Users/krsc0813/precision-medicine/example/database_hap_IDs.txt
+query_IDs:
+  /Users/krsc0813/precision-medicine/example/query_IDs.txt
+query_hap_IDs:
+  /Users/krsc0813/precision-medicine/example/query_hap_IDs.txt
+encoding_file:
+  /Users/krsc0813/precision-medicine/encoding.txt
+
+cpp_bin_dir:
+  /Users/krsc0813/precision-medicine/cpp/bin/
+cpp_src_dir:
+  /Users/krsc0813/precision-medicine/cpp/src/
+cpp_include_dir:
+  /Users/krsc0813/precision-medicine/cpp/include/
+
+python_dir:
+  /Users/krsc0813/precision-medicine/python/scripts/
+model_dir:
+  /Users/krsc0813/precision-medicine/pytorch/
+model_checkpoint:
+  /Users/krsc0813/precision-medicine/last.ckpt
+batch_size:
+  128
+n_workers:
+  8
+
+k:
+  20
+pedigree:
+  0
+
+htslib_dir:
+  /Users/krsc0813/precision-medicine/lib/htslib/

@@ -1,11 +1,9 @@
 conda_pmed:
-  conda_environments/pmed.yaml
+  conda_environments/pmed.yml
 conda_model:
-  conda_environments/torch-gpu.yaml
+  conda_environments/torch-gpu.yml
 conda_faiss:
-  conda_environments/faiss-cpu.yaml
-conda_svs:
-  conda_environments/svs.yaml
+  conda_environments/faiss-cpu.yml
 
 root_dir:
   example/
@@ -44,8 +42,6 @@ query_hap_IDs:
   example/query_hap_IDs.txt
 encoding_file:
   encoding.txt
-ilash_config:
-  example/iLASH-example.config
 
 cpp_bin_dir:
   cpp/bin/
@@ -67,12 +63,8 @@ n_workers:
 
 k:
   20
-delim:
-  space
 pedigree:
   0
 
 htslib_dir:
   lib/htslib/
-faisslib_dir:
-  lib/faiss/
