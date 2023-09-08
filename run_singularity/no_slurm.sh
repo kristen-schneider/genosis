@@ -5,7 +5,7 @@ set -e pipefail
 #conda config --add envs_dirs /home/sdp/miniconda3/envs
 conda config --add envs_dirs /opt/conda/envs/
 
-pmed_dir="/home/sdp/pmed_singularity/precision-medicine/"
+pmed_dir="/home/sdp/precision-medicine/"
 data_dir=$pmed_dir"example/"
 log=$data_dir"pipeline.log"
 
@@ -22,7 +22,7 @@ echo "1. slicing VCF..." > $log
 start_slice=$(date +%s.%3N)
 conda activate snakemake
 snakemake \
-    -s "./run_singularity/"SLICE.smk \
+    -s $pmed_dir"run_singularity/"SLICE.smk \
     -c 16 \
     -j 5 \
     --use-conda \

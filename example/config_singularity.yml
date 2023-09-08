@@ -6,56 +6,56 @@ conda_faiss:
   faiss-cpu
 
 root_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/
+  /home/sdp/precision-medicine/example/
 log_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/log/
+  /home/sdp/precision-medicine/example/log/
 benchmark_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/benchmark/
+  /home/sdp/precision-medicine/example/benchmark/
 vcf_segments_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/vcf_segments/
+  /home/sdp/precision-medicine/example/vcf_segments/
 encodings_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/encodings/
+  /home/sdp/precision-medicine/example/encodings/
 embeddings_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/embeddings/
+  /home/sdp/precision-medicine/example/embeddings/
 faiss_index_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/faiss_index/
+  /home/sdp/precision-medicine/example/faiss_index/
 faiss_results_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/faiss_results/
+  /home/sdp/precision-medicine/example/faiss_results/
 svs_index_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/svs_index/
+  /home/sdp/precision-medicine/example/svs_index/
 svs_results_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/svs_results/
+  /home/sdp/precision-medicine/example/svs_results/
 query_results_dir:
-  /home/sdp/pmed_singularity/precision-medicine/example/svs_sample_results/
+  /home/sdp/precision-medicine/example/svs_sample_results/
 
 vcf_file:
-  /home/sdp/pmed_singularity/precision-medicine/example/example_merge.vcf.gz
+  /home/sdp/precision-medicine/example/example_merge.vcf.gz
 ref_map:
-  /home/sdp/pmed_singularity/precision-medicine/example/example_merge.map 
+  /home/sdp/precision-medicine/example/example_merge.map 
 database_IDs:
-  /home/sdp/pmed_singularity/precision-medicine/example/database_IDs.txt
+  /home/sdp/precision-medicine/example/database_IDs.txt
 database_hap_IDs:
-  /home/sdp/pmed_singularity/precision-medicine/example/database_hap_IDs.txt
+  /home/sdp/precision-medicine/example/database_hap_IDs.txt
 query_IDs:
-  /home/sdp/pmed_singularity/precision-medicine/example/query_IDs.txt
+  /home/sdp/precision-medicine/example/query_IDs.txt
 query_hap_IDs:
-  /home/sdp/pmed_singularity/precision-medicine/example/query_hap_IDs.txt
+  /home/sdp/precision-medicine/example/query_hap_IDs.txt
 encoding_file:
-  /home/sdp/pmed_singularity/precision-medicine/encoding.txt
+  /home/sdp/precision-medicine/encoding.txt
 
 cpp_bin_dir:
-  /home/sdp/pmed_singularity/precision-medicine/cpp/bin/
+  /home/sdp/precision-medicine/cpp/bin/
 cpp_src_dir:
-  /home/sdp/pmed_singularity/precision-medicine/cpp/src/
+  /home/sdp/precision-medicine/cpp/src/
 cpp_include_dir:
-  /home/sdp/pmed_singularity/precision-medicine/cpp/include/
+  /home/sdp/precision-medicine/cpp/include/
 
 python_dir:
-  /home/sdp/pmed_singularity/precision-medicine/python/scripts/
+  /home/sdp/precision-medicine/python/scripts/
 model_dir:
-  /home/sdp/pmed_singularity/precision-medicine/pytorch/
+  /home/sdp/precision-medicine/pytorch/
 model_checkpoint:
-  /home/sdp/pmed_singularity/precision-medicine/last.ckpt
+  /home/sdp/precision-medicine/last.ckpt
 batch_size:
   128
 n_workers:
@@ -67,4 +67,4 @@ pedigree:
   0
 
 htslib_dir:
-  /home/sdp/pmed_singularity/precision-medicine/lib/htslib/
+  /home/sdp/precision-medicine/lib/htslib/

@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 #configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-configfile: "/home/sdp/pmed_singularity/precision-medicine/example/config_singularity.yml"
+configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
 #configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
 #configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
