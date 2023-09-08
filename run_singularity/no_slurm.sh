@@ -2,28 +2,25 @@
 
 set -e pipefail
 
-pmed_dir="/home/sdp/precision-medicine/"
+#conda config --add envs_dirs /home/sdp/miniconda3/envs
+conda config --add envs_dirs /opt/conda/envs/
 
+pmed_dir="/home/sdp/pmed_singularity/precision-medicine/"
 data_dir=$pmed_dir"example/"
-#data_dir="/Users/krsc0813/chr10/"
-#data_dir="/Users/krsc0813/chr15_20/"
-#data_dir="/Users/krsc0813/AFR_pedigree/"
-
 log=$data_dir"pipeline.log"
+
 
 # go to project directory and update
 cd $pmed_dir
-git submodule init
-git submodule update
 
 eval "$(conda shell.bash hook)"
-#conda info --envs
+conda info --envs
 
 # run pipeline
 # 1. slice vcf
 echo "1. slicing VCF..." > $log
 start_slice=$(date +%s.%3N)
-#conda activate snakemake
+conda activate snakemake
 snakemake \
     -s "./run_singularity/"SLICE.smk \
     -c 16 \
