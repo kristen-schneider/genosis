@@ -1,11 +1,9 @@
-conda_base:
-  /home/sdp/precision-medicine/conda_environments/base.yml
 conda_pmed:
-  /home/sdp/precision-medicine/conda_environments/pmed.yml
+  pmed
 conda_model:
-  /home/sdp/precision-medicine/conda_environments/torch-cpu.yml
+  torch-cpu
 conda_faiss:
-  /home/sdp/precision-medicine/conda_environments/faiss-cpu.yml
+  faiss-cpu
 
 root_dir:
   /home/sdp/precision-medicine/example/
