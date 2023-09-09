@@ -1,21 +1,16 @@
 from types import SimpleNamespace
-#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
+
+#configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
 configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
-#configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
-#configfile: "/Users/krsc0813/chr15_20/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/AFR_pedigree/config_AFR.yaml"
 
 config = SimpleNamespace(**config)
 
-#LD_LIBRARY_PATH = f"{config.conda_pmed}/lib"
-#shell.prefix("""
-#set -euo pipefail;
-#export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
-#""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
+shell.prefix("""
+source ~/.bashrc;
+conda activate pmed;
+conda info --envs
+""")
 
 import glob
 from os.path import basename
@@ -69,9 +64,8 @@ rule svs_search:
         knn_segments=f"{config.svs_results_dir}{{segment}}.knn"
     message:
         "SVS-searching indexes..."
-    conda:
-        f"{config.conda_base}"
     shell:
+	"conda activate base;"
         "echo 5. --SEARCHING SVS INDEX---;" \
         "test ! -d {config.svs_results_dir} && mkdir {config.svs_results_dir};" \
         "python {config.python_dir}svs/search_svs_index.py" \

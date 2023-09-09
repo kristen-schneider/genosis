@@ -1,21 +1,16 @@
 from types import SimpleNamespace
-#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
+
+#configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
 configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
-#configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
-#configfile: "/Users/krsc0813/chr15_20/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/AFR_pedigree/config_AFR.yaml"
 
 config = SimpleNamespace(**config)
 
-#LD_LIBRARY_PATH = f"{config.conda_pmed}/lib"
-#shell.prefix("""
-#set -euo pipefail;
-#export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
-#""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
+shell.prefix("""
+source ~/.bashrc;
+conda activate pmed;
+conda info --envs
+""")
 
 import glob
 from os.path import basename
@@ -40,8 +35,6 @@ rule remove_empty_encodings:
         f"{config.log_dir}zeros.log"
     message:
         "Removing positional encodings with empty entries"
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "python {config.python_dir}check_pos_encodigs.py" \
         " --pos_dir {config.encodings_dir}" \
@@ -52,8 +45,6 @@ rule remove_empty_encodings:
 rule remove_intermediate_files:
     message:
         "Removing intermediate files after encoding."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "rm {config.root_dir}vcf_bp.txt;" \
         "rm -r {config.out_dir}*.vcf.*;" \
@@ -64,8 +55,6 @@ rule hap_IDs:
         sampleIDs=f"{config.root_dir}sample_hap_IDs.txt"
     message:
         "Getting haplotype IDs from encoding file..."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "for enc_f in {config.encodings_dir}*.gt; do" \
         " awk '{{print $1}}' $enc_f > {output.sampleIDs};" \
@@ -82,9 +71,8 @@ rule model:
         model_log=f"{config.log_dir}model.log"
     message:
         "Running model to create embedding vectors..."
-    conda:
-        f"{config.conda_model}"
     shell:
+	"conda activate torch-cpu;"
         "echo 3. ---RUNNING MODEL---;" \
         "test ! -d {config.embeddings_dir} && mkdir {config.embeddings_dir};" \
 	"python {config.model_dir}encode_samples.py" \
@@ -105,9 +93,8 @@ rule split_embeddings:
                 f"{config.benchmark_dir}split_embeddings.tsv"
 	message:
 		"Splitting full embedding file into segments..."
-	conda:
-		f"{config.conda_pmed}"
 	shell:
+		"conda activate pmed;"
 		"python {config.python_dir}split_embeddings.py" \
 		" --emb_dir {config.embeddings_dir}" \
 		" --all_emb {config.embeddings_dir}all.embeddings.txt"

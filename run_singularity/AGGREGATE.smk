@@ -1,21 +1,16 @@
 from types import SimpleNamespace
-#configfile: "/home/sdp/pmed-local/data/1KG/config_snakemake.yaml"
-#configfile: "/home/sdp/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/1kg/config_snakemake.yaml"
-#configfile: "/scratch/alpine/krsc0813/data/AFR/AFR_config.yaml"
-configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/chr10/config_fiji.yaml"
-#configfile: "/Users/krsc0813/chr15_20/config_snakemake.yaml"
-#configfile: "/Users/krsc0813/AFR_pedigree/config_AFR.yaml"
+
+#configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
+configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
+#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
 
 config = SimpleNamespace(**config)
 
-LD_LIBRARY_PATH = f"{config.conda_pmed}/lib"
 shell.prefix("""
-set -euo pipefail;
-export LD_LIBRARY_PATH=\"{LD_LIBRARY_PATH}\";
-""".format(LD_LIBRARY_PATH=LD_LIBRARY_PATH))
+source ~/.bashrc;
+conda activate pmed;
+conda info --envs
+""")
 
 import glob
 from os.path import basename
@@ -53,8 +48,6 @@ rule aggregate_segment_compile:
         bin=f"{config.cpp_bin_dir}aggregate-segments"
     message:
         "Compiling--aggregating segments..."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "g++" \
 	" {input.aggregate_segments_cpp}" \
@@ -70,8 +63,6 @@ rule aggregate_segment_execute:
         done=f"{config.query_results_dir}segment_results.done"
     message:
         "Executing--aggregating segments..."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "test ! -d {config.query_results_dir} && mkdir {config.query_results_dir};" \
         "echo 6. ---AGGREGATING SEGMENTS---;" \
@@ -91,8 +82,6 @@ rule aggregate_chromosome_compile:
         bin=f"{config.cpp_bin_dir}aggregate-chromosomes"
     message:
         "Compiling--aggregating chromosomes..."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "g++" \
         " {input.aggregate_chromosomes_cpp}" \
@@ -108,8 +97,6 @@ rule aggregate_chromosomes_execute:
         done=f"{config.query_results_dir}chromosome_results.done"
     message:
         "Executing--aggregating chromosomes..."
-    conda:
-        f"{config.conda_pmed}"
     shell:
         "echo 7. ---AGGREGATING CHROMOSOMES---;" \
         "{input.bin}" \
