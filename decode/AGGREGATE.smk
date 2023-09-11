@@ -1,9 +1,5 @@
 from types import SimpleNamespace
 
-#configfile: "/nfs/fs3/ToResearch/kristens/precision-medicine/example/config_singularity.yml"
-configfile: "/nfs/fs3/ToResearch/kristens/precision-medicine/example/config_decode.yml"
-#configfile: "/Users/krsc0813/precision-medicine/example/config_snakemake.yaml"
-
 config = SimpleNamespace(**config)
 
 shell.prefix("""
