@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 
 #configfile: "/home/kristen/precision-medicine/example/config_singularity.yml"
-configfile: "/nfs/fs3/ToResearch/kristens/precision-medicine/example/config_decode.yml"
+#configfile: "/nfs/fs3/ToResearch/kristens/precision-medicine/example/config_decode.yml"
 #configfile: "/Users/krsc0813/precision-medicine/example/config_singularity.yml"
 
 config = SimpleNamespace(**config)
