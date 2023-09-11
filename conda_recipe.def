@@ -11,12 +11,9 @@ From: continuumio/miniconda3
 	./pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 
 %post
-	git clone https://github.com/kristen-schneider/precision-medicine.git
-	cd precision-medicine
-	git pull
-	git submodule init
-	git submodule update
-	cd ../
+	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+        . /opt/conda/etc/profile.d/conda.sh
+
 	conda update -n base -c defaults conda
 	conda install conda=23.7.3
 	conda env create -f ./conda_environments/faiss-cpu.yml
@@ -25,4 +22,5 @@ From: continuumio/miniconda3
 	conda env create -f ./conda_environments/torch-cpu.yml
 	conda env create -f ./conda_environments/torch-gpu.yml
 	conda clean --all
+	
 	pip install ./pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
