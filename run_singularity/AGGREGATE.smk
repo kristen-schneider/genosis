@@ -1,5 +1,7 @@
 from types import SimpleNamespace
 #
+config = SimpleNamespace(**config)
+
 shell.prefix("""
 source ~/.bashrc;
 conda activate pmed;
@@ -10,8 +12,6 @@ from os.path import basename
 
 rule all:
     input:
-        #f"{config.out_dir}svs_results/svs_results_file.txt",
-        #f"{config.out_dir}svs_results/",
         f"{config.out_dir}svs_results/svs_results_file.txt",
         f"{config.out_dir}svs_results/",
         f"{config.root_dir}cpp/bin/aggregate-segments",
@@ -94,5 +94,5 @@ rule aggregate_chromosomes_execute:
         "echo 7. ---AGGREGATING CHROMOSOMES---;" \
         "{input.bin}" \
         " {config.out_dir}svs_sample_results/" \
-        " {config.query_IDs};" \
+        " {config.out_dir}query_IDs;" \
         "touch {output.done}"
