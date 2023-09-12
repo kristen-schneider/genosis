@@ -126,7 +126,7 @@ void interpolate_map(
         
         // debug print
         cout << chr.first << " -> " << curr_chrm_int << endl;
-        cout << chr_bp_map[chr.first].size() << endl;
+        cout << "num markers: " << chr_bp_map[chr.first].size() << endl;
         // debug print
 
         for (auto const &bp: chr.second) {
