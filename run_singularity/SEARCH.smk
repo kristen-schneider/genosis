@@ -3,8 +3,7 @@ from types import SimpleNamespace
 config = SimpleNamespace(**config)
 
 shell.prefix("""
-#source ~/.bashrc;
-. /home/sdp/miniconda3/etc/profile.d/conda.sh;
+source ~/.bashrc;
 conda activate pmed;
 """)
 
@@ -68,7 +67,7 @@ rule svs_search:
         " --idx_dir {config.out_dir}svs_index/" \
         " --emb_dir {config.out_dir}embeddings/" \
         " --emb_ext emb" \
-        " --db_samples {config.root_dir}database_hap_IDs.txt" \
-        " --q_samples {config.root_dir}query_hap_IDs.txt" \
+        " --db_samples {config.out_dir}database_hap_IDs.txt" \
+        " --q_samples {config.out_dir}query_hap_IDs.txt" \
         " --k {config.k}" \
         " --out_dir {config.out_dir}svs_results/"

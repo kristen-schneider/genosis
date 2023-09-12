@@ -3,8 +3,7 @@ from types import SimpleNamespace
 config = SimpleNamespace(**config)
 
 shell.prefix("""
-#source ~/.bashrc;
-. /home/sdp/miniconda3/etc/profile.d/conda.sh;
+source ~/.bashrc;
 conda activate pmed;
 """)
 

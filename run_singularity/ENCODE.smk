@@ -3,8 +3,7 @@ from types import SimpleNamespace
 config = SimpleNamespace(**config)
 
 shell.prefix("""
-#source ~/.bashrc;
-. /home/sdp/miniconda3/etc/profile.d/conda.sh;
+source ~/.bashrc;
 conda activate pmed;
 """)
 
@@ -27,7 +26,6 @@ rule all:
 # 1.1 encode genotypes for VCF segments (compile)
 rule encode_compile:
     input:
-        slice_log=f"{config.out_dir}log/slice.log",
         main_encode_cpp=f"{config.root_dir}cpp/src/main_encode.cpp",
         encode_segment_cpp=f"{config.root_dir}cpp/src/encode_segment.cpp",
         read_map_cpp=f"{config.root_dir}cpp/src/read_map.cpp",
