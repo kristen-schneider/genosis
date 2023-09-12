@@ -30,21 +30,21 @@ end_slice=$(date +%s.%3N)
 #slice_time=$(echo "scale=3; $end_slice - $start_slice" | bc)
 #echo "--SLICE: $slice_time seconds" >> $log
 
-## 2. encode slices
-#echo "2. encode VCF slices..." >> $log
-#start_encode=$(date +%s.%3N)
-#snakemake \
-#    -s "./run_singularity/"ENCODE.smk \
-#    -c 16 \
-#    -j 10 \
-#    --use-conda \
-#    --conda-frontend mamba \
-#    --configfile=$config \
-#    --rerun-incomplete
-#end_encode=$(date +%s.%3N)
-##encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
-##echo "--ENCODE: $encode_time seconds" >> $log
-#
+# 2. encode slices
+echo "2. encode VCF slices..." >> $log
+start_encode=$(date +%s.%3N)
+snakemake \
+    -s "./run_singularity/"ENCODE.smk \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --configfile=$config \
+    --rerun-incomplete
+end_encode=$(date +%s.%3N)
+#encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
+#echo "--ENCODE: $encode_time seconds" >> $log
+
 ## 3. embed slices
 #echo "3. embed slice encodings..." >> $log
 #start_embed=$(date +%s.%3N)

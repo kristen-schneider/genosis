@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-
+#
 config = SimpleNamespace(**config)
 
 shell.prefix("""
