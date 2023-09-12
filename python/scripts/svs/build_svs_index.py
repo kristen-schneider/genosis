@@ -42,7 +42,7 @@ def main():
             # tuple (id, numpy array for embeddings)
             embeddings_numpy = read_embeddings(gt_embedding_file, db_samples_list)
 
-            print(embeddings_numpy)
+            #print(embeddings_numpy)
 
             index = pysvs.Vamana.build(
                     parameters, 
