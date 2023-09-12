@@ -1,13 +1,10 @@
 from types import SimpleNamespace
 
-#configfile: "/home/kristen/precision-medicine/example/config_singularity.yml"
-configfile: "/home/sdp/precision-medicine/example/config_singularity.yml"
-#configfile: "/Users/krsc0813/precision-medicine/example/config_singularity.yml"
-
 config = SimpleNamespace(**config)
 
 shell.prefix("""
-source ~/.bashrc;
+#source ~/.bashrc;
+. /home/sdp/miniconda3/etc/profile.d/conda.sh;
 conda activate pmed;
 conda info --envs
 """)

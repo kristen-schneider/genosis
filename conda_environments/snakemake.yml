@@ -211,5 +211,3 @@ dependencies:
   - pip:
       - archspec==0.2.1
       - numpy==1.25.2
-      - pysvs==0.0.1
-prefix: /Users/krsc0813/miniconda3/envs/snakemake
