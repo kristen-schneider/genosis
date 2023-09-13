@@ -14,10 +14,11 @@
 set -e pipefail
 
 pmed_dir="/home/name/precision-medicine/"
+run_dir=$pmed_dir"run/"
 data_dir=$pmed_dir"example/"
 singularity_container="/home/name/pmed.sif"
 
 singularity run \
 	--bind $data_dir \
 	$singularity_container \
-	bash $pmed_dir"example/example_run.sh"
+	bash $run_dir"example_run.sh"
