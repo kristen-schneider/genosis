@@ -28,7 +28,8 @@ Edit file paths:<br>
 ____________________________________________
 ### Run with singularity _(mount necessary data directories if necessary)_:<br>
 ```
-singularity run --bind /path/to/data_dir/ pmed.sif
-conda init
-bash example_run.sh
+singularity run --bind /path/to/data_dir/ pmed.sif bash example_run.sh
+# if conda is not working properly, try the following #
+## $ conda init
+## $ . /opt/conda/etc/profile.d/conda.sh
 ```
