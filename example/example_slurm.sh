@@ -8,16 +8,16 @@
 #SBATCH --time=00:20:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=name@email.com
-#SBATCH --output=/home/name/precision-medicine/slurm_example.out
-#SBATCH --error=/home/name/precision-medicine/slurm_example.err
+#SBATCH --output=/home/name/precision-medicine/example/slurm_example.out
+#SBATCH --error=/home/name/precision-medicine/example/slurm_example.err
 
 set -e pipefail
 
 pmed_dir="/home/name/precision-medicine/"
-singularity_container=$pmed_dir"pmed.sif"
 data_dir=$pmed_dir"example/"
+singularity_container="/home/name/pmed.sif"
 
 singularity run \
 	--bind $data_dir \
 	$singularity_container \
-	bash $pmed_dir"/example/example_run.sh"
+	bash $pmed_dir"example/example_run.sh"

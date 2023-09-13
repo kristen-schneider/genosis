@@ -11,8 +11,8 @@ config="/home/name/precision-medicine/example/example_config.yml"
 # go to project directory
 cd $pmed_dir
 
-eval "$(conda shell.bash hook)"
-#. /home/name/miniconda3/etc/profile.d/conda.sh
+# load conda and activate snakemake env for run
+. /opt/conda/etc/profile.d/conda.sh
 conda activate snakemake
 
 # run pipeline
@@ -88,33 +88,33 @@ end_index=$(date +%s.%3N)
 #index_time=$(echo "scale=3; $end_index - $start_index" | bc)
 #echo "--INDEX: $index_time seconds" >> $log
 
-## 5. search slices
-#echo "5. searching index slices..." >> $log
-#start_search=$(date +%s.%3N)
-#snakemake \
-#    -s $run_dir"SEARCH.smk" \
-#    -c 16 \
-#    -j 10 \
-#    --use-conda \
-#    --conda-frontend mamba \
-#    --configfile=$config \
-#    --rerun-incomplete
-#end_search=$(date +%s.%3N)
-##search_time=$(echo "scale=3; $end_search - $start_search" | bc)
-##echo "--SEARCH: $search_time seconds" >> $log
-#
-#
-## 6. aggregate slices
-#echo "6. aggregating results slices..." >> $log
-#start_aggregate=$(date +%s.%3N)
-#snakemake \
-#    -s $run_dir"AGGREGATE.smk" \
-#    -c 16 \
-#    -j 10 \
-#    --use-conda \
-#    --conda-frontend mamba \
-#    --configfile=$config \
-#    --rerun-incomplete
-#end_aggregate=$(date +%s.%3N)
-##aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
-##echo "--AGGREGATE: $aggregate_time seconds" >> $log
+# 5. search slices
+echo "5. searching index slices..." >> $log
+start_search=$(date +%s.%3N)
+snakemake \
+    -s $run_dir"SEARCH.smk" \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --configfile=$config \
+    --rerun-incomplete
+end_search=$(date +%s.%3N)
+#search_time=$(echo "scale=3; $end_search - $start_search" | bc)
+#echo "--SEARCH: $search_time seconds" >> $log
+
+
+# 6. aggregate slices
+echo "6. aggregating results slices..." >> $log
+start_aggregate=$(date +%s.%3N)
+snakemake \
+    -s $run_dir"AGGREGATE.smk" \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --configfile=$config \
+    --rerun-incomplete
+end_aggregate=$(date +%s.%3N)
+#aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
+#echo "--AGGREGATE: $aggregate_time seconds" >> $log
