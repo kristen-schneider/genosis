@@ -2,17 +2,17 @@
 
 set -e pipefail
 
-pmed_dir="/home/sdp/precision-medicine/"
+pmed_dir="/home/name/precision-medicine/"
 run_dir=$pmed_dir"run_singularity/"
 out_dir=$pmed_dir"example/"
 log=$out_dir"pipeline.log"
-config="/home/sdp/precision-medicine/example/example_config.yml"
+config="/home/name/precision-medicine/example/example_config.yml"
 
 # go to project directory
 cd $pmed_dir
 
 eval "$(conda shell.bash hook)"
-#. /home/sdp/miniconda3/etc/profile.d/conda.sh
+#. /home/name/miniconda3/etc/profile.d/conda.sh
 conda activate snakemake
 
 # run pipeline
