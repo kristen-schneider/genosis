@@ -3,10 +3,10 @@
 set -e pipefail
 
 pmed_dir="/home/name/precision-medicine/"
-run_dir=$pmed_dir"run_singularity/"
+smk_dir=$pmed_dir"smk_scripts/"
 out_dir=$pmed_dir"example/"
 log=$out_dir"pipeline.log"
-config="/home/name/precision-medicine/example/example_config.yml"
+config="/home/name/precision-medicine/run/example_config.yml"
 
 # go to project directory
 cd $pmed_dir
@@ -20,7 +20,7 @@ conda activate snakemake
 echo "1. slicing VCF..." > $log
 start_slice=$(date +%s.%3N)
 snakemake \
-    -s $run_dir"SLICE.smk" \
+    -s $smk_dir"SLICE.smk" \
     -c 16 \
     -j 5 \
     --configfile=$config \
@@ -33,7 +33,7 @@ end_slice=$(date +%s.%3N)
 echo "2. encode VCF slices..." >> $log
 start_encode=$(date +%s.%3N)
 snakemake \
-    -s $run_dir"ENCODE.smk" \
+    -s $smk_dir"ENCODE.smk" \
     -c 16 \
     -j 10 \
     --use-conda \
@@ -49,7 +49,7 @@ echo "3. embed slice encodings..." >> $log
 start_embed=$(date +%s.%3N)
 echo $start_embed
 snakemake \
-    -s $run_dir"EMBED.smk" \
+    -s $smk_dir"EMBED.smk" \
     -c 16 \
     -j 10 \
     --use-conda \
@@ -77,7 +77,7 @@ echo $end_embed
 echo "4. index slice embeddings..." >> $log
 start_index=$(date +%s.%3N)
 snakemake \
-    -s $run_dir"INDEX.smk" \
+    -s $smk_dir"INDEX.smk" \
     -c 16 \
     -j 10 \
     --configfile=$config \
@@ -92,7 +92,7 @@ end_index=$(date +%s.%3N)
 echo "5. searching index slices..." >> $log
 start_search=$(date +%s.%3N)
 snakemake \
-    -s $run_dir"SEARCH.smk" \
+    -s $smk_dir"SEARCH.smk" \
     -c 16 \
     -j 10 \
     --use-conda \
@@ -108,7 +108,7 @@ end_search=$(date +%s.%3N)
 echo "6. aggregating results slices..." >> $log
 start_aggregate=$(date +%s.%3N)
 snakemake \
-    -s $run_dir"AGGREGATE.smk" \
+    -s $smk_dir"AGGREGATE.smk" \
     -c 16 \
     -j 10 \
     --use-conda \
