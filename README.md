@@ -28,7 +28,7 @@ Edit file paths:<br>
 - Open [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_run.sh) and change path to config file appropriately.<br>
 - Run singularity _(mount necessary data directories if necessary)_:<br>
 ```
-singularity run --build /path/to/data_dir/ pmed.sif
+singularity run --bind /path/to/data_dir/ pmed.sif
 conda init
 bash example_run.sh
 ```
