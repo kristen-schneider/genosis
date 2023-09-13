@@ -22,10 +22,11 @@ Build singularity container from recipe file:
 sudo singularity build pmed.sif pmed_recipe.def
 ```
 ### Edit file paths
-*NO SLURM*<br>
+**NO SLURM**<br>
 - Make copy of  [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_config.yml) and change paths appropriately.<br>
-- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_run.sh) and change paths appropriately.<br>
-*SLURM*<br>
+- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_run.sh) and change paths appropriately.<br><br>
+
+**SLURM**<br>
 - Make copy of [example_slurm.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_slurm.sh) and change paths appropriately.<br>
 - Make copy of [embed_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/embed_config.yml) and change node configurations appropriately.<br>
 ## WORKFLOW
