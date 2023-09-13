@@ -2,9 +2,15 @@
 
 set -e pipefail
 
+### TODO: 
+### modify these paths
+
 pmed_dir="/home/name/precision-medicine/"
 vcf_file="/home/name/precision-medicine/example/example_merge.vcf.gz"
 out_dir=$pmed_dir"example/"
+
+###
+###
 
 # go to project directory
 cd $pmed_dir

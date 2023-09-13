@@ -2,11 +2,17 @@
 
 set -e pipefail
 
+### TODO: 
+### modify these paths
+
 pmed_dir="/home/name/precision-medicine/"
 smk_dir=$pmed_dir"smk_scripts/"
 out_dir=$pmed_dir"example/"
 log=$out_dir"pipeline.log"
 config="/home/name/precision-medicine/run/example_config.yml"
+
+###
+###
 
 # go to project directory
 cd $pmed_dir
