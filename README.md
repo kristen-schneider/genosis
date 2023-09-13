@@ -9,8 +9,6 @@ ____________________________________________
 - This file will serve as reference to the interpolate map script; which will create a new map (`interpolated.map`) that is used for down stream work.
 - see [`helper_scripts/reorder_map.sh`](https://github.com/kristen-schneider/precision-medicine/blob/main/helper_scripts/reorder_map.sh) to fix formatting errors with your map file.
 - see [`example/example_merge.map`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/examplemap), or visit [this resource](https://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/) for ready-to-download map files for GRCh36, 37, and 38.
-## WORKFLOW
-____________________________________________
 ### Download the latest release and update submodules.
 ```
 git clone git@github.com:kristen-schneider/precision-medicine.git
@@ -26,9 +24,12 @@ sudo singularity build pmed.sif pmed_recipe.def
 Edit file paths:<br>
 - Open [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_singularity.yml) and change paths appropriately.<br>
 - Open [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_run.sh) and change path to config file appropriately.<br>
-- Run singularity _(mount necessary data directories if necessary)_:<br>
+## WORKFLOW
+____________________________________________
+### Run with singularity _(mount necessary data directories if necessary)_:<br>
 ```
-singularity run --bind /path/to/data_dir/ pmed.sif
-conda init
-bash example_run.sh
+singularity run --bind /path/to/data_dir/ pmed.sif bash example_run.sh
+# if conda is not working properly, try the following #
+## $ conda init
+## $ . /opt/conda/etc/profile.d/conda.sh
 ```
