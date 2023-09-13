@@ -1,11 +1,11 @@
 root_dir:
-  /home/sdp/precision-medicine/
+  /home/name/precision-medicine/
 vcf_file:
-  /home/sdp/precision-medicine/example/example_merge.vcf.gz
+  /home/name/precision-medicine/example/example_merge.vcf.gz
 map_file:
-  /home/sdp/precision-medicine/example/example_merge.map
+  /home/name/precision-medicine/example/example_merge.map
 out_dir:
-  /home/sdp/precision-medicine/example/
+  /home/name/precision-medicine/example/
 batch_size:
   128
 n_workers:
