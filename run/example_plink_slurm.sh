@@ -13,10 +13,16 @@
 
 set -e pipefail
 
+### TODO: 
+### modify these paths
+
 pmed_dir="/home/name/precision-medicine/"
 run_dir=$pmed_dir"run/"
 data_dir=$pmed_dir"example/"
 singularity_container="/home/name/plink.sif"
+
+###
+###
 
 singularity run \
 	--bind $data_dir \
