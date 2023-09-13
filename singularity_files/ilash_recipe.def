@@ -5,11 +5,10 @@ From: continuumio/miniconda3
 %files
 	./*
 	./conda_environments/ilash.yml
+
 %post
         . /opt/conda/etc/profile.d/conda.sh
 
 	conda update -n base -c defaults conda
 	conda env create -f ./conda_environments/ilash.yml
 	conda clean --all
-
-	cd lib/	
