@@ -8,8 +8,8 @@
 #SBATCH --time=00:20:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=name@email.com
-#SBATCH --output=/home/name/precision-medicine/example/slurm_example.out
-#SBATCH --error=/home/name/precision-medicine/example/slurm_example.err
+#SBATCH --output=/home/name/precision-medicine/example/out/slurm_example.out
+#SBATCH --error=/home/name/precision-medicine/example/err/slurm_example.err
 
 set -e pipefail
 

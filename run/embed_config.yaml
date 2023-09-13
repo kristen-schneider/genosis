@@ -7,8 +7,8 @@ __default__:
     nodelist: fijinode-36
     ntasks: 4
     mem: 32gb
-    output: "slurm_scripts/out/{rule}.out"
-    error: "slurm_scripts/err/{rule}.err"
+    output: "/home/name/precision-medicine/example/out/{rule}.out"
+    error: "/home/name/precision-medicine/example/err/{rule}.err"
 
 remove_empty_encoding:
     time: 10
