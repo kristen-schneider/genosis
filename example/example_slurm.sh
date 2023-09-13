@@ -17,7 +17,7 @@ pmed_dir="/home/name/precision-medicine/"
 singularity_container=$pmed_dir"pmed.sif"
 data_dir=$pmed_dir"example/"
 
-singularity run --bind $data_dir $singularity_container
-conda init
-
-conda env list
+singularity run \
+	--bind $data_dir \
+	$singularity_container \
+	bash $pmed_dir"/example/example_run.sh"
