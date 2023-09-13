@@ -28,5 +28,5 @@ python/scripts/cnn/
 python/training_loop/__pycache__/
 pytorch/models/__pycache__/
 pytorch/data_utils/__pycache__/
-singularity_filess/*.sif
+singularity_files/*.sif
 .snakemake/
