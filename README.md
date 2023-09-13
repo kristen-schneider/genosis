@@ -16,20 +16,22 @@ cd precision-medicine
 git submodule init
 git submodule update
 ```
-### Run with singularity
+### Build singularity container
 Build singularity container from recipe file:
 ```
 sudo singularity build pmed.sif pmed_recipe.def
 ```
-Edit file paths:<br>
-- Open [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_singularity.yml) and change paths appropriately.<br>
-- Open [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/example/config_run.sh) and change path to config file appropriately.<br>
+### Edit file paths
+- Make copy of  [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_config.yml) and change paths appropriately.<br>
+- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_run.sh) and change path to config file appropriately.<br>
+- Make copy of [example_slurm.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_slurm.sh) and change path to config file appropriately.<br>
 ## WORKFLOW
 ____________________________________________
-### Run with singularity _(mount necessary data directories if necessary)_:<br>
+### Run with bash _(mount necessary data directories if necessary)_
 ```
-singularity run --bind /path/to/data_dir/ pmed.sif bash example_run.sh
-# if conda is not working properly, try the following #
-## $ conda init
-## $ . /opt/conda/etc/profile.d/conda.sh
+singularity run --bind /path/to/data_dir/ ./singularity/pmed.sif ./run/bash example_run.sh
+```
+### Run with slurm
+```
+sbatch ./run/example_slurm.sh
 ```
