@@ -27,13 +27,17 @@ sudo singularity build pmed.sif pmed_recipe.def
 - Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_run.sh) and change paths appropriately.<br><br>
 
 **SLURM**<br>
+- _In addition to the above ..._
 - Make copy of [example_slurm.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_slurm.sh) and change paths appropriately.<br>
 - Make copy of [embed_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/embed_config.yml) and change node configurations appropriately.<br>
 ## WORKFLOW
 ____________________________________________
 ### Run with no slurm _(mount necessary data directories if necessary)_
 ```
-singularity run --bind /path/to/data_dir/ ./singularity/pmed.sif ./run/bash example_run.sh
+singularity run
+  --bind /path/to/data_dir/ \
+  ./singularity/pmed.sif \
+  bash ./run/example_run.sh \
 ```
 ### Run with slurm
 ```
