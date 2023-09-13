@@ -5,8 +5,6 @@ data/
 example/
 slurm_scripts/err/
 slurm_scripts/out/
-lib/faiss/
-lib/
 lightning_logs/
 */out/*
 */err/*
@@ -30,4 +28,5 @@ python/scripts/cnn/
 python/training_loop/__pycache__/
 pytorch/models/__pycache__/
 pytorch/data_utils/__pycache__/
+singularity_filess/*.sif
 .snakemake/

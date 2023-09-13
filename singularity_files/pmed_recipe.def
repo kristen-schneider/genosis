@@ -24,3 +24,4 @@ From: continuumio/miniconda3
 	conda clean --all
 	
 	pip install ./pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+
