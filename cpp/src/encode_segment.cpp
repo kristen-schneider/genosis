@@ -84,14 +84,14 @@ void encode_vectors(int chrm_idx,
 		string id = vcf_record->d.id;					// sample id
 		string ref = vcf_record->d.allele[0];				// ref allele
 		string alt = vcf_record->d.allele[1];				// alt allele
-		double_t qual = vcf_record->qual;				// quality
-		float *afs = 0;
-		int count = 0;
-		int ret = bcf_get_info_float(vcf_header, vcf_record, "AF", &afs, &count);
-		float af = afs[0];						// allele frequency
+		//double_t qual = vcf_record->qual;				// quality
+		//float *afs = 0;
+		//int count = 0;
+		//int ret = bcf_get_info_float(vcf_header, vcf_record, "AF", &afs, &count);
+		//float af = afs[0];						// allele frequency
 	
 		all_bp_positions.push_back(pos+1);				// add pos to vector
-		all_af.push_back(af);						// add af to vector
+		//all_af.push_back(af);						// add af to vector
 
 		// reading genotypes
 		string s_gt;
