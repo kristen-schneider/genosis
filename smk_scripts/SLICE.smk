@@ -104,7 +104,6 @@ rule slice_VCF:
         "Slicing VCF into segments..."
     shell:
         "test ! -d {config.out_dir}vcf_segments/ && mkdir {config.out_dir}vcf_segments/;" \
-        "echo 1. ---SLICING VCF INTO SEGMENTS---;" \
         "while IFs= read -r chrm segment start_bp end_bp; do" \
         " echo segment ${{segment}};" \
         " bcftools view -h {input.vcf_file} > {config.out_dir}vcf_segments/chrm${{chrm}}.segment${{segment}}.vcf;" \

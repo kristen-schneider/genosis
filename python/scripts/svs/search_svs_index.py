@@ -32,7 +32,7 @@ def main():
     
     for seg_idx in os.listdir(idx_dir):
         if seg_idx.endswith('_config'):
-            print('Searching index for: {}'.format(seg_idx))
+            #print('Searching index for: {}'.format(seg_idx))
             base = seg_idx.split('_')[0]
             chrm = base.split('.')[0]
             segment = base.split('.')[1]
@@ -40,7 +40,7 @@ def main():
     
             # get embeddings for segment
             embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
-            print('embedding file: ', embedding_file)
+            #print('embedding file: ', embedding_file)
             db_embeddings = read_embeddings(embedding_file, database_samples_list)
             q_embeddings = read_embeddings(embedding_file, query_samples_list)
 

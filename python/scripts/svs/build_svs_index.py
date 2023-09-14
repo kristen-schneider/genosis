@@ -34,7 +34,7 @@ def main():
     for gt_embedding in os.listdir(emb_dir):
         # check if file is a gt embedding
         if gt_embedding.endswith(emb_ext):
-            print('Building index for: {}'.format(gt_embedding))
+            #print('Building index for: {}'.format(gt_embedding))
             
 
             # read data from file
@@ -49,7 +49,7 @@ def main():
                     embeddings_numpy, 
                     pysvs.DistanceType.L2,
             )
-            print('done building index')
+            #print('done building index')
 
             index.save(
                     os.path.join(idx_dir, gt_embedding.replace('.gt', '') + '_config'),

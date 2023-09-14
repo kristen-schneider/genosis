@@ -68,7 +68,6 @@ rule model:
         "Running model to create embedding vectors..."
     shell:
         "conda activate torch-cpu;"
-        "echo 3. ---RUNNING MODEL---;" \
         "test ! -d {config.out_dir}embeddings/ && mkdir {config.out_dir}embeddings/;" \
         "python {config.root_dir}pytorch/encode_samples.py" \
             " --encoder {config.root_dir}last.ckpt" \

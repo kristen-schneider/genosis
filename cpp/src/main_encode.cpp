@@ -57,14 +57,14 @@ int main(int argc, char* argv[]){
 
 	
 	// make gt encoding map (gt (string): encoding <int, int>)
-	cout << "...Loading gt encoding map." << endl;
+	//cout << "...Loading gt encoding map." << endl;
 	map<string, vector<int>> encoding_map = map_gt_encoding(encoding_file);
-	cout << "...Done loading gt encoding map." << endl;
+	//cout << "...Done loading gt encoding map." << endl;
 	
 	// make cm positional encoding map
-	cout << "...Loading pos encoding map." << endl;
+	//cout << "...Loading pos encoding map." << endl;
 	map<int, map<int, float>> bp_cm_map = map_bp_cm(interpolated_map);
-	cout << "...Done loading pos encoding map." << endl;
+	//cout << "...Done loading pos encoding map." << endl;
 	
 	cout << vcf_segment_file << " " << full_vcf_segment_file << endl;
 	

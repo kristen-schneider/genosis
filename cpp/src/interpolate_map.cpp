@@ -16,15 +16,15 @@ int main(int argc, char *argv[]){
     string outfile = argv[3];   // arg3 = output file
 
     // read in vcf basepair file
-    cout << "Reading in vcf basepair file: " << vcf_bps << endl;
+    //cout << "Reading in vcf basepair file: " << vcf_bps << endl;
     map<string, vector<int>> chr_bp_map = make_chr_bp_map(vcf_bps);
 
     // read in bp positions from plink map file and map to cm positions
-    cout << "Reading in plink map file: " << map_file << endl;
+    //cout << "Reading in plink map file: " << map_file << endl;
     map<int, vector<tuple<int, float>>> chrm_cm_map = make_chr_cm_map(map_file);
 
     // interpolate map and write new output file
-    cout << "Writing output file: " << outfile << endl;
+    //cout << "Writing output file: " << outfile << endl;
     interpolate_map(chr_bp_map, chrm_cm_map, outfile);
 
     return 0;
