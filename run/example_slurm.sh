@@ -17,7 +17,7 @@ set -e pipefail
 ### modify these paths
 
 pmed_dir="/home/name/precision-medicine/"
-run_dir=$pmed_dir"run/"
+run_script=$pmed_dir"run/example_run.sh"
 data_dir=$pmed_dir"example/"
 singularity_container="/home/name/pmed.sif"
 
@@ -27,4 +27,4 @@ singularity_container="/home/name/pmed.sif"
 singularity run \
 	--bind $data_dir \
 	$singularity_container \
-	bash $run_dir"example_run.sh"
+	bash $run_script
