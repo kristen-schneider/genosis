@@ -70,7 +70,8 @@ void encode_vectors(int chrm_idx,
 	// vector of all af in the VCF
 	vector<float> all_af;
 
-	cout << "...Reading genotypes." << endl;
+	// READING GENOTYPES
+	//cout << "...Reading genotypes." << endl;
 	while (bcf_read(vcf_stream, vcf_header, vcf_record) == 0){
 		bcf_unpack(vcf_record, BCF_UN_ALL);
 		bcf_unpack(vcf_record, BCF_UN_INFO);
@@ -116,7 +117,12 @@ void encode_vectors(int chrm_idx,
 					s_gt = ".|.";
 				}
 				else{
-					s_gt = ".|" + to_string(allele2);
+					if (allele2 < 0){
+						s_gt = ".|.";
+					}
+					else{
+						s_gt = ".|" + to_string(allele2);
+					}
 				}
 			}
 			if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
@@ -124,16 +130,22 @@ void encode_vectors(int chrm_idx,
 					s_gt = ".|.";
 				}
 				else{
-					s_gt = to_string(allele1) + "|.";
+					if (allele1 < 0){
+						s_gt = ".|.";
+					}
+					else{
+						s_gt = to_string(allele1) + "|.";
+					}
 				}
                         }
-			else{
+			else if (s_gt == ""){
 				s_gt = to_string(allele1)+"|"+to_string(allele2);
 			}
 			// mapping genotype to encoding vector and add to the hapltype vector
 			vector<int> biallelic_encoding = encoding_map[s_gt];
 			haplotype_gt_encoding_vector.push_back(biallelic_encoding[0]);
 			haplotype_gt_encoding_vector.push_back(biallelic_encoding[1]);
+			s_gt =  "";
 			// record the cm position for the current record (variant)
 			// add cm value if variant allele, add 0 if ref allele
 		}
@@ -144,24 +156,24 @@ void encode_vectors(int chrm_idx,
 
 	} // end of reading records
 	
-	cout << "...Done reading genotypes." << endl;
+	//cout << "...Done reading genotypes." << endl;
 
 	// transposing data
-	cout << "...Transposing data." << endl;
+	//cout << "...Transposing data." << endl;
 	//cout << "......gt data......" << endl;
 	vector<vector<int>> sample_major_format_gt_vec = transpose_int(all_gt_haplotype_encodings); 
 	//cout << "......pos data......" << endl;
 	//vector<vector<float>> sample_major_format_pos_vec = transpose_float(all_pos_haplotype_encodings);
-	cout << "...Done transposing data." << endl;
+	//cout << "...Done transposing data." << endl;
 
 	vector<string> all_sample_IDs = get_sample_IDs(sample_IDs_file); 
 	// writing smf
-	cout << "...Writing gt encodings to file: " << output_gt_file << "." << endl;
+	//cout << "...Writing gt encodings to file: " << output_gt_file << "." << endl;
 	write_SMF_gt(all_sample_IDs,
 			sample_major_format_gt_vec,
 			output_gt_file);
 
-	cout << "...Writing pos encodings to file: " << output_pos_file << "." << endl;
+	//cout << "...Writing pos encodings to file: " << output_pos_file << "." << endl;
 	write_SMF_pos(chrm_idx,
 			all_sample_IDs,
 			sample_major_format_gt_vec,
@@ -175,7 +187,7 @@ void encode_vectors(int chrm_idx,
 			all_af,
 			output_af_file);
 	*/
-	cout << "...Done writing sample major format." << endl;
+	//cout << "...Done writing sample major format." << endl;
 
 	// writing positinal encoding
 	//cout << "...writing positional encodings to file..." << endl;
