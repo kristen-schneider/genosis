@@ -1,0 +1,17 @@
+### TODO: 
+### modify these paths
+
+root_dir:
+  /home/kristens/kristen-pmed/precision-medicine/
+vcf_file:
+  /home/kristens/kristen-pmed/decode/kristen.vcf.gz
+map_file:
+  /home/kristens/kristen-pmed/decode/kristen.map
+out_dir:
+  /home/kristens/kristen-pmed/precision-medicine/decode/
+batch_size:
+  128
+n_workers:
+  8
+k:
+  20
