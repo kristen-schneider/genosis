@@ -59,7 +59,6 @@ rule encode_execute:
         "Executing--encoding segments..."
     shell:
         "test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;" \
-        "echo 2. ---ENCODING VCF SEGMENTS---;" \
         "{input.bin}" \
         " {input.vcf_segments}" \
         " {config.out_dir}sample_IDs.txt" \

@@ -55,7 +55,6 @@ rule svs_build:
         "SVS-building indexes..."
     shell:
         "conda activate base;"
-        "echo 4. ---CREATING SVS INDEX--;" \
         "test ! -d {config.out_dir}svs_index/ && mkdir {config.out_dir}svs_index/;" \
         "python {config.root_dir}python/scripts/svs/build_svs_index.py" \
         " --emb_dir {config.out_dir}embeddings/" \

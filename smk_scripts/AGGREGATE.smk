@@ -91,7 +91,6 @@ rule aggregate_chromosomes_execute:
     message:
         "Executing--aggregating chromosomes..."
     shell:
-        "echo 7. ---AGGREGATING CHROMOSOMES---;" \
         "{input.bin}" \
         " {config.out_dir}svs_sample_results/" \
         " {config.out_dir}query_IDs;" \
