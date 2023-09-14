@@ -7,7 +7,7 @@ set -e pipefail
 
 pmed_dir="/home/kristens/kristen-pmed/precision-medicine/"
 smk_dir=$pmed_dir"smk_scripts/"
-out_dir=$pmed_dir"/home/kristens/kristen-pmed/decode/"
+out_dir="/home/kristens/kristen-pmed/decode/"
 log=$out_dir"pipeline.log"
 config="/home/kristens/kristen-pmed/decode/decode_config.yml"
 
