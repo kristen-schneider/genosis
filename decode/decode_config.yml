@@ -8,7 +8,7 @@ vcf_file:
 map_file:
   /home/kristens/kristen-pmed/decode/kristen.map
 out_dir:
-  /home/kristens/kristen-pmed/precision-medicine/decode/
+  /home/kristens/kristen-pmed/decode/
 batch_size:
   128
 n_workers:
