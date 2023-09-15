@@ -18,10 +18,10 @@ def main():
     sample_IDs = read_sample_IDs(sample_IDs_txt)
     for sample_ID in sample_IDs:
         print(sample_ID)
-        sampleID_hap0 = ss_sample_results_dir + sample_ID + '_0.csv'
+        sampleID_hap0 = ss_sample_results_dir + sample_ID + '_0/' + 'all_chromosomes.csv'
         hap0_results = read_hap_results(sampleID_hap0)
 
-        sampleID_hap1 = ss_sample_results_dir + sample_ID + '_1.csv'
+        sampleID_hap1 = ss_sample_results_dir + sample_ID + '_1' + 'all_chromosomes.csv'
         hap1_results = read_hap_results(sampleID_hap1)
 
         # combined_haps = combine_key_haps(hap0_results, hap1_results)
