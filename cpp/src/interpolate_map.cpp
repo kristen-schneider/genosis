@@ -71,7 +71,14 @@ map<int, vector<tuple<int, float>>> make_chr_cm_map(string map_file){
     while (getline(file, line)){
         istringstream iss(line);
         vector<string> tokens{istream_iterator<string>{iss}, istream_iterator<string>{}};
-        chrm = stoi(tokens[0]);
+        // convert chrm to int (handle 'chr')
+	try{
+		chrm = stoi(tokens[0]);
+	catch (const std::invalid_argument& ia){
+		string chrm_str = tokens[0];
+		chrm_str.erase(0, 3);
+		chrm = stoi(chrm_str);
+	}
         float cm = stof(tokens[2]);
         int bp = stoi(tokens[3]);
         bp_cm = make_tuple(bp, cm);
