@@ -3,13 +3,12 @@ From: continuumio/miniconda3
 
 
 %files
-	./conda_environments/plink.yml
+	./conda_environments/plot.yml
 
 %post
 	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
         . /opt/conda/etc/profile.d/conda.sh
 
 	conda update -n base -c defaults conda
-	conda env create -f ./conda_environments/plink.yml
+	conda env create -f ./conda_environments/plot.yml
 	conda clean --all
-	
