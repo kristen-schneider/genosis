@@ -19,7 +19,7 @@ git submodule update
 ### Build singularity container
 Build singularity container from recipe file:
 ```
-(sudo) singularity build pmed.sif pmed_recipe.def
+singularity build pmed.sif pmed_recipe.def
 ```
 ### Edit file paths
 **NO SLURM**<br>
