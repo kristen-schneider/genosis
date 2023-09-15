@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+### TODO:
+### modify these optinos for your system
+
 #SBATCH -p short
 #SBATCH --job-name=example
 #SBATCH --nodes=1
