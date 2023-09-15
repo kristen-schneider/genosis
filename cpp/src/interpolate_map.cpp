@@ -74,6 +74,7 @@ map<int, vector<tuple<int, float>>> make_chr_cm_map(string map_file){
         // convert chrm to int (handle 'chr')
 	try{
 		chrm = stoi(tokens[0]);
+	}
 	catch (const std::invalid_argument& ia){
 		string chrm_str = tokens[0];
 		chrm_str.erase(0, 3);
