@@ -6,13 +6,18 @@ set -e pipefail
 ### modify these paths
 
 pmed_dir="/home/name/precision-medicine/"
-smk_dir=$pmed_dir"smk_scripts/"
 out_dir=$pmed_dir"example/"
-log=$out_dir"pipeline.log"
 config="/home/name/precision-medicine/run/example_config.yml"
 
 ###
 ###
+
+## These directories should be correct.
+## If you have changed where scripts exist, change these paths
+smk_dir=$pmed_dir"smk_scripts/"
+log=$out_dir"pipeline.log"
+##
+##
 
 # go to project directory
 cd $pmed_dir
