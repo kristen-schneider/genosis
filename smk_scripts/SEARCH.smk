@@ -60,7 +60,7 @@ rule svs_search:
     message:
         "SVS-searching indexes..."
     shell:
-	"conda activate base;"
+        "conda activate base;"
         "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
         "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
         " --idx_dir {config.out_dir}svs_index/" \
