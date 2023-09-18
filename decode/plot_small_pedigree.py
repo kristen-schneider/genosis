@@ -24,50 +24,36 @@ def main():
         results = read_results_file(out_dir, r_file)
 
 def read_results_file(out_dir, r_file):
-    results = defaultdict(dict)
+    results = dict()
     r_file = open(r_file, 'r')
-    hap0 = ''
-    hap1 = ''
+    sample_ID = r_file.readline().strip().split('_')[0]
     x_labels = []
     y_scores = []
 
     for line in r_file:
         if '_' in line:
-            if hap0 == '':
-                hap0 = line.strip()
-            else:
-                # plot a bar graph of the scores for each match and the x labels are the match IDs
-                plt.figure(figsize=(20, 10))
-                plt.bar(x_labels, y_scores, color='olivedrab')
-                plt.title('Query ID: ' + hap0)
-                plt.xticks(rotation=90)
-                plt.xlabel('Match IDs')
-                plt.ylabel('Scores')
-                plt.gca().spines['top'].set_visible(False)
-                plt.gca().spines['right'].set_visible(False)
-                plt.savefig(out_dir + hap0 + '.png')
-                plt.close()
-                x_labels = []
-                y_scores = []
-                hap1 = line.strip()
-
+            pass
         else:
-            x_labels.append(line.strip().split(':')[0])
-            y_scores.append(float(line.strip().split(':')[1]))
+            match_ID = line.strip().split(':')[0]
+            try:
+                results[match_ID] += float(line.strip().split(':')[1])
+            except KeyError:
+                results[match_ID] = float(line.strip().split(':')[1])
 
+    for match_ID in results:
+        x_labels.append(match_ID)
+        y_scores.append(results[match_ID])
+        
     plt.figure(figsize=(20, 10))
     plt.bar(x_labels, y_scores, color='olivedrab')
-    plt.title('Query ID: ' + hap0)
+    plt.title('Query ID: ' + sample_ID)
     plt.xticks(rotation=90)
     plt.xlabel('Match IDs')
     plt.ylabel('Scores')
     plt.gca().spines['top'].set_visible(False)
     plt.gca().spines['right'].set_visible(False)
-    plt.savefig(out_dir + hap1 + '.png')
+    plt.savefig(out_dir + sample_ID + '.png')
     plt.close()
-    x_labels = []
-    y_scores = []
-    hap1 = line.strip()
 
 if __name__ == '__main__':
     main()
