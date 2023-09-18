@@ -1,4 +1,4 @@
-name: plot
+name: matplotlib
 channels:
   - conda-forge
   - defaults

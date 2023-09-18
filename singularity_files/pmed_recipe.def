@@ -8,7 +8,8 @@ From: continuumio/miniconda3
 	./conda_environments/snakemake.yml
 	./conda_environments/torch-cpu.yml
 	./conda_environments/torch-gpu.yml
-	./pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+	./conda_environments/plot.yml
+	./singularity_files/pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 
 %post
 	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
@@ -21,7 +22,8 @@ From: continuumio/miniconda3
 	conda env create -f ./conda_environments/snakemake.yml
 	conda env create -f ./conda_environments/torch-cpu.yml
 	conda env create -f ./conda_environments/torch-gpu.yml
+	conda env create -f ./conda_environments/plot.yml
 	conda clean --all
 	
-	pip install ./pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+	pip install ./singularity_files/pysvs-0.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 
