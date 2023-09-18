@@ -53,7 +53,7 @@ def read_results_file(out_dir, r_file):
 
         else:
             x_labels.append(line.strip().split(':')[0])
-            y_scores.append(line.strip().split(':')[1])
+            y_scores.append(float(line.strip().split(':')[1]))
 
     plt.figure(figsize=(20, 10))
     plt.bar(x_labels, y_scores, color='olivedrab')
