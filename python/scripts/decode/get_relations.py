@@ -99,7 +99,7 @@ def name_rce(depths):
     if q > t:  #earlier generatin
         if t == 0:
             grands = 1 if q - t >= 2 else 0
-            greats = max(0, q - 3)
+            greats = max(0, q - 2)
             return (depths, str(greats) + 'x  Great ' + str(grands) + 'x Grand Parent')
         if t == 1:
             grands = 1 if q - t >= 2 else 0

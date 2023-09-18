@@ -25,7 +25,7 @@ rule write_summary:
     message:
         "Writing a summary result file for plotting..."
     shell:
-        "python {config.root_dir}decode/small_pedigree.py" \
+        "python {config.root_dir}python/scripts/decode/small_pedigree.py" \
 	" --sample_IDs {input.sample_IDs}" \
 	" --ss_sample_results_dir {input.svs_results_dir}" \
 	" --out_dir {input.svs_results_dir};" \
@@ -42,7 +42,7 @@ rule plot_summary:
     message:
         "Plotting summary results..."
     shell:
-        "python {config.root_dir}decode/plot_small_pedigree.py" \
+        "python {config.root_dir}python/scripts/decode/plot_small_pedigree.py" \
 	" --sample_IDs {input.sample_IDs}" \
 	" --ss_sample_results_dir {input.svs_results_dir}" \
 	" --out_dir {input.svs_results_dir};" \
