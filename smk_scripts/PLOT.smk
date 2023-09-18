@@ -4,7 +4,7 @@ config = SimpleNamespace(**config)
 
 shell.prefix("""
 . /opt/conda/etc/profile.d/conda.sh
-conda activate matplotlib-conda;
+conda activate matplotlib;
 """)
 
 import glob
@@ -32,9 +32,11 @@ rule write_summary:
 	" touch {output.write_summary};" 
 
 # 2.0 plot summmary data
-rule write_summary:
+rule plot_summary:
     input:
-        write_summary=f"{config.out_dir}svs_sample_results/write_summary.done"
+        write_summary=f"{config.out_dir}svs_sample_results/write_summary.done",
+        sample_IDs=f"{config.out_dir}sample_IDs.txt",
+        svs_results_dir=f"{config.out_dir}svs_results/"
     output:
         plot_summary=f"{config.out_dir}svs_sample_results/plot_summary.done"
     message:
