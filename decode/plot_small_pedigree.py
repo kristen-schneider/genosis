@@ -14,8 +14,8 @@ def get_args():
 def main():
     args = get_args()
     sample_IDs_txt = args.sample_IDs
-    ss_sample_results_dir = args.ss_sample_results_dir
-    out_dir = args.out_dir
+    ss_sample_results_dir = args.ss_sample_results_dir + '/'
+    out_dir = args.out_dir + '/'
 
     sample_IDs = sp.read_sample_IDs(sample_IDs_txt)
     for sample_ID in sample_IDs:
