@@ -124,3 +124,19 @@ snakemake \
 end_aggregate=$(date +%s.%3N)
 #aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
 #echo "--AGGREGATE: $aggregate_time seconds" >> $log
+
+
+# 7. plot pedigree summary
+echo "7. plotting results..." >> $log
+start_plot=$(date +%s.%3N)
+snakemake \
+    -s $smk_dir"PLOT.smk" \
+    -c 16 \
+    -j 10 \
+    --use-conda \
+    --conda-frontend mamba \
+    --configfile=$config \
+    --rerun-incomplete
+end_plot=$(date +%s.%3N)
+#plot_time=$(echo "scale=3; $end_plot - $start_plot" | bc)
+#echo "--PLOT: $plot_time seconds" >> $log
