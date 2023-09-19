@@ -1,0 +1,2 @@
+father ${PN}
+mother ${PN}
