@@ -59,6 +59,14 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
     if i1 == i2:
         return 0
 
+    # keep parents/children who are unrelated
+    for p in family_graph[i1].parents:
+        if p == i2:
+            return 1
+    for c in family_graph[i1].children:
+        if c == i2:
+            return 1
+
     # find shortest path between i1 and i2
     # if no path exists, return None
     queue = deque()
