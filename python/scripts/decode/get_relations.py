@@ -5,12 +5,9 @@ import tree_helpers as th
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Label pedigree relations between individuals')
-    parser.add_argument('--ped', type=str, help='PED file',
-                        default='/Users/kristen/PycharmProjects/data_analyses/input_data/dunns.fam')
-    parser.add_argument('--root_p', type=str, help='Paternal Root Node',
-                        default='tim')
-    parser.add_argument('--root_m', type=str, help='Maternal Root Node',
-                        default='dagmar')
+    parser.add_argument('--ped', type=str, help='PED file')
+    parser.add_argument('--root_p', type=str, help='Paternal Root Node')
+    parser.add_argument('--root_m', type=str, help='Maternal Root Node')
     return parser.parse_args()
 
 def main():
