@@ -19,6 +19,8 @@ full_map="/path/to/full_map.map"
 cmap="/path/to/cmap.cmap.gz"
 out_map=$out_dir"out.map"
 
+fam_ID="family_ID"
+out_ped="/path/to/out.ped"
 ###
 ###
 
@@ -40,6 +42,10 @@ echo "3. Preparing a MAP file."
 awk '{ print $1 $2 $7 $3}' $full_map > $out_map
 #python $cm_py $full_map $cmap
 
-# makde PED file
+# make PED file
 echo "4. Preparing a PED file."
+bash $python_src"decode/biscuit_ped.sh" \
+ $good_samples \
+ $fam_ID > $out_ped
+
 
