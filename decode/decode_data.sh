@@ -25,5 +25,5 @@ bgzip $out_vcf
 tabix -p vcf $out_vcf".gz"
 
 # make map file
-#awk '{ print $1 $3 $4 $2}'
+awk '{ print $1 $2 $7 $3}' $full_map > $out_map
 #python $cm_py $full_map $cmap
