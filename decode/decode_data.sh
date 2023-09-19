@@ -44,8 +44,12 @@ awk '{ print $1 $2 $7 $3}' $full_map > $out_map
 
 # make PED file
 echo "4. Preparing a PED file."
+# with bash
 bash $python_src"decode/biscuit_ped.sh" \
  $good_samples \
  $fam_ID > $out_ped
-
+# with python
+#python $python_src"decode/islbok.py" \
+# --sample_IDs $good_samples \
+# --family_ID $fam_ID > $out_ped
 
