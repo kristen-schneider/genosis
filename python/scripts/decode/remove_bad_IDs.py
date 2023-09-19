@@ -9,6 +9,10 @@ def get_args():
 	return parser.parse_args()
 
 def main():
+	
+	## remove bad ids from sample file before generating vcf
+	## bad ids = duplicate ids, and ids not in chi file
+	
 	args = get_args()
 	samples_f = args.my_samples
 	avail_f = args.all_samples
