@@ -94,4 +94,4 @@ rule aggregate_chromosomes_execute:
         "{input.bin}" \
         " {config.out_dir}svs_sample_results/" \
         " {config.out_dir}query_IDs.txt;" \
-i        "touch {output.done}"
+        "touch {output.done}"
