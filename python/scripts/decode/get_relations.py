@@ -17,11 +17,12 @@ def main():
     root_p = args.root_p
     root_m = args.root_m
 
+    family_members = get_family_members(ped_file)
+
     family_tree = th.build_family_tree(ped_file)
-    family_graph = gh.build_family_graph(ped_file)
+    family_graph = gh.build_family_graph(ped_file, family_members)
 
     # gh.plot_tree(family_tree)
-    family_members = family_tree.keys()
     relations_labels = defaultdict(dict)
 
     for i1 in family_members:
@@ -148,7 +149,7 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
             if height_1 - height_2 == 4:
                 relation = 'great-great-great-grandparent'
                 reverse_relation = 'great-great-great-grandchild'
-            elif height_1 - height_2 == 3:
+            elif height_1 - height_2 == 2:
                 relation = 'great-great-aunt/uncle'
                 reverse_relation = 'great-great-niece/nephew'
             elif height_1 - height_2 == 1:
@@ -179,6 +180,15 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
 
     return relation, reverse_relation
 
+def get_family_members(ped_file):
+    family_members = set()
+    with open(ped_file, 'r') as file:
+        for line in file:
+            values = line.strip().split()
+            for v in values[1:4]:
+                if v != '0':
+                    family_members.add(v)
+    return family_members
 
 
 if __name__ == '__main__':

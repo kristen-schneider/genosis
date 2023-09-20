@@ -20,7 +20,7 @@ class FamilyNode:
         self.parents = []
         self.children = []
 
-def build_family_graph(ped_file):
+def build_family_graph(ped_file, family_members):
     # ped_file_format: famID self father mother sex phenotype
     # read ped_file and build family graph (bidirectional)
     # create a graph of type FamilyNode
@@ -44,8 +44,17 @@ def build_family_graph(ped_file):
             # add children to parents
             if sample.paternal_id in G:
                 G[sample.paternal_id].children.append(sample.individual_id)
+            else:
+                sample_node = FamilyNode(sample.paternal_id)
+                sample_node.children.append(sample.individual_id)
+                G[sample.paternal_id] = sample_node
             if sample.maternal_id in G:
                 G[sample.maternal_id].children.append(sample.individual_id)
+            else:
+                sample_node = FamilyNode(sample.maternal_id)
+                sample_node.children.append(sample.individual_id)
+                G[sample.maternal_id] = sample_node
+
     return G
 
 def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
@@ -84,12 +93,21 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
 
     while queue:
         current_node = queue.popleft()
-        print(current_node)
-        if family_graph[current_node].parents[0] not in family_members:
-            if current_node == root_m or current_node == root_p:
-                pass
-            else:
-                break
+        # print(current_node)
+        # check if current node has parents
+        try:
+            parents = family_graph[current_node].parents
+        except KeyError:
+            break
+        try:
+            if family_graph[current_node].parents[0] not in family_members:
+                if current_node == root_m or current_node == root_p:
+                    pass
+                else:
+                    break
+        except IndexError:
+            break
+
         neighbors = get_neighbors(family_graph, family_graph[current_node], root_p, root_m, visited)
         for neighbor in neighbors:
             if not visited[neighbor]:
@@ -101,19 +119,15 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
                 if neighbor == i2:
                     return distances[neighbor]
 
-
-
-
-
 def get_neighbors(family_graph, family_member, root_p, root_m, visited):
-    # return neighbors of family_member
-
+    # return unvisited neighbors of family_member
+    # do not include parents who married into family, or who do not have parents listed
+    # do not include children who do not have parents listed
     parents_ = family_member.parents
     parents = [p for p in parents_]
     children_ = family_member.children
     children = [c for c in children_]
 
-    # if person is a root node, remove their parents
     if family_member.name == root_p or family_member.name == root_m:
         parents = []
     else:
@@ -122,27 +136,14 @@ def get_neighbors(family_graph, family_member, root_p, root_m, visited):
             if visited[p]:
                 parents.remove(p)
                 continue
-            # don't include people who married into family
             elif p == root_p or p == root_m:
                 continue
             else:
-                try:
-                    grandparents = family_graph[p].parents
-                    if grandparents[0] not in family_graph or grandparents[1] not in family_graph:
-                        parents.remove(p)
-                except KeyError:
-                    pass
-
-    for c in children_:
-        # remove children that have already been visited
-        if visited[c]:
-            children.remove(c)
-
+                if family_graph[p].parents == []:
+                    parents.remove(p)
+                    continue
     all_neighbors = parents + children
     return all_neighbors
-
-
-
 
 def get_node_degree(node, G):
     # return degree of node in G
@@ -164,4 +165,4 @@ def plot_graph(family_tree):
     plt.figure(figsize=(20, 20))
     pos = nx.spring_layout(G, k=0.5, iterations=20)
     nx.draw(G, pos, with_labels=True)
-    plt.savefig()
+    plt.savefig('/Users/kristen/PycharmProjects/data_analyses/input_data/schneiders.png')

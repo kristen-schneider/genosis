@@ -29,7 +29,7 @@ def main():
 		for l in Q.read_lines():
 			mother = l.strip()
 		
-		print( family_ID + '\t' + s + '\t' + father + '\t' + mother + '\t' + '0\t0' )
+		print( family_ID + '\t' + s + '\t' + father + '\t' + mother + '\t0\t0' )
 
 
 def read_samples(sample_IDs_pns):
