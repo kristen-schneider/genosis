@@ -68,13 +68,26 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
     if i1 == i2:
         return 0
 
-    # keep parents/children who are unrelated
+    # if current parent married in, keep them (removed downstream)
     for p in family_graph[i1].parents:
+        # if parent is i2 return 1
         if p == i2:
             return 1
+        # if parent is child of i2, return 2
+        for c in family_graph[i2].children:
+            if c == p:
+                return 2
+
+    # if current node married in, keep their children
     for c in family_graph[i1].children:
+        # if child is i2, return 1
         if c == i2:
             return 1
+        # if child is parent of i2, return 2
+        for p in family_graph[i2].parents:
+            if p == c:
+                return 2
+
 
     # find shortest path between i1 and i2
     # if no path exists, return None
@@ -118,6 +131,7 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
 
                 if neighbor == i2:
                     return distances[neighbor]
+    return -1
 
 def get_neighbors(family_graph, family_member, root_p, root_m, visited):
     # return unvisited neighbors of family_member
@@ -145,6 +159,8 @@ def get_neighbors(family_graph, family_member, root_p, root_m, visited):
     all_neighbors = parents + children
     return all_neighbors
 
+
+
 def get_node_degree(node, G):
     # return degree of node in G
     # degree = number of edges connected to node
@@ -152,17 +168,3 @@ def get_node_degree(node, G):
     neighbors = G.get(node, [])
     degree += len(neighbors)
     return degree
-
-def plot_graph(family_tree):
-    # use networkx to plot family tree
-    G = nx.DiGraph()
-    for node in family_tree:
-        G.add_node(node)
-        for neighbor in family_tree[node]:
-            G.add_edge(node, neighbor)
-
-    # no overlap between nodes
-    plt.figure(figsize=(20, 20))
-    pos = nx.spring_layout(G, k=0.5, iterations=20)
-    nx.draw(G, pos, with_labels=True)
-    plt.savefig('/Users/kristen/PycharmProjects/data_analyses/input_data/schneiders.png')
