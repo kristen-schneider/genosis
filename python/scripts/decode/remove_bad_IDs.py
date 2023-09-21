@@ -20,7 +20,7 @@ def main():
 
 	my_samples = make_my_samples(samples_f)
 
-	avail_samples = check_available_samples(my_samples, available_f)
+	avail_samples = check_available_samples(my_samples, avail_f)
 
 	write_avail_samples(avail_samples, out_f)
 	
@@ -33,7 +33,7 @@ def make_my_samples(samples_file):
 		if L not in my_samples:
 			my_samples.append(L)
 	s_open.close()
-	reutrn my_samples
+	return my_samples
 
 def check_available_samples(my_samples, available_file):
 	avail_samples = []
@@ -47,7 +47,7 @@ def check_available_samples(my_samples, available_file):
 	a_open.close()
 	return avail_samples
 
-def write_avail_samples(avail_samples, out_file)
+def write_avail_samples(avail_samples, out_file):
 	
 	o_open = open(out_file, 'w')
 	for avs in avail_samples:
