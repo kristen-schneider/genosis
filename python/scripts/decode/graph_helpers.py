@@ -75,10 +75,6 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
         for c in family_graph[i2].children:
             if c == p:
                 return 2
-            else:
-                return -2
-        else:
-            return -2
 
     # if current node married in, keep their children
     for c in family_graph[i1].children:
@@ -89,11 +85,13 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
         for p in family_graph[i2].parents:
             if p == c:
                 return 2
-            else:
-                return -2
-        else:
-            return -2
 
+    # if i1 married in (parent's parents are not in family), return -2
+    if family_graph[i1].parents == []:
+        return -2
+    # if i2 married in (parent's parents are not in family), return -2
+    if family_graph[i2].parents == []:
+        return -2
 
     # find shortest path between i1 and i2
     # if no path exists, return None
