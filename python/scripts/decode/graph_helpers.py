@@ -1,8 +1,6 @@
 from collections import deque
 from collections import defaultdict
 from collections import namedtuple
-import networkx as nx
-from matplotlib import pyplot as plt
 
 ped_header = ['family_id',
               'individual_id',
