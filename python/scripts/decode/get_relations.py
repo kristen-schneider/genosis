@@ -184,6 +184,9 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
     elif distance == -1:
         relation = 'unrelated'
         reverse_relation = 'unrelated'
+    elif distance == -2:
+        relation = 'in-law-flag'
+        reverse_relation = 'in-law-flag'
     else:
         relation = 'undetermined'
         reverse_relation = 'undetermined'
