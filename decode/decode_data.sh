@@ -29,7 +29,7 @@ root_m="maternal_root_ID"
 
 # remove bad ids from samples file
 echo "1. Removing bad IDs from "$my_samples
-python $python_src"decode/remove_bad_IDs.py" \
+python $python_src"remove_bad_IDs.py" \
  --my_samples $my_samples \
  --all_samples $all_samples \
  --out_sample $good_samples
@@ -48,11 +48,11 @@ awk '{ print $1 $2 $7 $3}' $full_map > $out_map
 # make PED file
 echo "4. Preparing a PED file."
 # with bash
-bash $python_src"decode/biscuit_ped.sh" \
+bash $python_src"biscuit_ped.sh" \
  $good_samples \
  $fam_ID > $out_ped
 # with python
-#python $python_src"decode/islbok.py" \
+#python $python_src"islbok.py" \
 # --sample_IDs $good_samples \
 # --family_ID $fam_ID > $out_ped
 
