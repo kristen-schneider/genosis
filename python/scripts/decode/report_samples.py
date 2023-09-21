@@ -69,13 +69,13 @@ def read_hap_results(hap_results_csv):
         chrm = int(line[0])
         match_hap = line[1]
         match_id = match_hap.split('_')[0]
-	pop_score = float(line[2])
+        pop_score = float(line[2])
         ibd_score = float(line[5])
         try:
             hap_results[sample][match_id][0] += pop_score
             hap_results[sample][match_id][1] += ibd_score
         except KeyError:
-            hap_results[sample][match_id] = [pop__score, ibd_score
+            hap_results[sample][match_id] = [pop_score, ibd_score]
 
     return hap_results
 

@@ -46,5 +46,5 @@ rule plot_summary:
         "python {config.root_dir}python/scripts/decode/lump_relations.py" \
 	" --relations {input.relations}" \
 	" --samples {input.sample_IDs}" \
-	" --out_dir {input.svs_results_dir};" \
+	" --data_dir {input.svs_results_dir};" \
 	" touch {output.plot_summary};" 

@@ -20,8 +20,8 @@ def main():
     all_relations_scores_pop = get_relation_scores(samples, pair_relations, data_dir, ext='.pop')
     all_relations_scores_ibd = get_relation_scores(samples, pair_relations, data_dir, ext='.ibd')
     
-    pd.violin_plot(all_relations_scores, data_dir + 'POP.png')
-    pd.violin_plot(all_relations_scores, data_dir + 'IBD.png')
+    pd.violin_plot(all_relations_scores_pop, data_dir + '/POP.png')
+    pd.violin_plot(all_relations_scores_ibd, data_dir + '/IBD.png')
 	
 def get_relation_scores(samples, pair_relations, data_dir, ext):
    
@@ -30,7 +30,7 @@ def get_relation_scores(samples, pair_relations, data_dir, ext):
     for sample in samples:
         print(sample)
         # open sample file
-        sample_file = data_dir + sample + ext + '.csv'
+        sample_file = data_dir + '/' + sample + ext + '.csv'
         query = sample
         with open(sample_file, 'r') as file:
             # combine any sample amtches across haps
@@ -54,16 +54,20 @@ def get_relation_scores(samples, pair_relations, data_dir, ext):
                 all_relations_scores[relation].append(curr_score)
             except KeyError:
                 all_relations_scores[relation] = [curr_score]
+    return all_relations_scores
             
 def read_relations(relations_file):
     relations = {}
     with open(relations_file, 'r') as file:
         for line in file:
-            values = line.strip().split()
+            values = line.strip().split(',')
             i1 = values[0]
             i2 = values[1]
             relation = values[2]
-            relations[i1] = {i2: relation}
+            try:
+		relations[i1].update({i2: relation})
+            except KeyError:
+                relations[i1] = {i2: relation}
     return relations
     
 def read_samples(samples_file):

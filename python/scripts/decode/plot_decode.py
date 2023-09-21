@@ -17,7 +17,7 @@ def violin_plot(all_relations_scores, outpng):
 	for generation in ordered_relations:
 		generation_data = []
 		gen_lbl= "-".join([rl for rl in generation])
-		for relationshiip in generation:
+		for relationship in generation:
 			try:
 				generation_data += all_relations_scores[relationship]
 			except KeyError:
@@ -28,10 +28,10 @@ def violin_plot(all_relations_scores, outpng):
 	
 	ax.violinplot([plot_data[col] for col in plot_data])
 	ax.set_xticks(range(1,len(plot_data)+1))
-	ax.set_xticklabels(col foor col in plot_data)
+	ax.set_xticklabels(col for col in plot_data)
 	ax.set_xlabel('Relationship')
 	ax.set_ylabel('Aggregate SimScore')
-	ax.set_titel('deCODE pedgree', fontsize=20)
+	ax.set_title('deCODE pedgree', fontsize=20)
 
 	for pc in ax.collections:
 		pc.set_facecolor('olivedrab')
