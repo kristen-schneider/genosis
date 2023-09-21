@@ -60,5 +60,6 @@ bash $python_src"biscuit_ped.sh" \
 echo "5. Preparing Relations file."
 python $python_src"get_relations.py" \
  --ped $out_ped \
+ --out_dir $out_dir \
  --root_p $root_p \
  --root_m $root_m \
