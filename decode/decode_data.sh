@@ -49,7 +49,7 @@ awk '{ print $1 $2 $7 $3}' $full_map > $out_map
 echo "4. Preparing a PED file."
 # with bash
 bash $python_src"biscuit_ped.sh" \
- $good_samples \
+ $my_samples \
  $fam_ID > $out_ped
 # with python
 #python $python_src"islbok.py" \
