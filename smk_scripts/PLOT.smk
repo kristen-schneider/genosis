@@ -35,7 +35,7 @@ rule write_summary:
 rule plot_summary:
     input:
         write_summary=f"{config.out_dir}svs_sample_results/write_summary.done",
-	relations=f"{config.out_dir}samples.relations"
+	relations=f"{config.out_dir}samples.relations",
         sample_IDs=f"{config.out_dir}sample_IDs.txt",
         svs_results_dir=f"{config.out_dir}svs_sample_results/"
     output:
@@ -46,5 +46,5 @@ rule plot_summary:
         "python {config.root_dir}python/scripts/decode/lump_relations.py" \
 	" --relations {input.relations}" \
 	" --samples {input.sample_IDs}" \
-	" --out_dir {input.svs_results_dir};" \
+	" --data_dir {input.svs_results_dir};" \
 	" touch {output.plot_summary};" 

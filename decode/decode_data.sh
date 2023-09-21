@@ -29,7 +29,7 @@ root_m="maternal_root_ID"
 
 # remove bad ids from samples file
 echo "1. Removing bad IDs from "$my_samples
-python $python_src"decode/remove_bad_IDs.py" \
+python $python_src"remove_bad_IDs.py" \
  --my_samples $my_samples \
  --all_samples $all_samples \
  --out_sample $good_samples
@@ -42,17 +42,17 @@ tabix -p vcf $out_vcf".gz"
 
 # make MAP file
 echo "3. Preparing a MAP file."
-awk '{ print $1 $2 $7 $3}' $full_map > $out_map
+awk '{ print $1, $2, $7, $3}' $full_map > $out_map
 #python $cm_py $full_map $cmap
 
 # make PED file
 echo "4. Preparing a PED file."
 # with bash
-bash $python_src"decode/biscuit_ped.sh" \
- $good_samples \
+bash $python_src"biscuit_ped.sh" \
+ $my_samples \
  $fam_ID > $out_ped
 # with python
-#python $python_src"decode/islbok.py" \
+#python $python_src"islbok.py" \
 # --sample_IDs $good_samples \
 # --family_ID $fam_ID > $out_ped
 
@@ -60,5 +60,6 @@ bash $python_src"decode/biscuit_ped.sh" \
 echo "5. Preparing Relations file."
 python $python_src"get_relations.py" \
  --ped $out_ped \
+ --out_dir $out_dir \
  --root_p $root_p \
  --root_m $root_m \

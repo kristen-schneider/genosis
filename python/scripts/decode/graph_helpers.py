@@ -1,8 +1,6 @@
 from collections import deque
 from collections import defaultdict
 from collections import namedtuple
-import networkx as nx
-from matplotlib import pyplot as plt
 
 ped_header = ['family_id',
               'individual_id',
@@ -88,6 +86,12 @@ def search_family_graph(family_graph, family_members, i1, i2, root_p, root_m):
             if p == c:
                 return 2
 
+    # if i1 married in (parent's parents are not in family), return -2
+    if family_graph[i1].parents == []:
+        return -2
+    # if i2 married in (parent's parents are not in family), return -2
+    if family_graph[i2].parents == []:
+        return -2
 
     # find shortest path between i1 and i2
     # if no path exists, return None

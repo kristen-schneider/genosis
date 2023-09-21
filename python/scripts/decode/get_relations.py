@@ -5,6 +5,7 @@ import graph_helpers as gh
 def parse_args():
     parser = argparse.ArgumentParser(description='Label pedigree relations between individuals')
     parser.add_argument('--ped', type=str, help='PED file')
+    parser.add_argument('--out_dir', type=str, help='output directory')
     parser.add_argument('--root_p', type=str, help='Paternal Root Node')
     parser.add_argument('--root_m', type=str, help='Maternal Root Node')
     return parser.parse_args()
@@ -12,7 +13,8 @@ def parse_args():
 def main():
     args = parse_args()
     ped_file = args.ped
-    relations_file = ('samples.relations')
+    out_dir = args.out_dir
+    relations_file = (out_dir + 'samples.relations')
     root_p = args.root_p
     root_m = args.root_m
 
@@ -182,6 +184,9 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
     elif distance == -1:
         relation = 'unrelated'
         reverse_relation = 'unrelated'
+    elif distance == -2:
+        relation = 'in-law-flag'
+        reverse_relation = 'in-law-flag'
     else:
         relation = 'undetermined'
         reverse_relation = 'undetermined'

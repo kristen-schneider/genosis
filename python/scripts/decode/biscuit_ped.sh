@@ -8,7 +8,7 @@
 sample_IDs=$1
 family_ID=$2
 
-readarray -r all_samples < $sample_IDs
+readarray -t all_samples < $sample_IDs
 
 for sample in "${all_samples[@]}"
 do
