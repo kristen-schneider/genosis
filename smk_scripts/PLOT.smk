@@ -35,7 +35,7 @@ rule write_summary:
 rule plot_summary:
     input:
         write_summary=f"{config.out_dir}svs_sample_results/write_summary.done",
-	relations=f"{config.out_dir}samples.relations"
+	relations=f"{config.out_dir}samples.relations",
         sample_IDs=f"{config.out_dir}sample_IDs.txt",
         svs_results_dir=f"{config.out_dir}svs_sample_results/"
     output:
