@@ -1,47 +1,59 @@
 import argparse
 from collections import defaultdict
-import graph_helpers as gh
+import find_relations as fr
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Label pedigree relations between individuals')
     parser.add_argument('--ped', type=str, help='PED file')
     parser.add_argument('--out_dir', type=str, help='output directory')
-    parser.add_argument('--root_p', type=str, help='Paternal Root Node')
-    parser.add_argument('--root_m', type=str, help='Maternal Root Node')
+    parser.add_argument('--roots', type=str, help='path to a list of root for all pedigrees')
     return parser.parse_args()
 
 def main():
     args = parse_args()
     ped_file = args.ped
-    out_dir = args.out_dir
-    relations_file = (out_dir + 'samples.relations')
-    root_p = args.root_p
-    root_m = args.root_m
+    out_dir = args.out_dir	
+    relations_file = out_dir + 'samples.relations'
+    roots = args.roots
 
     family_members = get_family_members(ped_file)
+    family_roots = get_family_roots(roots)
 
-    family_graph = gh.build_family_graph(ped_file, family_members)
+    family_graph = fr.build_family_graph(ped_file)
 
     # gh.plot_tree(family_tree)
     relations_labels = defaultdict(dict)
 
     for i1 in family_members:
+        roots_i1 = family_roots[family_members[i1]]
+        if roots_i1 == []:
+            continue
         for i2 in family_members:
-            distance = gh.search_family_graph(family_graph, family_members, i1, i2, root_p, root_m)
-            # set height to 0 if i1 or i2 is root
-            if i1 == root_p or i1 == root_m:
-                height_1 = 0
+            roots_i2 = family_roots[family_members[i2]]
+            if roots_i2 == []:
+                continue
+            # check if same family
+            if family_members[i1] == family_members[i2]:
+                distance = fr.search_family_graph(family_graph, family_members, i1, i2, family_roots)
+                # set height to 0 if i1 or i2 is root
+                if i1 in roots_i1:
+                    height_1 = 0
+                else:
+                    # height of i1 is i1s distance from root
+                    height_1 = fr.search_family_graph(family_graph, family_members, i1, roots_i1[0], family_roots)
+                if i2 in roots_i2:
+                    height_2 = 0
+                else:
+                    # height of i2 is i2s distance from root
+                    height_2 = fr.search_family_graph(family_graph, family_members, i2, roots_i2[0], family_roots)
+
+                relation, reverse_relation = label_relations(i1, i2,
+                                                             distance, height_1, height_2,
+                                                             family_members, family_roots)
             else:
-                height_1 = gh.search_family_graph(family_graph, family_members, i1, root_p, root_p, root_m)
-            if i2 == root_p or i2 == root_m:
-                height_2 = 0
-            else:
-                height_2 = gh.search_family_graph(family_graph, family_members, i2, root_p, root_p, root_m)
-            # height_1 = th.get_node_height(i1, family_tree, family_members, root_p, root_m)
-            # height_2 = th.get_node_height(i2, family_tree, family_members, root_p, root_m)
-            relation, reverse_relation = label_relations(i1, i2,
-                                                         distance, height_1, height_2,
-                                                         root_p, root_m)
+                relation = 'unrelated'
+                reverse_relation = 'unrelated'
+
             try:
                 relations_labels[i1][i2] = relation
             except KeyError:
@@ -60,7 +72,11 @@ def main():
 
 
 
-def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
+def label_relations(i1, i2, distance, height_1, height_2, family_members, family_roots):
+
+    roots_i1 = family_roots[family_members[i1]]
+    roots_i2 = family_roots[family_members[i2]]
+
     # can only be self
     if distance == 0 and height_1 == height_2 and i1 == i2:
         relation = 'self'
@@ -78,7 +94,7 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
             reverse_relation = 'undetermined'
     # can be a grandparent or grandchild or sibling
     elif distance == 2:
-        if (i1 == root_p or i1 == root_m) and (i2 == root_m or i2 == root_p):
+        if (i1 in roots_i1) and (i2 in roots_i2):
             relation = 'unrelated'
             reverse_relation = 'unrelated'
         elif height_1 > height_2:
@@ -194,15 +210,25 @@ def label_relations(i1, i2, distance, height_1, height_2, root_p, root_m):
     return relation, reverse_relation
 
 def get_family_members(ped_file):
-    family_members = set()
+    family_members = dict()
     with open(ped_file, 'r') as file:
         for line in file:
             values = line.strip().split()
-            for v in values[1:4]:
-                if v != '0':
-                    family_members.add(v)
+            family_ID = values[0]
+            samples = values[1:4]
+            for sample in samples:
+                family_members[sample] = family_ID
     return family_members
 
+def get_family_roots(roots_file):
+    family_roots = dict()
+    with open(roots_file, 'r') as file:
+        for line in file:
+            values = line.strip().split()
+            family_ID = values[0]
+            roots = values[1:3]
+            family_roots[family_ID] = roots
+    return family_roots
 
 if __name__ == '__main__':
     main()
