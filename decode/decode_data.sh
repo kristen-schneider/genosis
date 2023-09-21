@@ -21,6 +21,9 @@ out_map=$out_dir"out.map"
 
 fam_ID="family_ID"
 out_ped="/path/to/out.ped"
+root_p="paternal_root_ID"
+root_m="maternal_root_ID"
+
 ###
 ###
 
@@ -53,3 +56,9 @@ bash $python_src"decode/biscuit_ped.sh" \
 # --sample_IDs $good_samples \
 # --family_ID $fam_ID > $out_ped
 
+# make relations file
+echo "5. Preparing Relations file."
+python $python_src"get_relations.py" \
+ --ped $out_ped \
+ --root_p $root_p \
+ --root_m $root_m \
