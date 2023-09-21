@@ -42,7 +42,7 @@ tabix -p vcf $out_vcf".gz"
 
 # make MAP file
 echo "3. Preparing a MAP file."
-awk '{ print $1 $2 $7 $3}' $full_map > $out_map
+awk '{ print $1, $2, $7, $3}' $full_map > $out_map
 #python $cm_py $full_map $cmap
 
 # make PED file
