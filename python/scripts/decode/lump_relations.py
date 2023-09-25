@@ -19,7 +19,10 @@ def main():
 
     all_relations_scores_pop = get_relation_scores(samples, pair_relations, data_dir, ext='.pop')
     all_relations_scores_ibd = get_relation_scores(samples, pair_relations, data_dir, ext='.ibd')
-    
+
+    write_relations_scores(all_relations_scores_pop, data_dir + '/POP.results')    
+    write_relations_scores(all_relations_scores_pop, data_dir + '/IBD.results')    
+
     pd.violin_plot(all_relations_scores_pop, data_dir + '/POP.png')
     pd.violin_plot(all_relations_scores_ibd, data_dir + '/IBD.png')
 	
@@ -77,5 +80,13 @@ def read_samples(samples_file):
             samples.append(line.strip())
     return samples
     
+def write_relations_scores(all_relations_scores, out_f):
+    o = open(out_f, 'w')
+    for relation in all_relations_scores:
+        o.write(relation + ',' + str(all_relations_scores[relation]))
+	o.write('\n')
+   o.close()
+
+
 if __name__ == '__main__':
 	    main()
