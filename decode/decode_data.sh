@@ -21,11 +21,11 @@ out_map=$out_dir"out.map"
 
 fam_ID="family_ID"
 out_ped="/path/to/out.ped"
-root_p="paternal_root_ID"
-root_m="maternal_root_ID"
+roots="/patah/to/roots.roots"
 
 ###
 ###
+
 
 # remove bad ids from samples file
 echo "1. Removing bad IDs from "$my_samples
@@ -61,5 +61,4 @@ echo "5. Preparing Relations file."
 python $python_src"get_relations.py" \
  --ped $out_ped \
  --out_dir $out_dir \
- --root_p $root_p \
- --root_m $root_m \
+ --roots $roots
