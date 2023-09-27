@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 
     // full data structure
     // chromosome: MatchID: score]
-    map<int, vector<pair<string, vector<float>>>> chromosome_match_ID_scores;
+    map<int, vector<pair<string, vector<int>>>> chromosome_match_ID_scores;
 
     // for each query
     for (auto query : query_samples) {
@@ -53,10 +53,10 @@ int main(int argc, char* argv[]) {
                 // get match_ID
                 string match_ID = match.first;
                 // get scores
-                vector<float> scores = match.second;
+                vector<int> scores = match.second;
                 // add scores to map
                 chromosome_match_ID_scores[chromosome].push_back(make_pair(match_ID,
-                                                vector<float>{scores}));
+                                                vector<int>{scores}));
             }
         }
         // all top matches have been collected for this query
@@ -87,10 +87,10 @@ int main(int argc, char* argv[]) {
                 // get match_ID
                 string match_ID = match.first;
                 // get match_ID score from popcount
-                vector<float> scores = match.second;
+                vector<int> scores = match.second;
                 // add scores to map
                 chromosome_match_ID_scores[chromosome].push_back(make_pair(match_ID,
-                                                                           vector<float>{scores}));
+                                                                           vector<int>{scores}));
             }
         }
         // all top matches have been collected for this query

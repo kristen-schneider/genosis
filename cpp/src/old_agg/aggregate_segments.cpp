@@ -32,7 +32,6 @@ int main(int argc, char* argv[]) {
     // read faiss results file to get all files needed
     vector<string> sim_search_results_files;
     sim_search_results_files = read_ss_results_files(sim_search_results_filelist);
-    chromosome_segments = get_chromosome_segments(sim_search_results_files);
     
     // iterate through all files in the sim search results directory
     for (auto file_i : sim_search_results_files) {
@@ -51,13 +50,12 @@ int main(int argc, char* argv[]) {
         int segment = stoi(chromosome_segment.substr(chromosome_segment.find("segment") + 7));
         
         // add segment to list of segments for chromosome
-        // chromosome_segments[chromosome].push_back(segment);
+        chromosome_segments[chromosome].push_back(segment);
 
         // read file and build datastructure
         read_QCMS(filename,
                     chromosome,
                     segment,
-                    chromosome_segments,
                     query_chromosome_match_ID_segments);
     }
   
