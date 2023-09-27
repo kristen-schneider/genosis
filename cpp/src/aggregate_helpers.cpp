@@ -21,6 +21,22 @@ vector<string> get_query_samples_list(
     return query_samples;
 }
 
+map<int, vector<int>> get_chromosome_segments(
+        vector<string> knn_results_file) {
+    map<int, vector<int>> chromosome_segments;
+    // iterate through all files in knn_results_file
+    for (auto file_i : knn_results_file) {
+        // file name format is chrmX.segmentYY.txt
+        string chrom = file_i.substr(file_i.find("chrm") + 4, file_i.find("segment") - 5);
+        int chromosome = stoi(chrom);
+        string seg = file_i.substr(file_i.find("segment") + 7, file_i.find(".knn") - 7);
+        int segment = stoi(seg);
+        // add segment to list of segments for chromosome
+        chromosome_segments[chromosome].push_back(segment);
+    }
+    return chromosome_segments;
+}
+
 /*
  * Read knn file and add match IDs to map
  * @param filename: name of file to read
@@ -33,7 +49,8 @@ void read_QCMS(
         string filename,
         int chromosome,
         int segment,
-        map<string, map<int, map<string, vector<int>>>> & query_chromosome_match_ID_segments
+        map<int, vector<int>> chromosome_segments,
+        map<string, map<int, map<string, vector<float>>>> & query_chromosome_match_ID_segments
 ){
     ifstream file(filename);
     string line;
@@ -65,15 +82,21 @@ void read_QCMS(
                 if (match_ID.empty()) {
                     continue;
                 }
-
+                float score = stof(line.substr(line.find("\t") + 1));
                 // if match_ID exists, add match ID to map
                 if (query_chromosome_match_ID_segments[query_ID_line][chromosome].find(match_ID) !=
                     query_chromosome_match_ID_segments[query_ID_line][chromosome].end()) {
-                    query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID].push_back(segment);
+                    query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID][segment] = (1/score);
                 }
                     // else add match ID to map
                 else {
-                    query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID] = {segment};
+                    // initialize vector of zeros
+                    int max_segment = chromosome_segments[chromosome].back();
+                    vector<float> zeros(chromosome_segments[chromosome].back(), 0);
+                    // add score to vector
+                    zeros[segment] = (1/score);
+                    // add match ID and vector to map
+                    query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID] = zeros;
                 }
             }
         }
@@ -87,7 +110,7 @@ void read_QCMS(
 
 void write_query_output(
         map<int, vector<int>> chromosome_segments,
-        map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments,
+        map<string, map<int, map<string, vector<float>>>> query_chromosome_match_ID_segments,
         string query_results_dir
 ){
     // for each query make a directory for output
@@ -111,21 +134,16 @@ void write_query_output(
             // write header
             file << "segment,";
             int num_segments = chromosome_segments[chromosome_num].size();
-            for (int i = 0; i < num_segments; i++) {
-                file << i << ",";
+            for (int segment : chromosome_segments[chromosome_num]) {
+                file << segment << ",";
             }
             file << endl;
             // write match IDs
             for (auto const& match_ID : chromosome.second) {
                 file << match_ID.first << ",";
-                // for each segment in chromosome, write 1 if match ID is in segment, 0 otherwise
-                for (int segment : chromosome_segments[chromosome_num]) {
-                    if (find(match_ID.second.begin(), match_ID.second.end(), segment) != match_ID.second.end()) {
-                        file << "1,";
-                    }
-                    else {
-                        file << "0,";
-                    }
+                // write scores
+                for (float score : match_ID.second) {
+                    file << score << ",";
                 }
                 file << endl;
             }
@@ -154,9 +172,9 @@ vector<string> read_ss_results_files(
     return ss_results_files;
 }
 
-map<string, vector<int>> score_samples(
+map<string, vector<float>> score_samples(
         string query_hap_chrom){
-    map<string, vector<int>> match_scores;
+    map<string, vector<float>> match_scores;
     string line;
     ifstream file(query_hap_chrom);
     string header;
@@ -166,7 +184,7 @@ map<string, vector<int>> score_samples(
     while (getline(file, line)) {
         vector<string> line_vector;
         string matchID;
-        vector<int> segment_vector;
+        vector<float> segment_vector;
 
         // skip header
         if (header.empty()) {
@@ -188,14 +206,14 @@ map<string, vector<int>> score_samples(
         for (int i = 1; i < line_vector.size(); i++) {
             // try stoi
             try {
-                segment_vector.push_back(stoi(line_vector[i]));
+                segment_vector.push_back(stof(line_vector[i]));
             } catch (invalid_argument) {
-                // if stoi fails, skip
+                // if stof fails, skip
                 continue;
             }
         }
         // popcount score = sum of segment vector
-        int matchID_popcount_score = 0;
+        float matchID_popcount_score = 0;
         for (auto segment : segment_vector) {
             matchID_popcount_score += segment;
         }
@@ -204,7 +222,7 @@ map<string, vector<int>> score_samples(
         int matchID_lss = 0;
         int current_lss = 0;
         for (auto segment : segment_vector) {
-            if (segment == 1) {
+            if (segment > 0) {
                 current_lss++;
                 matchID_lss = current_lss;
             }
@@ -221,7 +239,7 @@ map<string, vector<int>> score_samples(
         vector<int> shared_segments;
         int current_segment = 0;
         for (auto segment : segment_vector) {
-            if (segment == 1) {
+            if (segment > 0) {
                 current_segment++;
             }
             else {
@@ -251,7 +269,7 @@ map<string, vector<int>> score_samples(
         int gap_size = 0;
 
         for (auto segment : segment_vector) {
-            if (segment == 1) {
+            if (segment > 0) {
                 ibd_curr_segment++;
                 gap_size = 0;
             }
@@ -315,12 +333,12 @@ map<string, vector<int>> score_samples(
             ibd_squared_segments.push_back(all_segments.back() * all_segments.back());
         }
 
-        int matchID_ibd = 0;
+        float matchID_ibd = 0;
         for (auto segment : ibd_segments) {
             matchID_ibd += segment;
         }
 
-        int matchID_ibd_squared = 0;
+        float matchID_ibd_squared = 0;
         for (auto segment : ibd_squared_segments) {
             matchID_ibd_squared += segment;
         }
@@ -335,7 +353,7 @@ map<string, vector<int>> score_samples(
 
 void write_all_chromosomes(string out_file,
                            string query_ID,
-                           map<int, vector<pair<string, vector<int>>>> chromosome_match_ID_scores){
+                           map<int, vector<pair<string, vector<float>>>> chromosome_match_ID_scores){
     ofstream file(out_file);
     // write header
     file << query_ID << endl;
@@ -346,11 +364,11 @@ void write_all_chromosomes(string out_file,
         // for each match ID
         for (auto const& match_ID_score : chromosome.second) {
             string match_ID = match_ID_score.first;
-            int popcount_score = match_ID_score.second[0];
-            int lss_score = match_ID_score.second[1];
-            int sss_score = match_ID_score.second[2];
-            int ibd_score = match_ID_score.second[3];
-            int ibd_score_squared = match_ID_score.second[4];
+            float popcount_score = match_ID_score.second[0];
+            float lss_score = match_ID_score.second[1];
+            float sss_score = match_ID_score.second[2];
+            float ibd_score = match_ID_score.second[3];
+            float ibd_score_squared = match_ID_score.second[4];
             file << chromosome_num << ","
             << match_ID << ","
             << popcount_score << ","
