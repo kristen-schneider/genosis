@@ -9,7 +9,6 @@ def parse_args():
     parser.add_argument('--relations', type=str, help='output relations file')
     parser.add_argument('--gen', type=int, help='number of generations', default=5)
     return parser.parse_args()
-
 def main():
     args = parse_args()
     ped_file = args.ped
@@ -48,9 +47,9 @@ def main():
 
     # write to file
     with open(relations_file, 'w') as file:
-        file.write('---------------------\n')
-        file.write('i2 is the _____ of i1\n')
-        file.write('---------------------\n')
+        # file.write('---------------------\n')
+        # file.write('i2 is the _____ of i1\n')
+        # file.write('---------------------\n')
         for i1 in family_members:
             for i2 in family_members:
                 file.write(family_members[i1] + ',' + i1 + ',' + i2 + ',' + relations_labels[i1][i2] + '\n')
@@ -70,6 +69,9 @@ def label_relations(family_graph, i1, i2, height_i1, height_i2, gen):
     great = abs(diff) - 1
     cousin = 0
     removed = abs(diff)
+
+    if i1 == 'kristen' and i2 == 'chance':
+        print('here')
 
     if diff == 0:
         my_parental_gen = get_parents(family_graph, [i1], abs(diff))
