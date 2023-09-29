@@ -31,22 +31,23 @@ def build_family_graph(ped_file):
 
             # create node from this sample
             sample_node = FamilyNode(sample.individual_id)
-            # add parents to node
-            sample_node.parents.append(sample.paternal_id)
-            sample_node.parents.append(sample.maternal_id)
+            # add parents to node if parents are not 0
+            if sample.paternal_id != '0':
+                sample_node.parents.append(sample.paternal_id)
+                sample_node.parents.append(sample.maternal_id)
             # add node to graph
             G[sample.individual_id] = sample_node
 
             # add children to parents
             if sample.paternal_id in G:
                 G[sample.paternal_id].children.append(sample.individual_id)
-            else:
+            elif sample.paternal_id != '0':
                 sample_node = FamilyNode(sample.paternal_id)
                 sample_node.children.append(sample.individual_id)
                 G[sample.paternal_id] = sample_node
             if sample.maternal_id in G:
                 G[sample.maternal_id].children.append(sample.individual_id)
-            else:
+            elif sample.maternal_id != '0':
                 sample_node = FamilyNode(sample.maternal_id)
                 sample_node.children.append(sample.individual_id)
                 G[sample.maternal_id] = sample_node
@@ -63,7 +64,7 @@ def get_distance_to_root(family_graph, i1, root, distance):
         curr_parents = family_graph[i1].parents
 
         for p in curr_parents:
-            if family_graph[p].parents != []:
+            if family_graph[p].parents != [] or p == root:
                 germline_parent = p
                 if germline_parent == root:
                     return distance
@@ -82,7 +83,8 @@ def get_family_members(ped_file):
             family_ID = values[0]
             samples = values[1:4]
             for sample in samples:
-                family_members[sample] = family_ID
+                if sample != '0':
+                    family_members[sample] = family_ID
     return family_members
 
 def get_family_roots(roots_file):
