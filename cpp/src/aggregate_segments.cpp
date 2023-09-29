@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     map<int, vector<int>> chromosome_segments;
 
     // queryID: chromosome: matchID: [segment binary string]
-    map<string, map<int, map<string, vector<int>>>> query_chromosome_match_ID_segments;
+    map<string, map<int, map<string, vector<float>>>> query_chromosome_match_ID_segments;
 
     // read faiss results file to get all files needed
     vector<string> sim_search_results_files;
