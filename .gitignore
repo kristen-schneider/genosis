@@ -7,7 +7,9 @@ slurm_scripts/err/
 slurm_scripts/out/
 lightning_logs/
 */out/*
+*.out
 */err/*
+*.err
 python/scripts/__pycache__/
 python/scripts/distance/__pycache__/
 python/scripts/distance/dist_data/
