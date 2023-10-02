@@ -74,6 +74,7 @@ void read_QCMS(
             if (line.find("Query: ") != string::npos) {
                 query_ID_line = line;
                 query_ID_line = query_ID_line.substr(7);
+
             }
                 // else split line on tab and add match ID to map
             else {
@@ -91,10 +92,12 @@ void read_QCMS(
                     // else add match ID to map
                 else {
                     // initialize vector of zeros
-                    int max_segment = chromosome_segments[chromosome].back();
-                    vector<float> zeros(chromosome_segments[chromosome].back(), 0);
+                    sort(chromosome_segments[chromosome].begin(), chromosome_segments[chromosome].end(), greater<int>());
+                    int max_segment = chromosome_segments[chromosome][0];
+                    vector<float> zeros(max_segment, -1);
                     // add score to vector
-                    zeros[segment] = (1/score);
+                    // if (score == 0){ score = 10; }
+                    zeros[segment] = score;
                     // add match ID and vector to map
                     query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID] = zeros;
                 }
@@ -212,10 +215,26 @@ map<string, vector<float>> score_samples(
                 continue;
             }
         }
-        // popcount score = sum of segment vector
+    
+        // svs score = sum of scores reported by svs
+        int svs_penalty = 10. // if score = -1 (doesn't appear in top k), penalty
+        float matchID_svs_score = 0.;
+        for (auto segment : segment_vector) {
+            // if segment appears (score > 0), add svs score
+            if (segment != -1){
+                matchID_svs_score += segment;
+            }else{
+                matchID_svs_score += svs_penalty;
+            }
+        }    
+    
+        // popcount score = sum of appearances in top k
         float matchID_popcount_score = 0;
         for (auto segment : segment_vector) {
-            matchID_popcount_score += segment;
+            // if segment appears (score > 0), add 1
+            if (segment > 0){
+                matchID_popcount_score += 1;
+            }
         }
 
         // longest shared segment score = length of longest shared segment
@@ -344,7 +363,7 @@ map<string, vector<float>> score_samples(
         }
 
         // add match ID and scores to map
-        match_scores[matchID] = {matchID_popcount_score, matchID_lss, matchID_sss, matchID_ibd, matchID_ibd_squared};
+        match_scores[matchID] = {matchID_svs_score, matchID_popcount_score, matchID_lss, matchID_sss, matchID_ibd, matchID_ibd_squared};
 
     }
     file.close();
@@ -357,7 +376,7 @@ void write_all_chromosomes(string out_file,
     ofstream file(out_file);
     // write header
     file << query_ID << endl;
-    file << "Chromosome,MatchID,popcount,longest_shared_segment,sum_shared_segment,ibd_score,ibd_score_squared" << endl;
+    file << "Chromosome,MatchID,svs_score,popcount,longest_shared_segment,sum_shared_segment,ibd_score,ibd_score_squared" << endl;
     // for each chromosome
     for (auto const& chromosome : chromosome_match_ID_scores) {
         int chromosome_num = chromosome.first;

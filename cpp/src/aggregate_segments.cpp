@@ -49,7 +49,6 @@ int main(int argc, char* argv[]) {
         chromosome_segment = chromosome_segment.substr(4, chromosome_segment.find_last_of(".") - 4);
         int chromosome = stoi(chromosome_segment.substr(0, chromosome_segment.find("segment") - 1));
         int segment = stoi(chromosome_segment.substr(chromosome_segment.find("segment") + 7));
-        
         // add segment to list of segments for chromosome
         // chromosome_segments[chromosome].push_back(segment);
 
