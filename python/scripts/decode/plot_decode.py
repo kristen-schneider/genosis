@@ -1,14 +1,18 @@
 import matplotlib.pyplot as plt
 
-def violin_plot(all_relations_scores, outpng):
+def violin_plot(all_relations_scores, score_type, outpng):
 	
 	ordered_relations = [['self'],
 				['child', 'parent'],
 				['sibling'],
 				['grandchild', 'grandparent'],
-				['niece/nephew', 'aunt/uncle'],
-				['1st cousin'],
-				['undetermined']]
+                                ['niece-nephew', 'aunt-uncle'],
+                                ['great-grandchild', 'great-grandparent'],
+                                ['1-cousin'],
+                                ['great-niece-nephew', 'great-aunt-uncle'],
+                                ['1-cousin-1-removed'],
+                                ['2-cousin'],
+                                ['unrelated']]
 
 	plot_data = {}
 	
@@ -28,10 +32,10 @@ def violin_plot(all_relations_scores, outpng):
 	
 	ax.violinplot([plot_data[col] for col in plot_data])
 	ax.set_xticks(range(1,len(plot_data)+1))
-	ax.set_xticklabels(col for col in plot_data)
+	ax.set_xticklabels([col for col in plot_data], rotation=45)
 	ax.set_xlabel('Relationship')
-	ax.set_ylabel('Aggregate SimScore')
-	ax.set_title('deCODE pedgree', fontsize=20)
+	ax.set_ylabel(score_type)
+	ax.set_title('simulated pedgree', fontsize=20)
 
 	for pc in ax.collections:
 		pc.set_facecolor('olivedrab')
