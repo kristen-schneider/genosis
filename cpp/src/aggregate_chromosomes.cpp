@@ -28,12 +28,11 @@ int main(int argc, char* argv[]) {
     // full data structure
     // chromosome: MatchID: score]
     map<int, vector<pair<string, vector<float>>>> chromosome_match_ID_scores;
-
     // for each query
     for (auto query : query_samples) {
         cout << "reading query: " << query << "\n";
 
-        map<string, vector<int>> chrm_scores;
+        map<string, vector<float>> chrm_scores;
         string query_0 = query + "_0";
         string query_1 = query + "_1";
 

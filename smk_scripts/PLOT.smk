@@ -4,7 +4,7 @@ config = SimpleNamespace(**config)
 
 shell.prefix("""
 . /opt/conda/etc/profile.d/conda.sh
-conda activate matplotlib-decode;
+conda activate pmed;
 """)
 
 import glob
