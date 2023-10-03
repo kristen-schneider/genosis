@@ -17,15 +17,15 @@ def main():
     samples = read_samples(samples_file)
     pair_relations = read_relations(relations_file)
 
-    all_relations_scores_pop = get_relation_scores(samples, pair_relations, data_dir, ext='.svs')
+    all_relations_scores_svs = get_relation_scores(samples, pair_relations, data_dir, ext='.svs')
     all_relations_scores_pop = get_relation_scores(samples, pair_relations, data_dir, ext='.pop')
     all_relations_scores_ibd = get_relation_scores(samples, pair_relations, data_dir, ext='.ibd')
 
-    write_relations_scores(all_relations_scores_pop, data_dir + '/SVS.results')    
+    write_relations_scores(all_relations_scores_svs, data_dir + '/SVS.results')    
     write_relations_scores(all_relations_scores_pop, data_dir + '/POP.results')    
-    write_relations_scores(all_relations_scores_pop, data_dir + '/IBD.results')    
+    write_relations_scores(all_relations_scores_ibd, data_dir + '/IBD.results')    
 
-    pd.violin_plot(all_relations_scores_pop, "SVS scores", data_dir + '/SVS.png')
+    pd.violin_plot(all_relations_scores_svs, "SVS scores", data_dir + '/SVS.png')
     pd.violin_plot(all_relations_scores_pop, "popcount", data_dir + '/POP.png')
     pd.violin_plot(all_relations_scores_ibd, "merge-gap", data_dir + '/IBD.png')
 	
@@ -46,16 +46,19 @@ def get_relation_scores(samples, pair_relations, data_dir, ext):
                     hap = line
                 else:
                     values = line.strip().split()
-                    match_ID = values[0].split(":")[0]
+                    match_ID = values[0].split(":")[0][:-2]
                     score = float(values[1])
                     try:
-                        sample_haps[match_ID] += score
+                        sample_haps[match_ID].append(score)
                     except KeyError:
-                        sample_haps[match_ID] = score
+                        sample_haps[match_ID] = [score]
+        
         # for all matches with this sample append and get score
         for m in sample_haps:
-            curr_score = sample_haps[m]
+            curr_score = sum(sample_haps[m])
             relation = pair_relations[query][m]
+            if relation == "sibling" and ext == '.pop':
+                if curr_score > 100: print(query, m, sample_haps[m], curr_score)
             try:
                 all_relations_scores[relation].append(curr_score)
             except KeyError:

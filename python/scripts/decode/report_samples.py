@@ -30,6 +30,8 @@ def main():
 
 def write_combined_haps(sample_ID, hap0_results, hap1_results, out_dir):
 
+    print(sample_ID, hap0_results, hap1_results)
+
     svs_csv = out_dir + sample_ID + '.svs.csv'
     svs_file = open(svs_csv, 'w')
     
@@ -60,8 +62,8 @@ def combine_key_haps(hap0_results, hap1_results):
     combined_haps = defaultdict(dict)
     for sample in hap0_results:
         for match_id in hap0_results[sample]:
-            combined_haps[sample][match_id] = (
-                    hap0_results[sample][match_id] + hap1_results[sample][match_id])
+            combined_haps[sample][match_id] = max(
+                    hap0_results[sample][match_id],hap1_results[sample][match_id])
     return combined_haps
 
 def read_hap_results(hap_results_csv):
@@ -75,7 +77,7 @@ def read_hap_results(hap_results_csv):
         line = line.strip().split(',')
         chrm = int(line[0])
         match_hap = line[1]
-        match_id = match_hap[:-2]
+        match_id = match_hap
         svs_score = float(line[2])
         pop_score = float(line[3])
         merge_gap_score = float(line[6])
@@ -86,7 +88,6 @@ def read_hap_results(hap_results_csv):
         except KeyError:
             hap_results[sample][match_id] = [svs_score, pop_score, merge_gap_score]
 
-    print(hap_results)
     return hap_results
 
 
