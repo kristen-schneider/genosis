@@ -7,8 +7,8 @@ __default__:
     nodelist: fijinode-36
     ntasks: 4
     mem: 32gb
-    output: "/home/name/precision-medicine/example/out/{rule}.out"
-    error: "/home/name/precision-medicine/example/err/{rule}.err"
+    output: "/Users/krsc0813/simulated_data/{rule}.out"
+    error: "/Users/krsc0813/simulated_data/{rule}.err"
 
 remove_empty_encoding:
     time: 10
