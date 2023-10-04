@@ -27,7 +27,29 @@ singularity_container="/home/name/pmed.sif"
 ###
 ###
 
-singularity run \
-	--bind $data_dir \
-	$singularity_container \
-	bash $run_script
+# assume snakemake is not installed #
+# ...many bash jobs...#
+
+# singularity container for:
+# slice and encode
+
+
+# singularity container for:
+# embed
+
+# singularity container for:
+# index & search
+
+# singularity container for:
+# aggregate & evaluate/plot
+
+
+
+
+# in one single go -- X
+# singularity containers cannot have SLURM installed.
+# need to break up the workflow
+#singularity run \
+#	--bind $data_dir \
+#	$singularity_container \
+#	bash $run_script

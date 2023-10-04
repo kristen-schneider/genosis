@@ -64,6 +64,8 @@ rule model:
         f"{config.out_dir}zeros.out"
     output:
         model_out=f"{config.out_dir}embeddings/model.out"
+    resources:
+        slurm_partition="fijigpu-04"
     message:
         "Running model to create embedding vectors..."
     shell:
@@ -72,7 +74,7 @@ rule model:
         "python {config.root_dir}pytorch/encode_samples.py" \
             " --encoder {config.root_dir}last.ckpt" \
             " --output {config.out_dir}embeddings/all.embeddings.txt" \
-        #" --gpu" \
+        " --gpu" \
         " --files {config.out_dir}encodings/*.pos" \
         " --batch-size {config.batch_size}" \
         " --num-workers {config.n_workers};" \
