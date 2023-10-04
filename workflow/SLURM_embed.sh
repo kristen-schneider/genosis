@@ -1,4 +1,4 @@
-#SBATCH -p short
+#SBATCH -p nvidia-a100
 #SBATCH --job-name=embed
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
