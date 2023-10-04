@@ -9,6 +9,10 @@ map_file:
   /home/name/precision-medicine/example/example_merge.map
 out_dir:
   /home/name/precision-medicine/example/
+database_IDs:
+  /home/name/precision-medicine/example/database_IDs.txt
+query_IDs:
+  /home/name/precision-medicine/example/query_IDs.txt
 batch_size:
   128
 n_workers:
