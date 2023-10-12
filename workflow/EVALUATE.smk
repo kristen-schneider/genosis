@@ -12,31 +12,20 @@ from os.path import basename
 
 rule all:
     input:
-        f"{config.out_dir}svs_sample_results/write_summary.done",
         f"{config.out_dir}svs_sample_results/plot_summary.done"
 
-# 1.0 write summmary data to be used for plotting
-rule write_summary:
-    input:
-        sample_IDs=f"{config.out_dir}sample_IDs.txt",
-        svs_results_dir=f"{config.out_dir}svs_sample_results/",
-    output:
-        write_summary=f"{config.out_dir}svs_sample_results/write_summary.done"
-    message:
-        "Writing a summary result file for plotting..."
-    shell:
-        "python {config.root_dir}python/scripts/decode/report_samples.py" \
-	" --sample_IDs {input.sample_IDs}" \
-	" --ss_sample_results_dir {input.svs_results_dir}" \
-	" --out_dir {input.svs_results_dir};" \
-	" touch {output.write_summary};" 
+# make relations file
+# plot KNN results
+# read ground truth IBD
+# plot KNN vs ground truth
 
-# 2.0 plot summmary data
+
+# 1.0 plot summmary data
 rule plot_summary:
     input:
-        write_summary=f"{config.out_dir}svs_sample_results/write_summary.done",
+        knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done",
 	relations=f"{config.out_dir}samples.relations",
-        sample_IDs=f"{config.out_dir}sample_IDs.txt",
+        query_IDs=f"{config.out_dir}query_IDs.txt",
         svs_results_dir=f"{config.out_dir}svs_sample_results/"
     output:
         plot_summary=f"{config.out_dir}svs_sample_results/plot_summary.done"
