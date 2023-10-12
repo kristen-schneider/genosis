@@ -10,11 +10,11 @@ conda activate pmed;
 import glob
 from os.path import basename
 
-encode_dir=f"{config.out_dir}encodings/"
-pos_encodings=glob.glob(encode_dir + "*.pos")
-pos_encodings=list(map(basename, pos_encodings))
-pos_encodings=[".".join(p.split('.')[:-1]) for p in pos_encodings]
-assert len(pos_encodings) > 0, "no positional encodings.."
+ENCODE_DIR=f"{config.out_dir}encodings/"
+POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
+POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
+POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
+assert len(POS_ENCODINGS) > 0, "no positional encodings.."
 
 
 rule all:

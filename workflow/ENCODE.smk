@@ -10,20 +10,20 @@ conda activate pmed;
 import glob
 from os.path import basename
 
-vcf_dir=f"{config.out_dir}vcf_segments/"
-vcf_segments=glob.glob(vcf_dir + "*.vcf.gz")
-vcf_segments=list(map(basename, vcf_segments))
-vcf_segments=[".".join(v.split('.')[:-2]) for v in vcf_segments]
-print(vcf_segments)
-assert len(vcf_segments) > 0, "no vcf segments.."
+VCF_DIR=f"{config.out_dir}VCF_SEGMENTS/"
+VCF_SEGMENTS=glob.glob(VCF_DIR + "*.vcf.gz")
+VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
+VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
+print(VCF_SEGMENTS)
+assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
 
 rule all:
     input:
         database_IDs=f"{config.database_IDs}",
         query_IDs=f"{config.query_IDs}",
-        expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=vcf_segments),
-        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=vcf_segments)
+        expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
+        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS)
 		
 
 # 1.1 encode genotypes for VCF segments (compile)
@@ -54,7 +54,7 @@ rule encode_compile:
 rule encode_execute:
     input:
         bin=f"{config.root_dir}cpp/bin/encode",
-        vcf_segments=f"{config.out_dir}vcf_segments/{{segment}}.vcf.gz"
+        VCF_SEGMENTS=f"{config.out_dir}VCF_SEGMENTS/{{segment}}.vcf.gz"
     output:
         encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
         encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos",
@@ -63,7 +63,7 @@ rule encode_execute:
     shell:
         "test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;" \
         "{input.bin}" \
-        " {input.vcf_segments}" \
+        " {input.VCF_SEGMENTS}" \
         " {config.out_dir}sample_IDs.txt" \
         " {config.root_dir}encoding.txt" \
         " {config.out_dir}interpolated.map" \
