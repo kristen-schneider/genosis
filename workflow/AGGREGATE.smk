@@ -95,3 +95,19 @@ rule aggregate_chromosomes_execute:
         " {config.out_dir}svs_sample_results/" \
         " {config.out_dir}query_IDs.txt;" \
         "touch {output.done}"
+
+# 3.0 report knn for samples
+rule report sample_knn:
+    input:
+        query_IDs=f"{config.out_dir}query_IDs.txt",
+        svs_results_dir=f"{config.out_dir}svs_sample_results/",
+    output:
+        knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done"
+    message:
+        "Writing a summary result file with knn for all samples..."
+    shell:
+        "python {config.root_dir}python/scripts/evaluate/report_knn.py" \
+        " --query_IDs {input.query_IDs}" \
+        " --ss_sample_results_dir {input.svs_results_dir}" \
+        " --out_dir {input.svs_results_dir};" \
+        " touch {output.knn_summary};" 
