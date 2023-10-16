@@ -82,10 +82,9 @@ rule remove_empty_encodings:
     message:
         "Removing positional encodings with empty entries"
     shell:
-        "python {config.root_dir}python/scripts/check_pos_encodigs.py" \
+        "python {config.root_dir}python/scripts/check_pos_encodings.py" \
         " --pos_dir {config.out_dir}encodings/" \
-        " --pos_ext pos;" \
-        "touch {config.out_dir}zeros.out;"
+        " --pos_ext pos > {config.out_dir}zeros.out;"
 
 # 3.0 get haplotype IDs for database samples
 rule hap_IDs:
