@@ -28,9 +28,10 @@ rule all:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
         expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS),
-        database_IDs=f"{config.database_IDs}",
-        query_IDs=f"{config.query_IDs}"
-	    
+        database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
+        query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt",
+	zeros=f"{config.out_dir}zeros.out"
+ 
 # 1.1 encode genotypes for VCF segments (compile)
 rule encode_compile:
     input:
