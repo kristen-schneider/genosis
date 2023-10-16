@@ -2,10 +2,16 @@ from types import SimpleNamespace
 #
 config = SimpleNamespace(**config)
 
+#shell.prefix("""
+#. /opt/conda/etc/profile.d/conda.sh
+#conda activate pmed;
+#""")
+
 shell.prefix("""
-. /opt/conda/etc/profile.d/conda.sh
+source  ~/.bashrc
 conda activate pmed;
 """)
+
 
 import glob
 from os.path import basename

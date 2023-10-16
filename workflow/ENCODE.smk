@@ -2,15 +2,21 @@ from types import SimpleNamespace
 #
 config = SimpleNamespace(**config)
 
+#shell.prefix("""
+#. /opt/conda/etc/profile.d/conda.sh
+#conda activate pmed;
+#""")
+
 shell.prefix("""
-. /opt/conda/etc/profile.d/conda.sh
+source  ~/.bashrc
 conda activate pmed;
 """)
+
 
 import glob
 from os.path import basename
 
-VCF_DIR=f"{config.out_dir}VCF_SEGMENTS/"
+VCF_DIR=f"{config.out_dir}vcf_segments/"
 VCF_SEGMENTS=glob.glob(VCF_DIR + "*.vcf.gz")
 VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
 VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
@@ -20,12 +26,11 @@ assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
 rule all:
     input:
-        database_IDs=f"{config.database_IDs}",
-        query_IDs=f"{config.query_IDs}",
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
-        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS)
-		
-
+	zeros=f"{config.out_dir}zeros.out",
+        database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
+        query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
+ 
 # 1.1 encode genotypes for VCF segments (compile)
 rule encode_compile:
     input:
@@ -54,7 +59,7 @@ rule encode_compile:
 rule encode_execute:
     input:
         bin=f"{config.root_dir}cpp/bin/encode",
-        VCF_SEGMENTS=f"{config.out_dir}VCF_SEGMENTS/{{segment}}.vcf.gz"
+        vcf_segments=f"{config.out_dir}vcf_segments/{{segment}}.vcf.gz"
     output:
         encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
         encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos",
@@ -63,7 +68,7 @@ rule encode_execute:
     shell:
         "test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;" \
         "{input.bin}" \
-        " {input.VCF_SEGMENTS}" \
+        " {input.vcf_segments}" \
         " {config.out_dir}sample_IDs.txt" \
         " {config.root_dir}encoding.txt" \
         " {config.out_dir}interpolated.map" \
@@ -76,21 +81,20 @@ rule remove_empty_encodings:
     message:
         "Removing positional encodings with empty entries"
     shell:
-        "python {config.root_dir}python/scripts/check_pos_encodigs.py" \
+        "python {config.root_dir}python/scripts/check_pos_encodings.py" \
         " --pos_dir {config.out_dir}encodings/" \
-        " --pos_ext pos;" \
-        "touch {config.out_dir}zeros.out;"
+        " --pos_ext pos > {config.out_dir}zeros.out;"
 
 # 3.0 get haplotype IDs for database samples
 rule hap_IDs:
     input:
-	hap_script=f"{config.root_dir}helper_scripts/make_hap_IDs.sh"
-        sample_IDs=f"{config.out_dir}sample_IDs.txt"
-        database_IDs=f"{config.database_IDs}"
+        hap_script=f"{config.root_dir}helper_scripts/make_hap_IDs.sh",
+        sample_IDs=f"{config.out_dir}sample_IDs.txt",
+        database_IDs=f"{config.database_IDs}",
         query_IDs=f"{config.query_IDs}"
     output:
-        sample_hap_IDs=f"{config.out_dir}sample_hap_IDs.txt"
-        database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt"
+        sample_hap_IDs=f"{config.out_dir}sample_hap_IDs.txt",
+        database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
         query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
     message:
         "Getting a list of all sampleIDs, databaseIDs, and queryIDs"
