@@ -35,7 +35,6 @@ snakemake \
     -c 16 \
     -j 5 \
     --configfile=$config \
-    --rerun-incomplete
 end_slice=$(date +%s.%3N)
 #slice_time=$(echo "scale=3; $end_slice - $start_slice" | bc)
 #echo "--SLICE: $slice_time seconds" >> $log
@@ -47,10 +46,7 @@ snakemake \
     -s $smk_dir"ENCODE.smk" \
     -c 16 \
     -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
     --configfile=$config \
-    --rerun-incomplete
 end_encode=$(date +%s.%3N)
 #encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
 #echo "--ENCODE: $encode_time seconds" >> $log
@@ -63,22 +59,19 @@ snakemake \
     -s $smk_dir"EMBED.smk" \
     -c 16 \
     -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
     --configfile=$config \
-    --rerun-incomplete \
     #--cluster-config embed_config.yaml \
     #--cluster "sbatch -J {cluster.job-name} \\
     #                  -t {cluster.time} \\
     #                  -N {cluster.nodes} \\
-    #                  -n {cluster.ntasks} \\
     #                  -p {cluster.partition} \\
+    #                  --ntasks-per-node {cluster.ntasks-per-node} \\
     #                  --nodelist={cluster.nodelist} \\
     #                  --gres={cluster.gpu} \\
     #                  --mem={cluster.mem} \\
     #                  --output {cluster.output} \\
     #                  --error {cluster.error}" \
-    #--latency-wait 70 \
+    #--latency-wait 70
 end_embed=$(date +%s.%3N)
 echo $end_embed
 #embed_time=$(echo "scale=3; $end_embed - $start_embed" | bc)
@@ -92,9 +85,6 @@ snakemake \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --rerun-incomplete
-    #--use-conda \
-    #--conda-frontend mamba \
 end_index=$(date +%s.%3N)
 #index_time=$(echo "scale=3; $end_index - $start_index" | bc)
 #echo "--INDEX: $index_time seconds" >> $log
@@ -106,10 +96,7 @@ snakemake \
     -s $smk_dir"SEARCH.smk" \
     -c 16 \
     -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
     --configfile=$config \
-    --rerun-incomplete
 end_search=$(date +%s.%3N)
 #search_time=$(echo "scale=3; $end_search - $start_search" | bc)
 #echo "--SEARCH: $search_time seconds" >> $log
@@ -122,10 +109,7 @@ snakemake \
     -s $smk_dir"AGGREGATE.smk" \
     -c 16 \
     -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
     --configfile=$config \
-    --rerun-incomplete
 end_aggregate=$(date +%s.%3N)
 #aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
 #echo "--AGGREGATE: $aggregate_time seconds" >> $log
