@@ -11,8 +11,6 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
-
 import glob
 from os.path import basename
 
@@ -41,11 +39,12 @@ rule label_relations:
 # plot KNN vs ground truth
 
 
-# 1.0 plot summmary data
+# 2.0 plot summmary data
 rule plot_summary:
     input:
         knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done",
 	relations=f"{config.out_dir}samples.relations",
+	ancestry=f"{config.ancestry}",
         query_IDs=f"{config.out_dir}query_IDs.txt",
         svs_results_dir=f"{config.out_dir}svs_sample_results/"
     output:
@@ -53,8 +52,9 @@ rule plot_summary:
     message:
         "Plotting summary results..."
     shell:
-        "python {config.root_dir}python/scripts/decode/lump_relations.py" \
+        "python {config.root_dir}python/scripts/decode/label_relationship.py" \
 	" --relations {input.relations}" \
+        " --ancestry {input.ancestry}" \
 	" --samples {input.sample_IDs}" \
 	" --data_dir {input.svs_results_dir};" \
 	" touch {output.plot_summary};" 
