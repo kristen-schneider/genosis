@@ -27,10 +27,9 @@ assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 rule all:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
-        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS),
+	zeros=f"{config.out_dir}zeros.out",
         database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
-        query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt",
-	zeros=f"{config.out_dir}zeros.out"
+        query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
  
 # 1.1 encode genotypes for VCF segments (compile)
 rule encode_compile:
