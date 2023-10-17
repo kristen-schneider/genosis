@@ -26,27 +26,34 @@ def main():
     if ancestry_file == 'None':
         print("evaluating pedigree data...")
 
+        # create a dictionary of samples pairs and their pedigree relationship label
         pair_relations = read_relations(relations_file)
+        
+        # create dictionaries of scores for different peigree relationship labels
+        all_pedigree_scores_svs = pedigree.get_pedigree_scores(samples, pair_relations, data_dir, ext='.svs')
+        all_pedigree_scores_pop = pedigree.get_pedigree_scores(samples, pair_relations, data_dir, ext='.pop')
+        all_pedigree_scores_ibd = pedigree.get_pedigree_scores(samples, pair_relations, data_dir, ext='.ibd')
 
-        all_relations_scores_svs = get_relation_scores(samples, pair_relations, data_dir, ext='.svs')
-        all_relations_scores_pop = get_relation_scores(samples, pair_relations, data_dir, ext='.pop')
-        all_relations_scores_ibd = get_relation_scores(samples, pair_relations, data_dir, ext='.ibd')
-
-        write_relations_scores(all_relations_scores_svs, data_dir + '/SVS.results')    
-        write_relations_scores(all_relations_scores_pop, data_dir + '/POP.results')    
-        write_relations_scores(all_relations_scores_ibd, data_dir + '/IBD.results')    
-
-        pd.violin_plot(all_relations_scores_svs, "SVS scores", data_dir + '/SVS.png')
-        pd.violin_plot(all_relations_scores_pop, "popcount", data_dir + '/POP.png')
-        pd.violin_plot(all_relations_scores_ibd, "merge-gap", data_dir + '/IBD.png')
+        # write these scores to output files for saving/transfering
+        write_category_scores(all_pedigree_scores_svs, data_dir + '/SVS.results')    
+        write_category_scores(all_pedigree_scores_pop, data_dir + '/POP.results')    
+        write_category_scores(all_relations_scores_ibd, data_dir + '/IBD.results')    
+    
+        # violin plot of scores
+        pv.violin_plot(all_pedigree_scores_svs, "SVS scores", data_dir + '/SVS.png')
+        pv.violin_plot(all_pedigree_scores_pop, "popcount", data_dir + '/POP.png')
+        pv.violin_plot(all_pedigree_scores_ibd, "merge-gap", data_dir + '/IBD.png')
 	
     # else --> ancestry file    
     else:
         print("evaluating ancestry data...")
-        super_pops_sub_pops = get_super_sub(ancestry_file)
-        super_labels, sub_labels = get_ancestry_names(ancestry_file)
         
-        super_ancestry, sub_ancestry = label_acestry(ancestry_file)
+        # dictionoary of superpop1: [subpop1, subpop2, ...]
+        super_pops_sub_pops = ancestry.get_super_sub(ancestry_file)
+        
+        super_labels, sub_labels = ancestry.get_ancestry_names(ancestry_file)
+        # dictionaries of popID: population name, 
+        super_ancestry, sub_ancestry = ancestry.label_acestry(ancestry_file)
         
             
 def write_category_scores(all_category_scores, out_f):

@@ -14,7 +14,7 @@ def read_relations(relations_file):
     return relations
 
 
-def get_relation_scores(samples, pair_relations, data_dir, ext):
+def get_pedigree_scores(samples, pair_relations, data_dir, ext):
 
     all_relations_scores = {}
 
