@@ -12,23 +12,27 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
-
 import glob
 from os.path import basename
 
+EMBED_DIR=f"{config.out_dir}embeddings/"
+EMBEDDINGS=glob.glob(EMBED_DIR + "*.emb")
+EMBEDDINGS=list(map(basename, EMBEDDINGS))
+EMBEDDINGS=[".".join(p.split('.')[:-1]) for p in EMBEDDINGS]
+assert len(EMBEDDINGS) > 0, "no embeddings.."
+
 rule all:
     input:
-        f"{config.out_dir}embeddings/embeddings.out",
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS),
         f"{config.out_dir}svs_index/idx.done"
 	#f"{config.out_dir}log/faiss_build.log",
 
 # 1.0 split all_embeddings.txt into segment embeddings for input to indexing steps
 rule split_embeddings:
     input:
-        model_out=f"{config.out_dir}embeddings/model.out",
+        f"{config.out_dir}embeddings/all.embeddings.txt"
     output:
-        embeddings_out=f"{config.out_dir}embeddings/embeddings.out"
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS),
     message:
         "Splitting full embedding file into segments..."
     shell:
@@ -36,7 +40,6 @@ rule split_embeddings:
         "python {config.root_dir}python/scripts/split_embeddings.py" \
         " --emb_dir {config.out_dir}embeddings/" \
         " --all_emb {config.out_dir}embeddings/all.embeddings.txt;" \
-	"touch {output.embeddings_out};"
 
 ## 5.1 build FAISS indices
 #rule faiss_build:
@@ -61,7 +64,7 @@ rule split_embeddings:
 # 5.2 build SVS indices
 rule svs_build:
     input:
-        emb_dir=f"{config.out_dir}embeddings/"
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS)
     output:
         idx_done=f"{config.out_dir}svs_index/idx.done"
     message:

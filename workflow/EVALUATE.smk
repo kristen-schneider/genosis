@@ -32,7 +32,7 @@ rule label_relations:
         " --ped {input.ped_file}" \
         " --root_file {input.root_file}" \
         " --relations {output.relations_file}" \
-        " --gen 6"
+        " --gen 6;"
 
 # plot KNN results
 # read ground truth IBD
@@ -52,9 +52,8 @@ rule plot_summary:
     message:
         "Plotting summary results..."
     shell:
-        "python {config.root_dir}python/scripts/decode/label_relationship.py" \
+        "python {config.root_dir}python/scripts/evaluate/label_category.py" \
 	" --relations {input.relations}" \
         " --ancestry {input.ancestry}" \
 	" --samples {input.sample_IDs}" \
-	" --data_dir {input.svs_results_dir};" \
-	" touch {output.plot_summary};" 
+	" --data_dir {input.svs_results_dir} > {output.plot_summary};"
