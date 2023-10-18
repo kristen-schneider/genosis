@@ -14,6 +14,6 @@
 
 using namespace std;
 
-map<string, vector<int>> map_gt_encoding(
+map<string, vector<int> > map_gt_encoding(
 		string encoding_file);
 
