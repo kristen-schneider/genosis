@@ -29,7 +29,7 @@ vector<float> remove_zeros_float(vector<float> vec_flt){
 }
 
 // transpose a vector of vectors of ints
-vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
+vector<vector<int> > transpose_int(vector<vector<int> > &vmf){
         /*
          * Takes a variant major format
          * vector of vector of ints
@@ -42,7 +42,7 @@ vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
         }
 
         // transpose data
-        vector<vector<int>> smf_vec(vmf[0].size(), vector<int>());
+        vector<vector<int> > smf_vec(vmf[0].size(), vector<int>());
         for (size_t i = 0; i < vmf.size(); i++) {
                 for (size_t j = 0; j < vmf[i].size(); j++) {
                         smf_vec[j].push_back(vmf[i][j]);
@@ -52,7 +52,7 @@ vector<vector<int>> transpose_int(vector<vector<int>> &vmf){
 }
 
 // transpose a vector of vectors of floats
-vector<vector<float>> transpose_float(vector<vector<float>> vmf){
+vector<vector<float> > transpose_float(vector<vector<float> > vmf){
         /*
          * Takes a variant major format
          * vector of vector of ints
@@ -65,14 +65,14 @@ vector<vector<float>> transpose_float(vector<vector<float>> vmf){
         }
 
         // transpose data
-        vector<vector<float>> smf_vec(vmf[0].size(), vector<float>());
+        vector<vector<float> > smf_vec(vmf[0].size(), vector<float>());
 	for (size_t i = 0; i < vmf.size(); i++) {
                 for (size_t j = 0; j < vmf[i].size(); j++) {
                         smf_vec[j].push_back(vmf[i][j]);
                 }
         }
 	/*
-        vector<vector<float>> smf_vec;
+        vector<vector<float> > smf_vec;
 	for (int i = 0; i < vmf.size(); i++){
 		vector<float> curr_vec = vmf[i];
 		for (int j = 0; j < curr_vec.size(); j++){

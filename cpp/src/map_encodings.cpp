@@ -11,7 +11,7 @@
 
 using namespace std;
 
-map<string, vector<int>> map_gt_encoding(string encoding_file){
+map<string, vector<int> > map_gt_encoding(string encoding_file){
     ifstream file(encoding_file);
     if (!file.is_open()){
         cout << "Error opening file: " << encoding_file << endl;
@@ -19,7 +19,7 @@ map<string, vector<int>> map_gt_encoding(string encoding_file){
     }
 
     string line;
-    map<string, vector<int>> gt_encoding_map;
+    map<string, vector<int> > gt_encoding_map;
     vector<int> single_gt_encoding;
 
     while (getline(file, line)){

@@ -59,11 +59,11 @@ int main(int argc, char* argv[]){
 	
 	// 2. make gt encoding map
 	// format: (gt (string): encoding <int, int>)
-	map<string, vector<int>> encoding_def_map = map_gt_encoding(encoding_def_file);	
+	map<string, vector<int> > encoding_def_map = map_gt_encoding(encoding_def_file);	
 	
         // 3. make cm positional encoding map
 	// format: (chrm (int): bp_cm <int, float>)
-	map<int, map<int, float>> chrm_bp_cm_map = map_bp_cm(interpolated_map);
+	map<int, map<int, float> > chrm_bp_cm_map = map_bp_cm(interpolated_map);
 	
 	// 4. encode single vcf
 	encode_vectors(chrm_idx,

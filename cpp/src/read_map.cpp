@@ -11,7 +11,7 @@
 
 using namespace std;
 
-map<int, map<int, float>> map_bp_cm(string interpolated_map_file){
+map<int, map<int, float> > map_bp_cm(string interpolated_map_file){
     ifstream file(interpolated_map_file);
     if (!file.is_open()){
         cout << "Error opening file: " << interpolated_map_file << endl;
@@ -21,7 +21,7 @@ map<int, map<int, float>> map_bp_cm(string interpolated_map_file){
     int curr_chrm = 0;
 
     string line;
-    map<int, map<int, float>> bp_cm_map;
+    map<int, map<int, float> > bp_cm_map;
     map<int, float> single_bp_cm;
 
     while (getline(file, line)){
