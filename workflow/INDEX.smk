@@ -15,15 +15,15 @@ conda activate pmed;
 import glob
 from os.path import basename
 
-EMBED_DIR=f"{config.out_dir}embeddings/"
-EMBEDDINGS=glob.glob(EMBED_DIR + "*.emb")
-EMBEDDINGS=list(map(basename, EMBEDDINGS))
-EMBEDDINGS=[".".join(p.split('.')[:-1]) for p in EMBEDDINGS]
-assert len(EMBEDDINGS) > 0, "no embeddings.."
+ENCODE_DIR=f"{config.out_dir}encodings/"
+POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
+POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
+POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
+assert len(POS_ENCODINGS) > 0, "no positional encodings.."
 
 rule all:
     input:
-        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS),
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
         f"{config.out_dir}svs_index/idx.done"
 	#f"{config.out_dir}log/faiss_build.log",
 
@@ -32,7 +32,7 @@ rule split_embeddings:
     input:
         f"{config.out_dir}embeddings/all.embeddings.txt"
     output:
-        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS),
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
     message:
         "Splitting full embedding file into segments..."
     shell:
@@ -64,13 +64,13 @@ rule split_embeddings:
 # 5.2 build SVS indices
 rule svs_build:
     input:
-        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=EMBEDDINGS)
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
     output:
         idx_done=f"{config.out_dir}svs_index/idx.done"
     message:
         "SVS-building indexes..."
     shell:
-        "conda activate base;"
+        "conda activate svs;"
         "test ! -d {config.out_dir}svs_index/ && mkdir {config.out_dir}svs_index/;" \
         "python {config.root_dir}python/scripts/svs/build_svs_index.py" \
         " --emb_dir {config.out_dir}embeddings/" \

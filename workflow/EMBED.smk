@@ -16,22 +16,16 @@ conda activate pmed;
 import glob
 from os.path import basename
 
-ENCODE_DIR=f"{config.out_dir}encodings/"
-POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
-POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
-POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
-assert len(POS_ENCODINGS) > 0, "no positional encodings.."
-
 rule all:
     input:
-        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
+        f"{config.out_dir}embeddings/all.embeddings.txt"
 
 # 1.0 run model 
 rule model:
     input:
         f"{config.out_dir}zeros.out"
     output:
-        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
+        f"{config.out_dir}embeddings/all.embeddings.txt"
     message:
         "Running model to create embedding vectors..."
     shell:

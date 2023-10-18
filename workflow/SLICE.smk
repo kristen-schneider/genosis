@@ -12,7 +12,6 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
 rule all:
     input:
         f"{config.out_dir}sample_IDs.txt",
