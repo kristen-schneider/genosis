@@ -11,6 +11,13 @@
 
 using namespace std;
 
+/**
+ * creates a map from basepair position to centimorgan position for all chromosomes
+ *
+ * @param interpolated_map_file MAP file with format: chrm cm bp
+ *
+ * @return chrm_bp_cm_map chrm: bp: cm
+ */
 map<int, map<int, float> > map_bp_cm(string interpolated_map_file){
     ifstream file(interpolated_map_file);
     if (!file.is_open()){
@@ -21,7 +28,7 @@ map<int, map<int, float> > map_bp_cm(string interpolated_map_file){
     int curr_chrm = 0;
 
     string line;
-    map<int, map<int, float> > bp_cm_map;
+    map<int, map<int, float> > chrm_bp_cm_map;
     map<int, float> single_bp_cm;
 
     while (getline(file, line)){
@@ -37,7 +44,7 @@ map<int, map<int, float> > map_bp_cm(string interpolated_map_file){
             single_bp_cm[bp] = cm;
         }
         else if (chrm != curr_chrm){
-            bp_cm_map[curr_chrm] = single_bp_cm;
+            chrm_bp_cm_map[curr_chrm] = single_bp_cm;
             curr_chrm = chrm;
             single_bp_cm.clear();
             single_bp_cm[bp] = cm;
@@ -47,6 +54,6 @@ map<int, map<int, float> > map_bp_cm(string interpolated_map_file){
         }
 
     }
-    bp_cm_map[curr_chrm] = single_bp_cm;
-    return bp_cm_map;
+    chrm_bp_cm_map[curr_chrm] = single_bp_cm;
+    return chrm_bp_cm_map;
 }
