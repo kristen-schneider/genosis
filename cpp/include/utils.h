@@ -19,8 +19,8 @@
 using namespace std;
 
 vector<float> remove_zeros_float(vector<float> vec_flt);
-vector<vector<int>> transpose_int(vector<vector<int>> &vmf);
-vector<vector<float>> transpose_float(vector<vector<float>> vmf);
+vector<vector<int> > transpose_int(vector<vector<int> > &vmf);
+vector<vector<float> > transpose_float(vector<vector<float> > vmf);
 vector<string> get_sample_IDs(string sample_IDs_file);
 int get_num_samples(bcf_hdr_t *vcf_header);
 int count_num_samples(string in_file);

@@ -11,7 +11,14 @@
 
 using namespace std;
 
-map<string, vector<int>> map_gt_encoding(string encoding_file){
+/**
+ * creates a map for string genotype to encoding vector
+ *
+ * @param encoding_file encoding file with correct string to int mapping
+ *
+ * @return gt_encoding_map map whose key is a string genotype and whose value is a vector of two ints
+ */
+map<string, vector<int> > map_gt_encoding(string encoding_file){
     ifstream file(encoding_file);
     if (!file.is_open()){
         cout << "Error opening file: " << encoding_file << endl;
@@ -19,7 +26,7 @@ map<string, vector<int>> map_gt_encoding(string encoding_file){
     }
 
     string line;
-    map<string, vector<int>> gt_encoding_map;
+    map<string, vector<int> > gt_encoding_map;
     vector<int> single_gt_encoding;
 
     while (getline(file, line)){
