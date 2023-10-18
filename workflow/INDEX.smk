@@ -12,23 +12,27 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
-
 import glob
 from os.path import basename
 
+ENCODE_DIR=f"{config.out_dir}encodings/"
+POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
+POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
+POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
+assert len(POS_ENCODINGS) > 0, "no positional encodings.."
+
 rule all:
     input:
-        f"{config.out_dir}embeddings/embeddings.out",
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
         f"{config.out_dir}svs_index/idx.done"
 	#f"{config.out_dir}log/faiss_build.log",
 
 # 1.0 split all_embeddings.txt into segment embeddings for input to indexing steps
 rule split_embeddings:
     input:
-        model_out=f"{config.out_dir}embeddings/model.out",
+        f"{config.out_dir}embeddings/all.embeddings.txt"
     output:
-        embeddings_out=f"{config.out_dir}embeddings/embeddings.out"
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
     message:
         "Splitting full embedding file into segments..."
     shell:
@@ -36,7 +40,6 @@ rule split_embeddings:
         "python {config.root_dir}python/scripts/split_embeddings.py" \
         " --emb_dir {config.out_dir}embeddings/" \
         " --all_emb {config.out_dir}embeddings/all.embeddings.txt;" \
-	"touch {output.embeddings_out};"
 
 ## 5.1 build FAISS indices
 #rule faiss_build:
@@ -61,13 +64,13 @@ rule split_embeddings:
 # 5.2 build SVS indices
 rule svs_build:
     input:
-        emb_dir=f"{config.out_dir}embeddings/"
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
     output:
         idx_done=f"{config.out_dir}svs_index/idx.done"
     message:
         "SVS-building indexes..."
     shell:
-        "conda activate base;"
+        "conda activate svs;"
         "test ! -d {config.out_dir}svs_index/ && mkdir {config.out_dir}svs_index/;" \
         "python {config.root_dir}python/scripts/svs/build_svs_index.py" \
         " --emb_dir {config.out_dir}embeddings/" \

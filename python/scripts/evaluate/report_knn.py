@@ -56,14 +56,6 @@ def write_combined_haps(q_ID, hap0_results, hap1_results, out_dir):
         ibd_file.write(' ' + match_id + ': ' + str(hap1_results[q_ID][match_id][2]) + '\n')
 
 
-def combine_key_haps(hap0_results, hap1_results):
-    combined_haps = defaultdict(dict)
-    for sample in hap0_results:
-        for match_id in hap0_results[sample]:
-            combined_haps[sample][match_id] = max(
-                    hap0_results[sample][match_id],hap1_results[sample][match_id])
-    return combined_haps
-
 def read_hap_results(hap_results_csv):
     h_file = open(hap_results_csv, 'r')
     hap_results = defaultdict(dict)

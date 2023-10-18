@@ -1,6 +1,7 @@
 import os
 import argparse
 
+MINIMUM=8
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -24,7 +25,7 @@ def check_for_empty_entries(pos_encoding):
     p = open(pos_encoding, 'r')
     for line in p:
         L = line.strip().split()
-        if len(L) < 5:
+        if len(L) < MINIMUM:
             empty = True
             print(line)
             break

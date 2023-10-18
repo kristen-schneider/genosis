@@ -22,7 +22,7 @@ from os.path import basename
 #IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
 #assert len(IDX_SEGMENTS) > 0, "no indexes.."
 
-EMB_DIRf"{config.out_dir}embeddings/"
+EMB_DIR=f"{config.out_dir}embeddings/"
 EMB_SEGMENTS=glob.glob(EMB_DIR + "*.emb")
 EMB_SEGMENTS=list(map(basename, EMB_SEGMENTS))
 EMB_SEGMENTS=[".".join(e.split('.')[:-1]) for e in EMB_SEGMENTS]
@@ -66,7 +66,7 @@ rule svs_search:
     message:
         "SVS-searching indexes..."
     shell:
-        "conda activate base;"
+        "conda activate svs;"
         "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
         "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
         " --idx_dir {config.out_dir}svs_index/" \

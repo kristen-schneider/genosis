@@ -13,6 +13,10 @@ database_IDs:
   /home/name/precision-medicine/example/database_IDs.txt
 query_IDs:
   /home/name/precision-medicine/example/query_IDs.txt
+ped:
+  /home/name/precision-medicine/example/samples.fam
+roots:
+  /home/name/precision-medicine/example/samples.roots
 batch_size:
   128
 n_workers:
