@@ -27,23 +27,7 @@ singularity_container="/home/name/pmed.sif"
 ###
 ###
 
-# assume snakemake is not installed #
-# ...many bash jobs...#
-
-# singularity container for:
-# slice and encode
-
-
-# singularity container for:
-# embed
-
-# singularity container for:
-# index & search
-
-# singularity container for:
-# aggregate & evaluate/plot
-
-
+bash $run_script
 
 
 # in one single go -- X
