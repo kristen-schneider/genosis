@@ -23,10 +23,10 @@ assert len(POS_ENCODINGS) > 0, "no positional encodings.."
 
 rule all:
     input:
-        embeddings=f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
-        idx_config=f"{config.out_dir}svs_index/{{segment}}.emb_config", segment=POS_ENCODINGS),
-        idx_data=f"{config.out_dir}svs_index/{{segment}}.emb_data", segment=POS_ENCODINGS),
-        idx_graph=f"{config.out_dir}svs_index/{{segment}}.emb_data", segment=POS_ENCODINGS)
+        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
+        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
+        idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
+        idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
         #f"{config.out_dir}svs_index/idx.done"
 	#f"{config.out_dir}log/faiss_build.log",
 
@@ -67,11 +67,11 @@ rule split_embeddings:
 # 5.2 build SVS indices
 rule svs_build:
     input:
-        embeddings=xpand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
+        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
     output:
-        idx_config=f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
-        idx_data=f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
-        idx_graph=f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
+        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
+        idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
+        idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
         #idx_done=f"{config.out_dir}svs_index/idx.done"
     message:
         "SVS-building indexes..."

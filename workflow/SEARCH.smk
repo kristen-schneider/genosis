@@ -60,10 +60,11 @@ rule all:
 # 6 search SVS indices
 rule svs_search:
     input:
-        idx_segments=f"{config.out_dir}svs_index/{{segment}}.config"
+        idx_segments=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=IDX_SEGMENTS)
         #idx_done=f"{config.out_dir}svs_index/idx.done"
     output:
-        knn_segments=f"{config.out_dir}svs_results/{{segment}}.knn"
+        knn_segments=expand(f"{config.out_dir}svs_results/{{segment}}.knn", segment=IDX_SEGMENTS)
+        #knn_segments=f"{config.out_dir}svs_results/{{segment}}.knn"
     message:
         "SVS-searching indexes..."
     shell:
