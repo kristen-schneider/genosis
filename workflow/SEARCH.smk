@@ -69,7 +69,7 @@ rule svs_search:
         "conda activate svs;"
         "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
         "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
-        " --idx_dir {config.out_dir}svs_index/" \
+        " --seg_idx {config.out_dir}svs_index/" \
         " --emb_dir {config.out_dir}embeddings/" \
         " --emb_ext emb" \
         " --db_samples {config.out_dir}database_hap_IDs.txt" \

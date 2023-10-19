@@ -3,11 +3,11 @@ import os
 import pysvs
 import argparse
 import numpy as np
-# [imports]
+import os.path
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--idx_dir', type=str, help='directory of all svs indexes')
+    parser.add_argument('--seg_idx', type=str, help='single svs index')
     parser.add_argument('--emb_dir', type=str, help='directory of all embedding files')
     parser.add_argument('--emb_ext', type=str, default='.emb', help='extension for embedding files')
     parser.add_argument('--db_samples', type=str, help='list of all samples in database (haplotypes)')
@@ -19,7 +19,7 @@ def parse_args():
 def main():
     # get arguments from argparse
     args = parse_args()
-    idx_dir = args.idx_dir
+    seg_idx = args.seg_idx
     emb_dir = args.emb_dir
     k = args.k
     db_samples = args.db_samples
@@ -33,55 +33,50 @@ def main():
     print("query: ", len(query_samples_list))
     print("database: ", len(database_samples_list))
     
-    # svs index creates 3 files that are kept in one directory, we want to search the '_config' one 
-    for seg_idx in os.listdir(idx_dir):
-        if seg_idx.endswith('_config'):
-            print(seg_idx)
-            base = seg_idx.split('_')[0]
-            chrm = base.split('.')[0]
-            segment = base.split('.')[1]
+    base = seg_idx.split('/')[-2].replace('_config', '')
+    chrm = base.split('.')[0]
+    segment = base.split('.')[1]
     
+    # get embeddings for segment
+    embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
+    db_embeddings = read_embeddings(embedding_file, database_samples_list)
+    q_embeddings = read_embeddings(embedding_file, query_samples_list)
+
+    # open results file and clear contents
+    results_file = out_dir + chrm + '.' + segment + '.knn'
+    print('writing...', results_file)
+    rf = open(results_file, 'w')
+    # get svs index from config file
+    index = pysvs.Vamana(
+            seg_idx,
+            pysvs.GraphLoader(seg_idx.replace('_config', '_graph')),
+            pysvs.VectorDataLoader(
+                os.path.join(seg_idx.replace('_config', '_data')), pysvs.DataType.float32
+                ),
+            pysvs.DistanceType.L2,
+            num_threads = 4,
+            )
     
-            # get embeddings for segment
-            embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
-            db_embeddings = read_embeddings(embedding_file, database_samples_list)
-            q_embeddings = read_embeddings(embedding_file, query_samples_list)
+    # search index
+    # I : index
+    # D : distance matrix
+    I, D = index.search(q_embeddings, k)
+    
+    # for all queries in our list, write out results file for knn
+    for query_idx in range(len(I)):
+        q = I[query_idx]
 
-            # open results file and clear contents
-            results_file = out_dir + chrm + '.' + segment + '.knn'
-            print('writing...', results_file)
-            rf = open(results_file, 'w')
-            # get svs index from config file
-            index = pysvs.Vamana(
-                    os.path.join(idx_dir, base+'_config'),
-                    pysvs.GraphLoader(os.path.join(idx_dir, base+'_graph')),
-                    pysvs.VectorDataLoader(
-                        os.path.join(idx_dir, base+'_data'), pysvs.DataType.float32
-                        ),
-                    pysvs.DistanceType.L2,
-                    num_threads = 4,
-                    )
-            
-            # search index
-            # I : index
-            # D : distance matrix
-            I, D = index.search(q_embeddings, k)
-            
-            # for all queries in our list, write out results file for knn
-            for query_idx in range(len(I)):
-                q = I[query_idx]
-
-                #query_idx = query_samples_list[query_result]
-                #query_idx = q[0]
-                query_line = 'Query: ' + query_samples_list[query_idx] + '\n'
-                rf.write(query_line)
-                
-                for match_idx in range(len(q)):
-                    m = q[match_idx]
-                    match_line = database_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
-                    rf.write(match_line)
-                rf.write('\n')      
-            rf.close()
+        #query_idx = query_samples_list[query_result]
+        #query_idx = q[0]
+        query_line = 'Query: ' + query_samples_list[query_idx] + '\n'
+        rf.write(query_line)
+        
+        for match_idx in range(len(q)):
+            m = q[match_idx]
+            match_line = database_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
+            rf.write(match_line)
+        rf.write('\n')      
+    rf.close()
 
 def read_samples(samples):
     """
