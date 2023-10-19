@@ -30,10 +30,13 @@ def main():
     # read query and database samples
     query_samples_list = read_samples(query_samples)
     database_samples_list = read_samples(db_samples)
-   
+    print("query: ", len(query_samples_list))
+    print("database: ", len(database_samples_list))
+    
     # svs index creates 3 files that are kept in one directory, we want to search the '_config' one 
     for seg_idx in os.listdir(idx_dir):
         if seg_idx.endswith('_config'):
+            print(seg_idx)
             base = seg_idx.split('_')[0]
             chrm = base.split('.')[0]
             segment = base.split('.')[1]
@@ -41,12 +44,12 @@ def main():
     
             # get embeddings for segment
             embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
-            #print('embedding file: ', embedding_file)
             db_embeddings = read_embeddings(embedding_file, database_samples_list)
             q_embeddings = read_embeddings(embedding_file, query_samples_list)
 
             # open results file and clear contents
             results_file = out_dir + chrm + '.' + segment + '.knn'
+            print('writing...', results_file)
             rf = open(results_file, 'w')
             # get svs index from config file
             index = pysvs.Vamana(
@@ -59,7 +62,7 @@ def main():
                     num_threads = 4,
                     )
             
-            # search index 
+            # search index
             # I : index
             # D : distance matrix
             I, D = index.search(q_embeddings, k)
@@ -75,7 +78,7 @@ def main():
                 
                 for match_idx in range(len(q)):
                     m = q[match_idx]
-                    match_line = query_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
+                    match_line = database_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
                     rf.write(match_line)
                 rf.write('\n')      
             rf.close()
