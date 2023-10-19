@@ -32,14 +32,14 @@ singularity build pmed.sif pmed_recipe.def
 - Make copy of [embed_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/embed_config.yml) and change node configurations appropriately.<br>
 ## RUN
 ____________________________________________
-### Run with no slurm _(mount necessary data directories if necessary)_
+### Run with singularity _(mount necessary data directories if necessary)_
 ```
 singularity run
   --bind /path/to/data_dir/ \
   ./singularity/pmed.sif \
   bash ./run/example_run.sh \
 ```
-### Run with slurm
+### Run without singularity
 ```
-sbatch ./run/example_slurm.sh
+sbatch ./run/example_run.sh
 ```
