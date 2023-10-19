@@ -16,22 +16,23 @@ conda activate pmed;
 import glob
 from os.path import basename
 
-#IDX_DIR=f"{config.out_dir}svs_index/"
-#IDX_SEGMENTS=glob.glob(IDX_DIR + "*.emb_config/")
-#IDX_SEGMENTS=list(map(basename, IDX_SEGMENTS))
-#IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
-#assert len(IDX_SEGMENTS) > 0, "no indexes.."
+IDX_DIR=f"{config.out_dir}svs_index/"
+IDX_SEGMENTS=glob.glob(IDX_DIR + "*.emb_config/")
+IDX_SEGMENTS=[i.split('/')[-2] for i in IDX_SEGMENTS]
+IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
+assert len(IDX_SEGMENTS) > 0, "no indexes.."
 
-EMB_DIR=f"{config.out_dir}embeddings/"
-EMB_SEGMENTS=glob.glob(EMB_DIR + "*.emb")
-EMB_SEGMENTS=list(map(basename, EMB_SEGMENTS))
-EMB_SEGMENTS=[".".join(e.split('.')[:-1]) for e in EMB_SEGMENTS]
-assert len(EMB_SEGMENTS) > 0, "no embeddings.."
+#print(IDX_SEGMENTS)
+
+#EMB_DIR=f"{config.out_dir}embeddings/"
+#EMB_SEGMENTS=glob.glob(EMB_DIR + "*.emb")
+#EMB_SEGMENTS=list(map(basename, EMB_SEGMENTS))
+#EMB_SEGMENTS=[".".join(e.split('.')[:-1]) for e in EMB_SEGMENTS]
+#assert len(EMB_SEGMENTS) > 0, "no embeddings.."
 
 rule all:
     input:
-        #expand(f"{config.faiss_results_dir}{{segment}}.knn", segment=IDX_SEGMENTS)
-        expand(f"{config.out_dir}svs_results/{{segment}}.knn", segment=EMB_SEGMENTS)
+        expand(f"{config.out_dir}svs_results/{{segment}}.knn", segment=IDX_SEGMENTS)
 
 ## 6 search FAISS indices
 #rule faiss_search:
@@ -59,8 +60,8 @@ rule all:
 # 6 search SVS indices
 rule svs_search:
     input:
-        #idx_segments=f"{config.out_dir}svs_index/"
-        idx_done=f"{config.out_dir}svs_index/idx.done"
+        idx_segments=f"{config.out_dir}svs_index/{{segment}}.config"
+        #idx_done=f"{config.out_dir}svs_index/idx.done"
     output:
         knn_segments=f"{config.out_dir}svs_results/{{segment}}.knn"
     message:

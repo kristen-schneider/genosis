@@ -30,10 +30,8 @@ def main():
     # read query and database samples
     query_samples_list = read_samples(query_samples)
     database_samples_list = read_samples(db_samples)
-    print("query: ", len(query_samples_list))
-    print("database: ", len(database_samples_list))
     
-    base = seg_idx.split('/')[-2].replace('_config', '')
+    base = seg_idx.split('/')[-2].replace('.config', '')
     chrm = base.split('.')[0]
     segment = base.split('.')[1]
     
@@ -44,14 +42,13 @@ def main():
 
     # open results file and clear contents
     results_file = out_dir + chrm + '.' + segment + '.knn'
-    print('writing...', results_file)
     rf = open(results_file, 'w')
     # get svs index from config file
     index = pysvs.Vamana(
             seg_idx,
-            pysvs.GraphLoader(seg_idx.replace('_config', '_graph')),
+            pysvs.GraphLoader(seg_idx.replace('.config', '.graph')),
             pysvs.VectorDataLoader(
-                os.path.join(seg_idx.replace('_config', '_data')), pysvs.DataType.float32
+                os.path.join(seg_idx.replace('.config', '.data')), pysvs.DataType.float32
                 ),
             pysvs.DistanceType.L2,
             num_threads = 4,
@@ -65,12 +62,10 @@ def main():
     # for all queries in our list, write out results file for knn
     for query_idx in range(len(I)):
         q = I[query_idx]
-
-        #query_idx = query_samples_list[query_result]
-        #query_idx = q[0]
+        # write query
         query_line = 'Query: ' + query_samples_list[query_idx] + '\n'
         rf.write(query_line)
-        
+        # write matches
         for match_idx in range(len(q)):
             m = q[match_idx]
             match_line = database_samples_list[m] + '\t' + str(D[query_idx][match_idx]) + '\n'
@@ -110,12 +105,8 @@ def read_embeddings(gt_embedding_file, db_samples_list):
             segment_embedding = [float(i) for i in line[1:]]
             # append to embeddings
             embeddings.append((sample_hap, segment_embedding))
-            #embedding_dict[sample_hap] = segment_embedding      
     # convert data to numpy array and reshape
-    #np.vstack([data_array, embeddings[i][1]])
     data_array = [np.array(i[1], dtype=np.float32) for i in embeddings]
-    #data_array = np.array([i[1] for i in embeddings])
-    #data_array = data_array.reshape(data_array.shape[0], data_array.shape[1])
     return data_array
 
 if __name__ == '__main__':

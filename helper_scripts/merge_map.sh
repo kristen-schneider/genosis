@@ -12,14 +12,22 @@
 #SBATCH --mail-user=krsc0813@colorado.edu
 
 
-# concat vcf files from 1000 genomes
-merged_file="/Users/krsc0813/chr15_20/chrm_15-20.map"
+# concat map files from plink maps
+merged_file="/Users/krsc0813/1KG_data/chr1_22/chrm_1-22.map"
+touch $merged_file
 
 cd /Users/krsc0813/plink_maps/
 
-cat plink.chr15.GRCh38.map > $merged_file
-cat plink.chr16.GRCh38.map >> $merged_file
-cat plink.chr17.GRCh38.map >> $merged_file
-cat plink.chr18.GRCh38.map >> $merged_file
-cat plink.chr19.GRCh38.map >> $merged_file
-cat plink.chr20.GRCh38.map >> $merged_file
+
+for CHROM in {1..22}
+do
+    #echo plink.chr$CHROM."GRCh38.map"
+    cat "./plink.chr"$CHROM."GRCh38.map" >> $merged_file
+done
+
+#cat plink.chr15.GRCh38.map > $merged_file
+#cat plink.chr16.GRCh38.map >> $merged_file
+#cat plink.chr17.GRCh38.map >> $merged_file
+#cat plink.chr18.GRCh38.map >> $merged_file
+#cat plink.chr19.GRCh38.map >> $merged_file
+#cat plink.chr20.GRCh38.map >> $merged_file
