@@ -50,12 +50,15 @@ def main():
         
         # dictionoary of superpop1: [subpop1, subpop2, ...]
         super_pops_sub_pops = ancestry.get_super_sub(ancestry_file)
-        
+        # dictionaries of ancestryID: ancestry name
         super_labels, sub_labels = ancestry.get_ancestry_names(ancestry_file)
-        # dictionaries of popID: population name, 
+        # dictionaries of samppleID: ancestryID
         super_ancestry, sub_ancestry = ancestry.label_acestry(ancestry_file)
-        
             
+        # get ancestry scores
+            
+            
+
 def write_category_scores(all_category_scores, out_f):
     o = open(out_f, 'w')
     for category in all_category_scores:
