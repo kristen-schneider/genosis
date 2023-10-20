@@ -20,10 +20,11 @@ POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
 POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
 POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
 assert len(POS_ENCODINGS) > 0, "no positional encodings.."
+print(len(POS_ENCODINGS))
 
 rule all:
     input:
-        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
+        expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
         idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
         idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
         idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
@@ -42,7 +43,7 @@ rule split_embeddings:
         "conda activate pmed;"
         "python {config.root_dir}python/scripts/split_embeddings.py" \
         " --emb_dir {config.out_dir}embeddings/" \
-        " --all_emb {config.out_dir}embeddings/all.embeddings.txt;" \
+        " --all_emb {config.out_dir}embeddings/all.embeddings.txt;"
 
 ## 5.1 build FAISS indices
 #rule faiss_build:
@@ -82,5 +83,4 @@ rule svs_build:
         " --emb_dir {config.out_dir}embeddings/" \
         " --idx_dir {config.out_dir}svs_index/" \
         " --db_samples {config.out_dir}database_hap_IDs.txt" \
-        " --emb_ext emb;" \
-        "touch {output.idx_done};"
+        " --emb_ext emb;"
