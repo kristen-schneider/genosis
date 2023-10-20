@@ -21,9 +21,9 @@ vector<string> get_query_samples_list(
     return query_samples;
 }
 
-map<int, vector<int>> get_chromosome_segments(
+map<int, vector<int> > get_chromosome_segments(
         vector<string> knn_results_file) {
-    map<int, vector<int>> chromosome_segments;
+    map<int, vector<int> > chromosome_segments;
     // iterate through all files in knn_results_file
     for (auto file_i : knn_results_file) {
         // file name format is chrmX.segmentYY.txt
@@ -49,8 +49,8 @@ void read_QCMS(
         string filename,
         int chromosome,
         int segment,
-        map<int, vector<int>> chromosome_segments,
-        map<string, map<int, map<string, vector<float>>>> & query_chromosome_match_ID_segments
+        map<int, vector<int> > chromosome_segments,
+        map<string, map<int, map<string, vector<float> > > > & query_chromosome_match_ID_segments
 ){
     ifstream file(filename);
     string line;
@@ -76,7 +76,7 @@ void read_QCMS(
                 query_ID_line = query_ID_line.substr(7);
 
             }
-                // else split line on tab and add match ID to map
+            // else split line on tab and add match ID to map
             else {
                 string match_ID = line.substr(0, line.find("\t"));
                 // if line is empty, skip
@@ -84,7 +84,7 @@ void read_QCMS(
                     continue;
                 }
                 float score = stof(line.substr(line.find("\t") + 1));
-                // if match_ID exists, add match ID to map
+                // if match_ID exists, add score
                 if (query_chromosome_match_ID_segments[query_ID_line][chromosome].find(match_ID) !=
                     query_chromosome_match_ID_segments[query_ID_line][chromosome].end()) {
                     query_chromosome_match_ID_segments[query_ID_line][chromosome][match_ID][segment] = score;
@@ -94,7 +94,7 @@ void read_QCMS(
                     // initialize vector of zeros
                     sort(chromosome_segments[chromosome].begin(), chromosome_segments[chromosome].end(), greater<int>());
                     int max_segment = chromosome_segments[chromosome][0];
-                    vector<float> zeros(max_segment, -1);
+                    vector<float> zeros(max_segment+1, -1);
                     // add score to vector
                     // if (score == 0){ score = 10; }
                     zeros[segment] = score;
@@ -112,8 +112,8 @@ void read_QCMS(
 }
 
 void write_query_output(
-        map<int, vector<int>> chromosome_segments,
-        map<string, map<int, map<string, vector<float>>>> query_chromosome_match_ID_segments,
+        map<int, vector<int> > chromosome_segments,
+        map<string, map<int, map<string, vector<float> > > > query_chromosome_match_ID_segments,
         string query_results_dir
 ){
     // for each query make a directory for output
@@ -175,9 +175,9 @@ vector<string> read_ss_results_files(
     return ss_results_files;
 }
 
-map<string, vector<float>> score_samples(
+map<string, vector<float> > score_samples(
         string query_hap_chrom){
-    map<string, vector<float>> match_scores;
+    map<string, vector<float> > match_scores;
     string line;
     ifstream file(query_hap_chrom);
     string header;
@@ -373,7 +373,7 @@ map<string, vector<float>> score_samples(
 
 void write_all_chromosomes(string out_file,
                            string query_ID,
-                           map<int, vector<pair<string, vector<float>>>> chromosome_match_ID_scores){
+                           map<int, vector<pair<string, vector<float> > > > chromosome_match_ID_scores){
     ofstream file(out_file);
     // write header
     file << query_ID << endl;
