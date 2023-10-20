@@ -8,6 +8,7 @@ config = SimpleNamespace(**config)
 #""")
 
 shell.prefix("""
+set -e pipefail
 source  ~/.bashrc
 conda activate pmed;
 """)
@@ -17,7 +18,7 @@ import glob
 from os.path import basename
 
 IDX_DIR=f"{config.out_dir}svs_index/"
-IDX_SEGMENTS=glob.glob(IDX_DIR + "*.emb_config/")
+IDX_SEGMENTS=glob.glob(IDX_DIR + "*.config/")
 IDX_SEGMENTS=[i.split('/')[-2] for i in IDX_SEGMENTS]
 IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
 assert len(IDX_SEGMENTS) > 0, "no indexes.."
@@ -60,10 +61,10 @@ rule all:
 # 6 search SVS indices
 rule svs_search:
     input:
-        idx_segments=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=IDX_SEGMENTS)
+        idx_segments=f"{config.out_dir}svs_index/{{segment}}.config/"
         #idx_done=f"{config.out_dir}svs_index/idx.done"
     output:
-        knn_segments=expand(f"{config.out_dir}svs_results/{{segment}}.knn", segment=IDX_SEGMENTS)
+        knn_segments=f"{config.out_dir}svs_results/{{segment}}.knn"
         #knn_segments=f"{config.out_dir}svs_results/{{segment}}.knn"
     message:
         "SVS-searching indexes..."
@@ -71,7 +72,7 @@ rule svs_search:
         "conda activate svs;"
         "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
         "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
-        " --seg_idx {config.out_dir}svs_index/" \
+        " --seg_idx {input.idx_segments}" \
         " --emb_dir {config.out_dir}embeddings/" \
         " --emb_ext emb" \
         " --db_samples {config.out_dir}database_hap_IDs.txt" \

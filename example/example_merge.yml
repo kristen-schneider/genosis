@@ -1,0 +1,27 @@
+### TODO: 
+### modify these paths
+
+root_dir:
+  /Users/user/precision-medicine/
+vcf_file:
+  /Users/user/example/example_merge.vcf.gz
+map_file:
+  /Users/user/example/example_merge.map
+out_dir:
+  /Users/user/example/
+database_IDs:
+  /Users/user/example/database_IDs.txt
+query_IDs:
+  /Users/user/example/query_IDs.txt
+ancestry:
+  /Users/user/example/samples.ancestry
+ped:
+  None
+roots:
+  None
+batch_size:
+  128
+n_workers:
+  8
+k:
+  20

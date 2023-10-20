@@ -24,10 +24,10 @@ int main(int argc, char* argv[]) {
     }
 
     // chromosome: list of segments for each chromosome
-    map<int, vector<int>> chromosome_segments;
+    map<int, vector<int> > chromosome_segments;
 
     // queryID: chromosome: matchID: [segment binary string]
-    map<string, map<int, map<string, vector<float>>>> query_chromosome_match_ID_segments;
+    map<string, map<int, map<string, vector<float> > > > query_chromosome_match_ID_segments;
 
     // read faiss results file to get all files needed
     vector<string> sim_search_results_files;
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
     }
   
     // for all chromosomes in chromosome_segments, put segments in order
-    map<int, vector<int>> sorted_chromosome_segments;
+    map<int, vector<int> > sorted_chromosome_segments;
     for (auto chromosome : chromosome_segments) {
         // sort segments
         sort(chromosome.second.begin(), chromosome.second.end());
