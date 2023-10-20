@@ -26,9 +26,9 @@ print(len(POS_ENCODINGS))
 rule all:
     input:
         expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
-        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
-        idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
-        idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
+        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config/", segment=POS_ENCODINGS),
+        #idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data/", segment=POS_ENCODINGS),
+        #idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph/", segment=POS_ENCODINGS)
         #f"{config.out_dir}svs_index/idx.done"
 	#f"{config.out_dir}log/faiss_build.log",
 
@@ -69,11 +69,11 @@ rule split_embeddings:
 # 5.2 build SVS indices
 rule svs_build:
     input:
-        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
+        embeddings=f"{config.out_dir}embeddings/{{segment}}.emb"
     output:
-        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config", segment=POS_ENCODINGS),
-        idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data", segment=POS_ENCODINGS),
-        idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph", segment=POS_ENCODINGS)
+        idx_config=directory(f"{config.out_dir}svs_index/{{segment}}.config/"),
+        #idx_data=directory(f"{config.out_dir}svs_index/{{segment}}.data/"),
+        #idx_graph=directory(f"{config.out_dir}svs_index/{{segment}}.graph/")
         #idx_done=f"{config.out_dir}svs_index/idx.done"
     message:
         "SVS-building indexes..."
@@ -81,7 +81,6 @@ rule svs_build:
         "conda activate svs;"
         "test ! -d {config.out_dir}svs_index/ && mkdir {config.out_dir}svs_index/;" \
         "python {config.root_dir}python/scripts/svs/build_svs_index.py" \
-        " --emb_dir {config.out_dir}embeddings/" \
+        " --emb_file {input.embeddings}" \
         " --idx_dir {config.out_dir}svs_index/" \
-        " --db_samples {config.out_dir}database_hap_IDs.txt" \
-        " --emb_ext emb;"
+        " --db_samples {config.out_dir}database_hap_IDs.txt;"

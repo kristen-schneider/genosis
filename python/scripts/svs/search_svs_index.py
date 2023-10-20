@@ -1,9 +1,9 @@
-# [imports]
 import os
 import pysvs
 import argparse
 import numpy as np
 import os.path
+from os.path import basename
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -31,25 +31,25 @@ def main():
     query_samples_list = read_samples(query_samples)
     database_samples_list = read_samples(db_samples)
     
-    base = seg_idx.split('/')[-2].replace('.config', '')
+    # simple file name
+    base = seg_idx.split('/')[-1].replace('.config', '')
     chrm = base.split('.')[0]
     segment = base.split('.')[1]
+    root_name = base
+    # open results file and clear contents
+    results_file = out_dir + root_name + '.knn'
+    rf = open(results_file, 'w')
     
     # get embeddings for segment
     embedding_file = emb_dir + chrm + '.' + segment + '.' + emb_ext
     db_embeddings = read_embeddings(embedding_file, database_samples_list)
     q_embeddings = read_embeddings(embedding_file, query_samples_list)
 
-    # open results file and clear contents
-    results_file = out_dir + chrm + '.' + segment + '.knn'
-    rf = open(results_file, 'w')
     # get svs index from config file
     index = pysvs.Vamana(
             seg_idx,
             pysvs.GraphLoader(seg_idx.replace('.config', '.graph')),
-            pysvs.VectorDataLoader(
-                os.path.join(seg_idx.replace('.config', '.data')), pysvs.DataType.float32
-                ),
+            pysvs.VectorDataLoader(seg_idx.replace('.config', '.data'), pysvs.DataType.float32),
             pysvs.DistanceType.L2,
             num_threads = 4,
             )
