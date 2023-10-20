@@ -7,8 +7,8 @@ __default__:
     nodelist: fijinode-36
     ntasks-per-node: 4
     mem: 32gb
-    output: "/Users/krsc0813/1KG_data/chr15_20/out/{rule}.out"
-    error: "/Users/krsc0813/1KG_data/chr15_20/err/{rule}.err"
+    output: "/Users/krsc0813/1KG_data/example/out/{rule}.out"
+    error: "/Users/krsc0813/1KG_data/example/err/{rule}.err"
 
 model:
     partition: nvidia-a100
