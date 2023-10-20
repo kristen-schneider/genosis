@@ -35,7 +35,7 @@ def check_for_empty_entries(pos_encoding):
             break       # exit loop as soon as bad encoding is found. don't keep searching file
     # remove a segment file if there are bad encodings (less than MINIMUM)
     if empty:
-        print('!! Removing ', pos_encoding, ' for empty positional encodings')
+        print('!! Removing', pos_encoding)
         os.remove(pos_encoding) 
 
 if __name__ == "__main__":
