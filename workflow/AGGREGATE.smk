@@ -9,6 +9,7 @@ config = SimpleNamespace(**config)
 #""")
 
 shell.prefix("""
+set -e pipefail
 source  ~/.bashrc
 conda activate pmed;
 """)
