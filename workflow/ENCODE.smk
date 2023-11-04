@@ -76,6 +76,9 @@ rule encode_execute:
 
 # 2.0 remove encodings with empty entries
 rule remove_empty_encodings:
+    input:
+        encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
+        encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos",
     output:
         f"{config.out_dir}zeros.out"
     message:
