@@ -25,7 +25,8 @@ rule all:
         f"{config.root_dir}cpp/bin/aggregate-segments",
         f"{config.out_dir}svs_sample_results/segment_results.done",
         f"{config.root_dir}cpp/bin/aggregate-chromosomes",
-        f"{config.out_dir}svs_sample_results/chromosome_results.done"
+        f"{config.out_dir}svs_sample_results/chromosome_results.done",
+        f"{config.out_dir}svs_sample_results/knn_summary.done"
 
 # 0.0 make a list of all files in sim search results dir
 rule make_results_list:
@@ -109,6 +110,7 @@ rule report sample_knn:
     input:
         query_IDs=f"{config.out_dir}query_IDs.txt",
         svs_results_dir=f"{config.out_dir}svs_sample_results/",
+        chrm=f"{config.out_dir}svs_sample_results/chromosome_results.done"
     output:
         knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done"
     message:
