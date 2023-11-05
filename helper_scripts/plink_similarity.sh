@@ -2,8 +2,8 @@
 
 #SBATCH --partition=short
 #SBATCH --job-name=plink-benchmark
-#SBATCH --output=/Users/krsc0813/1KG_data/chr15_20/out/plink-benchmark.out
-#SBATCH --error=/Users/krsc0813/1KG_data/chr15_20/err/plink-benchmark.err
+#SBATCH --output=/Users/krsc0813/1KG_data/chr1_22/out/plink-benchmark.out
+#SBATCH --error=/Users/krsc0813/1KG_data/chr1_22/err/plink-benchmark.err
 #SBATCH --time=0-23:00:00
 #SBATCH --qos=normal
 #SBATCH --nodes=1
@@ -16,14 +16,14 @@
 # plink2 --make-king-table
 
 # TODO: fill in file paths appropriately.
-vcf="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.vcf.gz"
-data_dir="/Users/krsc0813/1KG_data/chr15_20"
+vcf="/Users/krsc0813/1KG_data/chr1_22/chrm_1-22.vcf.gz"
+data_dir="/Users/krsc0813/1KG_data/chr1_22"
 
 cd $data_dir
 echo "plink --genome"
 plink --vcf $vcf \
        	--genome \
-	--out $data_dir"pink-genome"
+	--out $data_dir"/pink-genome"
 
 echo "plink2 --kinship"
 plink2 --vcf $vcf --make-king-table
