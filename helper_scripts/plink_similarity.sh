@@ -23,7 +23,7 @@ cd $data_dir
 echo "plink --genome"
 plink --vcf $vcf \
        	--genome \
-	--out $data_dir"/pink-genome"
+	--out $data_dir"/plink-genome"
 
 echo "plink2 --kinship"
 plink2 --vcf $vcf --make-king-table

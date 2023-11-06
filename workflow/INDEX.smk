@@ -21,12 +21,12 @@ POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
 POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
 POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
 assert len(POS_ENCODINGS) > 0, "no positional encodings.."
-print(len(POS_ENCODINGS))
+#print(len(POS_ENCODINGS))
 
 rule all:
     input:
         expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
-        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config/", segment=POS_ENCODINGS),
+        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config/", segment=POS_ENCODINGS)
         #idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data/", segment=POS_ENCODINGS),
         #idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph/", segment=POS_ENCODINGS)
         #f"{config.out_dir}svs_index/idx.done"
@@ -37,7 +37,7 @@ rule split_embeddings:
     input:
         f"{config.out_dir}embeddings/all.embeddings.txt"
     output:
-        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
+        embeddings=expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS)
     message:
         "Splitting full embedding file into segments..."
     shell:

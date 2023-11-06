@@ -13,7 +13,6 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
 import glob
 from os.path import basename
 
@@ -23,10 +22,10 @@ VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
 VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
 assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
-
 rule all:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
+        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS),
 	zeros=f"{config.out_dir}zeros.out",
         database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
         query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
@@ -62,7 +61,7 @@ rule encode_execute:
         vcf_segments=f"{config.out_dir}vcf_segments/{{segment}}.vcf.gz"
     output:
         encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
-        encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos",
+        encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos"
     message:
         "Executing--encoding segments..."
     shell:
@@ -77,8 +76,10 @@ rule encode_execute:
 # 2.0 remove encodings with empty entries
 rule remove_empty_encodings:
     input:
-        encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
-        encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos",
+        expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
+        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS)
+        #encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
+        #encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos"
     output:
         f"{config.out_dir}zeros.out"
     message:
@@ -87,8 +88,8 @@ rule remove_empty_encodings:
         "python {config.root_dir}python/scripts/check_pos_encodings.py" \
         " --pos_dir {config.out_dir}encodings/" \
         " --pos_ext pos > {config.out_dir}zeros.out;"
-
-# 3.0 get haplotype IDs for database samples
+ 
+## 3.0 get haplotype IDs for database samples
 rule hap_IDs:
     input:
         hap_script=f"{config.root_dir}helper_scripts/make_hap_IDs.sh",
