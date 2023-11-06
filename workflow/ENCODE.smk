@@ -16,10 +16,11 @@ conda activate pmed;
 import glob
 from os.path import basename
 
+# get a list of all vcf segments
 VCF_DIR=f"{config.out_dir}vcf_segments/"
 VCF_SEGMENTS=glob.glob(VCF_DIR + "*.vcf.gz")
-VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
-VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
+VCF_SEGMENTS=list(map(basename.replace('.vcf.gz', ''), VCF_SEGMENTS))
+#VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
 assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
 rule all:
