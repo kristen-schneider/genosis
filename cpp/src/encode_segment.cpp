@@ -121,15 +121,15 @@ void encode_vectors(int chrm_idx,
             int allele1 = bcf_gt_allele(gt[i*alleles_per_gt+0]);
             int allele2 = bcf_gt_allele(gt[i*alleles_per_gt+1]);
             // replace unknowns and concatinate genotypes to " | " format
-            // if allele 1 is undefined by 0-3, unkown ('.')
+            // if allele 1 is undefined by 0-3, unknown ('.')
             if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
-                // if allele 2 is undefined by 0-3, unkown ('.')
+                // if allele 2 is undefined by 0-3, unknown ('.')
             	if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
             	    s_gt = ".|.";    // both allels are unknown
             	}
             	else{
             	    if (allele2 < 0){
-            		s_gt = ".|.";    // both alleles are unkown
+            		s_gt = ".|.";    // both alleles are unknown
             	    }
                     // if allele 2 is defined, convert string to int and store
             	    else{
@@ -137,15 +137,15 @@ void encode_vectors(int chrm_idx,
             	    }
                 }
             }
-            // if allele 2 is undefined by 0-3, unkown ('.')
+            // if allele 2 is undefined by 0-3, unknown ('.')
             if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
-                // if allele 1 is undefined by 0-3, unkown ('.')
+                // if allele 1 is undefined by 0-3, unknown ('.')
             	if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
-            	    s_gt = ".|.";   // both alleles are unkown
+            	    s_gt = ".|.";   // both alleles are unknown
             	}
             	else{
             	    if (allele1 < 0){
-                        s_gt = ".|."; // both alleles are unkown
+                        s_gt = ".|."; // both alleles are unknown
             	    }
             	    else{
             	    	s_gt = to_string(allele1) + "|.";
