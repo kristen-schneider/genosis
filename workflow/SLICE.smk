@@ -16,9 +16,6 @@ conda activate pmed;
 rule all:
     input:
         f"{config.out_dir}sample_IDs.txt",
-        f"{config.out_dir}vcf_bp.txt",
-        f"{config.root_dir}cpp/bin/interpolate-map",
-        f"{config.out_dir}interpolated.map",
         f"{config.out_dir}segment_boundary.map",
         f"{config.out_dir}vcf_segments/vcf_slices.done"
 
