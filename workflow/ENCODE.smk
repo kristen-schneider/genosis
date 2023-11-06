@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-#
 config = SimpleNamespace(**config)
 
 #shell.prefix("""
@@ -43,17 +42,19 @@ rule encode_compile:
     message:
         "Compiling--encoding segments..."
     shell:
-        "g++" \
-	" {input.main_encode_cpp}" \
-	" {input.encode_segment_cpp}" \
-	" {input.read_map_cpp}" \
-	" {input.map_encodings_cpp}" \
-	" {input.utils_cpp} " \
-	" -I {config.root_dir}cpp/include/" \
-        " -I {config.root_dir}lib/htslib/" \
-        " -lhts" \
-        " -o {output.bin}"
-		
+        """
+        g++\
+	 {input.main_encode_cpp}\
+	 {input.encode_segment_cpp}\
+	 {input.read_map_cpp}\
+	 {input.map_encodings_cpp}\
+	 {input.utils_cpp}\
+	 -I {config.root_dir}cpp/include/\
+         -I {config.root_dir}lib/htslib/\
+         -lhts\
+         -o {output.bin}
+        """
+	
 # 1.2 encode genotypes for VCF segments (execute)
 rule encode_execute:
     input:
@@ -65,13 +66,15 @@ rule encode_execute:
     message:
         "Executing--encoding segments..."
     shell:
-        "test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;" \
-        "{input.bin}" \
-        " {input.vcf_segments}" \
-        " {config.out_dir}sample_IDs.txt" \
-        " {config.root_dir}encoding.txt" \
-        " {config.out_dir}interpolated.map" \
-        " {config.out_dir}encodings/;"
+        """
+        test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;\
+        {input.bin}\
+         {input.vcf_segments}\
+         {config.out_dir}sample_IDs.txt\
+         {config.root_dir}encoding.txt\
+         {config.out_dir}interpolated.map\
+         {config.out_dir}encodings/;
+        """
 
 # 2.0 remove encodings with empty entries
 rule remove_empty_encodings:
@@ -83,10 +86,12 @@ rule remove_empty_encodings:
     message:
         "Removing positional encodings with empty entries"
     shell:
-        "python {config.root_dir}python/scripts/check_pos_encodings.py" \
-        " --pos_dir {config.out_dir}encodings/" \
-        " --pos_ext pos > {config.out_dir}zeros.out;"
- 
+        """
+        python {config.root_dir}python/scripts/check_pos_encodings.py\
+         --pos_dir {config.out_dir}encodings/\
+         --pos_ext pos > {config.out_dir}zeros.out;
+        """
+
 ## 3.0 get haplotype IDs for database samples
 rule hap_IDs:
     input:
@@ -101,6 +106,8 @@ rule hap_IDs:
     message:
         "Getting a list of all sampleIDs, databaseIDs, and queryIDs"
     shell:
-        "bash {input.hap_script} {input.sample_IDs} > {output.sample_hap_IDs};"
-        "bash {input.hap_script} {input.database_IDs} > {output.database_hap_IDs};"
-        "bash {input.hap_script} {input.query_IDs} > {output.query_hap_IDs};"
+        """
+        bash {input.hap_script} {input.sample_IDs} > {output.sample_hap_IDs};
+        bash {input.hap_script} {input.database_IDs} > {output.database_hap_IDs};
+        bash {input.hap_script} {input.query_IDs} > {output.query_hap_IDs};
+        """
