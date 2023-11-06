@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
 	// 1. get output file name
 	stringstream full_vcf_segment_path(vcf_segment_file);	// store full path to vcf segment file
 	string vcf_segment_basename;
-	while(getline(full_vcf_segment_path, vcf_segment_basename, '/'){})	// get the last token in the path
+	while(getline(full_vcf_segment_path, vcf_segment_basename, '/')){}	// get the last token in the path
 	// get chromosome and segment from vcf_segment_basename
 	stringstream vcf_segment_basename_ss(vcf_segment_basename);
 	// format: chrm1.segment0.vcf.gz
