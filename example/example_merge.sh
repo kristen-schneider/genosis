@@ -5,8 +5,8 @@ set -e pipefail
 ### TODO: 
 ### modify these paths
 
-pmed_dir="/Users/user/precision-medicine/"
-out_dir="/Users/user/example/"
+pmed_dir="/Users/krsc0813/precision-medicine/"
+out_dir="/Users/krsc0813/precision-medicine/example/"
 config=$out_dir"example_merge.yml"
 
 ###

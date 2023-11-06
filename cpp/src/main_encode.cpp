@@ -19,14 +19,14 @@ int main(int argc, char* argv[]){
 	string encoding_def_file = argv[3];	// type of encodings to use (encoding def)
 	string interpolated_map= argv[4];	// interpolated map file
 	string encoding_dir = argv[5];		// directory to which encoding files should be written out
-
-        	
+	
 	string full_vcf_segment_file = vcf_segment_file;    // store full path to vcf segment file
                                                             // the original input string is manipulated below.
 	
         // 1. get output file name
         // split the file path and get the file name
-	vector<string> file_path;
+        /*
+        vector<string> file_path;
 	string path_delim = "/";
 	size_t pos = 0;
 	string path_token;
@@ -36,7 +36,8 @@ int main(int argc, char* argv[]){
 		vcf_segment_file.erase(0, pos + path_delim.length());
 	}
 	path_token = vcf_segment_file.substr(0, pos);
-	file_path.push_back(path_token);
+	*/
+        file_path.push_back(path_token);
 	// split the file name and get the chrm idx and seg idx
 	string file_name = file_path.back();
 	vector<string> file_name_vec;

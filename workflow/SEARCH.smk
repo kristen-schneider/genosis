@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-#
 config = SimpleNamespace(**config)
 
 #shell.prefix("""
@@ -62,13 +61,15 @@ rule svs_search:
     message:
         "SVS-searching indexes..."
     shell:
-        "conda activate svs;"
-        "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
-        "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
-        " --seg_idx {input.idx_segments}" \
-        " --emb_dir {config.out_dir}embeddings/" \
-        " --emb_ext emb" \
-        " --db_samples {config.out_dir}database_hap_IDs.txt" \
-        " --q_samples {config.out_dir}query_hap_IDs.txt" \
-        " --knn {config.k}" \
-        " --out_dir {config.out_dir}svs_results/"
+        """
+        conda activate svs;
+        test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;\
+        python {config.root_dir}python/scripts/svs/search_svs_index.py\
+         --seg_idx {input.idx_segments}\
+         --emb_dir {config.out_dir}embeddings/\
+         --emb_ext emb\
+         --db_samples {config.out_dir}database_hap_IDs.txt\
+         --q_samples {config.out_dir}query_hap_IDs.txt\
+         --knn {config.k}\
+         --out_dir {config.out_dir}svs_results/;
+        """
