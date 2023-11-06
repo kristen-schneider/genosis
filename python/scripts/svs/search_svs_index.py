@@ -33,8 +33,7 @@ def main():
     
     # simple file name
     base = seg_idx.split('/')[-1].replace('.config', '')
-    chrm = base.split('.')[0]
-    segment = base.split('.')[1]
+    chrm, segment = base.split(‘.’, 2)[:-1]
     root_name = base
     # open results file and clear contents
     results_file = out_dir + root_name + '.knn'
