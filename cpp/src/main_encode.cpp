@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <map>
 #include <vector>
@@ -19,14 +20,30 @@ int main(int argc, char* argv[]){
 	string encoding_def_file = argv[3];	// type of encodings to use (encoding def)
 	string interpolated_map= argv[4];	// interpolated map file
 	string encoding_dir = argv[5];		// directory to which encoding files should be written out
-	
-	string full_vcf_segment_file = vcf_segment_file;    // store full path to vcf segment file
-                                                            // the original input string is manipulated below.
-	
-        // 1. get output file name
-        // split the file path and get the file name
-        /*
-        vector<string> file_path;
+	   
+	// 1. get output file name
+	stringstream full_vcf_segment_path(vcf_segment_file);	// store full path to vcf segment file
+	string vcf_segment_basename;
+	while(getline(full_vcf_segment_path, vcf_segment_basename, '/'){})	// get the last token in the path
+	// get chromosome and segment from vcf_segment_basename
+	stringstream vcf_segment_basename_ss(vcf_segment_basename);
+	// format: chrm1.segment0.vcf.gz
+	vector<string> vcf_segment_basename_vec;
+	string vcf_segment_basename_delim = ".";
+	while(getline(vcf_segment_basename_ss, vcf_segment_token, '.')){
+		vcf_segment_basename_vec.push_back(vcf_segment_token);
+	}
+
+	int chrm_idx = stoi(vcf_segment_basename_vec[0].erase(0, 4));	// chromosome idx
+	int segment_idx = stoi(vcf_segment_basename_vec[1].erase(0, 7));	// segment idx
+
+	// name output files
+	string output_gt_file = encoding_dir + "chrm" + to_string(chrm_idx) + ".segment" + to_string(segment_idx) + ".gt";
+	string output_pos_file = encoding_dir + "chrm" + to_string(chrm_idx) + ".segment" + to_string(segment_idx) + ".pos";
+	cout << "output gt file: " << output_gt_file << endl;
+	cout << "output pos file: " << output_pos_file << endl;
+    /*
+    vector<string> file_path;
 	string path_delim = "/";
 	size_t pos = 0;
 	string path_token;
@@ -36,7 +53,7 @@ int main(int argc, char* argv[]){
 		vcf_segment_file.erase(0, pos + path_delim.length());
 	}
 	path_token = vcf_segment_file.substr(0, pos);
-	*/
+	
         file_path.push_back(path_token);
 	// split the file name and get the chrm idx and seg idx
 	string file_name = file_path.back();
@@ -53,9 +70,7 @@ int main(int argc, char* argv[]){
         file_name_vec.push_back(file_token);
 	int chrm_idx = stoi(file_name_vec[0].erase(0, 4));      // chromosome idx
 	int segment_idx = stoi(file_name_vec[1].erase(0, 7));   // segment idx
-	// name output files
-	string output_gt_file = encoding_dir + "chrm" + to_string(chrm_idx) + ".segment" + to_string(segment_idx) + ".gt";
-	string output_pos_file = encoding_dir + "chrm" + to_string(chrm_idx) + ".segment" + to_string(segment_idx) + ".pos";
+	*/
 
 	
 	// 2. make gt encoding map
