@@ -70,5 +70,5 @@ rule svs_search:
         " --emb_ext emb" \
         " --db_samples {config.out_dir}database_hap_IDs.txt" \
         " --q_samples {config.out_dir}query_hap_IDs.txt" \
-        " --k {config.k}" \
+        " --knn {config.k}" \
         " --out_dir {config.out_dir}svs_results/"
