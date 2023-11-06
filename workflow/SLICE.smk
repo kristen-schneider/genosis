@@ -16,7 +16,6 @@ conda activate pmed;
 rule all:
     input:
         f"{config.out_dir}sample_IDs.txt",
-        f"{config.out_dir}segment_boundary.map",
         f"{config.out_dir}vcf_segments/vcf_slices.done"
 
 # 1.0 create a file with all sample IDs
