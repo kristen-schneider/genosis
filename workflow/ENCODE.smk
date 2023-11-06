@@ -19,15 +19,13 @@ from os.path import basename
 # get a list of all vcf segments
 VCF_DIR=f"{config.out_dir}vcf_segments/"
 VCF_SEGMENTS=glob.glob(VCF_DIR + "*.vcf.gz")
-VCF_SEGMENTS=list(map(basename.replace('.vcf.gz', ''), VCF_SEGMENTS))
-print(VCF_SEGMENTS)
-#VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
+VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
+VCF_SEGMENTS=[vcf_seg.replace('.vcf.gz', '') for vcf_seg in VCF_SEGMENTS]
 assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
 rule all:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
-        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS),
 	zeros=f"{config.out_dir}zeros.out",
         database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
         query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
@@ -80,8 +78,6 @@ rule remove_empty_encodings:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
         expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS)
-        #encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
-        #encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos"
     output:
         f"{config.out_dir}zeros.out"
     message:
