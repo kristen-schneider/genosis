@@ -105,14 +105,13 @@ rule aggregate_chromosomes_execute:
         {input.bin}\
          {config.out_dir}svs_sample_results/\
          {config.out_dir}query_IDs.txt;\
-        touch {output.done};"
+        touch {output.done};
         """
 
 # 3.0 report knn for samples
 rule report sample_knn:
     input:
         query_IDs=f"{config.out_dir}query_IDs.txt",
-        svs_results_dir=f"{config.out_dir}svs_sample_results/",
         chrm=f"{config.out_dir}svs_sample_results/chromosome_results.done"
     output:
         knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done"
@@ -122,7 +121,7 @@ rule report sample_knn:
         """
         python {config.root_dir}python/scripts/evaluate/report_knn.py\
          --query_IDs {input.query_IDs}\
-         --ss_sample_results_dir {input.svs_results_dir}\
-         --out_dir {input.svs_results_dir};\
+         --ss_sample_results_dir {config.out_dir}svs_sample_results/\
+         --out_dir {config.out_dir}svs_sample_results/;
          touch {output.knn_summary};
         """
