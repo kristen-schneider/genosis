@@ -125,7 +125,7 @@ void encode_vectors(int chrm_idx,
             if (allele1 != 0 and allele1 != 1 and allele1 != 2 and allele1 != 3){
                 // if allele 2 is undefined by 0-3, unkown ('.')
             	if (allele2 != 0 and allele2 != 1 and allele2 != 2 and allele2 != 3){
-            	    s_gt = ".|.";    // both allels are unkown
+            	    s_gt = ".|.";    // both allels are unknown
             	}
             	else{
             	    if (allele2 < 0){
