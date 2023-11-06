@@ -18,14 +18,18 @@
 vcf="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.vcf.gz"
 reference_map="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.map"
 out_name="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.ilash"
-ilash_config="/Users/krsc0813/1KG_data/chr15_20/ilash.config"
+ilash_dir="/Users/krsc0813/iLASH/"
+ilash_config="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.ilash.config"
 
-# create ped/map files from VCF using plink
-plink \
-	--vcf $vcf \
-	--recode 01 \
-	--output-missing-genotype . \
-	--out $out_name
+## create ped/map files from VCF using plink
+#plink \
+#	--vcf $vcf \
+#	--recode 01 \
+#	--output-missing-genotype . \
+#	--out $out_name
+
+## create map file from interpolated map for iLASH
+# awk 'print{$1, $3, $2, $3}' interpolated.map > iLASH.map
 
 # run ilash
-./build/ilash $ilash_config
+$ilash_dir"./build/ilash" $ilash_config
