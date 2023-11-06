@@ -83,7 +83,7 @@ int main(int argc, char* argv[]){
 	
 	// 4. encode single vcf
 	encode_vectors(chrm_idx,
-			full_vcf_segment_file,
+			vcf_segment_file,
 			sample_IDs_file,
 			encoding_def_map,
 			chrm_bp_cm_map,
