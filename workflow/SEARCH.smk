@@ -20,16 +20,9 @@ from os.path import basename
 IDX_DIR=f"{config.out_dir}svs_index/"
 IDX_SEGMENTS=glob.glob(IDX_DIR + "*.config/")
 IDX_SEGMENTS=[i.split('/')[-2] for i in IDX_SEGMENTS]
-IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
+IDX_SEGMENTS=[idx_seg.replace('.config', '') for idx_seg in IDX_SEGMENTS]
 assert len(IDX_SEGMENTS) > 0, "no indexes.."
-
 #print(IDX_SEGMENTS)
-
-#EMB_DIR=f"{config.out_dir}embeddings/"
-#EMB_SEGMENTS=glob.glob(EMB_DIR + "*.emb")
-#EMB_SEGMENTS=list(map(basename, EMB_SEGMENTS))
-#EMB_SEGMENTS=[".".join(e.split('.')[:-1]) for e in EMB_SEGMENTS]
-#assert len(EMB_SEGMENTS) > 0, "no embeddings.."
 
 rule all:
     input:

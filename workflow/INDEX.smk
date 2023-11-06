@@ -16,21 +16,20 @@ conda activate pmed;
 import glob
 from os.path import basename
 
+# get a list of all positional encodings
 ENCODE_DIR=f"{config.out_dir}encodings/"
 POS_ENCODINGS=glob.glob(ENCODE_DIR + "*.pos")
 POS_ENCODINGS=list(map(basename, POS_ENCODINGS))
-POS_ENCODINGS=[".".join(p.split('.')[:-1]) for p in POS_ENCODINGS]
+POS_ENCODINGS=[pos_enc.replace('.pos', '') for pos_enc in POS_ENCODINGS]
 assert len(POS_ENCODINGS) > 0, "no positional encodings.."
-#print(len(POS_ENCODINGS))
 
 rule all:
     input:
         expand(f"{config.out_dir}embeddings/{{segment}}.emb", segment=POS_ENCODINGS),
-        idx_config=expand(f"{config.out_dir}svs_index/{{segment}}.config/", segment=POS_ENCODINGS)
-        #idx_data=expand(f"{config.out_dir}svs_index/{{segment}}.data/", segment=POS_ENCODINGS),
-        #idx_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph/", segment=POS_ENCODINGS)
+        svs_config=expand(f"{config.out_dir}svs_index/{{segment}}.config/", segment=POS_ENCODINGS)
+        #svs_data=expand(f"{config.out_dir}svs_index/{{segment}}.data/", segment=POS_ENCODINGS),
+        #svs_graph=expand(f"{config.out_dir}svs_index/{{segment}}.graph/", segment=POS_ENCODINGS)
         #f"{config.out_dir}svs_index/idx.done"
-	#f"{config.out_dir}log/faiss_build.log",
 
 # 1.0 split all_embeddings.txt into segment embeddings for input to indexing steps
 rule split_embeddings:
@@ -71,10 +70,9 @@ rule svs_build:
     input:
         embeddings=f"{config.out_dir}embeddings/{{segment}}.emb"
     output:
-        idx_config=directory(f"{config.out_dir}svs_index/{{segment}}.config/"),
-        #idx_data=directory(f"{config.out_dir}svs_index/{{segment}}.data/"),
-        #idx_graph=directory(f"{config.out_dir}svs_index/{{segment}}.graph/")
-        #idx_done=f"{config.out_dir}svs_index/idx.done"
+        svs_config=directory(f"{config.out_dir}svs_index/{{segment}}.config/"),
+        #svs_data=directory(f"{config.out_dir}svs_index/{{segment}}.data/"),
+        #svs_graph=directory(f"{config.out_dir}svs_index/{{segment}}.graph/")
     message:
         "SVS-building indexes..."
     shell:

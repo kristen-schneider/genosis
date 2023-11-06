@@ -2,7 +2,6 @@ from types import SimpleNamespace
 #
 config = SimpleNamespace(**config)
 
-
 #shell.prefix("""
 #. /opt/conda/etc/profile.d/conda.sh
 #conda activate pmed;
@@ -14,14 +13,12 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
 import glob
 from os.path import basename
 
 rule all:
     input:
         f"{config.out_dir}svs_results/svs_results_file.txt",
-        f"{config.out_dir}svs_results/",
         f"{config.root_dir}cpp/bin/aggregate-segments",
         f"{config.out_dir}svs_sample_results/segment_results.done",
         f"{config.root_dir}cpp/bin/aggregate-chromosomes",

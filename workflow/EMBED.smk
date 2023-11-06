@@ -13,10 +13,6 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
-
-import glob
-from os.path import basename
-
 rule all:
     input:
         f"{config.out_dir}embeddings/all.embeddings.txt"
