@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
 	stringstream vcf_segment_basename_ss(vcf_segment_basename);
 	// format: chrm1.segment0.vcf.gz
 	vector<string> vcf_segment_basename_vec;
-	string vcf_segment_basename_delim = ".";
+	string vcf_segment_token;
 	while(getline(vcf_segment_basename_ss, vcf_segment_token, '.')){
 		vcf_segment_basename_vec.push_back(vcf_segment_token);
 	}
