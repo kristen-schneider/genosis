@@ -19,15 +19,12 @@ set -e pipefail
 ### TODO: 
 ### modify these paths
 
-pmed_dir="./"
 index_script="./run/index.sh"
 search_script="./run/search.sh"
-data_dir="./example/"
 
 ###
 ###
 
-cd $pmed_dir
 # run indexing step
 echo "Running indexing step."
 bash $index_script
