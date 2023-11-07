@@ -12,6 +12,6 @@ __default__:
 
 model:
     partition: nvidia-a100
-    nodelist: fijigpu-04
+    nodelist: fijigpu-05
     gpu: gpu:1
     time: 3600
