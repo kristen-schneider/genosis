@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-#
 config = SimpleNamespace(**config)
 
 #shell.prefix("""
@@ -20,16 +19,9 @@ from os.path import basename
 IDX_DIR=f"{config.out_dir}svs_index/"
 IDX_SEGMENTS=glob.glob(IDX_DIR + "*.config/")
 IDX_SEGMENTS=[i.split('/')[-2] for i in IDX_SEGMENTS]
-IDX_SEGMENTS=[".".join(i.split('.')[:-1]) for i in IDX_SEGMENTS]
+IDX_SEGMENTS=[idx_seg.replace('.config', '') for idx_seg in IDX_SEGMENTS]
 assert len(IDX_SEGMENTS) > 0, "no indexes.."
-
 #print(IDX_SEGMENTS)
-
-#EMB_DIR=f"{config.out_dir}embeddings/"
-#EMB_SEGMENTS=glob.glob(EMB_DIR + "*.emb")
-#EMB_SEGMENTS=list(map(basename, EMB_SEGMENTS))
-#EMB_SEGMENTS=[".".join(e.split('.')[:-1]) for e in EMB_SEGMENTS]
-#assert len(EMB_SEGMENTS) > 0, "no embeddings.."
 
 rule all:
     input:
@@ -69,13 +61,15 @@ rule svs_search:
     message:
         "SVS-searching indexes..."
     shell:
-        "conda activate svs;"
-        "test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;" \
-        "python {config.root_dir}python/scripts/svs/search_svs_index.py" \
-        " --seg_idx {input.idx_segments}" \
-        " --emb_dir {config.out_dir}embeddings/" \
-        " --emb_ext emb" \
-        " --db_samples {config.out_dir}database_hap_IDs.txt" \
-        " --q_samples {config.out_dir}query_hap_IDs.txt" \
-        " --k {config.k}" \
-        " --out_dir {config.out_dir}svs_results/"
+        """
+        conda activate svs;
+        test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;\
+        python {config.root_dir}python/scripts/svs/search_svs_index.py\
+         --seg_idx {input.idx_segments}\
+         --emb_dir {config.out_dir}embeddings/\
+         --emb_ext emb\
+         --db_samples {config.out_dir}database_hap_IDs.txt\
+         --q_samples {config.out_dir}query_hap_IDs.txt\
+         --knn {config.k}\
+         --out_dir {config.out_dir}svs_results/;
+        """

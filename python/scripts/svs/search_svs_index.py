@@ -7,13 +7,13 @@ from os.path import basename
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--seg_idx', type=str, help='single svs index')
-    parser.add_argument('--emb_dir', type=str, help='directory of all embedding files')
-    parser.add_argument('--emb_ext', type=str, default='.emb', help='extension for embedding files')
-    parser.add_argument('--db_samples', type=str, help='list of all samples in database (haplotypes)')
-    parser.add_argument('--q_samples', type=str, help='list of all query samples (haplotypes)')
-    parser.add_argument('--k', type=int, default=20, help='k used for knn')
-    parser.add_argument('--out_dir', type=str, help='directory to write svs search results')
+    parser.add_argument('-s', '--seg_idx', type=str, help='single svs index')
+    parser.add_argument('-i', '--emb_dir', type=str, help='directory of all embedding files')
+    parser.add_argument('-e', '--emb_ext', type=str, default='.emb', help='extension for embedding files')
+    parser.add_argument('-d', '--db_samples', type=str, help='list of all samples in database (haplotypes)')
+    parser.add_argument('-q', '--q_samples', type=str, help='list of all query samples (haplotypes)')
+    parser.add_argument('-k', '--knn', type=int, default=20, help='k used for knn')
+    parser.add_argument('-o', '--out_dir', type=str, help='directory to write svs search results')
     return parser.parse_args()
 
 def main():
@@ -21,7 +21,7 @@ def main():
     args = parse_args()
     seg_idx = args.seg_idx
     emb_dir = args.emb_dir
-    k = args.k
+    k = args.knn
     db_samples = args.db_samples
     query_samples = args.q_samples
     out_dir = args.out_dir
@@ -33,8 +33,7 @@ def main():
     
     # simple file name
     base = seg_idx.split('/')[-1].replace('.config', '')
-    chrm = base.split('.')[0]
-    segment = base.split('.')[1]
+    chrm, segment = base.split('.')
     root_name = base
     # open results file and clear contents
     results_file = out_dir + root_name + '.knn'

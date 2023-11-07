@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-#
 config = SimpleNamespace(**config)
 
 #shell.prefix("""
@@ -16,16 +15,16 @@ conda activate pmed;
 import glob
 from os.path import basename
 
+# get a list of all vcf segments
 VCF_DIR=f"{config.out_dir}vcf_segments/"
 VCF_SEGMENTS=glob.glob(VCF_DIR + "*.vcf.gz")
 VCF_SEGMENTS=list(map(basename, VCF_SEGMENTS))
-VCF_SEGMENTS=[".".join(v.split('.')[:-2]) for v in VCF_SEGMENTS]
+VCF_SEGMENTS=[vcf_seg.replace('.vcf.gz', '') for vcf_seg in VCF_SEGMENTS]
 assert len(VCF_SEGMENTS) > 0, "no vcf segments.."
 
 rule all:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
-        expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS),
 	zeros=f"{config.out_dir}zeros.out",
         database_hap_IDs=f"{config.out_dir}database_hap_IDs.txt",
         query_hap_IDs=f"{config.out_dir}query_hap_IDs.txt"
@@ -43,17 +42,19 @@ rule encode_compile:
     message:
         "Compiling--encoding segments..."
     shell:
-        "g++" \
-	" {input.main_encode_cpp}" \
-	" {input.encode_segment_cpp}" \
-	" {input.read_map_cpp}" \
-	" {input.map_encodings_cpp}" \
-	" {input.utils_cpp} " \
-	" -I {config.root_dir}cpp/include/" \
-        " -I {config.root_dir}lib/htslib/" \
-        " -lhts" \
-        " -o {output.bin}"
-		
+        """
+        g++\
+	 {input.main_encode_cpp}\
+	 {input.encode_segment_cpp}\
+	 {input.read_map_cpp}\
+	 {input.map_encodings_cpp}\
+	 {input.utils_cpp}\
+	 -I {config.root_dir}cpp/include/\
+         -I {config.root_dir}lib/htslib/\
+         -lhts\
+         -o {output.bin}
+        """
+	
 # 1.2 encode genotypes for VCF segments (execute)
 rule encode_execute:
     input:
@@ -65,30 +66,32 @@ rule encode_execute:
     message:
         "Executing--encoding segments..."
     shell:
-        "test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;" \
-        "{input.bin}" \
-        " {input.vcf_segments}" \
-        " {config.out_dir}sample_IDs.txt" \
-        " {config.root_dir}encoding.txt" \
-        " {config.out_dir}interpolated.map" \
-        " {config.out_dir}encodings/;"
+        """
+        test ! -d {config.out_dir}encodings/ && mkdir {config.out_dir}encodings/;\
+        {input.bin}\
+         {input.vcf_segments}\
+         {config.out_dir}sample_IDs.txt\
+         {config.root_dir}encoding.txt\
+         {config.out_dir}interpolated.map\
+         {config.out_dir}encodings/;
+        """
 
 # 2.0 remove encodings with empty entries
 rule remove_empty_encodings:
     input:
         expand(f"{config.out_dir}encodings/{{segment}}.gt", segment=VCF_SEGMENTS),
         expand(f"{config.out_dir}encodings/{{segment}}.pos", segment=VCF_SEGMENTS)
-        #encoding_gt=f"{config.out_dir}encodings/{{segment}}.gt",
-        #encoding_pos=f"{config.out_dir}encodings/{{segment}}.pos"
     output:
         f"{config.out_dir}zeros.out"
     message:
         "Removing positional encodings with empty entries"
     shell:
-        "python {config.root_dir}python/scripts/check_pos_encodings.py" \
-        " --pos_dir {config.out_dir}encodings/" \
-        " --pos_ext pos > {config.out_dir}zeros.out;"
- 
+        """
+        python {config.root_dir}python/scripts/check_pos_encodings.py\
+         --pos_dir {config.out_dir}encodings/\
+         --pos_ext pos > {config.out_dir}zeros.out;
+        """
+
 ## 3.0 get haplotype IDs for database samples
 rule hap_IDs:
     input:
@@ -103,6 +106,8 @@ rule hap_IDs:
     message:
         "Getting a list of all sampleIDs, databaseIDs, and queryIDs"
     shell:
-        "bash {input.hap_script} {input.sample_IDs} > {output.sample_hap_IDs};"
-        "bash {input.hap_script} {input.database_IDs} > {output.database_hap_IDs};"
-        "bash {input.hap_script} {input.query_IDs} > {output.query_hap_IDs};"
+        """
+        bash {input.hap_script} {input.sample_IDs} > {output.sample_hap_IDs};
+        bash {input.hap_script} {input.database_IDs} > {output.database_hap_IDs};
+        bash {input.hap_script} {input.query_IDs} > {output.query_hap_IDs};
+        """
