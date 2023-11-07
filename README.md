@@ -23,12 +23,12 @@ singularity build pmed.sif pmed_recipe.def
 ```
 ### Edit file paths
 **NO SLURM**<br>
-- Make copy of  [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_config.yml) and change paths appropriately.<br>
-- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_run.sh) and change paths appropriately.<br><br>
+- Make copy of  [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.yml) and change paths appropriately.<br>
+- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/run.sh) and change paths appropriately.<br><br>
 
 **SLURM**<br>
 - _In addition to the above ..._
-- Make copy of [example_slurm.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/example_slurm.sh) and change paths appropriately.<br>
+- Make copy of [example_slurm.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/slurm.sh) and change paths appropriately.<br>
 - Make copy of [embed_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/embed_config.yml) and change node configurations appropriately.<br>
 ## RUN
 ____________________________________________
@@ -37,9 +37,9 @@ ____________________________________________
 singularity run
   --bind /path/to/data_dir/ \
   ./singularity/pmed.sif \
-  bash ./run/example_run.sh \
+  bash ./run/singularity.sh \
 ```
 ### Run without singularity
 ```
-sbatch ./run/example_run.sh
+sbatch ./run/run.sh
 ```
