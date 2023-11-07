@@ -5,9 +5,9 @@ set -e pipefail
 ### TODO: 
 ### modify these paths
 
-pmed_dir="/home/user/precision-medicine/"
-out_dir="/home/user/1KG_data/example/"
-config=$out_dir"example_config.yml"
+pmed_dir="./"
+out_dir="./example/"
+config=$out_dir"example.yml"
 
 ###
 ###
