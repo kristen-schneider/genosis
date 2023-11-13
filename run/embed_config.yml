@@ -1,7 +1,7 @@
 __default__:
     job-name: "{rule}"
-    partition: short
-    time: 60
+    partition: long
+    time: 600
     gpu: gpu:0
     nodes: 1
     nodelist: fijinode-36

@@ -123,6 +123,8 @@ void write_query_output(
         string query_dir = query_results_dir + query_ID;
         string mkdir_command = "mkdir " + query_dir;
         system(mkdir_command.c_str());
+        cout << "query_ID: " << query_ID << endl;
+        cout << "query_dir: " << query_dir << endl;
 
         // for each chromosome write out file
         // format:
