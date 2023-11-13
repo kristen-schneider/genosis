@@ -1,6 +1,6 @@
 import argparse
-import plot_segment_information as psi
-import matplotlib.pytplot as plt
+import segment_helper as sh
+import matplotlib.pyplot as plt
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -8,6 +8,7 @@ def parse_args():
     parser.add_argument('--encoding_dir', type=str, required=True, help='Directory containing encodings')
     parser.add_argument('--embedding_dir', type=str, required=True, help='Directory containing embeddings')
     parser.add_argument('--png', type=str, required=True, help='Path to save the plot')
+    return parser.parse_args()
 
 def main():
     args = parse_args()
@@ -17,16 +18,24 @@ def main():
     png = args.png
 
     # 1. count the number of segments for each chromosome
-    chrm_segment_count = psi.count_cm(boundary_file)
+    print('number of segments...')
+    chrm_segment_count = sh.count_cm(boundary_file)
     # 2. count the length of genotype encodings for each segment
-    gt_segment_lengths = psi.count_vector_lengths(encoding_dir, '.gt')
+    print('genotype enodings...')
+    gt_segment_lengths = sh.count_vector_lengths(encoding_dir, '.gt')
     # 3. count the length of positional encodings for each segment
-    pos_segment_lengths = psi.count_vector_lengths(encoding_dir, '.pos')
+    print('positional encodings...')
+    pos_segment_lengths = sh.count_vector_lengths(encoding_dir, '.pos')
     # 4. count the length of embeddings for each segment
-    embedding_segment_lengths = psi.count_vector_lengths(embedding_dir, '.emb')
+    print('embeddings')
+    embedding_segment_lengths = sh.count_vector_lengths(embedding_dir, '.emb')
 
     # plot the results
-    psi.plot_dimensionality_reduction(gt_segment_lengths,
+    print('plotting...')
+    sh.plot_dimensionality_reduction(gt_segment_lengths,
                                       pos_segment_lengths,
                                       embedding_segment_lengths,
                                       png)
+
+if __name__ == '__main__':
+    main()

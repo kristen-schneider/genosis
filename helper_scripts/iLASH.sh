@@ -15,13 +15,13 @@
 # including generating ped/map files with plink
 
 # TODO: fill in file paths appropriately.
-vcf="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.vcf.gz"
-reference_map="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.map"
-out_name="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.ilash"
+vcf="/Users/krsc0813/1KG_data/1kg_30x_phased/1kGP_high_coverage_Illumina.chr15.filtered.SNV_INDEL_SV_phased_panel.vcf.gz"
+reference_map="/Users/krsc0813/1KG_data/chr15_20/chrm_15.map"
+out_name="/Users/krsc0813/1KG_data/chr15_20/chrm_15.ilash"
 ilash_dir="/Users/krsc0813/iLASH/"
-ilash_config="/Users/krsc0813/1KG_data/chr15_20/chrm_15-20.ilash.config"
+ilash_config="/Users/krsc0813/1KG_data/chr15_20/chrm_15.ilash.config"
 
-## create ped/map files from VCF using plink
+# create ped/map files from VCF using plink
 #plink \
 #	--vcf $vcf \
 #	--recode 01 \
