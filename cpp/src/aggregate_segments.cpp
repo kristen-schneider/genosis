@@ -66,11 +66,14 @@ int main(int argc, char* argv[]) {
         sort(chromosome.second.begin(), chromosome.second.end());
         sorted_chromosome_segments[chromosome.first] = chromosome.second;
     }
-
     
     // for each query, write out file
     write_query_output(sorted_chromosome_segments,
                         query_chromosome_match_ID_segments,
                         query_results_dir);
-    
+
+    // write output file segments.done
+    string segments_done = query_results_dir + "segment_results.done";
+    ofstream done_file(segments_done);
+    done_file << query_chromosome_match_ID_segments.size();
 }
