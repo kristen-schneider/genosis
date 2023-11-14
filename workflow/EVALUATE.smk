@@ -19,6 +19,7 @@ rule all:
     input:
         f"{config.out_dir}svs_sample_results/plot_summary.done"
 
+### PEDIGREE PRE-PROCESSING ###
 # 1.0 make relations file (if pedigree)
 rule label_relations:
     input:
@@ -35,11 +36,8 @@ rule label_relations:
         " --relations {output.relations_file}" \
         " --gen 6;"
 
-# plot KNN results
-# read ground truth IBD
-# plot KNN vs ground truth
 
-
+### ANCESTRY PRE-PROCESSING ###
 # 2.0 plot summmary data
 rule plot_summary:
     input:

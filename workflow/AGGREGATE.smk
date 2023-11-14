@@ -66,8 +66,7 @@ rule aggregate_segment_execute:
         {input.bin}\
          {config.out_dir}svs_results/\
          {config.out_dir}svs_results/svs_results_file.txt\
-         {config.out_dir}svs_sample_results/;\
-        touch {output.done};
+         {config.out_dir}svs_sample_results/
         """
 
 # 2.1 aggregate results chromosomes (compile)
@@ -121,4 +120,4 @@ rule report sample_knn:
          --ss_sample_results_dir {config.out_dir}svs_sample_results/\
          --out_dir {config.out_dir}svs_sample_results/;
          touch {output.knn_summary};
-#        """
+        """
