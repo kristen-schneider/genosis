@@ -1,4 +1,5 @@
-import os 
+import os
+import matplotlib.pyplot as plt
 
 def count_cm(boundary_file):
     """

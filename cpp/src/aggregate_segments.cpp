@@ -36,8 +36,6 @@ int main(int argc, char* argv[]) {
     
     // iterate through all files in the sim search results directory
     for (auto file_i : sim_search_results_files) {
-        cout << file_i << endl;
-        
         string filename = sim_search_results_dir + file_i;
         string line;
         ifstream file(filename);
@@ -51,6 +49,7 @@ int main(int argc, char* argv[]) {
         int segment = stoi(chromosome_segment.substr(chromosome_segment.find("segment") + 7));
         // add segment to list of segments for chromosome
         // chromosome_segments[chromosome].push_back(segment);
+        //cout << file_i << " " << chromosome << " " << segment << " " << endl;
 
         // read file and build datastructure
         read_QCMS(filename,
@@ -67,11 +66,14 @@ int main(int argc, char* argv[]) {
         sort(chromosome.second.begin(), chromosome.second.end());
         sorted_chromosome_segments[chromosome.first] = chromosome.second;
     }
-
     
     // for each query, write out file
     write_query_output(sorted_chromosome_segments,
                         query_chromosome_match_ID_segments,
                         query_results_dir);
-    
+
+    // write output file segments.done
+    string segments_done = query_results_dir + "segment_results.done";
+    ofstream done_file(segments_done);
+    done_file << query_chromosome_match_ID_segments.size();
 }

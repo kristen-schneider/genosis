@@ -15,7 +15,7 @@ config=$out_dir"example.yml"
 ## These directories should be correct.
 ## If you have changed where scripts exist, change these paths
 smk_dir=$pmed_dir"workflow/"
-log=$out_dir"index.log"
+log=$out_dir"log/index.log"
 ##
 ##
 
