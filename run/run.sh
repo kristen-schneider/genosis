@@ -25,8 +25,11 @@ search_script="./run/search.sh"
 ###
 ###
 
+# make log directory
+mkdir log
 # run indexing step
 echo "Running indexing step."
 bash $index_script
+# run searching step
 echo "Running searching step."
 bash $search_script

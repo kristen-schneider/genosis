@@ -15,7 +15,7 @@ config=$out_dir"example.yml"
 ## These directories should be correct.
 ## If you have changed where scripts exist, change these paths
 smk_dir=$pmed_dir"workflow/"
-log=$out_dir"log/search.log"
+log=$out_dir"log/evaluate.log"
 ##
 ##
 
@@ -34,32 +34,14 @@ source  ~/.bashrc
 #export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:~/miniconda3/condabin/conda
 #conda activate snakemake
 
-# run pipeline
-# 5. search slices
-echo "5. searching index slices..." >> $log
-start_search=$(date +%s.%3N)
+# 7. evaluate KNN
+echo "7. evaluating sample results..." >> $log
+start_evaluate=$(date +%s.%3N)
 snakemake \
-    -s $smk_dir"SEARCH.smk" \
+    -s $smk_dir"EVALUATE.smk" \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --rerun-incomplete
-end_search=$(date +%s.%3N)
-search_time=$(echo "scale=3; $end_search - $start_search" | bc)
-echo "--SEARCH: $search_time seconds" >> $log
-
-
-# 6. aggregate slices
-echo "6. aggregating results slices..." >> $log
-start_aggregate=$(date +%s.%3N)
-snakemake \
-    -s $smk_dir"AGGREGATE.smk" \
-    -c 16 \
-    -j 10 \
-    --use-conda \
-    --conda-frontend mamba \
-    --configfile=$config \
-    --rerun-incomplete
-end_aggregate=$(date +%s.%3N)
-aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
-echo "--AGGREGATE: $aggregate_time seconds" >> $log
+end_evaluate=$(date +%s.%3N)
+evaluate_time=$(echo "scale=3; $end_evaluate - $start_evaluate" | bc)
+echo "--EVALUATE: $evaluate_time seconds" >> $log
