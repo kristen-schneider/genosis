@@ -123,9 +123,7 @@ void write_query_output(
         string query_dir = query_results_dir + query_ID;
         string mkdir_command = "mkdir " + query_dir;
         system(mkdir_command.c_str());
-        cout << "query_ID: " << query_ID << endl;
-        cout << "query_dir: " << query_dir << endl;
-
+        
         // for each chromosome write out file
         // format:
         // segment, 0, 1, 2, 3, ...
@@ -135,6 +133,7 @@ void write_query_output(
         for (auto const& chromosome : query.second) {
             int chromosome_num = chromosome.first;
             string query_chrm_file = query_dir + "/chrm" + to_string(chromosome_num) + ".csv";
+            cout << "file: " << query_chrm_file << endl;
             ofstream file(query_chrm_file);
             // write header
             file << "segment,";

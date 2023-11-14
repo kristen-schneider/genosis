@@ -1,23 +1,29 @@
+import argparse
 import os
 import sys
 
 data_dir = sys.argv[1]
 out_dir = sys.argv[2]
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--svs_sample_results_dir')
+    parser.add_argument('--sample')
+    return parser.parse_args()
+
 def main():
-    for sample in os.listdir(data_dir):
-        # if sample ends with .csv
-        if sample.endswith('.csv'):
-            print(sample)
-            sorted_dict = read_sample(data_dir + sample)        
-            topK_dict = topK(sorted_dict)
-            # write to file
-            with open(out_dir + sample, 'w') as f:
-                for m in topK_dict:
-                    f.write(m + '\t' + str(topK_dict[m]) + '\n')
+    args = get_args()
+    svs_dir = args.svs_sample_results_dir
+    all_chrm = args.sample
+
+    sorted_dict = read_sample(svs_dir + sample)        
+    topK_dict = topK(sorted_dict)
+    # write to file
+    with open(out_dir + sample, 'w') as f:
+        for m in topK_dict:
+            f.write(m + '\t' + str(topK_dict[m]) + '\n')
 
 def read_sample(sample_file):
-    print(sample_file)
     hap = None
     sample_dict = {}
     with open(sample_file) as f:
@@ -46,4 +52,3 @@ def topK(sorted_dict, k=20):
 
 if __name__ == '__main__':
     main()
-
