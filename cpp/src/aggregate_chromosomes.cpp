@@ -103,4 +103,9 @@ int main(int argc, char* argv[]) {
         // clear map
         chromosome_match_ID_scores.clear();
     }
+    // write output file chromosome_results.done
+    string chromosomes_done = query_results_dir + "chromosome_results.done";
+    ofstream done_file(chromosomes_done);
+    done_file << "done aggregating chromosomes.";
+
 }

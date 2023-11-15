@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
                         query_chromosome_match_ID_segments,
                         query_results_dir);
 
-    // write output file segments.done
+    // write output file segment_results.done
     string segments_done = query_results_dir + "segment_results.done";
     ofstream done_file(segments_done);
     done_file << query_chromosome_match_ID_segments.size();
