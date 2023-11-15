@@ -19,14 +19,14 @@ set -e pipefail
 ### TODO: 
 ### modify these paths
 # scripts
-index_script="./run/index.sh"
-search_script="./run/search.sh"
-evaluate_script="./run/evaluate.sh"
+index_script="/Users/krsc0813/precision-medicine/run/index.sh"
+search_script="/Users/krsc0813/precision-medicine/run/search.sh"
+evaluate_script="/Users/krsc0813/precision-medicine/run/evaluate.sh"
 # directories
-pmed_dir="./"
-out_dir="./example/"
+pmed_dir="/Users/krsc0813/precision-medicine/"
+out_dir="/Users/krsc0813/precision-medicine/example/"
 # config file
-config_file="./example/example.yml"
+config_file=$out_dir"example.yml"
 ###
 ###
 
@@ -43,6 +43,6 @@ bash $index_script $pmed_dir $out_dir $config_file
 # run searching step
 echo "Running searching step."
 bash $search_script $pmed_dir $out_dir $config_file
-# run evaluation step
-echo "Running evaluation step."
-bash $evaluate_script $pmed_dir $out_dir $config_file
+## run evaluation step
+#echo "Running evaluation step."
+#bash $evaluate_script $pmed_dir $out_dir $config_file

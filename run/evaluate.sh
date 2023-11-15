@@ -36,7 +36,7 @@ snakemake \
     -s $smk_dir"EVALUATE.smk" \
     -c 16 \
     -j 10 \
-    --configfile=$config \
+    --configfile=$config
 end_evaluate=$(date +%s.%3N)
 evaluate_time=$(echo "scale=3; $end_evaluate - $start_evaluate" | bc)
 echo "--EVALUATE: $evaluate_time seconds" >> $log
