@@ -17,20 +17,22 @@ from os.path import basename
 
 rule all:
     input:
-        f"{config.out_dir}svs_sample_results/knn_summary.done"
+        f"{config.out_dir}svs_sample_results/segment_results.done",
+        f"{config.out_dir}svs_sample_results/chromosome_results.done"
+        #f"{config.out_dir}svs_sample_results/knn_summary.done"
 
-## 0.0 make a list of all files in sim search results dir
-#rule make_results_list:
-#    input:
-#        svs_results_dir=f"{config.out_dir}svs_results/"
-#    output:
-#        svs_results_txt=f"{config.out_dir}svs_results/svs_results_file.txt"
-#    message:
-#        "Writing all results file to a text file to read in..."
-#    shell:
-#        """
-#        ls {config.out_dir}svs_results/ > {output.svs_results_txt};
-#        """
+# 0.0 make a list of all files in sim search results dir
+rule make_results_list:
+    input:
+        svs_results_dir=f"{config.out_dir}svs_results/"
+    output:
+        svs_results_txt=f"{config.out_dir}svs_results/svs_results_file.txt"
+    message:
+        "Writing all results file to a text file to read in..."
+    shell:
+        """
+        ls {config.out_dir}svs_results/ > {output.svs_results_txt};
+        """
 
 # 1.1 aggregate results segments (compile)
 rule aggregate_segment_compile:
@@ -100,24 +102,23 @@ rule aggregate_chromosomes_execute:
         """
         {input.bin}\
          {config.out_dir}svs_sample_results/\
-         {config.out_dir}query_IDs.txt;\
-        touch {output.done};
+         {config.out_dir}query_IDs.txt;
         """
 
-# 3.0 report knn for samples
-rule report sample_knn:
-    input:
-        query_IDs=f"{config.out_dir}query_IDs.txt",
-        chrm=f"{config.out_dir}svs_sample_results/chromosome_results.done"
-    output:
-        knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done"
-    message:
-        "Writing a summary result file with knn for all samples..."
-    shell:
-        """
-        python {config.root_dir}python/scripts/evaluate/report_knn.py\
-         --query_IDs {input.query_IDs}\
-         --ss_sample_results_dir {config.out_dir}svs_sample_results/\
-         --out_dir {config.out_dir}svs_sample_results/;
-         touch {output.knn_summary};
-        """
+## 3.0 report knn for samples
+#rule report sample_knn:
+#    input:
+#        query_IDs=f"{config.out_dir}query_IDs.txt",
+#        chrm=f"{config.out_dir}svs_sample_results/chromosome_results.done"
+#    output:
+#        knn_summary=f"{config.out_dir}svs_sample_results/knn_summary.done"
+#    message:
+#        "Writing a summary result file with knn for all samples..."
+#    shell:
+#        """
+#        python {config.root_dir}python/scripts/evaluate/report_knn.py\
+#         --query_IDs {input.query_IDs}\
+#         --ss_sample_results_dir {config.out_dir}svs_sample_results/\
+#         --out_dir {config.out_dir}svs_sample_results/;
+#         touch {output.knn_summary};
+#        """

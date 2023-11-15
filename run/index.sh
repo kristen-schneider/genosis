@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
-set -e pipefail
+pmed_dir=$1
+out_dir=$2
+config=$3
 
-### TODO: 
-### modify these paths
-
-pmed_dir="./"
-out_dir="./example/"
-config=$out_dir"example.yml"
-
-###
-###
+echo $pmed_dir
+echo $out_dir
+echo $config
 
 ## These directories should be correct.
 ## If you have changed where scripts exist, change these paths
@@ -19,9 +15,6 @@ log=$out_dir"log/index.log"
 ##
 ##
 
-# go to project directory
-cd $pmed_dir
-
 # for singularity container
 #. /opt/conda/etc/profile.d/conda.sh
 # load conda and activate snakemake env for run
@@ -29,11 +22,15 @@ cd $pmed_dir
 #.~/miniconda3/bin/conda
 #conda_dir="/home/sdp/miniconda3/envs/"
 #source ~/miniconda3/etc/profile.d/mamba.sh 
-source  ~/.bashrc
 #export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:~/miniconda3/condabin/conda
 #conda activate snakemake
 
-# run pipeline
+# activate conda / mamba
+source  ~/.bashrc
+# go to project directory
+cd $pmed_dir
+
+# run indexing pipeline
 # 1. slice vcf
 echo "1. slicing VCF..." > $log
 start_slice=$(date +%s.%3N)
@@ -41,8 +38,7 @@ snakemake \
     -s $smk_dir"SLICE.smk" \
     -c 16 \
     -j 5 \
-    --configfile=$config \
-    --rerun-incomplete
+    --configfile=$config
 end_slice=$(date +%s.%3N)
 slice_time=$(echo "scale=3; $end_slice - $start_slice" | bc)
 echo "--SLICE: $slice_time seconds" >> $log
@@ -55,7 +51,17 @@ snakemake \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --rerun-incomplete
+    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster "sbatch -J {cluster.job-name} \\
+                      -t {cluster.time} \\
+                      -N {cluster.nodes} \\
+                      -p {cluster.partition} \\
+                      --ntasks-per-node {cluster.ntasks-per-node} \\
+                      --gres={cluster.gpu} \\
+                      --mem={cluster.mem} \\
+                      --output {cluster.output} \\
+                      --error {cluster.error}" \
+    --latency-wait 70
 end_encode=$(date +%s.%3N)
 encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
 echo "--ENCODE: $encode_time seconds" >> $log
@@ -94,7 +100,17 @@ snakemake \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --rerun-incomplete
+    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster "sbatch -J {cluster.job-name} \\
+                      -t {cluster.time} \\
+                      -N {cluster.nodes} \\
+                      -p {cluster.partition} \\
+                      --ntasks-per-node {cluster.ntasks-per-node} \\
+                      --gres={cluster.gpu} \\
+                      --mem={cluster.mem} \\
+                      --output {cluster.output} \\
+                      --error {cluster.error}" \
+    --latency-wait 70
 end_index=$(date +%s.%3N)
 index_time=$(echo "scale=3; $end_index - $start_index" | bc)
 echo "--INDEX: $index_time seconds" >> $log

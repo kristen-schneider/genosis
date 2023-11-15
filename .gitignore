@@ -10,6 +10,7 @@ lightning_logs/
 *.out
 */err/*
 *.err
+*__pycache__*
 */__pycache__/*
 singularity_files/*.sif
 .snakemake/
