@@ -50,7 +50,18 @@ snakemake \
     -s $smk_dir"ENCODE.smk" \
     -c 16 \
     -j 10 \
-    --configfile=$config
+    --configfile=$config \
+    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster "sbatch -J {cluster.job-name} \\
+                      -t {cluster.time} \\
+                      -N {cluster.nodes} \\
+                      -p {cluster.partition} \\
+                      --ntasks-per-node {cluster.ntasks-per-node} \\
+                      --gres={cluster.gpu} \\
+                      --mem={cluster.mem} \\
+                      --output {cluster.output} \\
+                      --error {cluster.error}" \
+    --latency-wait 70
 end_encode=$(date +%s.%3N)
 encode_time=$(echo "scale=3; $end_encode - $start_encode" | bc)
 echo "--ENCODE: $encode_time seconds" >> $log
@@ -88,7 +99,18 @@ snakemake \
     -s $smk_dir"INDEX.smk" \
     -c 16 \
     -j 10 \
-    --configfile=$config
+    --configfile=$config \
+    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster "sbatch -J {cluster.job-name} \\
+                      -t {cluster.time} \\
+                      -N {cluster.nodes} \\
+                      -p {cluster.partition} \\
+                      --ntasks-per-node {cluster.ntasks-per-node} \\
+                      --gres={cluster.gpu} \\
+                      --mem={cluster.mem} \\
+                      --output {cluster.output} \\
+                      --error {cluster.error}" \
+    --latency-wait 70
 end_index=$(date +%s.%3N)
 index_time=$(echo "scale=3; $end_index - $start_index" | bc)
 echo "--INDEX: $index_time seconds" >> $log

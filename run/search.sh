@@ -34,7 +34,18 @@ snakemake \
     -s $smk_dir"SEARCH.smk" \
     -c 16 \
     -j 10 \
-    --configfile=$config
+    --configfile=$config \
+    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster "sbatch -J {cluster.job-name} \\
+                      -t {cluster.time} \\
+                      -N {cluster.nodes} \\
+                      -p {cluster.partition} \\
+                      --ntasks-per-node {cluster.ntasks-per-node} \\
+                      --gres={cluster.gpu} \\
+                      --mem={cluster.mem} \\
+                      --output {cluster.output} \\
+                      --error {cluster.error}" \
+    --latency-wait 70
 end_search=$(date +%s.%3N)
 search_time=$(echo "scale=3; $end_search - $start_search" | bc)
 echo "--SEARCH: $search_time seconds" >> $log
