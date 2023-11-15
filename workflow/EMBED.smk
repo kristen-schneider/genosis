@@ -12,14 +12,24 @@ source  ~/.bashrc
 conda activate pmed;
 """)
 
+import glob
+from os.path import basename
+
+# get a list of all encoding segments
+ENC_DIR=f"{config.out_dir}encodings/"
+ENC_SEGMENTS=glob.glob(ENC_DIR + "*.gt")
+ENC_SEGMENTS=list(map(basename, ENC_SEGMENTS))
+ENC_SEGMENTS=[enc_seg.replace('.gt', '') for enc_seg in ENC_SEGMENTS]
+assert len(ENC_SEGMENTS) > 0, "no genotype encoding segments.."
+
 rule all:
     input:
-        f"{config.out_dir}embeddings/all.embeddings.txt"
+        all_embeddings=f"{config.out_dir}embeddings/all.embeddings.txt"
 
-# 1.0 run model 
+# 1.0 generate embedding vectors
 rule model:
     input:
-        f"{config.out_dir}zeros.out"
+        zeros=expand(f"{config.out_dir}encodings/{{segment}}.done", segment=ENC_SEGMENTS)
     output:
         f"{config.out_dir}embeddings/all.embeddings.txt"
     message:
