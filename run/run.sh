@@ -31,8 +31,7 @@ config_file=$out_dir"example.yml"
 ###
 
 # make log directory
-cd $out_dir
-mkdir log
+test ! -d $out_dir"log/" && mkdir $out_dir"log/"
 
 # move to project dir
 cd $pmed_dir
