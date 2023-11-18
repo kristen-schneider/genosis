@@ -15,4 +15,5 @@ rm -r encodings/
 rm -r embeddings/
 rm -r svs_index/
 rm -r svs_results/
-rm -r svs_sample_results/
+rm TOP_HITS.txt
+#rm -r svs_sample_results/
