@@ -7,6 +7,8 @@ rm segment_boundary.map
 rm interpolated.map
 rm *hap_IDs.txt
 
+rm err/*
+rm out/*
 rm -r log/
 rm -r vcf_segments/
 rm -r encodings/
