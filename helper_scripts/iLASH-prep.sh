@@ -31,8 +31,9 @@ do
         --output-missing-genotype . \
         --out $out_dir"chrm"$CHROM
     
-    # create MAP file from interpolated map
-    echo "...creating MAP file..."
-    grep "chrm"$CHROM $out_dir"iLASH.fullmap" > $out_dir"chrm"$CHROM".map"
+    ## create MAP file from interpolated map
+    ## This is not perfect....needs to have no "chrm" prefix.
+    #echo "...creating MAP file..."
+    #grep "chrm"$CHROM $out_dir"iLASH.fullmap" > $out_dir"chrm"$CHROM".map"
 done
 

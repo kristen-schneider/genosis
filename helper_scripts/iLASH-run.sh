@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 #SBATCH --partition=short
-#SBATCH --job-name=iLASH-prep
-#SBATCH --output=/scratch/Users/krsc0813/chr1_22/out/ilash-prep.out
-#SBATCH --error=/scratch/Users/krsc0813/chr1_22/err/ilash-prep.err
+#SBATCH --job-name=iLASH-run
+#SBATCH --output=/scratch/Users/krsc0813/chr1_22/out/ilash-run.out
+#SBATCH --error=/scratch/Users/krsc0813/chr1_22/err/ilash-run.err
 #SBATCH --time=0-23:00:00
 #SBATCH --qos=normal
 #SBATCH --nodes=1
@@ -25,5 +25,5 @@ do
 
     # running iLASH
     echo "...running iLASH..."
-    $ilash_dir"./build/ilash" $config_file
+    $iLASH_dir"build/ilash" $config_file
 done
