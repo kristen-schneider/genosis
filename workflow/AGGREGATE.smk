@@ -46,7 +46,7 @@ rule aggregate_ryan:
         "Running Ryan's aggregation script..."
     shell:
         """
-        python {config.root_dir}python/scripts/evaluate/ryan_agg.py \
+        python {config.root_dir}python/scripts/aggregate/ryan_agg.py \
           --id_file {config.out_dir}query_hap_IDs.txt \
           --data_dir {config.out_dir}svs_results/ \
           --num_threads 20\
