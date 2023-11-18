@@ -6,8 +6,8 @@ __default__:
     nodes: 1
     ntasks-per-node: 16
     mem: 32gb
-    output: "/Users/krsc0813/1KG_data/example/out/{rule}.out"
-    error: "/Users/krsc0813/1KG_data/example/err/{rule}.err"
+    output: "/Users/krsc0813/precision-medicine/example/out/{rule}-%j.out"
+    error: "/Users/krsc0813/precision-medicine/example/err/{rule}-%j.err"
 
 model:
     partition: nvidia-a100

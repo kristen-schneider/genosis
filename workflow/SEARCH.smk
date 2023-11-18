@@ -63,7 +63,9 @@ rule svs_search:
     shell:
         """
         conda activate svs;
-        test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;\
+        test ! -d {config.out_dir}svs_results/ && mkdir {config.out_dir}svs_results/;
+        echo {input.idx_segments};
+        time \
         python {config.root_dir}python/scripts/svs/search_svs_index.py\
          --seg_idx {input.idx_segments}\
          --emb_dir {config.out_dir}embeddings/\
