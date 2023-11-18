@@ -86,10 +86,10 @@ map<int, vector<tuple<int, float>>> make_chr_cm_map(string map_file){
 
         if (curr_chrom == 0){
             curr_chrom = chrm;
-            cout << "chrom: " << chrm << endl;
+            //cout << "chrom: " << chrm << endl;
         }
         if (chrm != curr_chrom){
-            cout << "chrom: " << chrm << endl;
+            //cout << "chrom: " << chrm << endl;
             // add bp_cm_map to chrm_cm_map
             chrm_cm_map[curr_chrom] = bp_cm_vectors;
             // reset bp_cm_vectors

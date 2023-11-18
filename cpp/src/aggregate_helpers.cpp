@@ -133,7 +133,7 @@ void write_query_output(
         for (auto const& chromosome : query.second) {
             int chromosome_num = chromosome.first;
             string query_chrm_file = query_dir + "/chrm" + to_string(chromosome_num) + ".csv";
-            cout << "file: " << query_chrm_file << endl;
+            //cout << "file: " << query_chrm_file << endl;
             ofstream file(query_chrm_file);
             // write header
             file << "segment,";
