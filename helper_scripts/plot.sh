@@ -16,7 +16,7 @@ pop_file="/Users/krsc0813/1KG_data/samples.ancestry"
 knn_file="/scratch/Users/krsc0813/chr1_22/TOP_HITS.txt"
 png_dir="/scratch/Users/krsc0813/chr1_22/violin_plots/"
 
-python $python_script \
+python $plot_script \
     --pop $pop_file\
     --knn $knn_file\
     --png $png_dir
