@@ -4,10 +4,6 @@ pmed_dir=$1
 out_dir=$2
 config=$3
 
-echo $pmed_dir
-echo $out_dir
-echo $config
-
 ## These directories should be correct.
 ## If you have changed where scripts exist, change these paths
 smk_dir=$pmed_dir"workflow/"
@@ -69,7 +65,6 @@ echo "--ENCODE: $encode_time seconds" >> $log
 # 3. embed slices
 echo "3. embed slice encodings..." >> $log
 start_embed=$(date +%s.%3N)
-echo $start_embed
 snakemake \
     -s $smk_dir"EMBED.smk" \
     -c 16 \
@@ -88,7 +83,6 @@ snakemake \
                       --error {cluster.error}" \
     --latency-wait 70
 end_embed=$(date +%s.%3N)
-echo $end_embed
 embed_time=$(echo "scale=3; $end_embed - $start_embed" | bc)
 echo "--EMBED: $embed_time seconds" >> $log
 
