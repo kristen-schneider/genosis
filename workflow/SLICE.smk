@@ -28,8 +28,6 @@ rule get_sample_IDs:
     shell:
         """
         bcftools query -l {input.vcf_file} > {output.sample_IDs};
-	cp {output.sample_IDs} {config.out_dir}database_IDs.txt;
-	cp {output.sample_IDs} {config.out_dir}query_IDs.txt;
         """
 
 # 2.0 vcf basepairs
