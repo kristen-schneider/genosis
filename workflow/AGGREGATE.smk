@@ -64,7 +64,6 @@ rule aggregate_segment_execute:
     shell:
         """
         test ! -d {config.out_dir}svs_sample_results/ && mkdir {config.out_dir}svs_sample_results/;
-        echo 6. ---AGGREGATING SEGMENTS---;
         {input.bin}\
          {config.out_dir}svs_results/\
          {config.out_dir}svs_results/svs_results_file.txt\
