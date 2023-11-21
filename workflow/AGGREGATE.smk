@@ -39,7 +39,7 @@ rule make_results_list:
 # 1.1 aggregate svs_results with ryan's agg scripts
 rule aggregate_ryan:
     input:
-        ryan_agg=f"{config.root_dir}python/scripts/evaluate/ryan_agg.py",
+        ryan_agg=f"{config.root_dir}python/scripts/aggregate/ryan_agg.py",
     output:
         top_hits=f"{config.out_dir}TOP_HITS.txt"
     message:
