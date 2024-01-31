@@ -36,12 +36,13 @@ rule model:
         "Running model to create embedding vectors..."
     shell:
         """
-        conda activate torch-gpu;
+        conda info --envs;
+        conda activate torch-cpu;
         test ! -d {config.out_dir}embeddings/ && mkdir {config.out_dir}embeddings/;
         python {config.root_dir}pytorch/encode_samples.py\
          --encoder {config.root_dir}last.ckpt\
          --output {config.out_dir}embeddings/all.embeddings.txt\
-         --gpu\
+         #--gpu\
          --files {config.out_dir}encodings/*.pos\
          --batch-size {config.batch_size}\
          --num-workers {config.n_workers};

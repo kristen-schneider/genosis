@@ -40,10 +40,12 @@ cd $pmed_dir
 echo "Running indexing step."
 bash $index_script $pmed_dir $out_dir $config_file
 # run searching step
+wait
 
 echo
 echo "Running searching step."
 bash $search_script $pmed_dir $out_dir $config_file
+#wait
 
 echo
 ## run evaluation step

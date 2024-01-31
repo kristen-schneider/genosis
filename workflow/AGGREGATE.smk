@@ -50,7 +50,7 @@ rule aggregate_ryan:
           --id_file {config.out_dir}query_hap_IDs.txt \
           --data_dir {config.out_dir}svs_results/ \
           --num_threads 20\
-          --top_N 20\
+          --top_N 100\
           --out_file {output.top_hits}
         """
 
