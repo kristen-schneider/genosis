@@ -37,6 +37,7 @@ rule model:
     shell:
         """
         conda activate torch-gpu;
+        conda env list;
         test ! -d {config.out_dir}embeddings/ && mkdir {config.out_dir}embeddings/;
         python {config.root_dir}pytorch/encode_samples.py\
          --encoder {config.root_dir}last.ckpt\

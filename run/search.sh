@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-pmed_dir=$1
+gess_dir=$1
 out_dir=$2
 config=$3
 
 ## These directories should be correct.
 ## If you have changed where scripts exist, change these paths
-smk_dir=$pmed_dir"workflow/"
+smk_dir=$gess_dir"workflow/"
 log=$out_dir"log/search.log"
 ##
 ##
@@ -24,7 +24,7 @@ log=$out_dir"log/search.log"
 # activate conda / mamba
 source  ~/.bashrc
 # go to project directory
-cd $pmed_dir
+cd $gess_dir
 
 # run searching pipeline
 # 5. search slices
@@ -35,7 +35,7 @@ snakemake \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --cluster-config $pmed_dir"run/embed_config.yml" \
+    --cluster-config $out_dir"cluster_config.yml" \
     --cluster "sbatch -J {cluster.job-name} \\
                       -t {cluster.time} \\
                       -N {cluster.nodes} \\

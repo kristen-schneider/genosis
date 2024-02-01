@@ -23,7 +23,7 @@ index_script="/Users/krsc0813/precision-medicine/run/index.sh"
 search_script="/Users/krsc0813/precision-medicine/run/search.sh"
 evaluate_script="/Users/krsc0813/precision-medicine/run/evaluate.sh"
 # directories
-pmed_dir="/Users/krsc0813/precision-medicine/"
+gess_dir="/Users/krsc0813/precision-medicine/"
 out_dir="/Users/krsc0813/precision-medicine/example/"
 # config file
 config_file=$out_dir"example.yml"
@@ -34,18 +34,20 @@ config_file=$out_dir"example.yml"
 test ! -d $out_dir"log/" && mkdir $out_dir"log/"
 
 # move to project dir
-cd $pmed_dir
+cd $gess_dir
 
 # run indexing step
 echo "Running indexing step."
-bash $index_script $pmed_dir $out_dir $config_file
+bash $index_script $gess_dir $out_dir $config_file
 # run searching step
+wait
 
 echo
 echo "Running searching step."
-bash $search_script $pmed_dir $out_dir $config_file
+bash $search_script $gess_dir $out_dir $config_file
+#wait
 
 echo
 ## run evaluation step
 #echo "Running evaluation step."
-#bash $evaluate_script $pmed_dir $out_dir $config_file
+#bash $evaluate_script $gess_dir $out_dir $config_file

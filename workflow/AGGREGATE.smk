@@ -39,18 +39,18 @@ rule make_results_list:
 # 1.1 aggregate svs_results with ryan's agg scripts
 rule aggregate_ryan:
     input:
-        ryan_agg=f"{config.root_dir}python/scripts/evaluate/ryan_agg.py",
+        ryan_agg=f"{config.root_dir}python/scripts/aggregate/ryan_agg.py",
     output:
         top_hits=f"{config.out_dir}TOP_HITS.txt"
     message:
         "Running Ryan's aggregation script..."
     shell:
         """
-        python {config.root_dir}python/scripts/evaluate/ryan_agg.py \
+        python {config.root_dir}python/scripts/aggregate/ryan_agg.py \
           --id_file {config.out_dir}query_hap_IDs.txt \
           --data_dir {config.out_dir}svs_results/ \
           --num_threads 20\
-          --top_N 20\
+          --top_N 100\
           --out_file {output.top_hits}
         """
 

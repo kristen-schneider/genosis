@@ -75,5 +75,5 @@ rule svs_search:
          --db_samples {config.out_dir}database_hap_IDs.txt\
          --q_samples {config.out_dir}query_hap_IDs.txt\
          --knn {config.k}\
-         --out_dir {config.out_dir}svs_results/; }} 2>> {config.out_dir}log/search.log;
+         --out_dir {config.out_dir}svs_results/; }} 2>> {config.out_dir}search.log;
         """
