@@ -35,7 +35,7 @@ snakemake \
     -c 16 \
     -j 10 \
     --configfile=$config \
-    --cluster-config $gess_dir"run/embed_config.yml" \
+    --cluster-config $out_dir"cluster_config.yml" \
     --cluster "sbatch -J {cluster.job-name} \\
                       -t {cluster.time} \\
                       -N {cluster.nodes} \\
