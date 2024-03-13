@@ -62,6 +62,7 @@ rule encode_execute:
         vcf_segments=f"{config.out_dir}vcf_segments/{{segment}}.vcf.gz"
     output:
         gt_encodings=f"{config.out_dir}encodings/{{segment}}.gt",
+        pos_encodings=f"{config.out_dir}encodings/{{segment}}.pos"
     message:
         "Executing--encoding segments..."
     shell:
@@ -75,10 +76,10 @@ rule encode_execute:
          {config.out_dir}encodings/;
         """
 
-# 2.0 get haplotype IDs for database samples
+# 2.0 remove empty entries
 rule remove_empty_encodings:
     input:
-        gt_encodings=f"{config.out_dir}encodings/{{segment}}.gt"
+        pos_encodings=f"{config.out_dir}encodings/{{segment}}.pos"
     output:
         zeros=f"{config.out_dir}encodings/{{segment}}.done"
     message:
@@ -86,7 +87,7 @@ rule remove_empty_encodings:
     shell:
         """
         python {config.root_dir}python/scripts/check_pos_encodings.py\
-         --pos_enc {input.gt_encodings} > {output.zeros}
+         --pos_enc {input.pos_encodings} > {output.zeros}
         """
 
 # 3.0 get haplotype IDs for database samples

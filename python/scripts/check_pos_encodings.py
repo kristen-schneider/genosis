@@ -5,7 +5,7 @@ MINIMUM=7   # minimum length for an encoding vector for the segment to be includ
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--pos_enc', type=str, help='genotype encoding file')
+    parser.add_argument('--pos_enc', type=str, help='positional encoding file')
     return parser.parse_args()
 
 def main():
