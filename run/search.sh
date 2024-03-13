@@ -51,14 +51,14 @@ search_time=$(echo "scale=3; $end_search - $start_search" | bc)
 echo "--SEARCH: $search_time seconds" >> $log
 
 
-# 6. aggregate slices
-echo "6. aggregating results slices..." >> $log
-start_aggregate=$(date +%s.%3N)
-snakemake \
-    -s $smk_dir"AGGREGATE.smk" \
-    -c 16 \
-    -j 10 \
-    --configfile=$config
-end_aggregate=$(date +%s.%3N)
-aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
-echo "--AGGREGATE: $aggregate_time seconds" >> $log
+## 6. aggregate slices
+#echo "6. aggregating results slices..." >> $log
+#start_aggregate=$(date +%s.%3N)
+#snakemake \
+#    -s $smk_dir"AGGREGATE.smk" \
+#    -c 16 \
+#    -j 10 \
+#    --configfile=$config
+#end_aggregate=$(date +%s.%3N)
+#aggregate_time=$(echo "scale=3; $end_aggregate - $start_aggregate" | bc)
+#echo "--AGGREGATE: $aggregate_time seconds" >> $log
