@@ -49,7 +49,6 @@ rule svs_search:
         """
         conda activate svs;
         test ! -d {config.out_dir}top_hits/ && mkdir {config.out_dir}top_hits/;
-        #time touch {config.out_dir}search_time.log;
         time python \
          {config.root_dir}python/scripts/svs/search_svs_index_samples.py \
          --idx_dir {config.out_dir}svs_index/ \
@@ -58,7 +57,20 @@ rule svs_search:
          --query_samples {config.out_dir}query_hap_IDs.txt \
          --knn {config.k} \
          --out_dir {config.out_dir}top_hits/ > {config.out_dir}search_time.log;
-        """
+       """
+       # num_segments=$(tail -n 1 {config.out_dir}segment_boundary.map | awk '{{print $2}}');
+       # echo ${{num_segments}} 
+       # #time touch {config.out_dir}search_time.log;
+       # time python \
+       #  {config.root_dir}python/scripts/svs/search_svs_index_samples.py \
+       #  --idx_dir {config.out_dir}svs_index/ \
+       #  --emb_dir {config.out_dir}embeddings/ \
+       #  --db_samples {config.out_dir}database_hap_IDs.txt \
+       #  --query_samples {config.out_dir}query_hap_IDs.txt \
+       #  --num_segments ${num_segments} \
+       #  --knn {config.k} \
+       #  --out_dir {config.out_dir}top_hits/ > {config.out_dir}search_time.log;
+        #"""
 
 ## 6 search FAISS indices
 #rule faiss_search:

@@ -28,7 +28,8 @@ def main():
 
     # segment top hits for all queries
     # dict: key = query, value = dict of matches
-    segment_hits = defaultdict(dict)
+    pop_count_hits = defaultdict(dict)
+    svs_score_hits = defaultdict(dict)
 
     # read database and query samples into lists
     database_samples_list = read_samples(db_samples)
@@ -41,37 +42,50 @@ def main():
         if seg_idx.endswith('.config'):
             print(i+1, seg_idx)
             i += 1
-            segment_hits = single_segment_knn(idx_dir+seg_idx,
-                                            segment_hits,
+            pop_count_hits, svs_score_hits = single_segment_knn(idx_dir+seg_idx,
+                                            pop_count_hits,
+                                            svs_score_hits,
                                             emb_dir,
                                             k,
                                             query_samples_list,
                                             database_samples_list,
                                             out_dir)
 
+    num_segments = i
     # sort results by number of hits for each query
-    for query in segment_hits:
-        segment_hits[query] = {k: v for k, v in sorted(segment_hits[query].items(), key=lambda item: item[1], reverse=True)}
+    for query in pop_count_hits:
+        pop_count_hits[query] = {k: v for k, v in sorted(pop_count_hits[query].items(), key=lambda item: item[1], reverse=True)}
         
 
     # write out results
     print('writing output...')
-    for query in segment_hits:
-        print(query)
+    for query in pop_count_hits:
+        #print(query)
         results_file = out_dir + query + '.knn'
         rf = open(results_file, 'w')
         rf.write("QUERY: " + query + '\n')
         i = 0;
-        for match in segment_hits[query]:
-            if i < 20:
-                #rf.write(str(database_samples_list[match]) + '\t' + str(segment_hits[query][match]) + '\n')
-                rf.write(str(match) + '\t' + str(segment_hits[query][match]) + '\n')
-            else: break
+        for match in pop_count_hits[query]:
+            score1 = svs_score_hits[query][match] / pop_count_hits[query][match]
+            score2 = (pop_count_hits[query][match] / num_segments) * svs_score_hits[query][match]
+            score3 = (pop_count_hits[query][match] / num_segments) / svs_score_hits[query][match]
+            rf.write(str(match) + ',' + 
+                        str(pop_count_hits[query][match]) + ',' + 
+                        str(svs_score_hits[query][match]) + ',' + 
+                        str(score1) + ',' + 
+                        str(score2) + ',' + 
+                        str(score3) + ',' + 
+                        '\n')
+            #if i < 20:
+            #    #rf.write(str(database_samples_list[match]) + '\t' + str(pop_count_hits[query][match]) + '\n')
+            #    rf.write(str(match) + '\t' + str(pop_count_hits[query][match]) + '\n')
+            #else: break
             i += 1
     rf.close()
 
 def single_segment_knn(seg_idx,
-                       segment_hits,
+                       pop_count_hits,
+                       svs_score_hits,
                        emb_dir,
                        k,
                        query_samples_list,
@@ -100,24 +114,33 @@ def single_segment_knn(seg_idx,
     # D : distance matrix
     I, D = index.search(q_embeddings, k)
 
-    # for all queries in our list, fill out segment_hits
+    # for all queries in our list, fill out pop_count_hits
     for query_idx in range(len(I)):
         #print("QUERY: ", query_samples_list[query_idx])
+        #print("\n")
         q = I[query_idx]
+        q_D = D[query_idx]
+        #print(q_D)
         for match_idx in range(len(q)):
             match_ID = database_samples_list[q[match_idx]]
+            #print(match_ID, q_D[match_idx])
+            #print("\n")
+            #print(query_samples_list[query_idx], match_ID)
             try:
-                #segment_hits[query_samples_list[query_idx].split('_')[0]][q[match_idx]] += 1
-                segment_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] += 1
+                ##pop_count_hits[query_samples_list[query_idx].split('_')[0]][q[match_idx]] += 1
+                pop_count_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] += 1
+                svs_score_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] += q_D[match_idx]
             except KeyError:
                 try:
-                    #segment_hits[query_samples_list[query_idx].split('_')[0]][q[match_idx]] = 1
-                    segment_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] = 1
+                    ##pop_count_hits[query_samples_list[query_idx].split('_')[0]][q[match_idx]] = 1
+                    pop_count_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] = 1
+                    svs_score_hits[query_samples_list[query_idx].split('_')[0]][match_ID.split('_')[0]] = q_D[match_idx]
                 except KeyError:
-                    #segment_hits[query_samples_list[query_idx].split('_')[0]].update({q[match_idx]: 1})
-                    segment_hits[query_samples_list[query_idx].split('_')[0]].update({match_ID.split('_')[0]: 1})
+                    ##pop_count_hits[query_samples_list[query_idx].split('_')[0]].update({q[match_idx]: 1})
+                    pop_count_hits[query_samples_list[query_idx].split('_')[0]].update({match_ID.split('_')[0]: 1})
+                    svs_score_hits[query_samples_list[query_idx].split('_')[0]].update({match_ID.split('_')[0]: q_D[match_idx]})
 
-    return segment_hits
+    return pop_count_hits, svs_score_hits
 
 def read_samples(samples):
     """
