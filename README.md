@@ -37,9 +37,9 @@ mkdir err
 - One file with a list of sample IDs to include in the query set (for searching index). See [`example/query_IDs.txt`](https://github.com/kristen-schneider/precision-medicine/blob/main/example/query_IDs.txt) for an example using 1000 Genomes samples. <br>
 
 ## Make custom run files and edit file paths.
-- Make copy of [example_run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/run.sh) and edit paths appropriately.<br>
-- Make copy of [example_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.yml) and edit paths appropriately.<br>
-- Make copy of [embed_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/cluster_config.yml) and edit node configurations appropriately.<br>
+- Make copy of [run.sh](https://github.com/kristen-schneider/precision-medicine/blob/main/run/run.sh) and edit paths appropriately.<br>
+- Make copy of [example.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/example/example.yml) and edit paths appropriately.<br>
+- Make copy of [cluster_config.yml](https://github.com/kristen-schneider/precision-medicine/blob/main/run/cluster_config.yml) and edit node configurations appropriately.<br>
 
 ## Run
 ```
