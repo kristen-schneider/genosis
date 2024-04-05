@@ -11,8 +11,8 @@
 #SBATCH --time=23:00:00
 #SBATCH --mail-type=NONE
 #SBATCH --mail-user=name@email.com
-#SBATCH --output=./example/out/example.out
-#SBATCH --error=./example/err/example.err
+#SBATCH --output=/Users/krsc0813/precision-medicine/example/log/example.out
+#SBATCH --error=/Users/krsc0813/precision-medicine/example/err/example.err
 
 set -e pipefail
 
@@ -21,7 +21,6 @@ set -e pipefail
 # scripts
 index_script="/Users/krsc0813/precision-medicine/run/index.sh"
 search_script="/Users/krsc0813/precision-medicine/run/search.sh"
-evaluate_script="/Users/krsc0813/precision-medicine/run/evaluate.sh"
 # directories
 gess_dir="/Users/krsc0813/precision-medicine/"
 out_dir="/Users/krsc0813/precision-medicine/example/"
@@ -42,12 +41,10 @@ bash $index_script $gess_dir $out_dir $config_file
 # run searching step
 wait
 
-echo
 echo "Running searching step."
 bash $search_script $gess_dir $out_dir $config_file
 #wait
 
-echo
 ## run evaluation step
 #echo "Running evaluation step."
 #bash $evaluate_script $gess_dir $out_dir $config_file

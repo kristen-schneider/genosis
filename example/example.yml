@@ -2,23 +2,17 @@
 ### modify these paths
 
 root_dir:
-  ./
+  /Users/krsc0813/precision-medicine/
 vcf_file:
-  example/example_merge.vcf.gz
+  /Users/krsc0813/precision-medicine/example/example_merge.vcf.gz
 map_file:
-  example/example_merge.map
+  /Users/krsc0813/precision-medicine/example/example_merge.map
 out_dir:
-  example/gess_output/
+  /Users/krsc0813/precision-medicine/example/gess_output/
 database_IDs:
-  example/database_IDs.txt
+  /Users/krsc0813/precision-medicine/example/database_IDs.txt
 query_IDs:
-  example/query_IDs.txt
-ancestry:
-  example/samples.ancestry
-ped:
-  None
-roots:
-  None
+  /Users/krsc0813/precision-medicine/example/query_IDs.txt
 batch_size:
   128
 n_workers:
