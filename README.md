@@ -12,7 +12,7 @@ ____________________________________________
 cd precision-medicine
 mkdir example/log
 mkdir example/err
-sbatch example/example_run.sh
+sbatch run/run.sh
 ```
 ____________________________________________
 # RUN NEW DATA
